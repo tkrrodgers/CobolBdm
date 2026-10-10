@@ -77,17 +77,17 @@ foreach ($arm in @('A', 'B')) {
     $c = @($cells | Where-Object arm -eq $arm)
     if (-not $c) { continue }
     $md.Add("## Arm ${arm}: $($cfg.arms.$arm.name)"); $md.Add(''); $md.Add($cfg.arms.$arm.about); $md.Add('')
-    $md.Add('| Model | Programs passed | Implementation attempts | Minutes (design + implementation) | CardDemo service: tests · outputs | zopeneditor service: tests · outputs | Load s | GPU GiB | Server RAM GB |')
+    $md.Add('| Model | Programs passed | Implementation attempts | Minutes (design + implementation) | CardDemo service: tests / outputs | zopeneditor service: tests / outputs | Load s | GPU GiB | Server RAM GB |')
     $md.Add('|---|---|---|---|---|---|---|---|---|')
     foreach ($r in @($runs | Where-Object arm -eq $arm)) {
         $mc = @($c | Where-Object model -eq $r.model)
-        $svc = foreach ($p in $cfg.estates.project) { $s = $r.services | Where-Object { $_.project -eq $p }; if ($s) { "$($s.tests - $s.failed)/$($s.tests) · $($s.match)/$($s.outputs)" } else { '-' } }
+        $svc = foreach ($p in $cfg.estates.project) { $s = $r.services | Where-Object { $_.project -eq $p }; if ($s) { "$($s.tests - $s.failed)/$($s.tests) / $($s.match)/$($s.outputs)" } else { '-' } }
         $md.Add("| $($r.model) | $(@($mc | Where-Object passedAll).Count)/$($mc.Count) | $(Sum ($mc | ForEach-Object { $_.attemptsUsed })) | $(Sum ($mc | ForEach-Object { $_.minutes })) | $($svc[0]) | $($svc[1]) | $($r.loadSeconds) | $(if ($r.gpuMiB) { [math]::Round($r.gpuMiB / 1024, 1) }) | $($r.serverRamGB) |")
     }
     $md.Add(''); $md.Add('| Program | Model | Design | Acceptance | Output diffs | First full pass | Attempts | Minutes | Gen tok/s | Prompt tok/s |')
     $md.Add('|---|---|---|---|---|---|---|---|---|---|')
     foreach ($row in ($c | Sort-Object project, program, model)) {
-        $acc = if (-not $row.designValid) { 'no valid design' } elseif (-not $row.compiled) { 'does not compile' } else { "$($row.passed)/$($row.total)" }
+        $acc = if (-not $row.designValid) { 'no valid design' } elseif ($null -eq $row.bestAttempt) { 'not run yet' } elseif (-not $row.compiled) { 'does not compile' } else { "$($row.passed)/$($row.total)" }
         $md.Add("| $($row.program) | $($row.model) | $(if ($row.designValid) { "valid ($($row.designAttempts))" } else { 'invalid' }) | $acc | $($row.outputDifferences) | $(if ($row.firstPassAttempt) { "attempt $($row.firstPassAttempt)" } else { '-' }) | $($row.attemptsUsed) | $($row.minutes) | $($row.generationTokensPerSecond) | $($row.promptTokensPerSecond) |")
     }
     $md.Add('')
