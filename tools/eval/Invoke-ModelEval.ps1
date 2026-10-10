@@ -107,7 +107,8 @@ try {
             Log "$($e.project): $($step.name) $programs"
             $t = Get-Date
             $ErrorActionPreference = 'Continue'
-            & dotnet @($step.args) 2>&1 | ForEach-Object { "$_" } | Tee-Object -FilePath (Join-Path $out 'run.log') -Append | Out-Null
+            $runLog = Join-Path $out 'run.log'
+            & dotnet @($step.args) 2>&1 | ForEach-Object { Add-Content -Path $runLog -Value "$_" -Encoding UTF8 }
             $code = $LASTEXITCODE
             $ErrorActionPreference = 'Stop'
             Log "$($e.project): $($step.name) exit $code after $([math]::Round(((Get-Date) - $t).TotalMinutes, 1)) min"
