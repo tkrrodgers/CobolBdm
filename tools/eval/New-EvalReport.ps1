@@ -56,7 +56,7 @@ foreach ($arm in @('A', 'B')) {
             gpuMiB = if ($server) { ($server.snapshots | Measure-Object gpuMemoryUsedMiB -Maximum).Maximum } else { $null }
             serverRamGB = if ($server) { ($server.snapshots | Measure-Object serverWorkingSetGB -Maximum).Maximum } else { $null }
             wallMinutes = $server.minutes; harnessCommit = $server.harnessCommit; buildInfo = $server.buildInfo; services = $services
-            complete = [bool]$server
+            complete = [bool]($server -and $server.completed)
         }
     }
 }

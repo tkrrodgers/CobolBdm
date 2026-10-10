@@ -15,15 +15,23 @@ if (-not $Config) { $Config = Join-Path $PSScriptRoot 'eval-config.json' }
 $cfg = Get-Content $Config -Raw | ConvertFrom-Json
 $root = $cfg.evalRoot
 $log = Join-Path $root 'queue.log'
-function Log([string]$s) { Add-Content -Path $log -Value "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $s" -Encoding UTF8 }
+# Appends a line for people to read; a reader holding the file open (Windows sharing) delays it, never stops the run.
+function Append([string]$path, [string]$text) {
+    for ($i = 0; $i -lt 40; $i++) {
+        try { [System.IO.File]::AppendAllText($path, $text + "`r`n", (New-Object System.Text.UTF8Encoding $false)); return } catch { Start-Sleep -Milliseconds 250 }
+    }
+}
+function Log([string]$s) { Append $log "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $s" }
 function Script([string]$name) { Join-Path $PSScriptRoot $name }
+# A run counts as done only when its server.json says it completed; an aborted run is run again.
+function Done([string]$dir) { $f = Join-Path $dir 'server.json'; (Test-Path $f) -and ((Get-Content $f -Raw | ConvertFrom-Json).completed -eq $true) }
 
 Log "queue started (pid $PID): $($Order -join ', ')"
 foreach ($entry in $Order) {
     $arm, $model = $entry -split ':', 2
     $m = $cfg.models | Where-Object { $_.name -eq $model }
     $runDir = Join-Path $root "runs\$arm\$model"
-    if (Test-Path (Join-Path $runDir 'server.json')) { Log "$entry already run; skipped" }
+    if (Done $runDir) { Log "$entry already run; skipped" }
     else {
         if ($m.downloadLog) {
             $waited = $false
@@ -37,7 +45,7 @@ foreach ($entry in $Order) {
         # A run started outside the queue holds the port until it finishes and writes its server.json.
         while (Get-NetTCPConnection -LocalPort $cfg.port -State Listen -ErrorAction SilentlyContinue) { Start-Sleep -Seconds 60 }
         Start-Sleep -Seconds 30
-        if (Test-Path (Join-Path $runDir 'server.json')) { Log "$entry finished outside the queue; not run again" }
+        if (Done $runDir) { Log "$entry finished outside the queue; not run again" }
         else {
             Log "$entry`: run"
             & powershell -ExecutionPolicy Bypass -File (Script 'Invoke-ModelEval.ps1') -Model $model -Arm $arm *> (Join-Path $root "$arm-$model.console.log")
@@ -45,7 +53,7 @@ foreach ($entry in $Order) {
         }
     }
     $verified = @($cfg.estates | Where-Object { Test-Path (Join-Path $runDir "$($_.project)\service-verification.json") }).Count -eq @($cfg.estates).Count
-    if ((Test-Path (Join-Path $runDir 'server.json')) -and -not $verified) {
+    if ((Done $runDir) -and -not $verified) {
         Log "$entry`: service verification"
         & powershell -ExecutionPolicy Bypass -File (Script 'Invoke-ServiceVerification.ps1') -Model $model -Arm $arm *> (Join-Path $root "$arm-$model.verify.log")
         Log "$entry`: verification finished (exit $LASTEXITCODE)"

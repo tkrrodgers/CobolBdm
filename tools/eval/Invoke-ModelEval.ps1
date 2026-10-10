@@ -40,7 +40,13 @@ if (-not $gguf -or -not (Test-Path $gguf)) { throw "${Model}: model file not fou
 $weights = if (Test-Path $m.gguf -PathType Container) { Get-ChildItem $m.gguf -Filter *.gguf } else { Get-Item $gguf }
 $weightsGB = [math]::Round((($weights | Measure-Object Length -Sum).Sum) / 1GB, 1)
 
-function Log([string]$s) { $line = "$(Get-Date -Format 'HH:mm:ss') $s"; Write-Host $line; Add-Content (Join-Path $runDir 'eval.log') $line }
+# Appends a line for people to read; a reader holding the file open (Windows sharing) delays it, never stops the run.
+function Append([string]$path, [string]$text) {
+    for ($i = 0; $i -lt 40; $i++) {
+        try { [System.IO.File]::AppendAllText($path, $text + "`r`n", (New-Object System.Text.UTF8Encoding $false)); return } catch { Start-Sleep -Milliseconds 250 }
+    }
+}
+function Log([string]$s) { $line = "$(Get-Date -Format 'HH:mm:ss') $s"; Write-Host $line; Append (Join-Path $runDir 'eval.log') $line }
 
 # The harness (MlCpu.DesignModel) is built from this worktree, so its commit pins the protocol.
 dotnet build (Join-Path $repo 'MlCpu\src\MlCpu.DesignModel') -c Release -v q -nologo | Out-Null
@@ -87,6 +93,7 @@ $snapshots = @((Snapshot))
 Log "loaded in $loadSeconds s; GPU $($snapshots[0].gpuMemoryUsedMiB) MiB; server working set $($snapshots[0].serverWorkingSetGB) GB"
 
 $started = Get-Date
+$completed = $false
 try {
     foreach ($e in $cfg.estates) {
         if ($Projects -and $Projects -notcontains $e.project) { continue }
@@ -108,7 +115,7 @@ try {
             $t = Get-Date
             $ErrorActionPreference = 'Continue'
             $runLog = Join-Path $out 'run.log'
-            & dotnet @($step.args) 2>&1 | ForEach-Object { Add-Content -Path $runLog -Value "$_" -Encoding UTF8 }
+            & dotnet @($step.args) 2>&1 | ForEach-Object { Append $runLog "$_" }
             $code = $LASTEXITCODE
             $ErrorActionPreference = 'Stop'
             Log "$($e.project): $($step.name) exit $code after $([math]::Round(((Get-Date) - $t).TotalMinutes, 1)) min"
@@ -116,6 +123,7 @@ try {
         }
         $snapshots += (Snapshot)
     }
+    $completed = $true
 }
 finally {
     if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force }
@@ -123,7 +131,7 @@ finally {
         schema = 'mlcpu.model-eval-server.v1'; model = $Model; arm = $Arm; armName = $armCfg.name; lab = $m.lab; license = $m.license
         architecture = $m.architecture; precision = $m.precision; weights = $gguf; weightsGB = $weightsGB; source = $m.source
         sampling = $m.sampling; llamaBuild = $cfg.llamaBuild; buildInfo = $props.build_info; serverArguments = $serverArgs -join ' '
-        harnessCommit = $commit; harnessDirty = $dirty; loadSeconds = $loadSeconds; snapshots = $snapshots
+        harnessCommit = $commit; harnessDirty = $dirty; completed = $completed; loadSeconds = $loadSeconds; snapshots = $snapshots
         started = $started.ToString('o'); finished = (Get-Date).ToString('o'); minutes = [math]::Round(((Get-Date) - $started).TotalMinutes, 1)
     } | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $runDir 'server.json') -Encoding UTF8
     Log "===== $Model, arm ${Arm}: done in $([math]::Round(((Get-Date) - $started).TotalMinutes, 1)) min"
