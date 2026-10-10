@@ -25,7 +25,7 @@ if (-not $env:JAVA_HOME) { $env:JAVA_HOME = [Environment]::GetEnvironmentVariabl
 $cfg = Get-Content $Config -Raw | ConvertFrom-Json
 $m = $cfg.models | Where-Object { $_.name -eq $Model }
 if (-not $m) { throw "unknown model '$Model' (eval-config.json)" }
-$arm = $cfg.arms.$Arm
+$armCfg = $cfg.arms.$Arm
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $root = $cfg.evalRoot
 $runDir = Join-Path $root "runs\$Arm\$Model"
@@ -59,7 +59,7 @@ $serverArgs = @('-m', $gguf, '-c', "$($cfg.context)", '-np', '1', '--host', '127
     '--temp', ([double]$s.temp).ToString($inv), '--top-p', ([double]$s.top_p).ToString($inv), '--top-k', "$($s.top_k)", '--min-p', ([double]$s.min_p).ToString($inv))
 if ($m.serverArgs) { $serverArgs += ($m.serverArgs -split ' ') }
 $exe = Join-Path $cfg.llamaDir 'llama-server.exe'
-Log "===== $Model, arm $Arm ($($arm.name)); $weightsGB GB of weights; harness $commit$(if ($dirty) { ' (uncommitted changes)' })"
+Log "===== $Model, arm $Arm ($($armCfg.name)); $weightsGB GB of weights; harness $commit$(if ($dirty) { ' (uncommitted changes)' })"
 Log "llama-server $($serverArgs -join ' ')"
 $quoted = $serverArgs | ForEach-Object { if ($_ -match '\s') { '"' + $_ + '"' } else { $_ } }
 $server = Start-Process -FilePath $exe -ArgumentList $quoted -PassThru -WindowStyle Hidden `
@@ -97,12 +97,12 @@ try {
         $programs = $e.programs -join ','
         $common = @('--model', $gguf, '--name', $Model, '--server', "http://127.0.0.1:$port", '--no-fallback', '--ctx', "$($cfg.context)",
             '--seed', "$($cfg.seed)", '--programs', $programs, '--normalization', (Join-Path $publish 'normalization'), '--out', $out)
-        $design = @($dll, 'design-all') + $common + @('--attempts', "$($arm.designAttempts)")
-        if ($arm.outline) { $design += '--outline' }
+        $design = @($dll, 'design-all') + $common + @('--attempts', "$($armCfg.designAttempts)")
+        if ($armCfg.outline) { $design += '--outline' }
         $implement = @($dll, 'implement-all') + $common + @('--manifest', (Join-Path $publish 'capability-manifest.json'), '--project', $publish,
-            '--harness-root', (Join-Path $root "harness\$Arm\$Model\$($e.project)"), '--impl-attempts', "$($arm.implementationAttempts)")
-        if ($arm.outline) { $implement += '--outline' }
-        if ($arm.examples) { $implement += '--with-examples' }
+            '--harness-root', (Join-Path $root "harness\$Arm\$Model\$($e.project)"), '--impl-attempts', "$($armCfg.implementationAttempts)")
+        if ($armCfg.outline) { $implement += '--outline' }
+        if ($armCfg.examples) { $implement += '--with-examples' }
         foreach ($step in @(@{ name = 'design'; args = $design }, @{ name = 'implement'; args = $implement })) {
             Log "$($e.project): $($step.name) $programs"
             $t = Get-Date
@@ -119,7 +119,7 @@ try {
 finally {
     if (-not $server.HasExited) { Stop-Process -Id $server.Id -Force }
     [ordered]@{
-        schema = 'mlcpu.model-eval-server.v1'; model = $Model; arm = $Arm; armName = $arm.name; lab = $m.lab; license = $m.license
+        schema = 'mlcpu.model-eval-server.v1'; model = $Model; arm = $Arm; armName = $armCfg.name; lab = $m.lab; license = $m.license
         architecture = $m.architecture; precision = $m.precision; weights = $gguf; weightsGB = $weightsGB; source = $m.source
         sampling = $m.sampling; llamaBuild = $cfg.llamaBuild; buildInfo = $props.build_info; serverArguments = $serverArgs -join ' '
         harnessCommit = $commit; harnessDirty = $dirty; loadSeconds = $loadSeconds; snapshots = $snapshots
