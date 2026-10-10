@@ -14,10 +14,11 @@
 param(
     [Parameter(Mandatory)][string]$Model,
     [Parameter(Mandatory)][ValidateSet('A', 'B')][string]$Arm,
-    [string]$Config = (Join-Path $PSScriptRoot 'eval-config.json'),
+    [string]$Config,
     [string[]]$Projects
 )
 $ErrorActionPreference = 'Stop'
+if (-not $Config) { $Config = Join-Path $PSScriptRoot 'eval-config.json' }
 $env:Path = [Environment]::GetEnvironmentVariable('Path', 'User') + ';' + [Environment]::GetEnvironmentVariable('Path', 'Machine')
 if (-not $env:JAVA_HOME) { $env:JAVA_HOME = [Environment]::GetEnvironmentVariable('JAVA_HOME', 'User') }
 
