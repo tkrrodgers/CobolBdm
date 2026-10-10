@@ -1,0 +1,55 @@
+{
+  "schema": "mlcpu.model-eval-config.v1",
+  "about": "Frozen protocol for comparing local models on the normalization pipeline; see tools/eval/PROTOCOL.md.",
+  "evalRoot": "C:\\Users\\Tomrodgers\\Source\\modelEval",
+  "llamaDir": "C:\\models\\llama.cpp-unsloth-b11539",
+  "llamaBuild": "unslothai/llama.cpp b11539-mix-2500203 (upstream b11539 + Inkling PR #25731), CUDA 13.3 portable",
+  "port": 8190,
+  "context": 131072,
+  "seed": 42,
+  "estates": [
+    { "project": "carddemo", "programs": ["CBTRN02C", "CBACT04C", "CBTRN03C"] },
+    { "project": "zopeneditor-sample", "programs": ["SAM1", "SAM2"] }
+  ],
+  "arms": {
+    "A": {
+      "name": "production guidance",
+      "about": "The workbench's configuration that produced Gemma's 116/116 + 61/61 result: AST outline in both prompts, worked examples and parity notes in the implementation prompt.",
+      "designAttempts": 3, "implementationAttempts": 15, "outline": true, "examples": true
+    },
+    "B": {
+      "name": "lean guidance",
+      "about": "No worked examples or parity notes (AST outline kept): separates models that can derive the COBOL semantics from the packet from those that need them spelled out.",
+      "designAttempts": 3, "implementationAttempts": 10, "outline": true, "examples": false
+    }
+  },
+  "models": [
+    {
+      "name": "gemma-4-31B-it", "lab": "Google", "released": "2026-03-31", "license": "Apache-2.0",
+      "architecture": "31B dense", "precision": "BF16 (full)",
+      "gguf": "C:\\models\\gemma-4-31B-it-GGUF\\BF16\\gemma-4-31B-it-BF16-00001-of-00002.gguf",
+      "source": "the workbench's Gemma model (unchanged)",
+      "sampling": { "temp": 1.0, "top_p": 0.95, "top_k": 64, "min_p": 0.0, "from": "google/gemma-4-31B-it generation_config.json" },
+      "serverArgs": "--spec-type draft-mtp --spec-draft-model C:\\models\\gemma-4-31B-it-GGUF\\MTP\\mtp-gemma-4-31B-it-BF16.gguf",
+      "speedNote": "MTP draft model: speculative decoding, same output distribution"
+    },
+    {
+      "name": "laguna-s-2.1", "lab": "Poolside", "released": "2026-07", "license": "OpenMDW-1.1 (+ acceptable use policy)",
+      "architecture": "118B MoE, 8B active", "precision": "Q8_0 (routed experts Q8_0; attention, shared experts, embeddings BF16)",
+      "gguf": "C:\\models\\Laguna-S-2.1-GGUF\\laguna-s-2.1-Q8_0.gguf",
+      "source": "poolside/Laguna-S-2.1-GGUF",
+      "sampling": { "temp": 1.0, "top_p": 1.0, "top_k": 20, "min_p": 0.0, "from": "poolside/Laguna-S-2.1 generation_config.json" },
+      "serverArgs": "",
+      "speedNote": "no DFlash drafter (needs Poolside's fork); experts that do not fit the GPU stay in system RAM (--fit)"
+    },
+    {
+      "name": "inkling-small", "lab": "Thinking Machines Lab", "released": "2026-07-15", "license": "Apache-2.0 (+ acceptable use policy)",
+      "architecture": "276B MoE, 12B active", "precision": "UD-Q5_K_XL (Unsloth dynamic 5-bit)",
+      "gguf": "C:\\models\\Inkling-Small-GGUF\\UD-Q5_K_XL",
+      "source": "unsloth/Inkling-Small-GGUF",
+      "sampling": { "temp": 1.0, "top_p": 1.0, "top_k": 0, "min_p": 0.0, "from": "Unsloth's Inkling guide (the model card gives none)" },
+      "serverArgs": "",
+      "speedNote": "about half the weights in system RAM (--fit); Q8 (280 GB) does not fit this machine"
+    }
+  ]
+}

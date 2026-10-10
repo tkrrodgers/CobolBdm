@@ -108,6 +108,13 @@ api.MapPost("/projects/{id}/gemma/publish", (string id, string programs, bool? o
     Results.Json(OpJson(a.StartGemmaPublish(id, programs.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
         new GemmaOptions(ImplementationAttempts: attempts ?? 15, AstOutline: outline ?? true, WorkedExamples: examples ?? true)))));
 api.MapPost("/projects/{id}/gemma/test", (string id, WorkspaceActions a) => Results.Json(OpJson(a.StartGemmaTest(id))));
+// Model evaluation: any assembled service (a copy of the published project with a model's capability classes) is tested
+// exactly as Gemma's is: every test, then each job with --mlcpu.implementation=normalized against the GnuCOBOL oracle.
+// The report goes to runs/<label>/report.json.
+api.MapPost("/projects/{id}/eval/verify", (string id, string service, string label, ProjectService ps, OperationService ops, JobParityService parity) =>
+    ps.Get(id) is not { } p ? Results.NotFound()
+        : Results.Json(OpJson(ops.Start(id, "eval-verify", $"Verify {label}", async (op, ct) =>
+            op.Result = await parity.BuildAndTestAsync(p, service, "normalized", label, op, 0, 1, ct)))));
 api.MapGet("/projects/{id}/gemma/status", (string id, ProjectService ps, GemmaService g) => ps.Get(id) is { } p
     ? Results.Json(g.Capabilities(p).Select(c => g.Status(p, c.ProgramId) with { Design = null }), indented) : Results.NotFound());
 api.MapGet("/operations", (string? project, OperationService ops) =>
