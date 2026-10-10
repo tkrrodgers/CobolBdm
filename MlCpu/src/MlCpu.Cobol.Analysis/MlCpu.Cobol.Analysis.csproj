@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MlCpu.Cobol.Analysis</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MlCpu.Core\MlCpu.Core.csproj" />
+    <ProjectReference Include="..\MlCpu.CobolKb\MlCpu.CobolKb.csproj" />
+  </ItemGroup>
+</Project>

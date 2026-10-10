@@ -1,0 +1,53 @@
+@* The latest operation of one kind for the active project: progress bar, status, elapsed time, error and a live log tail. *@
+@implements IDisposable
+@inject OperationService Ops
+
+@if (Op is { } op)
+{
+    <div class="op">
+        <div class="head">
+            <span class="title">@op.Title</span>
+            @if (op.Running) { <span class="chip info">running @Elapsed(op)</span> <button class="secondary" @onclick="() => op.Cancellation.Cancel()">Cancel</button> }
+            else if (op.Succeeded) { <span class="chip ok">done in @Elapsed(op)</span> }
+            else { <span class="chip bad">@(op.Error ?? "failed")</span> }
+        </div>
+        <ProgressBar Value="@(op.Running ? op.Progress : 1)" Label="@op.Status" Done="@(!op.Running && op.Succeeded)" Failed="@(!op.Running && !op.Succeeded)" />
+        <details open="@(op.Running && ShowLog)">
+            <summary>log (@op.Log.Count lines)</summary>
+            <pre class="log">@string.Join("\n", op.Log.TakeLast(Lines))</pre>
+        </details>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public string ProjectId { get; set; } = "";
+    [Parameter, EditorRequired] public string Kind { get; set; } = "";
+    [Parameter] public int Lines { get; set; } = 40;
+    [Parameter] public bool ShowLog { get; set; } = true;
+    /// <summary>Raised (on the renderer's thread) when the operation finishes.</summary>
+    [Parameter] public EventCallback<Operation> Completed { get; set; }
+
+    Operation? Op => Ops.Latest(ProjectId, Kind);
+    bool _wasRunning;
+
+    protected override void OnInitialized()
+    {
+        Ops.Changed += OnChanged;
+        _wasRunning = Op?.Running == true;
+    }
+
+    void OnChanged(Operation o)
+    {
+        if (o.ProjectId != ProjectId || o.Kind != Kind) return;
+        InvokeAsync(async () =>
+        {
+            StateHasChanged();
+            if (_wasRunning && !o.Running) await Completed.InvokeAsync(o);
+            _wasRunning = o.Running;
+        });
+    }
+
+    static string Elapsed(Operation o) => o.Elapsed.TotalMinutes >= 1 ? $"{(int)o.Elapsed.TotalMinutes}m {o.Elapsed.Seconds:00}s" : $"{o.Elapsed.TotalSeconds:N0}s";
+
+    public void Dispose() => Ops.Changed -= OnChanged;
+}

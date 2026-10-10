@@ -1,0 +1,13 @@
+work/
+**/bin/
+**/obj/
+**/build/
+.gradle/
+*.user
+.vs/
+# Onboarded projects: clones, GnuCOBOL caches, generated graphs, publishes and model runs stay local;
+# project.json and authored scenarios are kept.
+projects/*/*
+!projects/*/project.json
+!projects/*/scenarios/
+projects/workspace.json

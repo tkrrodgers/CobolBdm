@@ -1,0 +1,614 @@
+{
+  "schema": "mlcpu.project.v1",
+  "id": "carddemo",
+  "name": "carddemo",
+  "origin": "C:\\Users\\Tomrodgers\\Source\\carddemo",
+  "onboardedAt": "2026-10-09T19:10:28",
+  "layout": {
+    "sourceDir": "source",
+    "codeRoots": [
+      "app/cbl"
+    ],
+    "copybookRoots": [
+      "app/cpy"
+    ],
+    "jclRoots": [
+      "app/jcl"
+    ],
+    "procRoots": [
+      "app/proc"
+    ],
+    "controlCardRoots": [
+      "app/ctl"
+    ],
+    "dataRoots": [
+      "app/data/ASCII"
+    ]
+  },
+  "programs": [
+    {
+      "id": "CBACT01C",
+      "path": "app/cbl/CBACT01C.cbl",
+      "kind": "batch",
+      "lines": 430,
+      "calledBy": [],
+      "jobs": [
+        "READACCT"
+      ]
+    },
+    {
+      "id": "CBACT02C",
+      "path": "app/cbl/CBACT02C.cbl",
+      "kind": "batch",
+      "lines": 178,
+      "calledBy": [],
+      "jobs": [
+        "READCARD"
+      ]
+    },
+    {
+      "id": "CBACT03C",
+      "path": "app/cbl/CBACT03C.cbl",
+      "kind": "batch",
+      "lines": 178,
+      "calledBy": [],
+      "jobs": [
+        "READXREF"
+      ]
+    },
+    {
+      "id": "CBACT04C",
+      "path": "app/cbl/CBACT04C.cbl",
+      "kind": "batch",
+      "lines": 652,
+      "calledBy": [],
+      "jobs": [
+        "INTCALC"
+      ]
+    },
+    {
+      "id": "CBCUS01C",
+      "path": "app/cbl/CBCUS01C.cbl",
+      "kind": "batch",
+      "lines": 178,
+      "calledBy": [],
+      "jobs": [
+        "READCUST"
+      ]
+    },
+    {
+      "id": "CBEXPORT",
+      "path": "app/cbl/CBEXPORT.cbl",
+      "kind": "batch",
+      "lines": 582,
+      "calledBy": [],
+      "jobs": [
+        "CBEXPORT"
+      ]
+    },
+    {
+      "id": "CBIMPORT",
+      "path": "app/cbl/CBIMPORT.cbl",
+      "kind": "batch",
+      "lines": 487,
+      "calledBy": [],
+      "jobs": [
+        "CBIMPORT"
+      ]
+    },
+    {
+      "id": "CBSTM03A",
+      "path": "app/cbl/CBSTM03A.CBL",
+      "kind": "batch",
+      "lines": 924,
+      "calledBy": [],
+      "jobs": [
+        "CREASTMT"
+      ]
+    },
+    {
+      "id": "CBSTM03B",
+      "path": "app/cbl/CBSTM03B.CBL",
+      "kind": "subprogram",
+      "lines": 230,
+      "calledBy": [
+        "CBSTM03A"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "CBTRN01C",
+      "path": "app/cbl/CBTRN01C.cbl",
+      "kind": "unreferenced",
+      "lines": 494,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "CBTRN02C",
+      "path": "app/cbl/CBTRN02C.cbl",
+      "kind": "batch",
+      "lines": 731,
+      "calledBy": [],
+      "jobs": [
+        "POSTTRAN"
+      ]
+    },
+    {
+      "id": "CBTRN03C",
+      "path": "app/cbl/CBTRN03C.cbl",
+      "kind": "batch",
+      "lines": 649,
+      "calledBy": [],
+      "jobs": [
+        "TRANREPT"
+      ]
+    },
+    {
+      "id": "COACTUPC",
+      "path": "app/cbl/COACTUPC.cbl",
+      "kind": "online",
+      "lines": 4236,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COACTVWC",
+      "path": "app/cbl/COACTVWC.cbl",
+      "kind": "online",
+      "lines": 941,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COADM01C",
+      "path": "app/cbl/COADM01C.cbl",
+      "kind": "online",
+      "lines": 288,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COBIL00C",
+      "path": "app/cbl/COBIL00C.cbl",
+      "kind": "online",
+      "lines": 572,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COBSWAIT",
+      "path": "app/cbl/COBSWAIT.cbl",
+      "kind": "batch",
+      "lines": 41,
+      "calledBy": [],
+      "jobs": [
+        "WAITSTEP"
+      ]
+    },
+    {
+      "id": "COCRDLIC",
+      "path": "app/cbl/COCRDLIC.cbl",
+      "kind": "online",
+      "lines": 1459,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COCRDSLC",
+      "path": "app/cbl/COCRDSLC.cbl",
+      "kind": "online",
+      "lines": 887,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COCRDUPC",
+      "path": "app/cbl/COCRDUPC.cbl",
+      "kind": "online",
+      "lines": 1560,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COMEN01C",
+      "path": "app/cbl/COMEN01C.cbl",
+      "kind": "online",
+      "lines": 308,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "CORPT00C",
+      "path": "app/cbl/CORPT00C.cbl",
+      "kind": "online",
+      "lines": 649,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COSGN00C",
+      "path": "app/cbl/COSGN00C.cbl",
+      "kind": "online",
+      "lines": 260,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COTRN00C",
+      "path": "app/cbl/COTRN00C.cbl",
+      "kind": "online",
+      "lines": 699,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COTRN01C",
+      "path": "app/cbl/COTRN01C.cbl",
+      "kind": "online",
+      "lines": 330,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COTRN02C",
+      "path": "app/cbl/COTRN02C.cbl",
+      "kind": "online",
+      "lines": 783,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COUSR00C",
+      "path": "app/cbl/COUSR00C.cbl",
+      "kind": "online",
+      "lines": 695,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COUSR01C",
+      "path": "app/cbl/COUSR01C.cbl",
+      "kind": "online",
+      "lines": 299,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COUSR02C",
+      "path": "app/cbl/COUSR02C.cbl",
+      "kind": "online",
+      "lines": 414,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "COUSR03C",
+      "path": "app/cbl/COUSR03C.cbl",
+      "kind": "online",
+      "lines": 359,
+      "calledBy": [],
+      "jobs": []
+    },
+    {
+      "id": "CSUTLDTC",
+      "path": "app/cbl/CSUTLDTC.cbl",
+      "kind": "subprogram",
+      "lines": 157,
+      "calledBy": [
+        "COACTUPC",
+        "CORPT00C",
+        "COTRN02C"
+      ],
+      "jobs": []
+    }
+  ],
+  "excluded": [
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/CBPAUP0C.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-vsam-mq/cbl/COACCT01.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-transaction-type-db2/cbl/COBTUPDT.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-vsam-mq/cbl/CODATE01.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUA0C.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUS0C.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUS1C.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/COPAUS2C.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-transaction-type-db2/cbl/COTRTLIC.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-transaction-type-db2/cbl/COTRTUPC.cbl",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/DBUNLDGS.CBL",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/PAUDBLOD.CBL",
+      "reason": "outside the profile\u0027s code roots"
+    },
+    {
+      "path": "app/app-authorization-ims-db2-mq/cbl/PAUDBUNL.CBL",
+      "reason": "outside the profile\u0027s code roots"
+    }
+  ],
+  "oracle": {
+    "provider": "carddemo-script",
+    "clock": "2022-07-05T10:11:12-07:00",
+    "cobcFlags": [
+      "-std=ibm",
+      "-fsign=EBCDIC",
+      "-fstatic-call",
+      "-Wno-others"
+    ],
+    "jobs": [
+      "POSTTRAN",
+      "INTCALC",
+      "TRANREPT"
+    ],
+    "datasets": [
+      {
+        "dsn": "AWS.M2.CARDDEMO.CUSTDATA.VSAM.KSDS",
+        "source": "app/data/ASCII/custdata.txt",
+        "format": "ksds",
+        "lrecl": 500,
+        "minRecord": 500,
+        "key": "1,9",
+        "alternateKeys": [],
+        "from": "CBEXPORT:CUSTOMER-INPUT"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+        "source": "app/data/ASCII/acctdata.txt",
+        "format": "ksds",
+        "lrecl": 300,
+        "minRecord": 300,
+        "key": "1,11",
+        "alternateKeys": [],
+        "from": "CBEXPORT:ACCOUNT-INPUT"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+        "source": "app/data/ASCII/cardxref.txt",
+        "format": "ksds",
+        "lrecl": 50,
+        "minRecord": 50,
+        "key": "1,16",
+        "alternateKeys": [],
+        "from": "CBEXPORT:XREF-INPUT"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS",
+        "format": "ksds",
+        "lrecl": 350,
+        "minRecord": 350,
+        "key": "1,16",
+        "alternateKeys": [],
+        "from": "CBEXPORT:TRANSACTION-INPUT"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.CARDDATA.VSAM.KSDS",
+        "source": "app/data/ASCII/carddata.txt",
+        "format": "ksds",
+        "lrecl": 150,
+        "minRecord": 150,
+        "key": "1,16",
+        "alternateKeys": [],
+        "from": "CBEXPORT:CARD-INPUT"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS",
+        "format": "ksds",
+        "lrecl": 350,
+        "minRecord": 350,
+        "key": "1,32",
+        "alternateKeys": [],
+        "from": "CBSTM03B:TRNX-FILE"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+        "format": "ksds",
+        "lrecl": 50,
+        "minRecord": 50,
+        "key": "1,17",
+        "alternateKeys": [],
+        "from": "CBACT04C:TCATBAL-FILE"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS",
+        "source": "app/data/ASCII/discgrp.txt",
+        "format": "ksds",
+        "lrecl": 50,
+        "minRecord": 50,
+        "key": "1,16",
+        "alternateKeys": [],
+        "from": "CBACT04C:DISCGRP-FILE"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.DALYTRAN.PS",
+        "format": "fixed",
+        "lrecl": 350,
+        "minRecord": 350,
+        "alternateKeys": [],
+        "from": "CBTRN02C:DALYTRAN-FILE"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.TRANSACT.DALY",
+        "format": "fixed",
+        "lrecl": 350,
+        "minRecord": 350,
+        "alternateKeys": [],
+        "from": "CBTRN03C:TRANSACT-FILE"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS",
+        "source": "app/data/ASCII/trantype.txt",
+        "format": "ksds",
+        "lrecl": 60,
+        "minRecord": 60,
+        "key": "1,2",
+        "alternateKeys": [],
+        "from": "CBTRN03C:TRANTYPE-FILE"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS",
+        "source": "app/data/ASCII/trancatg.txt",
+        "format": "ksds",
+        "lrecl": 60,
+        "minRecord": 60,
+        "key": "1,6",
+        "alternateKeys": [],
+        "from": "CBTRN03C:TRANCATG-FILE"
+      },
+      {
+        "dsn": "AWS.M2.CARDDEMO.DATEPARM",
+        "format": "fixed",
+        "lrecl": 80,
+        "minRecord": 80,
+        "alternateKeys": [],
+        "from": "CBTRN03C:DATE-PARMS-FILE"
+      }
+    ],
+    "scenarios": [],
+    "jobChecks": [
+      {
+        "job": "POSTTRAN",
+        "scenario": "base",
+        "inputs": {
+          "AWS.M2.CARDDEMO.DALYTRAN.PS": "common/DALYTRAN.dat",
+          "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS": "common/TRANSACT.ksds",
+          "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS": "common/CARDXREF.ksds",
+          "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS": "common/ACCTDATA.ksds",
+          "AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS": "common/TCATBAL.ksds"
+        },
+        "outputs": {
+          "data:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.TRANSACT.ksds",
+          "data:AWS.M2.CARDDEMO.DALYREJS": "oracle/sysout/S5-POSTTRAN.DALYREJS.dat",
+          "data:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.ACCTDATA.ksds",
+          "data:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.TCATBAL.ksds",
+          "sysout:STEP15.SYSOUT.txt": "oracle/sysout/S5-POSTTRAN.txt"
+        }
+      },
+      {
+        "job": "INTCALC",
+        "scenario": "base",
+        "inputs": {
+          "AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.TCATBAL.ksds",
+          "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS": "common/CARDXREF.ksds",
+          "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.ACCTDATA.ksds",
+          "AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS": "common/DISCGRP.ksds"
+        },
+        "outputs": {
+          "data:AWS.M2.CARDDEMO.SYSTRAN": "oracle/sysout/S6-INTCALC.SYSTRAN.dat",
+          "data:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS": "oracle/sysout/S6-INTCALC.ACCTDATA.ksds",
+          "sysout:STEP15.SYSOUT.txt": "oracle/sysout/S6-INTCALC.txt"
+        }
+      },
+      {
+        "job": "TRANREPT",
+        "scenario": "base",
+        "inputs": {
+          "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS": "oracle/sysout/S7-COMBTRAN.TRANSACT.ksds",
+          "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS": "common/CARDXREF.ksds",
+          "AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS": "common/TRANTYPE.ksds",
+          "AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS": "common/TRANCATG.ksds",
+          "AWS.M2.CARDDEMO.DATEPARM": "common/DATEPARM.dat"
+        },
+        "outputs": {
+          "data:AWS.M2.CARDDEMO.TRANSACT.DALY": "oracle/sysout/S8-TRANREPT.TRANDALY.dat",
+          "data:AWS.M2.CARDDEMO.TRANREPT": "oracle/sysout/S8-TRANREPT.TRANREPT.dat",
+          "sysout:STEP10R.SYSOUT.txt": "oracle/sysout/S8-TRANREPT.txt"
+        }
+      }
+    ],
+    "jobCheckRoot": "oracle/script",
+    "status": {
+      "builtAt": "2026-10-09T19:39:44",
+      "units": 0,
+      "unitsCached": 0,
+      "runAt": "2026-10-09T19:39:44",
+      "scenarios": [
+        "base"
+      ],
+      "problems": []
+    }
+  },
+  "publish": {
+    "jobs": [
+      "POSTTRAN",
+      "INTCALC",
+      "TRANREPT"
+    ],
+    "capabilities": [
+      "CBTRN02C",
+      "CBACT04C",
+      "CBTRN03C"
+    ],
+    "capabilitiesRoot": "capabilities/carddemo",
+    "last": {
+      "path": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\carddemo\\publish\\carddemo-normalized-spring",
+      "at": "2026-10-09T19:11:20",
+      "programs": 3,
+      "capabilities": 3,
+      "lastTest": {
+        "at": "2026-10-09T19:11:57",
+        "tests": 116,
+        "failed": 0,
+        "outputs": 11,
+        "match": 11,
+        "implementation": "legacy"
+      }
+    }
+  },
+  "gemma": {
+    "designed": [
+      "CBTRN02C",
+      "CBACT04C",
+      "CBTRN03C"
+    ],
+    "servicePath": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\carddemo\\gemma\\service\\carddemo-normalized-spring",
+    "lastTest": {
+      "at": "2026-10-09T22:15:06",
+      "tests": 116,
+      "failed": 0,
+      "outputs": 11,
+      "match": 11,
+      "implementation": "normalized"
+    }
+  },
+  "notes": [
+    "CBEXPORT: no data file matches AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS; it starts empty (add one under scenarios/ or edit project.json)",
+    "CREASTMT: no data file matches AWS.M2.CARDDEMO.TRXFL.VSAM.KSDS; it starts empty (add one under scenarios/ or edit project.json)",
+    "INTCALC: no data file matches AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS; it starts empty (add one under scenarios/ or edit project.json)",
+    "POSTTRAN: no data file matches AWS.M2.CARDDEMO.DALYTRAN.PS; it starts empty (add one under scenarios/ or edit project.json)",
+    "TRANREPT: no data file matches AWS.M2.CARDDEMO.TRANSACT.DALY; it starts empty (add one under scenarios/ or edit project.json)",
+    "TRANREPT: no data file matches AWS.M2.CARDDEMO.DATEPARM; it starts empty (add one under scenarios/ or edit project.json)",
+    "The oracle is tools/carddemo/Invoke-CardDemoParity.ps1 (GnuCOBOL executables cached by content hash in oracle/script/oracle/bin).",
+    "Normalized capabilities are authored in capabilities/carddemo (reference implementations, equivalence tests, worked examples)."
+  ]
+}

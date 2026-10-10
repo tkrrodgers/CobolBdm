@@ -1,0 +1,81 @@
+@page "/jobs"
+@inject EstateService Estate
+@inject JobJavaConversionService Conversion
+@inject JavaProjectAssembler Assembler
+@inject ConfigService Config
+@inject ProjectService Projects
+
+<PageTitle>Jobs</PageTitle>
+<h2>Jobs</h2>
+
+<p>
+    <select @bind="job">
+        @foreach (var j in jobs) { <option value="@j">@j</option> }
+    </select>
+    <button disabled="@busy" @onclick="Resolve">Resolve</button>
+    <button disabled="@(busy || scope is null)" @onclick="ConvertAndPublish">Convert &amp; publish</button>
+    <span class="muted">@status</span>
+</p>
+
+@if (scope is not null)
+{
+    <table class="grid">
+        <tr><th>#</th><th>Step</th><th>Program</th><th>PARM</th><th>Disposition</th></tr>
+        @foreach (var s in scope.Steps)
+        {
+            <tr><td>@s.Order</td><td>@s.Step</td><td>@(s.Program ?? "PROC " + s.Proc)</td><td>@s.Parm</td>
+                <td>@(s.Program is not null && scope.Entries.Contains(s.Program) ? "convert" : "utility / frontier")</td></tr>
+        }
+    </table>
+    @if (scope.Called.Count > 0) { <p>Called programs: @string.Join(", ", scope.Called)</p> }
+}
+
+@if (conversion?.Project is not null)
+{
+    <h3>Published @conversion.Project.Name</h3>
+    <p>@projectRoot</p>
+    <table class="grid">
+        <tr><th>Program</th><th>Verdict</th><th>Lowered</th><th>Abstained</th></tr>
+        @foreach (var r in conversion.Results)
+        {
+            <tr><td>@r.Program</td><td class="@(r.Ok ? "ok" : "bad")">@r.Verdict</td><td>@r.Lowered</td><td>@r.Abstained</td></tr>
+        }
+    </table>
+}
+
+@code {
+    IReadOnlyList<string> jobs = [];
+    string job = "POSTTRAN";
+    JobScope? scope;
+    JobJavaConversion? conversion;
+    string status = "";
+    string projectRoot = "";
+    bool busy;
+
+    protected override void OnInitialized()
+    {
+        jobs = Estate.Jobs();
+        if (Projects.Active?.Publish.Jobs.FirstOrDefault(jobs.Contains) is { } published) job = published;
+        if (!jobs.Contains(job) && jobs.Count > 0) job = jobs[0];
+    }
+
+    void Resolve()
+    {
+        scope = Estate.Resolve(job);
+        conversion = null;
+        status = scope is null ? "job not found" : $"{scope.Entries.Count} program(s) to convert";
+    }
+
+    async Task ConvertAndPublish()
+    {
+        busy = true;
+        conversion = await Conversion.ConvertAsync(job, onProgram: p => { status = $"transpiling {p}…"; InvokeAsync(StateHasChanged); });
+        if (conversion.Project is not null)
+        {
+            projectRoot = await Assembler.PublishAsync(conversion.Project, Config.Settings.ExportDir);
+            status = "published";
+        }
+        else status = "no program compiled";
+        busy = false;
+    }
+}

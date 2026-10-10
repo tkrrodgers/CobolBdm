@@ -1,0 +1,36 @@
+{
+  "schema": "mlcpu.design-run.v1",
+  "programId": "CBTRN02C",
+  "requirementsHash": "044b30b08318ba6a0c3ade1bdfcddb4e01f19669d1cc0508fdc9e3b8d8fe2f7c",
+  "model": "gpt-oss-120b-MXFP4.gguf",
+  "lmkit": "2026.10.3",
+  "reasoning": "Medium",
+  "context": 65536,
+  "valid": true,
+  "attempts": [
+    {
+      "attempt": 1,
+      "promptTokens": 28621,
+      "generatedTokens": 5100,
+      "tokensPerSecond": 145.60285751146486,
+      "seconds": 43.7488618,
+      "stop": "EndOfGeneration",
+      "problems": [
+        "output dataset TRANFILE is not produced by any design element",
+        "output dataset DALYREJS is not produced by any design element",
+        "output dataset ACCTFILE is not produced by any design element",
+        "output dataset TCATBALF is not produced by any design element"
+      ]
+    },
+    {
+      "attempt": 2,
+      "promptTokens": 77,
+      "generatedTokens": 5095,
+      "tokensPerSecond": 135.76150797477354,
+      "seconds": 37.6278836,
+      "stop": "EndOfGeneration",
+      "problems": []
+    }
+  ],
+  "remainingProblems": []
+}

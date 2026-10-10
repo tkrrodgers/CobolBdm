@@ -1,0 +1,210 @@
+@page "/gemma-code"
+@implements IAsyncDisposable
+@inject ProjectService Projects
+@inject GemmaService GemmaSvc
+@inject IJSRuntime JS
+
+<PageTitle>Gemma 4's Code</PageTitle>
+<h2>Gemma 4's Code</h2>
+
+@if (Projects.Active is not { } p)
+{
+    <p>Select or onboard a project in <a href="settings">Settings</a>.</p>
+}
+else if (tree.Count == 0)
+{
+    <p>Gemma has not written code for @p.Name yet: run <a href="gemma">Gemma 4 Modernization</a> (Design, then Publish design to service).</p>
+}
+else
+{
+    <p class="muted">What Gemma 4 wrote for @p.Name, from <code>@GemmaSvc.Dir(p)</code>. Each program's <code>java/</code> folder holds its best
+    attempt, which went into the service only if it passed every acceptance test; beside it are the design, the implementation prompt and
+    every attempt with its reasoning.</p>
+    <div class="ide">
+        <aside class="explorer">
+            <div class="pane-title">Explorer</div>
+            <CodeTree Nodes="tree" Expanded="expanded" Selected="@active?.Path" Badges="badges" Open="Open" />
+        </aside>
+        <section class="editor">
+            <div class="tabs">
+                @foreach (var t in tabs)
+                {
+                    <div class="tab @(t == active ? "active" : "")" title="@t.Path" @onclick="() => Activate(t)" @onmouseup="e => MiddleClose(e, t)">
+                        <span class="ic @CodeTree.Icon(t.Name)"></span>
+                        <span>@t.Name</span>
+                        @if (tabs.Count(x => x.Name == t.Name) > 1) { <span class="hint">@t.Program</span> }
+                        <span class="x" title="Close" @onclick="() => Close(t)" @onclick:stopPropagation="true">×</span>
+                    </div>
+                }
+            </div>
+            @if (active is not null)
+            {
+                var parts = active.Path.Split('/');
+                <div class="crumbs">
+                    @for (var i = 0; i < parts.Length; i++)
+                    {
+                        if (i > 0) { <span class="sep">›</span> }
+                        <span class="@(i == parts.Length - 1 ? "last" : "")">@parts[i]</span>
+                    }
+                </div>
+            }
+            <div class="editor-host">
+                <div id="@hostId" class="monaco-host"></div>
+                @if (active is null) { <div class="welcome">Select a file in the Explorer to open it in a tab.</div> }
+            </div>
+        </section>
+    </div>
+}
+
+@code {
+    sealed record Tab(string Path, string Name, string Program);
+
+    readonly string hostId = "code" + Guid.NewGuid().ToString("n")[..10];
+    readonly HashSet<string> expanded = [];
+    readonly List<Tab> tabs = [];
+    readonly List<Tab> recent = [];
+    IReadOnlyList<GemmaCodeNode> tree = [];
+    Dictionary<string, (string Text, string Css, string Title)> badges = [];
+    Tab? active;
+    string? loadedFor;
+    bool interactive;
+
+    protected override void OnInitialized()
+    {
+        Projects.Changed += Refresh;
+        Load();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        interactive = true;
+        await OpenDefault();
+    }
+
+    /// <summary>Re-reads the tree (Gemma may have written more). Another active project starts over with no tabs.</summary>
+    void Load()
+    {
+        var p = Projects.Active;
+        var fresh = p?.Id != loadedFor;
+        if (fresh)
+        {
+            loadedFor = p?.Id;
+            tabs.Clear();
+            recent.Clear();
+            expanded.Clear();
+            active = null;
+        }
+        tree = p is null ? [] : GemmaSvc.CodeTree(p);
+        badges = [];
+        if (p is null) return;
+        foreach (var program in tree)
+        {
+            var s = GemmaSvc.Status(p, program.Name);
+            var passed = s.Compiled && s.TestsTotal > 0 && s.TestsPassed == s.TestsTotal;
+            if (s.Implemented)
+                badges[program.Path] = (s.Compiled ? $"{s.TestsPassed}/{s.TestsTotal}" : "no compile", passed ? "ok" : "bad",
+                    $"acceptance {s.TestsPassed}/{s.TestsTotal}, best attempt {s.BestAttempt} of {s.Attempts}" +
+                    (passed ? "; in the service" : "; not in the service (the published classes stay)"));
+            else if (s.Designed)
+                badges[program.Path] = ("design only", "muted", "designed, not implemented yet");
+            // Each program's java/... folder starts open, so expanding a program shows its classes.
+            if (fresh) foreach (var d in program.Children!.Where(c => c.IsDir)) expanded.Add(d.Path);
+        }
+    }
+
+    /// <summary>On arrival, the first program's entry class (its step, or its subprogram class) is opened.</summary>
+    async Task OpenDefault()
+    {
+        if (Projects.Active is not { } p || tabs.Count > 0) return;
+        var file = GemmaSvc.Capabilities(p).Select(c => Find(tree, $"{c.ProgramId}/java/{c.EntryClass.Replace('.', '/')}.java")).FirstOrDefault(n => n is not null);
+        if (file is not null)
+        {
+            await Open(file);
+            StateHasChanged();
+        }
+    }
+
+    async Task Open(GemmaCodeNode n)
+    {
+        if (tabs.FirstOrDefault(t => t.Path == n.Path) is { } open)
+        {
+            await Activate(open);
+            return;
+        }
+        if (Projects.Active is not { } p || GemmaSvc.ReadCode(p, n.Path) is not { } text) return;
+        var tab = new Tab(n.Path, n.Name, n.Path.Split('/')[0]);
+        tabs.Add(tab);
+        Touch(tab);
+        await JS.InvokeVoidAsync("mlcpuCode.open", hostId, tab.Path, text);
+    }
+
+    async Task Activate(Tab t)
+    {
+        Touch(t);
+        await JS.InvokeVoidAsync("mlcpuCode.show", hostId, t.Path);
+    }
+
+    /// <summary>The active tab, revealed in the explorer; recent keeps the activation order, so closing goes back to the previous tab.</summary>
+    void Touch(Tab t)
+    {
+        active = t;
+        recent.Remove(t);
+        recent.Add(t);
+        Reveal(tree, t.Path);
+    }
+
+    async Task Close(Tab t)
+    {
+        tabs.Remove(t);
+        recent.Remove(t);
+        await JS.InvokeVoidAsync("mlcpuCode.close", hostId, t.Path);
+        if (active != t) return;
+        active = null;
+        if (recent.LastOrDefault() is { } previous) await Activate(previous);
+    }
+
+    Task MiddleClose(MouseEventArgs e, Tab t) => e.Button == 1 ? Close(t) : Task.CompletedTask;
+
+    bool Reveal(IEnumerable<GemmaCodeNode> nodes, string path)
+    {
+        foreach (var n in nodes)
+        {
+            if (n.Path == path) return true;
+            if (n.IsDir && path.StartsWith(n.Path + "/", StringComparison.Ordinal) && Reveal(n.Children!, path))
+            {
+                expanded.Add(n.Path);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static GemmaCodeNode? Find(IEnumerable<GemmaCodeNode> nodes, string path)
+    {
+        foreach (var n in nodes)
+        {
+            if (n.Path == path) return n;
+            if (n.IsDir && path.StartsWith(n.Path + "/", StringComparison.Ordinal)) return Find(n.Children!, path);
+        }
+        return null;
+    }
+
+    void Refresh() => InvokeAsync(async () =>
+    {
+        var switched = Projects.Active?.Id != loadedFor;
+        if (switched && interactive) await JS.InvokeVoidAsync("mlcpuCode.destroy", hostId);
+        Load();
+        StateHasChanged();
+        if (switched && interactive) await OpenDefault();
+    });
+
+    public async ValueTask DisposeAsync()
+    {
+        Projects.Changed -= Refresh;
+        // JS interop is not available while prerendering, nor after the circuit is gone.
+        if (!interactive) return;
+        try { await JS.InvokeVoidAsync("mlcpuCode.destroy", hostId); }
+        catch (Exception e) when (e is JSDisconnectedException or InvalidOperationException or TaskCanceledException) { }
+    }
+}

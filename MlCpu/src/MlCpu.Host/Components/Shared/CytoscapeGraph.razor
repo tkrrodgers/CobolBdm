@@ -1,0 +1,41 @@
+@* A cytoscape.js graph. Elements: { nodes: [{ data }], edges: [{ data }] }. NodeTapped receives the tapped node's id. *@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<div id="@_id" class="graph @Css"></div>
+
+@code {
+    [Parameter, EditorRequired] public System.Text.Json.Nodes.JsonObject? Elements { get; set; }
+    [Parameter] public string Layout { get; set; } = "breadthfirst";
+    [Parameter] public string Css { get; set; } = "";
+    [Parameter] public EventCallback<string> NodeTapped { get; set; }
+
+    readonly string _id = "g" + Guid.NewGuid().ToString("n")[..10];
+    DotNetObjectReference<CytoscapeGraph>? _ref;
+    string? _rendered;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var json = Elements?.ToJsonString();
+        if (json is null || (json == _rendered && !firstRender)) return;
+        _rendered = json;
+        _ref ??= DotNetObjectReference.Create(this);
+        await JS.InvokeVoidAsync("mlcpuGraphs.render", _id, System.Text.Json.JsonDocument.Parse(json).RootElement, Layout, _ref);
+    }
+
+    public Task Fit() => JS.InvokeVoidAsync("mlcpuGraphs.fit", _id).AsTask();
+
+    [JSInvokable]
+    public Task OnNodeTap(string id) => NodeTapped.InvokeAsync(id);
+
+    public async ValueTask DisposeAsync()
+    {
+        // Nothing was drawn while prerendering, and JS interop is not available then.
+        if (_ref is not null)
+        {
+            try { await JS.InvokeVoidAsync("mlcpuGraphs.destroy", _id); }
+            catch (Exception e) when (e is JSDisconnectedException or InvalidOperationException or TaskCanceledException) { }
+        }
+        _ref?.Dispose();
+    }
+}

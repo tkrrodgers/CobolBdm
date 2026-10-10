@@ -1,0 +1,48 @@
+{
+  "schema": "mlcpu.capability-manifest.v1",
+  "estate": "carddemo",
+  "sources": {
+    "main": "src/main/java",
+    "test": "src/test/java",
+    "testResources": "src/test/resources"
+  },
+  "sharedPackages": ["com.mlcpu.carddemo"],
+  "capabilities": [
+    {
+      "programId": "CBTRN02C",
+      "job": "POSTTRAN",
+      "package": "com.mlcpu.capabilities.transactionposting",
+      "step": "com.mlcpu.capabilities.transactionposting.TransactionPostingStep",
+      "classes": ["TransactionPostingStep", "TransactionPostingService", "TransactionValidator", "RejectReason"],
+      "requirements": "normalization/CBTRN02C/requirements.json",
+      "design": "normalization/CBTRN02C/design.json",
+      "conformance": "normalization/CBTRN02C/design-conformance.json",
+      "evidence": "evidence/CBTRN02C.evidence.json",
+      "approval": "approvals/CBTRN02C.approval.json"
+    },
+    {
+      "programId": "CBACT04C",
+      "job": "INTCALC",
+      "package": "com.mlcpu.capabilities.interestcalculation",
+      "step": "com.mlcpu.capabilities.interestcalculation.InterestCalculationStep",
+      "classes": ["InterestCalculationStep", "InterestCalculationService", "InterestPolicy"],
+      "requirements": "normalization/CBACT04C/requirements.json",
+      "design": "normalization/CBACT04C/design.json",
+      "conformance": "normalization/CBACT04C/design-conformance.json",
+      "evidence": "evidence/CBACT04C.evidence.json",
+      "approval": "approvals/CBACT04C.approval.json"
+    },
+    {
+      "programId": "CBTRN03C",
+      "job": "TRANREPT",
+      "package": "com.mlcpu.capabilities.transactionreporting",
+      "step": "com.mlcpu.capabilities.transactionreporting.TransactionReportStep",
+      "classes": ["TransactionReportStep", "TransactionReportService", "ReportPager", "ReportLayout"],
+      "requirements": "normalization/CBTRN03C/requirements.json",
+      "design": "normalization/CBTRN03C/design.json",
+      "conformance": "normalization/CBTRN03C/design-conformance.json",
+      "evidence": "evidence/CBTRN03C.evidence.json",
+      "approval": "approvals/CBTRN03C.approval.json"
+    }
+  ]
+}

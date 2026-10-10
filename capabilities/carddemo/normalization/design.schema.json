@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mlcpu.capability-design.v1",
+  "type": "object",
+  "required": ["schema", "programId", "requirementsHash", "capability", "package", "domainModel", "ports", "services", "rules", "quirks", "outputs", "tests"],
+  "properties": {
+    "schema": { "const": "mlcpu.capability-design.v1" },
+    "programId": { "type": "string" },
+    "requirementsHash": { "type": "string", "description": "requirementsHash of the packet this design answers" },
+    "capability": { "type": "string" },
+    "package": { "type": "string", "description": "Java package, e.g. com.mlcpu.capabilities.transactionposting" },
+    "summary": { "type": "string" },
+    "domainModel": { "type": "array", "items": { "type": "object", "required": ["name", "kind", "fields", "source"],
+      "properties": { "name": {"type":"string"}, "kind": {"enum":["record","enum","value"]}, "source": {"type":"string","description":"COBOL record or 88-levels it models"},
+        "fields": { "type": "array", "items": { "type": "object", "required": ["name","type"], "properties": { "name":{"type":"string"}, "type":{"type":"string"}, "cobol":{"type":"string"} } } } } } },
+    "ports": { "type": "array", "items": { "type": "object", "required": ["name", "kind", "methods", "file"],
+      "properties": { "name":{"type":"string"}, "kind":{"enum":["repository","reader","writer","report","console","clock"]}, "file":{"type":"string"},
+        "methods": { "type": "array", "items": { "type": "string" } } } } },
+    "services": { "type": "array", "items": { "type": "object", "required": ["name", "responsibility", "methods"],
+      "properties": { "name":{"type":"string"}, "responsibility":{"type":"string"}, "methods":{"type":"array","items":{"type":"string"}} } } },
+    "rules": { "type": "array", "description": "One entry per packet rule id", "items": { "type": "object", "required": ["ruleId", "disposition"],
+      "properties": { "ruleId":{"type":"string"}, "disposition":{"enum":["implemented","not-needed"]}, "element":{"type":"string"}, "description":{"type":"string"}, "reason":{"type":"string"} } } },
+    "quirks": { "type": "array", "items": { "type": "object", "required": ["quirkId", "disposition", "reason"],
+      "properties": { "quirkId":{"type":"string"}, "disposition":{"enum":["preserve","fix"]}, "reason":{"type":"string"}, "element":{"type":"string"} } } },
+    "outputs": { "type": "array", "items": { "type": "object", "required": ["output", "producedBy"],
+      "properties": { "output":{"type":"string","description":"DD name or console step id"}, "producedBy":{"type":"string"}, "format":{"type":"string"} } } },
+    "tests": { "type": "array", "items": { "type": "object", "required": ["name", "kind"],
+      "properties": { "name":{"type":"string"}, "kind":{"enum":["unit","equivalence","property"]}, "covers":{"type":"array","items":{"type":"string"}} } } },
+    "openQuestions": { "type": "array", "items": { "type": "string" } }
+  }
+}

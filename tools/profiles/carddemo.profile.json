@@ -1,0 +1,77 @@
+{
+  "id": "carddemo",
+  "description": "AWS CardDemo: batch flow POSTTRAN -> INTCALC -> COMBTRAN -> TRANREPT with authored normalized capabilities.",
+  "detect": ["app/cbl/CBTRN02C.cbl", "app/jcl/POSTTRAN.jcl"],
+  "layout": {
+    "sourceDir": "source",
+    "codeRoots": ["app/cbl"],
+    "copybookRoots": ["app/cpy"],
+    "jclRoots": ["app/jcl"],
+    "procRoots": ["app/proc"],
+    "controlCardRoots": ["app/ctl"],
+    "dataRoots": ["app/data/ASCII"]
+  },
+  "oracle": {
+    "provider": "carddemo-script",
+    "clock": "2022-07-05T10:11:12-07:00",
+    "jobs": ["POSTTRAN", "INTCALC", "TRANREPT"],
+    "jobCheckRoot": "oracle/script",
+    "jobChecks": [
+      {
+        "job": "POSTTRAN",
+        "inputs": {
+          "AWS.M2.CARDDEMO.DALYTRAN.PS": "common/DALYTRAN.dat",
+          "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS": "common/TRANSACT.ksds",
+          "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS": "common/CARDXREF.ksds",
+          "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS": "common/ACCTDATA.ksds",
+          "AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS": "common/TCATBAL.ksds"
+        },
+        "outputs": {
+          "data:AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.TRANSACT.ksds",
+          "data:AWS.M2.CARDDEMO.DALYREJS": "oracle/sysout/S5-POSTTRAN.DALYREJS.dat",
+          "data:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.ACCTDATA.ksds",
+          "data:AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.TCATBAL.ksds",
+          "sysout:STEP15.SYSOUT.txt": "oracle/sysout/S5-POSTTRAN.txt"
+        }
+      },
+      {
+        "job": "INTCALC",
+        "inputs": {
+          "AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.TCATBAL.ksds",
+          "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS": "common/CARDXREF.ksds",
+          "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS": "oracle/sysout/S5-POSTTRAN.ACCTDATA.ksds",
+          "AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS": "common/DISCGRP.ksds"
+        },
+        "outputs": {
+          "data:AWS.M2.CARDDEMO.SYSTRAN": "oracle/sysout/S6-INTCALC.SYSTRAN.dat",
+          "data:AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS": "oracle/sysout/S6-INTCALC.ACCTDATA.ksds",
+          "sysout:STEP15.SYSOUT.txt": "oracle/sysout/S6-INTCALC.txt"
+        }
+      },
+      {
+        "job": "TRANREPT",
+        "inputs": {
+          "AWS.M2.CARDDEMO.TRANSACT.VSAM.KSDS": "oracle/sysout/S7-COMBTRAN.TRANSACT.ksds",
+          "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS": "common/CARDXREF.ksds",
+          "AWS.M2.CARDDEMO.TRANTYPE.VSAM.KSDS": "common/TRANTYPE.ksds",
+          "AWS.M2.CARDDEMO.TRANCATG.VSAM.KSDS": "common/TRANCATG.ksds",
+          "AWS.M2.CARDDEMO.DATEPARM": "common/DATEPARM.dat"
+        },
+        "outputs": {
+          "data:AWS.M2.CARDDEMO.TRANSACT.DALY": "oracle/sysout/S8-TRANREPT.TRANDALY.dat",
+          "data:AWS.M2.CARDDEMO.TRANREPT": "oracle/sysout/S8-TRANREPT.TRANREPT.dat",
+          "sysout:STEP10R.SYSOUT.txt": "oracle/sysout/S8-TRANREPT.txt"
+        }
+      }
+    ]
+  },
+  "publish": {
+    "jobs": ["POSTTRAN", "INTCALC", "TRANREPT"],
+    "capabilities": ["CBTRN02C", "CBACT04C", "CBTRN03C"],
+    "capabilitiesRoot": "capabilities/carddemo"
+  },
+  "notes": [
+    "The oracle is tools/carddemo/Invoke-CardDemoParity.ps1 (GnuCOBOL executables cached by content hash in oracle/script/oracle/bin).",
+    "Normalized capabilities are authored in capabilities/carddemo (reference implementations, equivalence tests, worked examples)."
+  ]
+}

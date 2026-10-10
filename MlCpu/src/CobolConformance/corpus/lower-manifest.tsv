@@ -1,0 +1,6 @@
+# relative-path	mustContain (;)	mustNotFrontier (;)	mustFrontier (;)
+lower/LOWER01.cbl	CobRt.frontier(	MOVE;SET;DISPLAY	SEARCH
+lower/LOWER02.cbl	[MAIN-PARA:1:UNSTRING;[MAIN-PARA:2:STRING;[MAIN-PARA:3:INSPECT	UNSTRING;STRING;INSPECT;DISPLAY	
+lower/LOWER03.cbl	_goto	GO TO;GOBACK	ALTER
+lower/LOWER04.cbl	CobRt.store(;SizeError	DIVIDE;COMPUTE;ADD;MULTIPLY;SUBTRACT;DISPLAY	
+lower/LOWER05.cbl	, 2, -1);, 1, 1);, 2, 2)	WRITE;PERFORM;READ	

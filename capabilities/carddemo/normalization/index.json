@@ -1,0 +1,29 @@
+{
+  "schema": "mlcpu.normalization-index.v1",
+  "programs": [
+    {
+      "programId": "CBTRN02C",
+      "job": "POSTTRAN",
+      "requirementsHash": "044b30b08318ba6a0c3ade1bdfcddb4e01f19669d1cc0508fdc9e3b8d8fe2f7c",
+      "rules": 19,
+      "quirks": 4,
+      "path": "CBTRN02C/requirements.json"
+    },
+    {
+      "programId": "CBACT04C",
+      "job": "INTCALC",
+      "requirementsHash": "2bf0c7cfda6bce92c8ac3a954229a5fa9c4bdefa3ab72307b8484f1256747f36",
+      "rules": 9,
+      "quirks": 6,
+      "path": "CBACT04C/requirements.json"
+    },
+    {
+      "programId": "CBTRN03C",
+      "job": "TRANREPT",
+      "requirementsHash": "ebb35e155bebfd0f07c630690551e5f86565ccf08d789f9ac9eaa40791e7ec3e",
+      "rules": 20,
+      "quirks": 5,
+      "path": "CBTRN03C/requirements.json"
+    }
+  ]
+}

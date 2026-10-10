@@ -1,0 +1,4352 @@
+{
+  "schema": "mlcpu.requirements-packet.v1",
+  "programId": "CBACT04C",
+  "source": {
+    "file": "CBACT04C.cbl",
+    "sha256": "0ff681b12950033d649146becd794f2e9d7bf336918c6acb5413f0ad5fce3c44",
+    "lines": 652,
+    "copybooks": [
+      "CVACT01Y",
+      "CVACT03Y",
+      "CVTRA01Y",
+      "CVTRA02Y",
+      "CVTRA05Y"
+    ]
+  },
+  "purpose": {
+    "header": [
+      "Program     : CBACT04C.CBL",
+      "Application : CardDemo",
+      "Type        : BATCH COBOL Program",
+      "Function    : This is a interest calculator program."
+    ],
+    "capability": "InterestCalculation",
+    "package": "interestcalculation",
+    "workflow": "InterestCalculationWorkflow",
+    "domain": "interest",
+    "namingConfidence": 0.95,
+    "rationale": "computes monthly interest per account and transaction category balance and writes interest transactions",
+    "citations": [
+      "CBACT04C.cbl:5",
+      "INTCALC.jcl"
+    ]
+  },
+  "invocation": [
+    {
+      "job": "INTCALC",
+      "step": "STEP15",
+      "parm": "2022071800",
+      "stepCitation": "INTCALC.jcl:22",
+      "dds": [
+        {
+          "dd": "TCATBALF",
+          "file": "TCATBAL-FILE",
+          "direction": "input",
+          "dsn": "AWS.M2.CARDDEMO.TCATBALF.VSAM.KSDS",
+          "status": "Bound"
+        },
+        {
+          "dd": "XREFFILE",
+          "file": "XREF-FILE",
+          "direction": "input",
+          "dsn": "AWS.M2.CARDDEMO.CARDXREF.VSAM.KSDS",
+          "status": "Bound"
+        },
+        {
+          "dd": "ACCTFILE",
+          "file": "ACCOUNT-FILE",
+          "direction": "i-o",
+          "dsn": "AWS.M2.CARDDEMO.ACCTDATA.VSAM.KSDS",
+          "status": "Bound"
+        },
+        {
+          "dd": "DISCGRP",
+          "file": "DISCGRP-FILE",
+          "direction": "input",
+          "dsn": "AWS.M2.CARDDEMO.DISCGRP.VSAM.KSDS",
+          "status": "Bound"
+        },
+        {
+          "dd": "TRANSACT",
+          "file": "TRANSACT-FILE",
+          "direction": "output",
+          "dsn": "AWS.M2.CARDDEMO.SYSTRAN",
+          "generation": "+1",
+          "status": "Bound",
+          "jclLrecl": "350"
+        }
+      ]
+    }
+  ],
+  "dataContracts": [
+    {
+      "record": "FD-TRAN-CAT-BAL-RECORD",
+      "file": "TCATBAL-FILE",
+      "length": 50,
+      "fields": [
+        {
+          "name": "FD-TRANCAT-ACCT-ID",
+          "offset": 0,
+          "length": 11,
+          "pic": "9(11)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "FD-TRANCAT-TYPE-CD",
+          "offset": 11,
+          "length": 2,
+          "pic": "X(02)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "FD-TRANCAT-CD",
+          "offset": 13,
+          "length": 4,
+          "pic": "9(04)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "FD-FD-TRAN-CAT-DATA",
+          "offset": 17,
+          "length": 33,
+          "pic": "X(33)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "FD-XREFFILE-REC",
+      "file": "XREF-FILE",
+      "length": 50,
+      "fields": [
+        {
+          "name": "FD-XREF-CARD-NUM",
+          "offset": 0,
+          "length": 16,
+          "pic": "X(16)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "FD-XREF-CUST-NUM",
+          "offset": 16,
+          "length": 9,
+          "pic": "9(09)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "FD-XREF-ACCT-ID",
+          "offset": 25,
+          "length": 11,
+          "pic": "9(11)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "FD-XREF-FILLER",
+          "offset": 36,
+          "length": 14,
+          "pic": "X(14)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "FD-DISCGRP-REC",
+      "file": "DISCGRP-FILE",
+      "length": 50,
+      "fields": [
+        {
+          "name": "FD-DIS-ACCT-GROUP-ID",
+          "offset": 0,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "FD-DIS-TRAN-TYPE-CD",
+          "offset": 10,
+          "length": 2,
+          "pic": "X(02)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "FD-DIS-TRAN-CAT-CD",
+          "offset": 12,
+          "length": 4,
+          "pic": "9(04)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "FD-DISCGRP-DATA",
+          "offset": 16,
+          "length": 34,
+          "pic": "X(34)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "FD-ACCTFILE-REC",
+      "file": "ACCOUNT-FILE",
+      "length": 300,
+      "fields": [
+        {
+          "name": "FD-ACCT-ID",
+          "offset": 0,
+          "length": 11,
+          "pic": "9(11)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "FD-ACCT-DATA",
+          "offset": 11,
+          "length": 289,
+          "pic": "X(289)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "FD-TRANFILE-REC",
+      "file": "TRANSACT-FILE",
+      "length": 350,
+      "fields": [
+        {
+          "name": "FD-TRANS-ID",
+          "offset": 0,
+          "length": 16,
+          "pic": "X(16)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "FD-ACCT-DATA",
+          "offset": 16,
+          "length": 334,
+          "pic": "X(334)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "TRAN-CAT-BAL-RECORD",
+      "copybook": "CVTRA01Y",
+      "length": 50,
+      "fields": [
+        {
+          "name": "TRANCAT-ACCT-ID",
+          "offset": 0,
+          "length": 11,
+          "pic": "9(11)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "TRANCAT-TYPE-CD",
+          "offset": 11,
+          "length": 2,
+          "pic": "X(02)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRANCAT-CD",
+          "offset": 13,
+          "length": 4,
+          "pic": "9(04)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "TRAN-CAT-BAL",
+          "offset": 17,
+          "length": 11,
+          "pic": "S9(09)V99",
+          "usage": "DISPLAY",
+          "scale": 2,
+          "signed": true,
+          "type": "zoned"
+        },
+        {
+          "name": "FILLER@28",
+          "offset": 28,
+          "length": 22,
+          "pic": "X(22)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "CARD-XREF-RECORD",
+      "copybook": "CVACT03Y",
+      "length": 50,
+      "fields": [
+        {
+          "name": "XREF-CARD-NUM",
+          "offset": 0,
+          "length": 16,
+          "pic": "X(16)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "XREF-CUST-ID",
+          "offset": 16,
+          "length": 9,
+          "pic": "9(09)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "XREF-ACCT-ID",
+          "offset": 25,
+          "length": 11,
+          "pic": "9(11)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "FILLER@36",
+          "offset": 36,
+          "length": 14,
+          "pic": "X(14)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "DIS-GROUP-RECORD",
+      "copybook": "CVTRA02Y",
+      "length": 50,
+      "fields": [
+        {
+          "name": "DIS-ACCT-GROUP-ID",
+          "offset": 0,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "DIS-TRAN-TYPE-CD",
+          "offset": 10,
+          "length": 2,
+          "pic": "X(02)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "DIS-TRAN-CAT-CD",
+          "offset": 12,
+          "length": 4,
+          "pic": "9(04)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "DIS-INT-RATE",
+          "offset": 16,
+          "length": 6,
+          "pic": "S9(04)V99",
+          "usage": "DISPLAY",
+          "scale": 2,
+          "signed": true,
+          "type": "zoned"
+        },
+        {
+          "name": "FILLER@22",
+          "offset": 22,
+          "length": 28,
+          "pic": "X(28)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "ACCOUNT-RECORD",
+      "copybook": "CVACT01Y",
+      "length": 300,
+      "fields": [
+        {
+          "name": "ACCT-ID",
+          "offset": 0,
+          "length": 11,
+          "pic": "9(11)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "ACCT-ACTIVE-STATUS",
+          "offset": 11,
+          "length": 1,
+          "pic": "X(01)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "ACCT-CURR-BAL",
+          "offset": 12,
+          "length": 12,
+          "pic": "S9(10)V99",
+          "usage": "DISPLAY",
+          "scale": 2,
+          "signed": true,
+          "type": "zoned"
+        },
+        {
+          "name": "ACCT-CREDIT-LIMIT",
+          "offset": 24,
+          "length": 12,
+          "pic": "S9(10)V99",
+          "usage": "DISPLAY",
+          "scale": 2,
+          "signed": true,
+          "type": "zoned"
+        },
+        {
+          "name": "ACCT-CASH-CREDIT-LIMIT",
+          "offset": 36,
+          "length": 12,
+          "pic": "S9(10)V99",
+          "usage": "DISPLAY",
+          "scale": 2,
+          "signed": true,
+          "type": "zoned"
+        },
+        {
+          "name": "ACCT-OPEN-DATE",
+          "offset": 48,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "ACCT-EXPIRAION-DATE",
+          "offset": 58,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "ACCT-REISSUE-DATE",
+          "offset": 68,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "ACCT-CURR-CYC-CREDIT",
+          "offset": 78,
+          "length": 12,
+          "pic": "S9(10)V99",
+          "usage": "DISPLAY",
+          "scale": 2,
+          "signed": true,
+          "type": "zoned"
+        },
+        {
+          "name": "ACCT-CURR-CYC-DEBIT",
+          "offset": 90,
+          "length": 12,
+          "pic": "S9(10)V99",
+          "usage": "DISPLAY",
+          "scale": 2,
+          "signed": true,
+          "type": "zoned"
+        },
+        {
+          "name": "ACCT-ADDR-ZIP",
+          "offset": 102,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "ACCT-GROUP-ID",
+          "offset": 112,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "FILLER@122",
+          "offset": 122,
+          "length": 178,
+          "pic": "X(178)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    },
+    {
+      "record": "TRAN-RECORD",
+      "copybook": "CVTRA05Y",
+      "length": 350,
+      "fields": [
+        {
+          "name": "TRAN-ID",
+          "offset": 0,
+          "length": 16,
+          "pic": "X(16)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-TYPE-CD",
+          "offset": 16,
+          "length": 2,
+          "pic": "X(02)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-CAT-CD",
+          "offset": 18,
+          "length": 4,
+          "pic": "9(04)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "TRAN-SOURCE",
+          "offset": 22,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-DESC",
+          "offset": 32,
+          "length": 100,
+          "pic": "X(100)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-AMT",
+          "offset": 132,
+          "length": 11,
+          "pic": "S9(09)V99",
+          "usage": "DISPLAY",
+          "scale": 2,
+          "signed": true,
+          "type": "zoned"
+        },
+        {
+          "name": "TRAN-MERCHANT-ID",
+          "offset": 143,
+          "length": 9,
+          "pic": "9(09)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "zoned"
+        },
+        {
+          "name": "TRAN-MERCHANT-NAME",
+          "offset": 152,
+          "length": 50,
+          "pic": "X(50)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-MERCHANT-CITY",
+          "offset": 202,
+          "length": 50,
+          "pic": "X(50)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-MERCHANT-ZIP",
+          "offset": 252,
+          "length": 10,
+          "pic": "X(10)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-CARD-NUM",
+          "offset": 262,
+          "length": 16,
+          "pic": "X(16)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-ORIG-TS",
+          "offset": 278,
+          "length": 26,
+          "pic": "X(26)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "TRAN-PROC-TS",
+          "offset": 304,
+          "length": 26,
+          "pic": "X(26)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        },
+        {
+          "name": "FILLER@330",
+          "offset": 330,
+          "length": 20,
+          "pic": "X(20)",
+          "usage": "DISPLAY",
+          "scale": 0,
+          "signed": false,
+          "type": "alphanumeric"
+        }
+      ]
+    }
+  ],
+  "ports": [
+    {
+      "file": "TCATBAL-FILE",
+      "dd": "TCATBALF",
+      "organization": "INDEXED",
+      "access": "SEQUENTIAL",
+      "recordKey": "FD-TRAN-CAT-KEY",
+      "alternateKeys": [],
+      "direction": "input",
+      "statusField": "TCATBALF-STATUS",
+      "operations": [
+        "READ INTO TRAN-CAT-BAL-RECORD"
+      ],
+      "recordLength": 50
+    },
+    {
+      "file": "XREF-FILE",
+      "dd": "XREFFILE",
+      "organization": "INDEXED",
+      "access": "RANDOM",
+      "recordKey": "FD-XREF-CARD-NUM",
+      "alternateKeys": [
+        "FD-XREF-ACCT-ID"
+      ],
+      "direction": "input",
+      "statusField": "XREFFILE-STATUS",
+      "operations": [
+        "READ by alternate key INTO CARD-XREF-RECORD"
+      ],
+      "recordLength": 50
+    },
+    {
+      "file": "ACCOUNT-FILE",
+      "dd": "ACCTFILE",
+      "organization": "INDEXED",
+      "access": "RANDOM",
+      "recordKey": "FD-ACCT-ID",
+      "alternateKeys": [],
+      "direction": "i-o",
+      "statusField": "ACCTFILE-STATUS",
+      "operations": [
+        "REWRITE FROM ACCOUNT-RECORD",
+        "READ INTO ACCOUNT-RECORD"
+      ],
+      "recordLength": 300
+    },
+    {
+      "file": "DISCGRP-FILE",
+      "dd": "DISCGRP",
+      "organization": "INDEXED",
+      "access": "RANDOM",
+      "recordKey": "FD-DISCGRP-KEY",
+      "alternateKeys": [],
+      "direction": "input",
+      "statusField": "DISCGRP-STATUS",
+      "operations": [
+        "READ INTO DIS-GROUP-RECORD"
+      ],
+      "recordLength": 50
+    },
+    {
+      "file": "TRANSACT-FILE",
+      "dd": "TRANSACT",
+      "organization": "SEQUENTIAL",
+      "access": "SEQUENTIAL",
+      "alternateKeys": [],
+      "direction": "output",
+      "statusField": "TRANFILE-STATUS",
+      "operations": [
+        "WRITE FROM TRAN-RECORD"
+      ],
+      "recordLength": 350
+    }
+  ],
+  "controlFlags": [
+    {
+      "field": "APPL-RESULT",
+      "values": [
+        "0",
+        "12",
+        "16",
+        "8"
+      ]
+    },
+    {
+      "field": "DB2-DOT-1",
+      "values": [
+        "."
+      ]
+    },
+    {
+      "field": "DB2-DOT-2",
+      "values": [
+        "."
+      ]
+    },
+    {
+      "field": "DB2-DOT-3",
+      "values": [
+        "."
+      ]
+    },
+    {
+      "field": "DB2-REST",
+      "values": [
+        "0000"
+      ]
+    },
+    {
+      "field": "DB2-STREEP-1",
+      "values": [
+        "-"
+      ]
+    },
+    {
+      "field": "DB2-STREEP-2",
+      "values": [
+        "-"
+      ]
+    },
+    {
+      "field": "DB2-STREEP-3",
+      "values": [
+        "-"
+      ]
+    },
+    {
+      "field": "END-OF-FILE",
+      "values": [
+        "N",
+        "Y"
+      ]
+    },
+    {
+      "field": "FD-DIS-ACCT-GROUP-ID",
+      "values": [
+        "DEFAULT"
+      ]
+    },
+    {
+      "field": "WS-FIRST-TIME",
+      "values": [
+        "N",
+        "Y"
+      ]
+    }
+  ],
+  "errorHandling": {
+    "paragraphs": [
+      "9910-DISPLAY-IO-STATUS",
+      "9999-ABEND-PROGRAM"
+    ],
+    "behaviour": "Any unexpected file status displays a message and the file status (as 'FILE STATUS IS: NNNN' + 4 digits), then abends with code 999 (CALL 'CEE3ABD'). The step return code becomes 16 and later steps do not run."
+  },
+  "paragraphs": [
+    {
+      "paragraph": "MAINLINE",
+      "line": 181,
+      "endLine": 233,
+      "role": "orchestration",
+      "segments": [
+        {
+          "id": "SEG-001",
+          "paragraph": "MAINLINE",
+          "kind": "Console",
+          "statements": [
+            {
+              "stepId": "MAINLINE:1:DISPLAY:L181",
+              "line": 181,
+              "verb": "DISPLAY",
+              "cobol": "DISPLAY 'START OF EXECUTION OF PROGRAM CBACT04C'"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-002",
+          "paragraph": "MAINLINE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "MAINLINE:2:PERFORM:L182",
+              "line": 182,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 0000-TCATBALF-OPEN"
+            },
+            {
+              "stepId": "MAINLINE:3:PERFORM:L183",
+              "line": 183,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 0100-XREFFILE-OPEN"
+            },
+            {
+              "stepId": "MAINLINE:4:PERFORM:L184",
+              "line": 184,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 0200-DISCGRP-OPEN"
+            },
+            {
+              "stepId": "MAINLINE:5:PERFORM:L185",
+              "line": 185,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 0300-ACCTFILE-OPEN"
+            },
+            {
+              "stepId": "MAINLINE:6:PERFORM:L186",
+              "line": 186,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 0400-TRANFILE-OPEN"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-018",
+          "paragraph": "MAINLINE",
+          "kind": "Decision",
+          "statements": [
+            {
+              "stepId": "MAINLINE:7:PERFORM:L188",
+              "line": 188,
+              "verb": "PERFORM",
+              "cobol": "PERFORM UNTIL END-OF-FILE = 'Y'"
+            }
+          ],
+          "reads": [
+            "ACCT-GROUP-ID",
+            "DIS-INT-RATE",
+            "END-OF-FILE",
+            "TRAN-CAT-BAL-RECORD",
+            "TRANCAT-ACCT-ID",
+            "TRANCAT-CD",
+            "TRANCAT-TYPE-CD",
+            "WS-FIRST-TIME",
+            "WS-LAST-ACCT-NUM",
+            "WS-RECORD-COUNT"
+          ],
+          "writes": [
+            "FD-ACCT-ID",
+            "FD-DIS-ACCT-GROUP-ID",
+            "FD-DIS-TRAN-CAT-CD",
+            "FD-DIS-TRAN-TYPE-CD",
+            "FD-XREF-ACCT-ID",
+            "WS-FIRST-TIME",
+            "WS-LAST-ACCT-NUM",
+            "WS-RECORD-COUNT",
+            "WS-TOTAL-INT"
+          ],
+          "children": [
+            {
+              "id": "SEG-017",
+              "paragraph": "MAINLINE",
+              "kind": "Decision",
+              "statements": [
+                {
+                  "stepId": "MAINLINE:8:IF:L189",
+                  "line": 189,
+                  "verb": "IF",
+                  "cobol": "IF END-OF-FILE = 'N'"
+                }
+              ],
+              "reads": [
+                "ACCT-GROUP-ID",
+                "DIS-INT-RATE",
+                "END-OF-FILE",
+                "TRAN-CAT-BAL-RECORD",
+                "TRANCAT-ACCT-ID",
+                "TRANCAT-CD",
+                "TRANCAT-TYPE-CD",
+                "WS-FIRST-TIME",
+                "WS-LAST-ACCT-NUM",
+                "WS-RECORD-COUNT"
+              ],
+              "writes": [
+                "FD-ACCT-ID",
+                "FD-DIS-ACCT-GROUP-ID",
+                "FD-DIS-TRAN-CAT-CD",
+                "FD-DIS-TRAN-TYPE-CD",
+                "FD-XREF-ACCT-ID",
+                "WS-FIRST-TIME",
+                "WS-LAST-ACCT-NUM",
+                "WS-RECORD-COUNT",
+                "WS-TOTAL-INT"
+              ],
+              "children": [
+                {
+                  "id": "SEG-003",
+                  "paragraph": "MAINLINE",
+                  "kind": "Control",
+                  "statements": [
+                    {
+                      "stepId": "MAINLINE:9:PERFORM:L190",
+                      "line": 190,
+                      "verb": "PERFORM",
+                      "cobol": "PERFORM 1000-TCATBALF-GET-NEXT"
+                    }
+                  ],
+                  "reads": [],
+                  "writes": [],
+                  "children": [],
+                  "condition": "TRUE"
+                },
+                {
+                  "id": "SEG-015",
+                  "paragraph": "MAINLINE",
+                  "kind": "Decision",
+                  "statements": [
+                    {
+                      "stepId": "MAINLINE:10:IF:L191",
+                      "line": 191,
+                      "verb": "IF",
+                      "cobol": "IF END-OF-FILE = 'N'"
+                    }
+                  ],
+                  "reads": [
+                    "ACCT-GROUP-ID",
+                    "DIS-INT-RATE",
+                    "END-OF-FILE",
+                    "TRAN-CAT-BAL-RECORD",
+                    "TRANCAT-ACCT-ID",
+                    "TRANCAT-CD",
+                    "TRANCAT-TYPE-CD",
+                    "WS-FIRST-TIME",
+                    "WS-LAST-ACCT-NUM",
+                    "WS-RECORD-COUNT"
+                  ],
+                  "writes": [
+                    "FD-ACCT-ID",
+                    "FD-DIS-ACCT-GROUP-ID",
+                    "FD-DIS-TRAN-CAT-CD",
+                    "FD-DIS-TRAN-TYPE-CD",
+                    "FD-XREF-ACCT-ID",
+                    "WS-FIRST-TIME",
+                    "WS-LAST-ACCT-NUM",
+                    "WS-RECORD-COUNT",
+                    "WS-TOTAL-INT"
+                  ],
+                  "children": [
+                    {
+                      "id": "SEG-004",
+                      "paragraph": "MAINLINE",
+                      "kind": "Logic",
+                      "statements": [
+                        {
+                          "stepId": "MAINLINE:11:ADD:L192",
+                          "line": 192,
+                          "verb": "ADD",
+                          "cobol": "ADD 1 TO WS-RECORD-COUNT"
+                        }
+                      ],
+                      "reads": [
+                        "WS-RECORD-COUNT"
+                      ],
+                      "writes": [
+                        "WS-RECORD-COUNT"
+                      ],
+                      "children": [],
+                      "condition": "TRUE"
+                    },
+                    {
+                      "id": "SEG-005",
+                      "paragraph": "MAINLINE",
+                      "kind": "Console",
+                      "statements": [
+                        {
+                          "stepId": "MAINLINE:12:DISPLAY:L193",
+                          "line": 193,
+                          "verb": "DISPLAY",
+                          "cobol": "DISPLAY TRAN-CAT-BAL-RECORD"
+                        }
+                      ],
+                      "reads": [
+                        "TRAN-CAT-BAL-RECORD"
+                      ],
+                      "writes": [],
+                      "children": [],
+                      "condition": "TRUE"
+                    },
+                    {
+                      "id": "SEG-011",
+                      "paragraph": "MAINLINE",
+                      "kind": "Decision",
+                      "statements": [
+                        {
+                          "stepId": "MAINLINE:13:IF:L194",
+                          "line": 194,
+                          "verb": "IF",
+                          "cobol": "IF TRANCAT-ACCT-ID NOT = WS-LAST-ACCT-NUM"
+                        }
+                      ],
+                      "reads": [
+                        "TRANCAT-ACCT-ID",
+                        "WS-FIRST-TIME",
+                        "WS-LAST-ACCT-NUM"
+                      ],
+                      "writes": [
+                        "FD-ACCT-ID",
+                        "FD-XREF-ACCT-ID",
+                        "WS-FIRST-TIME",
+                        "WS-LAST-ACCT-NUM",
+                        "WS-TOTAL-INT"
+                      ],
+                      "children": [
+                        {
+                          "id": "SEG-006",
+                          "paragraph": "MAINLINE",
+                          "kind": "ControlFlag",
+                          "statements": [
+                            {
+                              "stepId": "MAINLINE:14:IF:L195",
+                              "line": 195,
+                              "verb": "IF",
+                              "cobol": "IF WS-FIRST-TIME NOT = 'Y'"
+                            }
+                          ],
+                          "reads": [
+                            "WS-FIRST-TIME"
+                          ],
+                          "writes": [
+                            "WS-FIRST-TIME"
+                          ],
+                          "children": [],
+                          "condition": "TRUE"
+                        },
+                        {
+                          "id": "SEG-007",
+                          "paragraph": "MAINLINE",
+                          "kind": "Logic",
+                          "statements": [
+                            {
+                              "stepId": "MAINLINE:17:MOVE:L200",
+                              "line": 200,
+                              "verb": "MOVE",
+                              "cobol": "MOVE 0 TO WS-TOTAL-INT"
+                            },
+                            {
+                              "stepId": "MAINLINE:18:MOVE:L201",
+                              "line": 201,
+                              "verb": "MOVE",
+                              "cobol": "MOVE TRANCAT-ACCT-ID TO WS-LAST-ACCT-NUM"
+                            },
+                            {
+                              "stepId": "MAINLINE:19:MOVE:L202",
+                              "line": 202,
+                              "verb": "MOVE",
+                              "cobol": "MOVE TRANCAT-ACCT-ID TO FD-ACCT-ID"
+                            }
+                          ],
+                          "reads": [
+                            "TRANCAT-ACCT-ID"
+                          ],
+                          "writes": [
+                            "FD-ACCT-ID",
+                            "WS-LAST-ACCT-NUM",
+                            "WS-TOTAL-INT"
+                          ],
+                          "children": [],
+                          "condition": "TRUE"
+                        },
+                        {
+                          "id": "SEG-008",
+                          "paragraph": "MAINLINE",
+                          "kind": "Control",
+                          "statements": [
+                            {
+                              "stepId": "MAINLINE:20:PERFORM:L203",
+                              "line": 203,
+                              "verb": "PERFORM",
+                              "cobol": "PERFORM 1100-GET-ACCT-DATA"
+                            }
+                          ],
+                          "reads": [],
+                          "writes": [],
+                          "children": [],
+                          "condition": "TRUE"
+                        },
+                        {
+                          "id": "SEG-009",
+                          "paragraph": "MAINLINE",
+                          "kind": "Logic",
+                          "statements": [
+                            {
+                              "stepId": "MAINLINE:21:MOVE:L204",
+                              "line": 204,
+                              "verb": "MOVE",
+                              "cobol": "MOVE TRANCAT-ACCT-ID TO FD-XREF-ACCT-ID"
+                            }
+                          ],
+                          "reads": [
+                            "TRANCAT-ACCT-ID"
+                          ],
+                          "writes": [
+                            "FD-XREF-ACCT-ID"
+                          ],
+                          "children": [],
+                          "condition": "TRUE"
+                        },
+                        {
+                          "id": "SEG-010",
+                          "paragraph": "MAINLINE",
+                          "kind": "Control",
+                          "statements": [
+                            {
+                              "stepId": "MAINLINE:22:PERFORM:L205",
+                              "line": 205,
+                              "verb": "PERFORM",
+                              "cobol": "PERFORM 1110-GET-XREF-DATA"
+                            }
+                          ],
+                          "reads": [],
+                          "writes": [],
+                          "children": [],
+                          "condition": "TRUE"
+                        }
+                      ],
+                      "condition": "IF TRANCAT-ACCT-ID NOT = WS-LAST-ACCT-NUM"
+                    },
+                    {
+                      "id": "SEG-012",
+                      "paragraph": "MAINLINE",
+                      "kind": "ControlFlag",
+                      "statements": [
+                        {
+                          "stepId": "MAINLINE:23:MOVE:L210",
+                          "line": 210,
+                          "verb": "MOVE",
+                          "cobol": "MOVE ACCT-GROUP-ID TO FD-DIS-ACCT-GROUP-ID"
+                        }
+                      ],
+                      "reads": [
+                        "ACCT-GROUP-ID"
+                      ],
+                      "writes": [
+                        "FD-DIS-ACCT-GROUP-ID"
+                      ],
+                      "children": [],
+                      "condition": "TRUE"
+                    },
+                    {
+                      "id": "SEG-013",
+                      "paragraph": "MAINLINE",
+                      "kind": "Logic",
+                      "statements": [
+                        {
+                          "stepId": "MAINLINE:24:MOVE:L211",
+                          "line": 211,
+                          "verb": "MOVE",
+                          "cobol": "MOVE TRANCAT-CD TO FD-DIS-TRAN-CAT-CD"
+                        },
+                        {
+                          "stepId": "MAINLINE:25:MOVE:L212",
+                          "line": 212,
+                          "verb": "MOVE",
+                          "cobol": "MOVE TRANCAT-TYPE-CD TO FD-DIS-TRAN-TYPE-CD"
+                        }
+                      ],
+                      "reads": [
+                        "TRANCAT-CD",
+                        "TRANCAT-TYPE-CD"
+                      ],
+                      "writes": [
+                        "FD-DIS-TRAN-CAT-CD",
+                        "FD-DIS-TRAN-TYPE-CD"
+                      ],
+                      "children": [],
+                      "condition": "TRUE"
+                    },
+                    {
+                      "id": "SEG-014",
+                      "paragraph": "MAINLINE",
+                      "kind": "Control",
+                      "statements": [
+                        {
+                          "stepId": "MAINLINE:26:PERFORM:L213",
+                          "line": 213,
+                          "verb": "PERFORM",
+                          "cobol": "PERFORM 1200-GET-INTEREST-RATE"
+                        },
+                        {
+                          "stepId": "MAINLINE:27:IF:L214",
+                          "line": 214,
+                          "verb": "IF",
+                          "cobol": "IF DIS-INT-RATE NOT = 0"
+                        }
+                      ],
+                      "reads": [
+                        "DIS-INT-RATE"
+                      ],
+                      "writes": [],
+                      "children": [],
+                      "condition": "TRUE"
+                    }
+                  ],
+                  "condition": "IF END-OF-FILE = 'N'"
+                },
+                {
+                  "id": "SEG-016",
+                  "paragraph": "MAINLINE",
+                  "kind": "Control",
+                  "statements": [
+                    {
+                      "stepId": "MAINLINE:30:PERFORM:L220",
+                      "line": 220,
+                      "verb": "PERFORM",
+                      "cobol": "PERFORM 1050-UPDATE-ACCOUNT"
+                    }
+                  ],
+                  "reads": [],
+                  "writes": [],
+                  "children": [],
+                  "condition": "FALSE"
+                }
+              ],
+              "condition": "IF END-OF-FILE = 'N'"
+            }
+          ],
+          "condition": "PERFORM UNTIL END-OF-FILE = 'Y'"
+        },
+        {
+          "id": "SEG-019",
+          "paragraph": "MAINLINE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "MAINLINE:31:PERFORM:L224",
+              "line": 224,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 9000-TCATBALF-CLOSE"
+            },
+            {
+              "stepId": "MAINLINE:32:PERFORM:L225",
+              "line": 225,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 9100-XREFFILE-CLOSE"
+            },
+            {
+              "stepId": "MAINLINE:33:PERFORM:L226",
+              "line": 226,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 9200-DISCGRP-CLOSE"
+            },
+            {
+              "stepId": "MAINLINE:34:PERFORM:L227",
+              "line": 227,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 9300-ACCTFILE-CLOSE"
+            },
+            {
+              "stepId": "MAINLINE:35:PERFORM:L228",
+              "line": 228,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 9400-TRANFILE-CLOSE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-020",
+          "paragraph": "MAINLINE",
+          "kind": "Console",
+          "statements": [
+            {
+              "stepId": "MAINLINE:36:DISPLAY:L230",
+              "line": 230,
+              "verb": "DISPLAY",
+              "cobol": "DISPLAY 'END OF EXECUTION OF PROGRAM CBACT04C'"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-021",
+          "paragraph": "MAINLINE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "MAINLINE:37:GOBACK:L232",
+              "line": 232,
+              "verb": "GOBACK",
+              "cobol": "GOBACK"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "0000-TCATBALF-OPEN",
+      "line": 234,
+      "endLine": 251,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-022",
+          "paragraph": "0000-TCATBALF-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0000-TCATBALF-OPEN:1:MOVE:L235",
+              "line": 235,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-023",
+          "paragraph": "0000-TCATBALF-OPEN",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "0000-TCATBALF-OPEN:2:OPEN:L236",
+              "line": 236,
+              "verb": "OPEN",
+              "cobol": "OPEN INPUT TCATBAL-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-024",
+          "paragraph": "0000-TCATBALF-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0000-TCATBALF-OPEN:3:IF:L237",
+              "line": 237,
+              "verb": "IF",
+              "cobol": "IF TCATBALF-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "TCATBALF-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-025",
+          "paragraph": "0000-TCATBALF-OPEN",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "0000-TCATBALF-OPEN:6:IF:L242",
+              "line": 242,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "TCATBALF-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-026",
+          "paragraph": "0000-TCATBALF-OPEN",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "0000-TCATBALF-OPEN:12:EXIT:L250",
+              "line": 250,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "0100-XREFFILE-OPEN",
+      "line": 252,
+      "endLine": 269,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-027",
+          "paragraph": "0100-XREFFILE-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0100-XREFFILE-OPEN:1:MOVE:L253",
+              "line": 253,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-028",
+          "paragraph": "0100-XREFFILE-OPEN",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "0100-XREFFILE-OPEN:2:OPEN:L254",
+              "line": 254,
+              "verb": "OPEN",
+              "cobol": "OPEN INPUT XREF-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-029",
+          "paragraph": "0100-XREFFILE-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0100-XREFFILE-OPEN:3:IF:L255",
+              "line": 255,
+              "verb": "IF",
+              "cobol": "IF XREFFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "XREFFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-030",
+          "paragraph": "0100-XREFFILE-OPEN",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "0100-XREFFILE-OPEN:6:IF:L260",
+              "line": 260,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "XREFFILE-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-031",
+          "paragraph": "0100-XREFFILE-OPEN",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "0100-XREFFILE-OPEN:12:EXIT:L268",
+              "line": 268,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "0200-DISCGRP-OPEN",
+      "line": 270,
+      "endLine": 288,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-032",
+          "paragraph": "0200-DISCGRP-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0200-DISCGRP-OPEN:1:MOVE:L271",
+              "line": 271,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-033",
+          "paragraph": "0200-DISCGRP-OPEN",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "0200-DISCGRP-OPEN:2:OPEN:L272",
+              "line": 272,
+              "verb": "OPEN",
+              "cobol": "OPEN INPUT DISCGRP-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-034",
+          "paragraph": "0200-DISCGRP-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0200-DISCGRP-OPEN:3:IF:L273",
+              "line": 273,
+              "verb": "IF",
+              "cobol": "IF DISCGRP-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-035",
+          "paragraph": "0200-DISCGRP-OPEN",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "0200-DISCGRP-OPEN:6:IF:L278",
+              "line": 278,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-036",
+          "paragraph": "0200-DISCGRP-OPEN",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "0200-DISCGRP-OPEN:12:EXIT:L286",
+              "line": 286,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "0300-ACCTFILE-OPEN",
+      "line": 289,
+      "endLine": 306,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-037",
+          "paragraph": "0300-ACCTFILE-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0300-ACCTFILE-OPEN:1:MOVE:L290",
+              "line": 290,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-038",
+          "paragraph": "0300-ACCTFILE-OPEN",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "0300-ACCTFILE-OPEN:2:OPEN:L291",
+              "line": 291,
+              "verb": "OPEN",
+              "cobol": "OPEN I-O ACCOUNT-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-039",
+          "paragraph": "0300-ACCTFILE-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0300-ACCTFILE-OPEN:3:IF:L292",
+              "line": 292,
+              "verb": "IF",
+              "cobol": "IF ACCTFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "ACCTFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-040",
+          "paragraph": "0300-ACCTFILE-OPEN",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "0300-ACCTFILE-OPEN:6:IF:L297",
+              "line": 297,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "ACCTFILE-STATUS",
+            "APPL-RESULT"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-041",
+          "paragraph": "0300-ACCTFILE-OPEN",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "0300-ACCTFILE-OPEN:12:EXIT:L305",
+              "line": 305,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "0400-TRANFILE-OPEN",
+      "line": 307,
+      "endLine": 324,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-042",
+          "paragraph": "0400-TRANFILE-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0400-TRANFILE-OPEN:1:MOVE:L308",
+              "line": 308,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-043",
+          "paragraph": "0400-TRANFILE-OPEN",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "0400-TRANFILE-OPEN:2:OPEN:L309",
+              "line": 309,
+              "verb": "OPEN",
+              "cobol": "OPEN OUTPUT TRANSACT-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-044",
+          "paragraph": "0400-TRANFILE-OPEN",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "0400-TRANFILE-OPEN:3:IF:L310",
+              "line": 310,
+              "verb": "IF",
+              "cobol": "IF TRANFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "TRANFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-045",
+          "paragraph": "0400-TRANFILE-OPEN",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "0400-TRANFILE-OPEN:6:IF:L315",
+              "line": 315,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "TRANFILE-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-046",
+          "paragraph": "0400-TRANFILE-OPEN",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "0400-TRANFILE-OPEN:12:EXIT:L323",
+              "line": 323,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1000-TCATBALF-GET-NEXT",
+      "line": 325,
+      "endLine": 349,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-047",
+          "paragraph": "1000-TCATBALF-GET-NEXT",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "1000-TCATBALF-GET-NEXT:1:READ:L326",
+              "line": 326,
+              "verb": "READ",
+              "cobol": "READ TCATBAL-FILE INTO TRAN-CAT-BAL-RECORD"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "TRAN-CAT-BAL-RECORD"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-048",
+          "paragraph": "1000-TCATBALF-GET-NEXT",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "1000-TCATBALF-GET-NEXT:2:IF:L327",
+              "line": 327,
+              "verb": "IF",
+              "cobol": "IF TCATBALF-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "TCATBALF-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-049",
+          "paragraph": "1000-TCATBALF-GET-NEXT",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "1000-TCATBALF-GET-NEXT:7:IF:L336",
+              "line": 336,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "TCATBALF-STATUS"
+          ],
+          "writes": [
+            "END-OF-FILE",
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-050",
+          "paragraph": "1000-TCATBALF-GET-NEXT",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1000-TCATBALF-GET-NEXT:15:EXIT:L348",
+              "line": 348,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1050-UPDATE-ACCOUNT",
+      "line": 350,
+      "endLine": 371,
+      "role": "mixed",
+      "segments": [
+        {
+          "id": "SEG-051",
+          "paragraph": "1050-UPDATE-ACCOUNT",
+          "kind": "Logic",
+          "statements": [
+            {
+              "stepId": "1050-UPDATE-ACCOUNT:1:ADD:L352",
+              "line": 352,
+              "verb": "ADD",
+              "cobol": "ADD WS-TOTAL-INT TO ACCT-CURR-BAL"
+            },
+            {
+              "stepId": "1050-UPDATE-ACCOUNT:2:MOVE:L353",
+              "line": 353,
+              "verb": "MOVE",
+              "cobol": "MOVE 0 TO ACCT-CURR-CYC-CREDIT"
+            },
+            {
+              "stepId": "1050-UPDATE-ACCOUNT:3:MOVE:L354",
+              "line": 354,
+              "verb": "MOVE",
+              "cobol": "MOVE 0 TO ACCT-CURR-CYC-DEBIT"
+            }
+          ],
+          "reads": [
+            "ACCT-CURR-BAL",
+            "WS-TOTAL-INT"
+          ],
+          "writes": [
+            "ACCT-CURR-BAL",
+            "ACCT-CURR-CYC-CREDIT",
+            "ACCT-CURR-CYC-DEBIT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-052",
+          "paragraph": "1050-UPDATE-ACCOUNT",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "1050-UPDATE-ACCOUNT:4:REWRITE:L356",
+              "line": 356,
+              "verb": "REWRITE",
+              "cobol": "REWRITE FD-ACCTFILE-REC FROM ACCOUNT-RECORD"
+            }
+          ],
+          "reads": [
+            "ACCOUNT-RECORD"
+          ],
+          "writes": [
+            "FD-ACCTFILE-REC"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-053",
+          "paragraph": "1050-UPDATE-ACCOUNT",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "1050-UPDATE-ACCOUNT:5:IF:L357",
+              "line": 357,
+              "verb": "IF",
+              "cobol": "IF ACCTFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "ACCTFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-054",
+          "paragraph": "1050-UPDATE-ACCOUNT",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "1050-UPDATE-ACCOUNT:8:IF:L362",
+              "line": 362,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "ACCTFILE-STATUS",
+            "APPL-RESULT"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-055",
+          "paragraph": "1050-UPDATE-ACCOUNT",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1050-UPDATE-ACCOUNT:14:EXIT:L370",
+              "line": 370,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1100-GET-ACCT-DATA",
+      "line": 372,
+      "endLine": 392,
+      "role": "orchestration",
+      "segments": [
+        {
+          "id": "SEG-057",
+          "paragraph": "1100-GET-ACCT-DATA",
+          "kind": "Decision",
+          "statements": [
+            {
+              "stepId": "1100-GET-ACCT-DATA:1:READ:L373",
+              "line": 373,
+              "verb": "READ",
+              "cobol": "READ ACCOUNT-FILE INTO ACCOUNT-RECORD INVALID KEY"
+            }
+          ],
+          "reads": [
+            "FD-ACCT-ID"
+          ],
+          "writes": [
+            "ACCOUNT-RECORD"
+          ],
+          "children": [
+            {
+              "id": "SEG-056",
+              "paragraph": "1100-GET-ACCT-DATA",
+              "kind": "Console",
+              "statements": [
+                {
+                  "stepId": "1100-GET-ACCT-DATA:2:DISPLAY:L375",
+                  "line": 375,
+                  "verb": "DISPLAY",
+                  "cobol": "DISPLAY 'ACCOUNT NOT FOUND: ' FD-ACCT-ID"
+                }
+              ],
+              "reads": [
+                "FD-ACCT-ID"
+              ],
+              "writes": [],
+              "children": [],
+              "condition": "INVALID"
+            }
+          ],
+          "condition": "READ ACCOUNT-FILE INTO ACCOUNT-RECORD INVALID KEY"
+        },
+        {
+          "id": "SEG-058",
+          "paragraph": "1100-GET-ACCT-DATA",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "1100-GET-ACCT-DATA:3:IF:L378",
+              "line": 378,
+              "verb": "IF",
+              "cobol": "IF ACCTFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "ACCTFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-059",
+          "paragraph": "1100-GET-ACCT-DATA",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "1100-GET-ACCT-DATA:6:IF:L383",
+              "line": 383,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "ACCTFILE-STATUS",
+            "APPL-RESULT"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-060",
+          "paragraph": "1100-GET-ACCT-DATA",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1100-GET-ACCT-DATA:12:EXIT:L391",
+              "line": 391,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1110-GET-XREF-DATA",
+      "line": 393,
+      "endLine": 414,
+      "role": "orchestration",
+      "segments": [
+        {
+          "id": "SEG-062",
+          "paragraph": "1110-GET-XREF-DATA",
+          "kind": "Decision",
+          "statements": [
+            {
+              "stepId": "1110-GET-XREF-DATA:1:READ:L394",
+              "line": 394,
+              "verb": "READ",
+              "cobol": "READ XREF-FILE INTO CARD-XREF-RECORD KEY IS FD-XREF-ACCT-ID INVALID KEY"
+            }
+          ],
+          "reads": [
+            "FD-XREF-ACCT-ID"
+          ],
+          "writes": [
+            "CARD-XREF-RECORD"
+          ],
+          "children": [
+            {
+              "id": "SEG-061",
+              "paragraph": "1110-GET-XREF-DATA",
+              "kind": "Console",
+              "statements": [
+                {
+                  "stepId": "1110-GET-XREF-DATA:2:DISPLAY:L397",
+                  "line": 397,
+                  "verb": "DISPLAY",
+                  "cobol": "DISPLAY 'ACCOUNT NOT FOUND: ' FD-XREF-ACCT-ID"
+                }
+              ],
+              "reads": [
+                "FD-XREF-ACCT-ID"
+              ],
+              "writes": [],
+              "children": [],
+              "condition": "INVALID"
+            }
+          ],
+          "condition": "READ XREF-FILE INTO CARD-XREF-RECORD KEY IS FD-XREF-ACCT-ID INVALID KEY"
+        },
+        {
+          "id": "SEG-063",
+          "paragraph": "1110-GET-XREF-DATA",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "1110-GET-XREF-DATA:3:IF:L400",
+              "line": 400,
+              "verb": "IF",
+              "cobol": "IF XREFFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "XREFFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-064",
+          "paragraph": "1110-GET-XREF-DATA",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "1110-GET-XREF-DATA:6:IF:L405",
+              "line": 405,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "XREFFILE-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-065",
+          "paragraph": "1110-GET-XREF-DATA",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1110-GET-XREF-DATA:12:EXIT:L413",
+              "line": 413,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1200-GET-INTEREST-RATE",
+      "line": 415,
+      "endLine": 442,
+      "role": "orchestration",
+      "segments": [
+        {
+          "id": "SEG-067",
+          "paragraph": "1200-GET-INTEREST-RATE",
+          "kind": "Decision",
+          "statements": [
+            {
+              "stepId": "1200-GET-INTEREST-RATE:1:READ:L416",
+              "line": 416,
+              "verb": "READ",
+              "cobol": "READ DISCGRP-FILE INTO DIS-GROUP-RECORD INVALID KEY"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "DIS-GROUP-RECORD"
+          ],
+          "children": [
+            {
+              "id": "SEG-066",
+              "paragraph": "1200-GET-INTEREST-RATE",
+              "kind": "Console",
+              "statements": [
+                {
+                  "stepId": "1200-GET-INTEREST-RATE:2:DISPLAY:L418",
+                  "line": 418,
+                  "verb": "DISPLAY",
+                  "cobol": "DISPLAY 'DISCLOSURE GROUP RECORD MISSING'"
+                },
+                {
+                  "stepId": "1200-GET-INTEREST-RATE:3:DISPLAY:L419",
+                  "line": 419,
+                  "verb": "DISPLAY",
+                  "cobol": "DISPLAY 'TRY WITH DEFAULT GROUP CODE'"
+                }
+              ],
+              "reads": [],
+              "writes": [],
+              "children": [],
+              "condition": "INVALID"
+            }
+          ],
+          "condition": "READ DISCGRP-FILE INTO DIS-GROUP-RECORD INVALID KEY"
+        },
+        {
+          "id": "SEG-068",
+          "paragraph": "1200-GET-INTEREST-RATE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "1200-GET-INTEREST-RATE:4:IF:L422",
+              "line": 422,
+              "verb": "IF",
+              "cobol": "IF DISCGRP-STATUS = '00' OR '23'"
+            }
+          ],
+          "reads": [
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-069",
+          "paragraph": "1200-GET-INTEREST-RATE",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "1200-GET-INTEREST-RATE:7:IF:L428",
+              "line": 428,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-070",
+          "paragraph": "1200-GET-INTEREST-RATE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "1200-GET-INTEREST-RATE:13:IF:L436",
+              "line": 436,
+              "verb": "IF",
+              "cobol": "IF DISCGRP-STATUS = '23'"
+            }
+          ],
+          "reads": [
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "FD-DIS-ACCT-GROUP-ID"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-071",
+          "paragraph": "1200-GET-INTEREST-RATE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1200-GET-INTEREST-RATE:16:EXIT:L440",
+              "line": 440,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1200-A-GET-DEFAULT-INT-RATE",
+      "line": 443,
+      "endLine": 461,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-072",
+          "paragraph": "1200-A-GET-DEFAULT-INT-RATE",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "1200-A-GET-DEFAULT-INT-RATE:1:READ:L444",
+              "line": 444,
+              "verb": "READ",
+              "cobol": "READ DISCGRP-FILE INTO DIS-GROUP-RECORD"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "DIS-GROUP-RECORD"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-073",
+          "paragraph": "1200-A-GET-DEFAULT-INT-RATE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "1200-A-GET-DEFAULT-INT-RATE:2:IF:L446",
+              "line": 446,
+              "verb": "IF",
+              "cobol": "IF DISCGRP-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-074",
+          "paragraph": "1200-A-GET-DEFAULT-INT-RATE",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "1200-A-GET-DEFAULT-INT-RATE:5:IF:L452",
+              "line": 452,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-075",
+          "paragraph": "1200-A-GET-DEFAULT-INT-RATE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1200-A-GET-DEFAULT-INT-RATE:11:EXIT:L460",
+              "line": 460,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1300-COMPUTE-INTEREST",
+      "line": 462,
+      "endLine": 472,
+      "role": "business-logic",
+      "segments": [
+        {
+          "id": "SEG-076",
+          "paragraph": "1300-COMPUTE-INTEREST",
+          "kind": "Logic",
+          "statements": [
+            {
+              "stepId": "1300-COMPUTE-INTEREST:1:COMPUTE:L464",
+              "line": 464,
+              "verb": "COMPUTE",
+              "cobol": "COMPUTE WS-MONTHLY-INT = ( TRAN-CAT-BAL * DIS-INT-RATE ) / 1200"
+            },
+            {
+              "stepId": "1300-COMPUTE-INTEREST:2:ADD:L467",
+              "line": 467,
+              "verb": "ADD",
+              "cobol": "ADD WS-MONTHLY-INT TO WS-TOTAL-INT"
+            }
+          ],
+          "reads": [
+            "DIS-INT-RATE",
+            "TRAN-CAT-BAL",
+            "WS-MONTHLY-INT",
+            "WS-TOTAL-INT"
+          ],
+          "writes": [
+            "WS-MONTHLY-INT",
+            "WS-TOTAL-INT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-077",
+          "paragraph": "1300-COMPUTE-INTEREST",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1300-COMPUTE-INTEREST:3:PERFORM:L468",
+              "line": 468,
+              "verb": "PERFORM",
+              "cobol": "PERFORM 1300-B-WRITE-TX"
+            },
+            {
+              "stepId": "1300-COMPUTE-INTEREST:4:EXIT:L470",
+              "line": 470,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1300-B-WRITE-TX",
+      "line": 473,
+      "endLine": 517,
+      "role": "orchestration",
+      "segments": [
+        {
+          "id": "SEG-078",
+          "paragraph": "1300-B-WRITE-TX",
+          "kind": "Logic",
+          "statements": [
+            {
+              "stepId": "1300-B-WRITE-TX:1:ADD:L474",
+              "line": 474,
+              "verb": "ADD",
+              "cobol": "ADD 1 TO WS-TRANID-SUFFIX"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:2:STRING:L476",
+              "line": 476,
+              "verb": "STRING",
+              "cobol": "STRING PARM-DATE WS-TRANID-SUFFIX DELIMITED BY SIZE INTO TRAN-ID END-STRING"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:3:MOVE:L482",
+              "line": 482,
+              "verb": "MOVE",
+              "cobol": "MOVE '01' TO TRAN-TYPE-CD"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:4:MOVE:L483",
+              "line": 483,
+              "verb": "MOVE",
+              "cobol": "MOVE '05' TO TRAN-CAT-CD"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:5:MOVE:L484",
+              "line": 484,
+              "verb": "MOVE",
+              "cobol": "MOVE 'System' TO TRAN-SOURCE"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:6:STRING:L485",
+              "line": 485,
+              "verb": "STRING",
+              "cobol": "STRING 'Int. for a/c ' ACCT-ID DELIMITED BY SIZE INTO TRAN-DESC END-STRING"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:7:MOVE:L490",
+              "line": 490,
+              "verb": "MOVE",
+              "cobol": "MOVE WS-MONTHLY-INT TO TRAN-AMT"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:8:MOVE:L491",
+              "line": 491,
+              "verb": "MOVE",
+              "cobol": "MOVE 0 TO TRAN-MERCHANT-ID"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:9:MOVE:L492",
+              "line": 492,
+              "verb": "MOVE",
+              "cobol": "MOVE SPACES TO TRAN-MERCHANT-NAME"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:10:MOVE:L493",
+              "line": 493,
+              "verb": "MOVE",
+              "cobol": "MOVE SPACES TO TRAN-MERCHANT-CITY"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:11:MOVE:L494",
+              "line": 494,
+              "verb": "MOVE",
+              "cobol": "MOVE SPACES TO TRAN-MERCHANT-ZIP"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:12:MOVE:L495",
+              "line": 495,
+              "verb": "MOVE",
+              "cobol": "MOVE XREF-CARD-NUM TO TRAN-CARD-NUM"
+            }
+          ],
+          "reads": [
+            "ACCT-ID",
+            "PARM-DATE",
+            "WS-MONTHLY-INT",
+            "WS-TRANID-SUFFIX",
+            "XREF-CARD-NUM"
+          ],
+          "writes": [
+            "TRAN-AMT",
+            "TRAN-CARD-NUM",
+            "TRAN-CAT-CD",
+            "TRAN-DESC",
+            "TRAN-ID",
+            "TRAN-MERCHANT-CITY",
+            "TRAN-MERCHANT-ID",
+            "TRAN-MERCHANT-NAME",
+            "TRAN-MERCHANT-ZIP",
+            "TRAN-SOURCE",
+            "TRAN-TYPE-CD",
+            "WS-TRANID-SUFFIX"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-079",
+          "paragraph": "1300-B-WRITE-TX",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1300-B-WRITE-TX:13:PERFORM:L496",
+              "line": 496,
+              "verb": "PERFORM",
+              "cobol": "PERFORM Z-GET-DB2-FORMAT-TIMESTAMP"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-080",
+          "paragraph": "1300-B-WRITE-TX",
+          "kind": "Logic",
+          "statements": [
+            {
+              "stepId": "1300-B-WRITE-TX:14:MOVE:L497",
+              "line": 497,
+              "verb": "MOVE",
+              "cobol": "MOVE DB2-FORMAT-TS TO TRAN-ORIG-TS"
+            },
+            {
+              "stepId": "1300-B-WRITE-TX:15:MOVE:L498",
+              "line": 498,
+              "verb": "MOVE",
+              "cobol": "MOVE DB2-FORMAT-TS TO TRAN-PROC-TS"
+            }
+          ],
+          "reads": [
+            "DB2-FORMAT-TS"
+          ],
+          "writes": [
+            "TRAN-ORIG-TS",
+            "TRAN-PROC-TS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-081",
+          "paragraph": "1300-B-WRITE-TX",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "1300-B-WRITE-TX:16:WRITE:L500",
+              "line": 500,
+              "verb": "WRITE",
+              "cobol": "WRITE FD-TRANFILE-REC FROM TRAN-RECORD"
+            }
+          ],
+          "reads": [
+            "TRAN-RECORD"
+          ],
+          "writes": [
+            "FD-TRANFILE-REC"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-082",
+          "paragraph": "1300-B-WRITE-TX",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "1300-B-WRITE-TX:17:IF:L501",
+              "line": 501,
+              "verb": "IF",
+              "cobol": "IF TRANFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "TRANFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-083",
+          "paragraph": "1300-B-WRITE-TX",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "1300-B-WRITE-TX:20:IF:L507",
+              "line": 507,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "TRANFILE-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-084",
+          "paragraph": "1300-B-WRITE-TX",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1300-B-WRITE-TX:26:EXIT:L515",
+              "line": 515,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "1400-COMPUTE-FEES",
+      "line": 518,
+      "endLine": 521,
+      "role": "orchestration",
+      "segments": [
+        {
+          "id": "SEG-085",
+          "paragraph": "1400-COMPUTE-FEES",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "1400-COMPUTE-FEES:1:EXIT:L520",
+              "line": 520,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "9000-TCATBALF-CLOSE",
+      "line": 522,
+      "endLine": 540,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-086",
+          "paragraph": "9000-TCATBALF-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9000-TCATBALF-CLOSE:1:MOVE:L523",
+              "line": 523,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-087",
+          "paragraph": "9000-TCATBALF-CLOSE",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "9000-TCATBALF-CLOSE:2:CLOSE:L524",
+              "line": 524,
+              "verb": "CLOSE",
+              "cobol": "CLOSE TCATBAL-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-088",
+          "paragraph": "9000-TCATBALF-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9000-TCATBALF-CLOSE:3:IF:L525",
+              "line": 525,
+              "verb": "IF",
+              "cobol": "IF TCATBALF-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "TCATBALF-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-089",
+          "paragraph": "9000-TCATBALF-CLOSE",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "9000-TCATBALF-CLOSE:6:IF:L530",
+              "line": 530,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "TCATBALF-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-090",
+          "paragraph": "9000-TCATBALF-CLOSE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "9000-TCATBALF-CLOSE:12:EXIT:L538",
+              "line": 538,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "9100-XREFFILE-CLOSE",
+      "line": 541,
+      "endLine": 558,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-091",
+          "paragraph": "9100-XREFFILE-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9100-XREFFILE-CLOSE:1:MOVE:L542",
+              "line": 542,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-092",
+          "paragraph": "9100-XREFFILE-CLOSE",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "9100-XREFFILE-CLOSE:2:CLOSE:L543",
+              "line": 543,
+              "verb": "CLOSE",
+              "cobol": "CLOSE XREF-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-093",
+          "paragraph": "9100-XREFFILE-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9100-XREFFILE-CLOSE:3:IF:L544",
+              "line": 544,
+              "verb": "IF",
+              "cobol": "IF XREFFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "XREFFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-094",
+          "paragraph": "9100-XREFFILE-CLOSE",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "9100-XREFFILE-CLOSE:6:IF:L549",
+              "line": 549,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "XREFFILE-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-095",
+          "paragraph": "9100-XREFFILE-CLOSE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "9100-XREFFILE-CLOSE:12:EXIT:L557",
+              "line": 557,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "9200-DISCGRP-CLOSE",
+      "line": 559,
+      "endLine": 576,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-096",
+          "paragraph": "9200-DISCGRP-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9200-DISCGRP-CLOSE:1:MOVE:L560",
+              "line": 560,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-097",
+          "paragraph": "9200-DISCGRP-CLOSE",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "9200-DISCGRP-CLOSE:2:CLOSE:L561",
+              "line": 561,
+              "verb": "CLOSE",
+              "cobol": "CLOSE DISCGRP-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-098",
+          "paragraph": "9200-DISCGRP-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9200-DISCGRP-CLOSE:3:IF:L562",
+              "line": 562,
+              "verb": "IF",
+              "cobol": "IF DISCGRP-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-099",
+          "paragraph": "9200-DISCGRP-CLOSE",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "9200-DISCGRP-CLOSE:6:IF:L567",
+              "line": 567,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "DISCGRP-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-100",
+          "paragraph": "9200-DISCGRP-CLOSE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "9200-DISCGRP-CLOSE:12:EXIT:L575",
+              "line": 575,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "9300-ACCTFILE-CLOSE",
+      "line": 577,
+      "endLine": 594,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-101",
+          "paragraph": "9300-ACCTFILE-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9300-ACCTFILE-CLOSE:1:MOVE:L578",
+              "line": 578,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-102",
+          "paragraph": "9300-ACCTFILE-CLOSE",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "9300-ACCTFILE-CLOSE:2:CLOSE:L579",
+              "line": 579,
+              "verb": "CLOSE",
+              "cobol": "CLOSE ACCOUNT-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-103",
+          "paragraph": "9300-ACCTFILE-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9300-ACCTFILE-CLOSE:3:IF:L580",
+              "line": 580,
+              "verb": "IF",
+              "cobol": "IF ACCTFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "ACCTFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-104",
+          "paragraph": "9300-ACCTFILE-CLOSE",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "9300-ACCTFILE-CLOSE:6:IF:L585",
+              "line": 585,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "ACCTFILE-STATUS",
+            "APPL-RESULT"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-105",
+          "paragraph": "9300-ACCTFILE-CLOSE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "9300-ACCTFILE-CLOSE:12:EXIT:L593",
+              "line": 593,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "9400-TRANFILE-CLOSE",
+      "line": 595,
+      "endLine": 612,
+      "role": "io-adapter",
+      "segments": [
+        {
+          "id": "SEG-106",
+          "paragraph": "9400-TRANFILE-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9400-TRANFILE-CLOSE:1:MOVE:L596",
+              "line": 596,
+              "verb": "MOVE",
+              "cobol": "MOVE 8 TO APPL-RESULT"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-107",
+          "paragraph": "9400-TRANFILE-CLOSE",
+          "kind": "Io",
+          "statements": [
+            {
+              "stepId": "9400-TRANFILE-CLOSE:2:CLOSE:L597",
+              "line": 597,
+              "verb": "CLOSE",
+              "cobol": "CLOSE TRANSACT-FILE"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-108",
+          "paragraph": "9400-TRANFILE-CLOSE",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "9400-TRANFILE-CLOSE:3:IF:L598",
+              "line": 598,
+              "verb": "IF",
+              "cobol": "IF TRANFILE-STATUS = '00'"
+            }
+          ],
+          "reads": [
+            "TRANFILE-STATUS"
+          ],
+          "writes": [
+            "APPL-RESULT"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-109",
+          "paragraph": "9400-TRANFILE-CLOSE",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "9400-TRANFILE-CLOSE:6:IF:L603",
+              "line": 603,
+              "verb": "IF",
+              "cobol": "IF APPL-AOK"
+            }
+          ],
+          "reads": [
+            "APPL-RESULT",
+            "TRANFILE-STATUS"
+          ],
+          "writes": [
+            "IO-STATUS"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-110",
+          "paragraph": "9400-TRANFILE-CLOSE",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "9400-TRANFILE-CLOSE:12:EXIT:L611",
+              "line": 611,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "Z-GET-DB2-FORMAT-TIMESTAMP",
+      "line": 613,
+      "endLine": 627,
+      "role": "business-logic",
+      "segments": [
+        {
+          "id": "SEG-111",
+          "paragraph": "Z-GET-DB2-FORMAT-TIMESTAMP",
+          "kind": "Logic",
+          "statements": [
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:1:MOVE:L614",
+              "line": 614,
+              "verb": "MOVE",
+              "cobol": "MOVE FUNCTION CURRENT-DATE TO COBOL-TS"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:2:MOVE:L615",
+              "line": 615,
+              "verb": "MOVE",
+              "cobol": "MOVE COB-YYYY TO DB2-YYYY"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:3:MOVE:L616",
+              "line": 616,
+              "verb": "MOVE",
+              "cobol": "MOVE COB-MM TO DB2-MM"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:4:MOVE:L617",
+              "line": 617,
+              "verb": "MOVE",
+              "cobol": "MOVE COB-DD TO DB2-DD"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:5:MOVE:L618",
+              "line": 618,
+              "verb": "MOVE",
+              "cobol": "MOVE COB-HH TO DB2-HH"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:6:MOVE:L619",
+              "line": 619,
+              "verb": "MOVE",
+              "cobol": "MOVE COB-MIN TO DB2-MIN"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:7:MOVE:L620",
+              "line": 620,
+              "verb": "MOVE",
+              "cobol": "MOVE COB-SS TO DB2-SS"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:8:MOVE:L621",
+              "line": 621,
+              "verb": "MOVE",
+              "cobol": "MOVE COB-MIL TO DB2-MIL"
+            }
+          ],
+          "reads": [
+            "COB-DD",
+            "COB-HH",
+            "COB-MIL",
+            "COB-MIN",
+            "COB-MM",
+            "COB-SS",
+            "COB-YYYY"
+          ],
+          "writes": [
+            "COBOL-TS",
+            "DB2-DD",
+            "DB2-HH",
+            "DB2-MIL",
+            "DB2-MIN",
+            "DB2-MM",
+            "DB2-SS",
+            "DB2-YYYY"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-112",
+          "paragraph": "Z-GET-DB2-FORMAT-TIMESTAMP",
+          "kind": "ControlFlag",
+          "statements": [
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:9:MOVE:L622",
+              "line": 622,
+              "verb": "MOVE",
+              "cobol": "MOVE '0000' TO DB2-REST"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:10:MOVE:L623",
+              "line": 623,
+              "verb": "MOVE",
+              "cobol": "MOVE '-' TO DB2-STREEP-1 DB2-STREEP-2 DB2-STREEP-3"
+            },
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:11:MOVE:L624",
+              "line": 624,
+              "verb": "MOVE",
+              "cobol": "MOVE '.' TO DB2-DOT-1 DB2-DOT-2 DB2-DOT-3"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "DB2-DOT-1",
+            "DB2-DOT-2",
+            "DB2-DOT-3",
+            "DB2-REST",
+            "DB2-STREEP-1",
+            "DB2-STREEP-2",
+            "DB2-STREEP-3"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-113",
+          "paragraph": "Z-GET-DB2-FORMAT-TIMESTAMP",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:12:EXIT:L626",
+              "line": 626,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "9999-ABEND-PROGRAM",
+      "line": 628,
+      "endLine": 634,
+      "role": "error-handling",
+      "segments": [
+        {
+          "id": "SEG-114",
+          "paragraph": "9999-ABEND-PROGRAM",
+          "kind": "Console",
+          "statements": [
+            {
+              "stepId": "9999-ABEND-PROGRAM:1:DISPLAY:L629",
+              "line": 629,
+              "verb": "DISPLAY",
+              "cobol": "DISPLAY 'ABENDING PROGRAM'"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        },
+        {
+          "id": "SEG-115",
+          "paragraph": "9999-ABEND-PROGRAM",
+          "kind": "Logic",
+          "statements": [
+            {
+              "stepId": "9999-ABEND-PROGRAM:2:MOVE:L630",
+              "line": 630,
+              "verb": "MOVE",
+              "cobol": "MOVE 0 TO TIMING"
+            },
+            {
+              "stepId": "9999-ABEND-PROGRAM:3:MOVE:L631",
+              "line": 631,
+              "verb": "MOVE",
+              "cobol": "MOVE 999 TO ABCODE"
+            }
+          ],
+          "reads": [],
+          "writes": [
+            "ABCODE",
+            "TIMING"
+          ],
+          "children": []
+        },
+        {
+          "id": "SEG-116",
+          "paragraph": "9999-ABEND-PROGRAM",
+          "kind": "ErrorHandling",
+          "statements": [
+            {
+              "stepId": "9999-ABEND-PROGRAM:4:CALL:L632",
+              "line": 632,
+              "verb": "CALL",
+              "cobol": "CALL 'CEE3ABD' USING ABCODE TIMING"
+            }
+          ],
+          "reads": [
+            "ABCODE",
+            "TIMING"
+          ],
+          "writes": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "paragraph": "9910-DISPLAY-IO-STATUS",
+      "line": 635,
+      "endLine": 648,
+      "role": "error-handling",
+      "segments": [
+        {
+          "id": "SEG-121",
+          "paragraph": "9910-DISPLAY-IO-STATUS",
+          "kind": "Decision",
+          "statements": [
+            {
+              "stepId": "9910-DISPLAY-IO-STATUS:1:IF:L636",
+              "line": 636,
+              "verb": "IF",
+              "cobol": "IF IO-STATUS NOT NUMERIC OR IO-STAT1 = '9'"
+            }
+          ],
+          "reads": [
+            "IO-STAT1",
+            "IO-STAT2",
+            "IO-STATUS",
+            "IO-STATUS-04",
+            "TWO-BYTES-BINARY"
+          ],
+          "writes": [
+            "IO-STATUS-04",
+            "IO-STATUS-0403",
+            "TWO-BYTES-BINARY",
+            "TWO-BYTES-RIGHT"
+          ],
+          "children": [
+            {
+              "id": "SEG-117",
+              "paragraph": "9910-DISPLAY-IO-STATUS",
+              "kind": "Logic",
+              "statements": [
+                {
+                  "stepId": "9910-DISPLAY-IO-STATUS:2:MOVE:L638",
+                  "line": 638,
+                  "verb": "MOVE",
+                  "cobol": "MOVE IO-STAT1 TO IO-STATUS-04 ( 1 : 1 )"
+                },
+                {
+                  "stepId": "9910-DISPLAY-IO-STATUS:3:MOVE:L639",
+                  "line": 639,
+                  "verb": "MOVE",
+                  "cobol": "MOVE 0 TO TWO-BYTES-BINARY"
+                },
+                {
+                  "stepId": "9910-DISPLAY-IO-STATUS:4:MOVE:L640",
+                  "line": 640,
+                  "verb": "MOVE",
+                  "cobol": "MOVE IO-STAT2 TO TWO-BYTES-RIGHT"
+                },
+                {
+                  "stepId": "9910-DISPLAY-IO-STATUS:5:MOVE:L641",
+                  "line": 641,
+                  "verb": "MOVE",
+                  "cobol": "MOVE TWO-BYTES-BINARY TO IO-STATUS-0403"
+                }
+              ],
+              "reads": [
+                "IO-STAT1",
+                "IO-STAT2",
+                "TWO-BYTES-BINARY"
+              ],
+              "writes": [
+                "IO-STATUS-04",
+                "IO-STATUS-0403",
+                "TWO-BYTES-BINARY",
+                "TWO-BYTES-RIGHT"
+              ],
+              "children": [],
+              "condition": "TRUE"
+            },
+            {
+              "id": "SEG-118",
+              "paragraph": "9910-DISPLAY-IO-STATUS",
+              "kind": "Console",
+              "statements": [
+                {
+                  "stepId": "9910-DISPLAY-IO-STATUS:6:DISPLAY:L642",
+                  "line": 642,
+                  "verb": "DISPLAY",
+                  "cobol": "DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04"
+                }
+              ],
+              "reads": [
+                "IO-STATUS-04"
+              ],
+              "writes": [],
+              "children": [],
+              "condition": "TRUE"
+            },
+            {
+              "id": "SEG-119",
+              "paragraph": "9910-DISPLAY-IO-STATUS",
+              "kind": "Logic",
+              "statements": [
+                {
+                  "stepId": "9910-DISPLAY-IO-STATUS:7:MOVE:L644",
+                  "line": 644,
+                  "verb": "MOVE",
+                  "cobol": "MOVE '0000' TO IO-STATUS-04"
+                },
+                {
+                  "stepId": "9910-DISPLAY-IO-STATUS:8:MOVE:L645",
+                  "line": 645,
+                  "verb": "MOVE",
+                  "cobol": "MOVE IO-STATUS TO IO-STATUS-04 ( 3 : 2 )"
+                }
+              ],
+              "reads": [
+                "IO-STATUS"
+              ],
+              "writes": [
+                "IO-STATUS-04"
+              ],
+              "children": [],
+              "condition": "FALSE"
+            },
+            {
+              "id": "SEG-120",
+              "paragraph": "9910-DISPLAY-IO-STATUS",
+              "kind": "Console",
+              "statements": [
+                {
+                  "stepId": "9910-DISPLAY-IO-STATUS:9:DISPLAY:L646",
+                  "line": 646,
+                  "verb": "DISPLAY",
+                  "cobol": "DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04"
+                }
+              ],
+              "reads": [
+                "IO-STATUS-04"
+              ],
+              "writes": [],
+              "children": [],
+              "condition": "FALSE"
+            }
+          ],
+          "condition": "IF IO-STATUS NOT NUMERIC OR IO-STAT1 = '9'"
+        },
+        {
+          "id": "SEG-122",
+          "paragraph": "9910-DISPLAY-IO-STATUS",
+          "kind": "Control",
+          "statements": [
+            {
+              "stepId": "9910-DISPLAY-IO-STATUS:10:EXIT:L648",
+              "line": 648,
+              "verb": "EXIT",
+              "cobol": "EXIT"
+            }
+          ],
+          "reads": [],
+          "writes": [],
+          "children": []
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "R-CBACT04C-001",
+      "paragraph": "MAINLINE",
+      "kind": "logic",
+      "when": [
+        "PERFORM UNTIL END-OF-FILE = 'Y'",
+        "IF END-OF-FILE = 'N'",
+        "IF END-OF-FILE = 'N'"
+      ],
+      "statements": [
+        {
+          "stepId": "MAINLINE:11:ADD:L192",
+          "line": 192,
+          "verb": "ADD",
+          "cobol": "ADD 1 TO WS-RECORD-COUNT"
+        }
+      ],
+      "reads": [
+        "WS-RECORD-COUNT"
+      ],
+      "writes": [
+        "WS-RECORD-COUNT"
+      ]
+    },
+    {
+      "id": "R-CBACT04C-002",
+      "paragraph": "MAINLINE",
+      "kind": "logic",
+      "when": [
+        "PERFORM UNTIL END-OF-FILE = 'Y'",
+        "IF END-OF-FILE = 'N'",
+        "IF END-OF-FILE = 'N'",
+        "IF TRANCAT-ACCT-ID NOT = WS-LAST-ACCT-NUM"
+      ],
+      "statements": [
+        {
+          "stepId": "MAINLINE:17:MOVE:L200",
+          "line": 200,
+          "verb": "MOVE",
+          "cobol": "MOVE 0 TO WS-TOTAL-INT"
+        },
+        {
+          "stepId": "MAINLINE:18:MOVE:L201",
+          "line": 201,
+          "verb": "MOVE",
+          "cobol": "MOVE TRANCAT-ACCT-ID TO WS-LAST-ACCT-NUM"
+        },
+        {
+          "stepId": "MAINLINE:19:MOVE:L202",
+          "line": 202,
+          "verb": "MOVE",
+          "cobol": "MOVE TRANCAT-ACCT-ID TO FD-ACCT-ID"
+        }
+      ],
+      "reads": [
+        "TRANCAT-ACCT-ID"
+      ],
+      "writes": [
+        "FD-ACCT-ID",
+        "WS-LAST-ACCT-NUM",
+        "WS-TOTAL-INT"
+      ]
+    },
+    {
+      "id": "R-CBACT04C-003",
+      "paragraph": "MAINLINE",
+      "kind": "logic",
+      "when": [
+        "PERFORM UNTIL END-OF-FILE = 'Y'",
+        "IF END-OF-FILE = 'N'",
+        "IF END-OF-FILE = 'N'",
+        "IF TRANCAT-ACCT-ID NOT = WS-LAST-ACCT-NUM"
+      ],
+      "statements": [
+        {
+          "stepId": "MAINLINE:21:MOVE:L204",
+          "line": 204,
+          "verb": "MOVE",
+          "cobol": "MOVE TRANCAT-ACCT-ID TO FD-XREF-ACCT-ID"
+        }
+      ],
+      "reads": [
+        "TRANCAT-ACCT-ID"
+      ],
+      "writes": [
+        "FD-XREF-ACCT-ID"
+      ]
+    },
+    {
+      "id": "R-CBACT04C-004",
+      "paragraph": "MAINLINE",
+      "kind": "logic",
+      "when": [
+        "PERFORM UNTIL END-OF-FILE = 'Y'",
+        "IF END-OF-FILE = 'N'",
+        "IF END-OF-FILE = 'N'"
+      ],
+      "statements": [
+        {
+          "stepId": "MAINLINE:24:MOVE:L211",
+          "line": 211,
+          "verb": "MOVE",
+          "cobol": "MOVE TRANCAT-CD TO FD-DIS-TRAN-CAT-CD"
+        },
+        {
+          "stepId": "MAINLINE:25:MOVE:L212",
+          "line": 212,
+          "verb": "MOVE",
+          "cobol": "MOVE TRANCAT-TYPE-CD TO FD-DIS-TRAN-TYPE-CD"
+        }
+      ],
+      "reads": [
+        "TRANCAT-CD",
+        "TRANCAT-TYPE-CD"
+      ],
+      "writes": [
+        "FD-DIS-TRAN-CAT-CD",
+        "FD-DIS-TRAN-TYPE-CD"
+      ]
+    },
+    {
+      "id": "R-CBACT04C-005",
+      "paragraph": "1050-UPDATE-ACCOUNT",
+      "kind": "logic",
+      "when": [],
+      "statements": [
+        {
+          "stepId": "1050-UPDATE-ACCOUNT:1:ADD:L352",
+          "line": 352,
+          "verb": "ADD",
+          "cobol": "ADD WS-TOTAL-INT TO ACCT-CURR-BAL"
+        },
+        {
+          "stepId": "1050-UPDATE-ACCOUNT:2:MOVE:L353",
+          "line": 353,
+          "verb": "MOVE",
+          "cobol": "MOVE 0 TO ACCT-CURR-CYC-CREDIT"
+        },
+        {
+          "stepId": "1050-UPDATE-ACCOUNT:3:MOVE:L354",
+          "line": 354,
+          "verb": "MOVE",
+          "cobol": "MOVE 0 TO ACCT-CURR-CYC-DEBIT"
+        }
+      ],
+      "reads": [
+        "ACCT-CURR-BAL",
+        "WS-TOTAL-INT"
+      ],
+      "writes": [
+        "ACCT-CURR-BAL",
+        "ACCT-CURR-CYC-CREDIT",
+        "ACCT-CURR-CYC-DEBIT"
+      ]
+    },
+    {
+      "id": "R-CBACT04C-006",
+      "paragraph": "1300-COMPUTE-INTEREST",
+      "kind": "logic",
+      "when": [],
+      "statements": [
+        {
+          "stepId": "1300-COMPUTE-INTEREST:1:COMPUTE:L464",
+          "line": 464,
+          "verb": "COMPUTE",
+          "cobol": "COMPUTE WS-MONTHLY-INT = ( TRAN-CAT-BAL * DIS-INT-RATE ) / 1200"
+        },
+        {
+          "stepId": "1300-COMPUTE-INTEREST:2:ADD:L467",
+          "line": 467,
+          "verb": "ADD",
+          "cobol": "ADD WS-MONTHLY-INT TO WS-TOTAL-INT"
+        }
+      ],
+      "reads": [
+        "DIS-INT-RATE",
+        "TRAN-CAT-BAL",
+        "WS-MONTHLY-INT",
+        "WS-TOTAL-INT"
+      ],
+      "writes": [
+        "WS-MONTHLY-INT",
+        "WS-TOTAL-INT"
+      ]
+    },
+    {
+      "id": "R-CBACT04C-007",
+      "paragraph": "1300-B-WRITE-TX",
+      "kind": "logic",
+      "when": [],
+      "statements": [
+        {
+          "stepId": "1300-B-WRITE-TX:1:ADD:L474",
+          "line": 474,
+          "verb": "ADD",
+          "cobol": "ADD 1 TO WS-TRANID-SUFFIX"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:2:STRING:L476",
+          "line": 476,
+          "verb": "STRING",
+          "cobol": "STRING PARM-DATE WS-TRANID-SUFFIX DELIMITED BY SIZE INTO TRAN-ID END-STRING"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:3:MOVE:L482",
+          "line": 482,
+          "verb": "MOVE",
+          "cobol": "MOVE '01' TO TRAN-TYPE-CD"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:4:MOVE:L483",
+          "line": 483,
+          "verb": "MOVE",
+          "cobol": "MOVE '05' TO TRAN-CAT-CD"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:5:MOVE:L484",
+          "line": 484,
+          "verb": "MOVE",
+          "cobol": "MOVE 'System' TO TRAN-SOURCE"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:6:STRING:L485",
+          "line": 485,
+          "verb": "STRING",
+          "cobol": "STRING 'Int. for a/c ' ACCT-ID DELIMITED BY SIZE INTO TRAN-DESC END-STRING"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:7:MOVE:L490",
+          "line": 490,
+          "verb": "MOVE",
+          "cobol": "MOVE WS-MONTHLY-INT TO TRAN-AMT"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:8:MOVE:L491",
+          "line": 491,
+          "verb": "MOVE",
+          "cobol": "MOVE 0 TO TRAN-MERCHANT-ID"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:9:MOVE:L492",
+          "line": 492,
+          "verb": "MOVE",
+          "cobol": "MOVE SPACES TO TRAN-MERCHANT-NAME"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:10:MOVE:L493",
+          "line": 493,
+          "verb": "MOVE",
+          "cobol": "MOVE SPACES TO TRAN-MERCHANT-CITY"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:11:MOVE:L494",
+          "line": 494,
+          "verb": "MOVE",
+          "cobol": "MOVE SPACES TO TRAN-MERCHANT-ZIP"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:12:MOVE:L495",
+          "line": 495,
+          "verb": "MOVE",
+          "cobol": "MOVE XREF-CARD-NUM TO TRAN-CARD-NUM"
+        }
+      ],
+      "reads": [
+        "ACCT-ID",
+        "PARM-DATE",
+        "WS-MONTHLY-INT",
+        "WS-TRANID-SUFFIX",
+        "XREF-CARD-NUM"
+      ],
+      "writes": [
+        "TRAN-AMT",
+        "TRAN-CARD-NUM",
+        "TRAN-CAT-CD",
+        "TRAN-DESC",
+        "TRAN-ID",
+        "TRAN-MERCHANT-CITY",
+        "TRAN-MERCHANT-ID",
+        "TRAN-MERCHANT-NAME",
+        "TRAN-MERCHANT-ZIP",
+        "TRAN-SOURCE",
+        "TRAN-TYPE-CD",
+        "WS-TRANID-SUFFIX"
+      ]
+    },
+    {
+      "id": "R-CBACT04C-008",
+      "paragraph": "1300-B-WRITE-TX",
+      "kind": "logic",
+      "when": [],
+      "statements": [
+        {
+          "stepId": "1300-B-WRITE-TX:14:MOVE:L497",
+          "line": 497,
+          "verb": "MOVE",
+          "cobol": "MOVE DB2-FORMAT-TS TO TRAN-ORIG-TS"
+        },
+        {
+          "stepId": "1300-B-WRITE-TX:15:MOVE:L498",
+          "line": 498,
+          "verb": "MOVE",
+          "cobol": "MOVE DB2-FORMAT-TS TO TRAN-PROC-TS"
+        }
+      ],
+      "reads": [
+        "DB2-FORMAT-TS"
+      ],
+      "writes": [
+        "TRAN-ORIG-TS",
+        "TRAN-PROC-TS"
+      ]
+    },
+    {
+      "id": "R-CBACT04C-009",
+      "paragraph": "Z-GET-DB2-FORMAT-TIMESTAMP",
+      "kind": "logic",
+      "when": [],
+      "statements": [
+        {
+          "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:1:MOVE:L614",
+          "line": 614,
+          "verb": "MOVE",
+          "cobol": "MOVE FUNCTION CURRENT-DATE TO COBOL-TS"
+        },
+        {
+          "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:2:MOVE:L615",
+          "line": 615,
+          "verb": "MOVE",
+          "cobol": "MOVE COB-YYYY TO DB2-YYYY"
+        },
+        {
+          "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:3:MOVE:L616",
+          "line": 616,
+          "verb": "MOVE",
+          "cobol": "MOVE COB-MM TO DB2-MM"
+        },
+        {
+          "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:4:MOVE:L617",
+          "line": 617,
+          "verb": "MOVE",
+          "cobol": "MOVE COB-DD TO DB2-DD"
+        },
+        {
+          "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:5:MOVE:L618",
+          "line": 618,
+          "verb": "MOVE",
+          "cobol": "MOVE COB-HH TO DB2-HH"
+        },
+        {
+          "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:6:MOVE:L619",
+          "line": 619,
+          "verb": "MOVE",
+          "cobol": "MOVE COB-MIN TO DB2-MIN"
+        },
+        {
+          "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:7:MOVE:L620",
+          "line": 620,
+          "verb": "MOVE",
+          "cobol": "MOVE COB-SS TO DB2-SS"
+        },
+        {
+          "stepId": "Z-GET-DB2-FORMAT-TIMESTAMP:8:MOVE:L621",
+          "line": 621,
+          "verb": "MOVE",
+          "cobol": "MOVE COB-MIL TO DB2-MIL"
+        }
+      ],
+      "reads": [
+        "COB-DD",
+        "COB-HH",
+        "COB-MIL",
+        "COB-MIN",
+        "COB-MM",
+        "COB-SS",
+        "COB-YYYY"
+      ],
+      "writes": [
+        "COBOL-TS",
+        "DB2-DD",
+        "DB2-HH",
+        "DB2-MIL",
+        "DB2-MIN",
+        "DB2-MM",
+        "DB2-SS",
+        "DB2-YYYY"
+      ]
+    }
+  ],
+  "observableOutputs": {
+    "console": [
+      {
+        "stepId": "MAINLINE:1:DISPLAY:L181",
+        "line": 181,
+        "cobol": "DISPLAY 'START OF EXECUTION OF PROGRAM CBACT04C'"
+      },
+      {
+        "stepId": "MAINLINE:12:DISPLAY:L193",
+        "line": 193,
+        "cobol": "DISPLAY TRAN-CAT-BAL-RECORD"
+      },
+      {
+        "stepId": "MAINLINE:36:DISPLAY:L230",
+        "line": 230,
+        "cobol": "DISPLAY 'END OF EXECUTION OF PROGRAM CBACT04C'"
+      },
+      {
+        "stepId": "0000-TCATBALF-OPEN:8:DISPLAY:L245",
+        "line": 245,
+        "cobol": "DISPLAY 'ERROR OPENING TRANSACTION CATEGORY BALANCE'"
+      },
+      {
+        "stepId": "0100-XREFFILE-OPEN:8:DISPLAY:L263",
+        "line": 263,
+        "cobol": "DISPLAY 'ERROR OPENING CROSS REF FILE' XREFFILE-STATUS"
+      },
+      {
+        "stepId": "0200-DISCGRP-OPEN:8:DISPLAY:L281",
+        "line": 281,
+        "cobol": "DISPLAY 'ERROR OPENING DALY REJECTS FILE'"
+      },
+      {
+        "stepId": "0300-ACCTFILE-OPEN:8:DISPLAY:L300",
+        "line": 300,
+        "cobol": "DISPLAY 'ERROR OPENING ACCOUNT MASTER FILE'"
+      },
+      {
+        "stepId": "0400-TRANFILE-OPEN:8:DISPLAY:L318",
+        "line": 318,
+        "cobol": "DISPLAY 'ERROR OPENING TRANSACTION FILE'"
+      },
+      {
+        "stepId": "1000-TCATBALF-GET-NEXT:11:DISPLAY:L342",
+        "line": 342,
+        "cobol": "DISPLAY 'ERROR READING TRANSACTION CATEGORY FILE'"
+      },
+      {
+        "stepId": "1050-UPDATE-ACCOUNT:10:DISPLAY:L365",
+        "line": 365,
+        "cobol": "DISPLAY 'ERROR RE-WRITING ACCOUNT FILE'"
+      },
+      {
+        "stepId": "1100-GET-ACCT-DATA:2:DISPLAY:L375",
+        "line": 375,
+        "cobol": "DISPLAY 'ACCOUNT NOT FOUND: ' FD-ACCT-ID"
+      },
+      {
+        "stepId": "1100-GET-ACCT-DATA:8:DISPLAY:L386",
+        "line": 386,
+        "cobol": "DISPLAY 'ERROR READING ACCOUNT FILE'"
+      },
+      {
+        "stepId": "1110-GET-XREF-DATA:2:DISPLAY:L397",
+        "line": 397,
+        "cobol": "DISPLAY 'ACCOUNT NOT FOUND: ' FD-XREF-ACCT-ID"
+      },
+      {
+        "stepId": "1110-GET-XREF-DATA:8:DISPLAY:L408",
+        "line": 408,
+        "cobol": "DISPLAY 'ERROR READING XREF FILE'"
+      },
+      {
+        "stepId": "1200-GET-INTEREST-RATE:2:DISPLAY:L418",
+        "line": 418,
+        "cobol": "DISPLAY 'DISCLOSURE GROUP RECORD MISSING'"
+      },
+      {
+        "stepId": "1200-GET-INTEREST-RATE:3:DISPLAY:L419",
+        "line": 419,
+        "cobol": "DISPLAY 'TRY WITH DEFAULT GROUP CODE'"
+      },
+      {
+        "stepId": "1200-GET-INTEREST-RATE:9:DISPLAY:L431",
+        "line": 431,
+        "cobol": "DISPLAY 'ERROR READING DISCLOSURE GROUP FILE'"
+      },
+      {
+        "stepId": "1200-A-GET-DEFAULT-INT-RATE:7:DISPLAY:L455",
+        "line": 455,
+        "cobol": "DISPLAY 'ERROR READING DEFAULT DISCLOSURE GROUP'"
+      },
+      {
+        "stepId": "1300-B-WRITE-TX:22:DISPLAY:L510",
+        "line": 510,
+        "cobol": "DISPLAY 'ERROR WRITING TRANSACTION RECORD'"
+      },
+      {
+        "stepId": "9000-TCATBALF-CLOSE:8:DISPLAY:L533",
+        "line": 533,
+        "cobol": "DISPLAY 'ERROR CLOSING TRANSACTION BALANCE FILE'"
+      },
+      {
+        "stepId": "9100-XREFFILE-CLOSE:8:DISPLAY:L552",
+        "line": 552,
+        "cobol": "DISPLAY 'ERROR CLOSING CROSS REF FILE'"
+      },
+      {
+        "stepId": "9200-DISCGRP-CLOSE:8:DISPLAY:L570",
+        "line": 570,
+        "cobol": "DISPLAY 'ERROR CLOSING DISCLOSURE GROUP FILE'"
+      },
+      {
+        "stepId": "9300-ACCTFILE-CLOSE:8:DISPLAY:L588",
+        "line": 588,
+        "cobol": "DISPLAY 'ERROR CLOSING ACCOUNT FILE'"
+      },
+      {
+        "stepId": "9400-TRANFILE-CLOSE:8:DISPLAY:L606",
+        "line": 606,
+        "cobol": "DISPLAY 'ERROR CLOSING TRANSACTION FILE'"
+      },
+      {
+        "stepId": "9999-ABEND-PROGRAM:1:DISPLAY:L629",
+        "line": 629,
+        "cobol": "DISPLAY 'ABENDING PROGRAM'"
+      },
+      {
+        "stepId": "9910-DISPLAY-IO-STATUS:6:DISPLAY:L642",
+        "line": 642,
+        "cobol": "DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04"
+      },
+      {
+        "stepId": "9910-DISPLAY-IO-STATUS:9:DISPLAY:L646",
+        "line": 646,
+        "cobol": "DISPLAY 'FILE STATUS IS: NNNN' IO-STATUS-04"
+      }
+    ],
+    "returnCode": [],
+    "files": [
+      {
+        "dd": "ACCTFILE",
+        "volatileFields": [],
+        "volatileFieldsBasis": "flow-insensitive byte-range taint from FUNCTION CURRENT-DATE / WHEN-COMPILED and ACCEPT FROM DATE|TIME|DAY, propagated through MOVE (byte-mapped for alphanumeric and group moves), arithmetic, STRING, UNSTRING and WRITE/REWRITE FROM",
+        "layouts": [
+          {
+            "record": "ACCOUNT-RECORD",
+            "role": "DTL",
+            "length": 300
+          }
+        ]
+      },
+      {
+        "dd": "TRANSACT",
+        "volatileFields": [
+          "TRAN-RECORD.TRAN-ORIG-TS",
+          "TRAN-RECORD.TRAN-PROC-TS"
+        ],
+        "volatileFieldsBasis": "flow-insensitive byte-range taint from FUNCTION CURRENT-DATE / WHEN-COMPILED and ACCEPT FROM DATE|TIME|DAY, propagated through MOVE (byte-mapped for alphanumeric and group moves), arithmetic, STRING, UNSTRING and WRITE/REWRITE FROM",
+        "layouts": [
+          {
+            "record": "TRAN-RECORD",
+            "role": "DTL",
+            "length": 350
+          }
+        ]
+      }
+    ]
+  },
+  "legacyQuirks": [
+    {
+      "id": "Q-01",
+      "kind": "unreachable-branch",
+      "paragraph": "MAINLINE",
+      "stepId": "MAINLINE:8:IF:L189",
+      "description": "The ELSE of 'IF END-OF-FILE = 'N'' can never run: inside 'PERFORM UNTIL END-OF-FILE = Y' the flag only takes the values N, Y. Statements there (PERFORM 1050-UPDATE-ACCOUNT) are dead code.",
+      "evidence": "CBACT04C.cbl:189"
+    },
+    {
+      "id": "Q-02",
+      "kind": "stale-record-on-invalid-key",
+      "paragraph": "1100-GET-ACCT-DATA",
+      "stepId": "1100-GET-ACCT-DATA:1:READ:L373",
+      "description": "On INVALID KEY the INTO record (ACCOUNT-RECORD) keeps the previously read record's values.",
+      "evidence": "CBACT04C.cbl:373"
+    },
+    {
+      "id": "Q-03",
+      "kind": "stale-record-on-invalid-key",
+      "paragraph": "1110-GET-XREF-DATA",
+      "stepId": "1110-GET-XREF-DATA:1:READ:L394",
+      "description": "On INVALID KEY the INTO record (CARD-XREF-RECORD) keeps the previously read record's values.",
+      "evidence": "CBACT04C.cbl:394"
+    },
+    {
+      "id": "Q-04",
+      "kind": "stale-record-on-invalid-key",
+      "paragraph": "1200-GET-INTEREST-RATE",
+      "stepId": "1200-GET-INTEREST-RATE:1:READ:L416",
+      "description": "On INVALID KEY the INTO record (DIS-GROUP-RECORD) keeps the previously read record's values.",
+      "evidence": "CBACT04C.cbl:416"
+    },
+    {
+      "id": "Q-05",
+      "kind": "string-without-padding",
+      "paragraph": "1300-B-WRITE-TX",
+      "stepId": "1300-B-WRITE-TX:2:STRING:L476",
+      "description": "STRING does not pad TRAN-ID; bytes beyond the text keep their prior content (initially the storage default, x'00').",
+      "evidence": "CBACT04C.cbl:476"
+    },
+    {
+      "id": "Q-06",
+      "kind": "string-without-padding",
+      "paragraph": "1300-B-WRITE-TX",
+      "stepId": "1300-B-WRITE-TX:6:STRING:L485",
+      "description": "STRING does not pad TRAN-DESC; bytes beyond the text keep their prior content (initially the storage default, x'00').",
+      "evidence": "CBACT04C.cbl:485"
+    }
+  ],
+  "semantics": [
+    "Numeric receivers keep their PICTURE: integer digits beyond the PICTURE are truncated on the left (no ON SIZE ERROR is coded), fraction digits beyond the scale are truncated (no ROUNDED unless stated), an unsigned receiver stores the absolute value.",
+    "COMPUTE evaluates exactly, then stores with the receiver's truncation; division results are truncated at the receiver's scale.",
+    "Zoned decimal files carry the sign as an EBCDIC-style overpunch in the last byte ({ A-I positive, } J-R negative); unsigned fields hold plain digits.",
+    "Storage without a VALUE clause starts as binary zeros (x'00'); STRING does not pad its receiver.",
+    "DISPLAY of an unsigned numeric field prints its digits with leading zeros; DISPLAY of a group prints its raw bytes.",
+    "Alphanumeric receivers are left-justified and space-padded; comparisons of alphanumerics are byte-wise after space padding.",
+    "INDEXED files are fixed-length record images kept in primary-key order; SEQUENTIAL files are fixed-length records.",
+    "FUNCTION CURRENT-DATE gives YYYYMMDDHHMMSShh+hhmm from the batch clock; the DB2 timestamp built from it is YYYY-MM-DD-HH.MM.SS.hh0000."
+  ],
+  "acceptance": {
+    "oracle": "GnuCOBOL 3.3 running the original source (-std=ibm -fsign=EBCDIC), storage default x'00'",
+    "equality": "Every output dataset byte-identical; SYSOUT line-identical; same return code. Fields listed as volatile may differ only when the clock is not pinned.",
+    "clock": "Tests pin the batch clock (FUNCTION CURRENT-DATE) to a fixed instant.",
+    "regression": "tools/carddemo/Invoke-SpringJobParity.ps1 with --mlcpu.implementation=normalized"
+  },
+  "designContract": {
+    "output": "One JSON document conforming to design.schema.json (mlcpu.capability-design.v1).",
+    "rules": [
+      "Express business rules as typed Java over immutable records (BigDecimal for amounts, enums for reason codes, Optional for lookups).",
+      "Keep file formats behind repository/port interfaces; business services must not see byte offsets, file status codes or record images.",
+      "Every rule id in 'rules' must be traced to a design element, or dispositioned as 'not-needed' with a reason.",
+      "Every legacy quirk must be dispositioned: 'preserve' (needed for output parity) or 'fix' (behaviour change, requires business sign-off).",
+      "Every console line and output dataset in observableOutputs must be produced by a named design element.",
+      "Do not invent behaviour that the packet does not evidence."
+    ]
+  },
+  "requirementsHash": "2bf0c7cfda6bce92c8ac3a954229a5fa9c4bdefa3ab72307b8484f1256747f36"
+}

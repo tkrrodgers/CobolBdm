@@ -1,0 +1,43 @@
+@page "/"
+@inject ConfigService Config
+@inject ProjectService Projects
+@inject JavaSidecarService Sidecar
+@inject GraphService Graphs
+@inject GemmaService Gemma
+
+<PageTitle>COBOL BDM</PageTitle>
+
+<h2>COBOL → Java</h2>
+<p class="muted">C# analyses COBOL once into IR v1.2 with a resolved semantic tree (and a COBOL-85 AST from the grammars-v4 ANTLR grammar);
+the Java sidecar renders, compiles and verifies it. Generated programs run on the byte-backed <code>com.mlcpu.rt</code> runtime and are
+proven byte for byte against GnuCOBOL running the original source. Gemma 4 then re-expresses programs as idiomatic Java on the same proof.</p>
+
+<div class="cards">
+    <div class="card"><div class="muted">Sidecar</div><div class="n @(health is null ? "bad" : "ok")">@(health is null ? "down" : "up")</div><div class="muted">@Config.Settings.SidecarUrl</div></div>
+    <div class="card"><div class="muted">Projects</div><div class="n">@Projects.Projects.Count</div><div class="muted">@Projects.Root</div></div>
+    @if (Projects.Active is { } p)
+    {
+        <div class="card"><div class="muted">@p.Name: programs</div><div class="n">@p.Programs.Count</div><div class="muted">@p.Programs.Count(x => x.Kind == "batch") batch, @p.Programs.Count(x => x.Kind == "subprogram") subprogram, @p.Programs.Count(x => x.Kind == "online") online</div></div>
+        <div class="card"><div class="muted">GnuCOBOL oracle</div><div class="n @(p.Oracle.JobChecks.Count > 0 ? "ok" : "bad")">@(p.Oracle.JobChecks.Count > 0 ? p.Oracle.JobChecks.Sum(c => c.Outputs.Count) + " outputs" : "—")</div><div class="muted">@p.Oracle.JobChecks.Count job check(s)</div></div>
+        <div class="card"><div class="muted">Published estate vs GnuCOBOL</div>
+            <div class="n @(p.Publish.Last?.LastTest is { } t && t.Match == t.Outputs && t.Failed == 0 ? "ok" : "bad")">@(p.Publish.Last?.LastTest is { } t2 ? $"{t2.Match}/{t2.Outputs}" : "—")</div>
+            <div class="muted">@(p.Publish.Last?.LastTest is { } t3 ? $"tests {t3.Tests - t3.Failed}/{t3.Tests}" : "not tested")</div></div>
+        <div class="card"><div class="muted">Gemma 4 service vs GnuCOBOL</div>
+            <div class="n @(p.Gemma.LastTest is { } g && g.Match == g.Outputs && g.Failed == 0 ? "ok" : "bad")">@(p.Gemma.LastTest is { } g2 ? $"{g2.Match}/{g2.Outputs}" : "—")</div>
+            <div class="muted">@(p.Gemma.LastTest is { } g3 ? $"tests {g3.Tests - g3.Failed}/{g3.Tests}" : Gemma.Published(p) ? "not run" : "publish first")</div></div>
+    }
+</div>
+
+<h3>Workflow</h3>
+<ol>
+    <li><a href="settings">Settings</a>: onboard a repository (cloned once into the workspace), select it; build &amp; run the GnuCOBOL oracle (cached).</li>
+    <li><a href="graphs">Graphs</a>: COBOL-85 AST, call graph, DDG (JSON) and the PDG (in memory); cytoscape views.</li>
+    <li><a href="convert">Conversion</a>: transpile all programs, publish the normalized Spring estate with the capabilities layer, build &amp; test against GnuCOBOL.</li>
+    <li><a href="gemma">Gemma 4 Modernization</a>: design, publish the design to a service, test it against GnuCOBOL.</li>
+</ol>
+
+@code {
+    System.Text.Json.Nodes.JsonNode? health;
+
+    protected override async Task OnInitializedAsync() => health = await Sidecar.HealthAsync();
+}

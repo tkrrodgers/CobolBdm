@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MlCpu.JavaBridge</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MlCpu.Core\MlCpu.Core.csproj" />
+    <ProjectReference Include="..\MlCpu.Cobol.Analysis\MlCpu.Cobol.Analysis.csproj" />
+    <ProjectReference Include="..\MlCpu.CobolKb.Knowledge\MlCpu.CobolKb.Knowledge.csproj" />
+    <ProjectReference Include="..\MlCpu.Cobol.Antlr\MlCpu.Cobol.Antlr.csproj" />
+  </ItemGroup>
+</Project>

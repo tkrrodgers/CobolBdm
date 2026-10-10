@@ -1,0 +1,202 @@
+{
+  "schema": "mlcpu.capability-design.v1",
+  "programId": "CBACT04C",
+  "requirementsHash": "2bf0c7cfda6bce92c8ac3a954229a5fa9c4bdefa3ab72307b8484f1256747f36",
+  "capability": "InterestCalculation",
+  "package": "interestcalculation",
+  "summary": "Calculates monthly interest per account and transaction‑category balance and writes an interest transaction record.",
+  "domainModel": [
+    {
+      "name": "TransactionCategoryBalance",
+      "kind": "record",
+      "source": "FD-TRAN-CAT-BAL-RECORD",
+      "fields": [
+        { "name": "accountId", "type": "String", "cobol": "9(11)" },
+        { "name": "typeCode", "type": "String", "cobol": "X(02)" },
+        { "name": "categoryCode", "type": "String", "cobol": "9(04)" },
+        { "name": "balance", "type": "java.math.BigDecimal", "cobol": "S9(09)V99" }
+      ]
+    },
+    {
+      "name": "Account",
+      "kind": "record",
+      "source": "ACCOUNT-RECORD",
+      "fields": [
+        { "name": "accountId", "type": "String", "cobol": "9(11)" },
+        { "name": "activeStatus", "type": "AccountStatus", "cobol": "X(01)" },
+        { "name": "currentBalance", "type": "java.math.BigDecimal", "cobol": "S9(10)V99" },
+        { "name": "creditLimit", "type": "java.math.BigDecimal", "cobol": "S9(10)V99" },
+        { "name": "cashCreditLimit", "type": "java.math.BigDecimal", "cobol": "S9(10)V99" },
+        { "name": "openDate", "type": "String", "cobol": "X(10)" },
+        { "name": "expirationDate", "type": "String", "cobol": "X(10)" },
+        { "name": "reissueDate", "type": "String", "cobol": "X(10)" },
+        { "name": "currentCycleCredit", "type": "java.math.BigDecimal", "cobol": "S9(10)V99" },
+        { "name": "currentCycleDebit", "type": "java.math.BigDecimal", "cobol": "S9(10)V99" },
+        { "name": "zip", "type": "String", "cobol": "X(10)" },
+        { "name": "groupId", "type": "String", "cobol": "X(10)" }
+      ]
+    },
+    {
+      "name": "Transaction",
+      "kind": "record",
+      "source": "TRAN-RECORD",
+      "fields": [
+        { "name": "transactionId", "type": "String", "cobol": "X(16)" },
+        { "name": "typeCode", "type": "String", "cobol": "X(02)" },
+        { "name": "categoryCode", "type": "String", "cobol": "9(04)" },
+        { "name": "source", "type": "String", "cobol": "X(10)" },
+        { "name": "description", "type": "String", "cobol": "X(100)" },
+        { "name": "amount", "type": "java.math.BigDecimal", "cobol": "S9(09)V99" },
+        { "name": "merchantId", "type": "String", "cobol": "9(09)" },
+        { "name": "merchantName", "type": "String", "cobol": "X(50)" },
+        { "name": "merchantCity", "type": "String", "cobol": "X(50)" },
+        { "name": "merchantZip", "type": "String", "cobol": "X(10)" },
+        { "name": "cardNumber", "type": "String", "cobol": "X(16)" },
+        { "name": "originTimestamp", "type": "String", "cobol": "X(26)" },
+        { "name": "processTimestamp", "type": "String", "cobol": "X(26)" }
+      ]
+    },
+    {
+      "name": "DisclosureGroup",
+      "kind": "record",
+      "source": "DIS-GROUP-RECORD",
+      "fields": [
+        { "name": "groupId", "type": "String", "cobol": "X(10)" },
+        { "name": "transactionTypeCode", "type": "String", "cobol": "X(02)" },
+        { "name": "transactionCategoryCode", "type": "String", "cobol": "9(04)" },
+        { "name": "interestRate", "type": "java.math.BigDecimal", "cobol": "S9(04)V99" }
+      ]
+    },
+    {
+      "name": "Xref",
+      "kind": "record",
+      "source": "CARD-XREF-RECORD",
+      "fields": [
+        { "name": "cardNumber", "type": "String", "cobol": "X(16)" },
+        { "name": "customerId", "type": "String", "cobol": "9(09)" },
+        { "name": "accountId", "type": "String", "cobol": "9(11)" }
+      ]
+    },
+    {
+      "name": "AccountStatus",
+      "kind": "enum",
+      "source": "88‑LEVELS in ACCOUNT‑RECORD",
+      "fields": [
+        { "name": "ACTIVE", "type": "String", "cobol": "'A'" },
+        { "name": "INACTIVE", "type": "String", "cobol": "'I'" }
+      ]
+    }
+  ],
+  "ports": [
+    {
+      "name": "TransactionCategoryBalanceRepository",
+      "kind": "repository",
+      "file": "TCATBAL-FILE",
+      "methods": [
+        "streamAll()",
+        "findByAccountId(String accountId)"
+      ]
+    },
+    {
+      "name": "XrefRepository",
+      "kind": "repository",
+      "file": "XREF-FILE",
+      "methods": [
+        "findByAccountId(String accountId)",
+        "findByCardNumber(String cardNumber)"
+      ]
+    },
+    {
+      "name": "AccountRepository",
+      "kind": "repository",
+      "file": "ACCOUNT-FILE",
+      "methods": [
+        "findById(String accountId)",
+        "save(Account account)"
+      ]
+    },
+    {
+      "name": "DisclosureGroupRepository",
+      "kind": "repository",
+      "file": "DISCGRP",
+      "methods": [
+        "findByGroupIdAndTypeAndCategory(String groupId, String typeCd, String catCd)",
+        "findDefaultByGroupId(String groupId)"
+      ]
+    },
+    {
+      "name": "TransactionWriter",
+      "kind": "writer",
+      "file": "TRANSACT",
+      "methods": [
+        "write(Transaction transaction)"
+      ]
+    },
+    {
+      "name": "ConsolePort",
+      "kind": "console",
+      "file": "SYSOUT",
+      "methods": [
+        "display(String line)"
+      ]
+    },
+    {
+      "name": "ClockPort",
+      "kind": "clock",
+      "file": "SYSTEM",
+      "methods": [
+        "currentTimestamp()"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "InterestCalculationService",
+      "responsibility": "Orchestrates reading balances, applying interest rates, updating accounts and writing interest transactions.",
+      "methods": [
+        "run(String parmDate)"
+      ]
+    }
+  ],
+  "rules": [
+    { "ruleId": "R-CBACT04C-001", "disposition": "implemented", "element": "InterestCalculationService.run", "description": "Increment record count per balance record.", "reason": "Direct translation of ADD 1 TO WS-RECORD-COUNT." },
+    { "ruleId": "R-CBACT04C-002", "disposition": "implemented", "element": "InterestCalculationService.run", "description": "Reset totals when account id changes.", "reason": "MOVE 0 TO WS‑TOTAL‑INT and initialise work fields." },
+    { "ruleId": "R-CBACT04C-003", "disposition": "implemented", "element": "InterestCalculationService.run", "description": "Propagate account id to work fields.", "reason": "MOVE statements for FD‑ACCT‑ID and FD‑XREF‑ACCT‑ID." },
+    { "ruleId": "R-CBACT04C-004", "disposition": "implemented", "element": "InterestCalculationService.run", "description": "Move transaction category and type codes to disclosure‑group work fields.", "reason": "Corresponds to MOVE TRANCAT‑CD/TYPE‑CD." },
+    { "ruleId": "R-CBACT04C-005", "disposition": "implemented", "element": "InterestCalculationService.updateAccount", "description": "Add accumulated interest to account balance and reset cycle credit/debit.", "reason": "ADD WS‑TOTAL‑INT TO ACCT‑CURR‑BAL etc." },
+    { "ruleId": "R-CBACT04C-006", "disposition": "implemented", "element": "InterestCalculationService.computeInterest", "description": "Compute monthly interest from balance and rate.", "reason": "COMPUTE WS‑MONTHLY‑INT = (TRAN‑CAT‑BAL * DIS‑INT‑RATE) / 1200." },
+    { "ruleId": "R-CBACT04C-007", "disposition": "implemented", "element": "InterestCalculationService.writeInterestTransaction", "description": "Build and write an interest transaction record.", "reason": "All MOVE/STRING steps in 1300‑B‑WRITE‑TX." },
+    { "ruleId": "R-CBACT04C-008", "disposition": "implemented", "element": "InterestCalculationService.writeInterestTransaction", "description": "Populate DB2 timestamp fields.", "reason": "MOVE DB2‑FORMAT‑TS to TRAN‑ORIG‑TS / PROC‑TS." },
+    { "ruleId": "R-CBACT04C-009", "disposition": "implemented", "element": "ZGetDb2FormatTimestamp", "description": "Create DB2‑style timestamp from CURRENT‑DATE.", "reason": "Logic of Z‑GET‑DB2‑FORMAT‑TIMESTAMP." }
+  ],
+  "quirks": [
+    { "quirkId": "Q-01", "disposition": "fix", "reason": "Dead branch removed – never executed, safe to eliminate.", "element": "InterestCalculationService.run" },
+    { "quirkId": "Q-02", "disposition": "preserve", "reason": "COBOL retains previous ACCOUNT‑RECORD on INVALID KEY; required for byte‑for‑byte parity.", "element": "AccountRepository.findById" },
+    { "quirkId": "Q-03", "disposition": "preserve", "reason": "COBOL retains previous CARD‑XREF‑RECORD on INVALID KEY.", "element": "XrefRepository.findByAccountId" },
+    { "quirkId": "Q-04", "disposition": "preserve", "reason": "COBOL retains previous DIS‑GROUP‑RECORD on INVALID KEY.", "element": "DisclosureGroupRepository.findByGroupIdAndTypeAndCategory" },
+    { "quirkId": "Q-05", "disposition": "preserve", "reason": "STRING does not pad TRAN‑ID; leftover bytes must stay as default (x'00').", "element": "InterestCalculationService.writeInterestTransaction" },
+    { "quirkId": "Q-06", "disposition": "preserve", "reason": "STRING does not pad TRAN‑DESC; leftover bytes must stay as default (x'00').", "element": "InterestCalculationService.writeInterestTransaction" }
+  ],
+  "outputs": [
+    { "output": "SYSOUT", "producedBy": "ConsolePort.display", "format": "plain text lines" },
+    { "output": "TRANSACT", "producedBy": "TransactionWriter.write", "format": "fixed‑length 350‑byte records" }
+  ],
+  "tests": [
+    {
+      "name": "InterestCalculation_ParityTest",
+      "kind": "equivalence",
+      "covers": [
+        "R-CBACT04C-001",
+        "R-CBACT04C-002",
+        "R-CBACT04C-003",
+        "R-CBACT04C-004",
+        "R-CBACT04C-005",
+        "R-CBACT04C-006",
+        "R-CBACT04C-007",
+        "R-CBACT04C-008",
+        "R-CBACT04C-009"
+      ]
+    }
+  ],
+  "openQuestions": []
+}

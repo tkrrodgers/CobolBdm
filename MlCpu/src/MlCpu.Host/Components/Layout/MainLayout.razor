@@ -1,0 +1,90 @@
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject ProjectService Projects
+@inject OperationService Ops
+@inject GemmaService Gemma
+
+<div class="shell">
+    <nav class="side">
+        <div class="brand">COBOL BDM</div>
+        <NavLink href="" Match="NavLinkMatch.All">Overview</NavLink>
+        <NavLink href="settings">Settings</NavLink>
+        <div class="section">Active project</div>
+        <NavLink href="convert">Conversion</NavLink>
+        <NavLink href="graphs">Graphs</NavLink>
+        <NavLink href="jobs">Jobs</NavLink>
+        <NavLink href="parity">Parity</NavLink>
+        @if (Projects.Active is { } p && Gemma.Published(p))
+        {
+            <NavLink href="gemma">Gemma 4 Modernization</NavLink>
+        }
+        else
+        {
+            <span class="disabled" title="Publish the active project first (Conversion → Publish)">Gemma 4 Modernization<small>publish the project first</small></span>
+        }
+        @if (Projects.Active is { } c && Gemma.HasCode(c))
+        {
+            <NavLink href="gemma-code">View Gemma 4's Code</NavLink>
+        }
+        else
+        {
+            <span class="disabled" title="Run Gemma 4 Modernization (Design, then Publish design to service) first">View Gemma 4's Code<small>no Gemma code yet</small></span>
+        }
+    </nav>
+    <div class="main">
+        <header class="topbar">
+            @if (Projects.Active is { } a)
+            {
+                var running = Ops.All.Where(o => o.Running && o.ProjectId == a.Id).ToList();
+                <span class="project"><a href="settings" title="Select another project in Settings">Project: @a.Name</a></span>
+                <span class="path" title="Source (cloned at onboarding)">@Projects.SourceDir(a)</span>
+                <span class="chip">@a.Programs.Count program(s)</span>
+                <span class="chip @(a.Oracle.JobChecks.Count > 0 ? "ok" : "warn")" title="GnuCOBOL oracle">@(a.Oracle.JobChecks.Count > 0 ? $"oracle: {a.Oracle.JobChecks.Count} job check(s)" : "oracle not run")</span>
+                <span class="chip @(a.Publish.Last is null ? "" : "ok")">@(a.Publish.Last is null ? "not published" : $"published {a.Publish.Last.At[..16].Replace('T', ' ')}")</span>
+                @if (a.Publish.Last?.LastTest is { } t)
+                {
+                    <span class="chip @(t.Failed == 0 && t.Match == t.Outputs ? "ok" : "bad")">tests @(t.Tests - t.Failed)/@t.Tests · GnuCOBOL @t.Match/@t.Outputs</span>
+                }
+                @foreach (var o in running) { <span class="chip info">@o.Title…</span> }
+            }
+            else
+            {
+                <span class="project">No project selected</span>
+                <a href="settings">Onboard or select a project in Settings</a>
+            }
+        </header>
+        <main class="content">@Body</main>
+    </div>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    DateTime _last;
+
+    protected override void OnInitialized()
+    {
+        Projects.Changed += Refresh;
+        Ops.Changed += OnOp;
+    }
+
+    void Refresh() => InvokeAsync(StateHasChanged);
+
+    void OnOp(Operation o)
+    {
+        // Running chips: refresh at most every 2 s, and always when an operation starts or ends.
+        if (o.Running && (DateTime.Now - _last).TotalSeconds < 2) return;
+        _last = DateTime.Now;
+        Refresh();
+    }
+
+    public void Dispose()
+    {
+        Projects.Changed -= Refresh;
+        Ops.Changed -= OnOp;
+    }
+}

@@ -1,0 +1,144 @@
+@page "/gemma"
+@using System.Text.Json.Nodes
+@implements IDisposable
+@inject ProjectService Projects
+@inject WorkspaceActions Actions
+@inject OperationService Ops
+@inject GemmaService GemmaSvc
+@inject JobParityService Parity
+@inject ConfigService Config
+
+<PageTitle>Gemma 4 Modernization</PageTitle>
+<h2>Gemma 4 Modernization</h2>
+
+@if (Projects.Active is not { } p)
+{
+    <p>Select or onboard a project in <a href="settings">Settings</a>.</p>
+}
+else if (!GemmaSvc.Published(p))
+{
+    <p>Gemma works on a published estate: publish @p.Name first (<a href="convert">Conversion → Publish</a>).</p>
+}
+else
+{
+    var caps = GemmaSvc.Capabilities(p);
+    var statuses = caps.ToDictionary(c => c.ProgramId, c => GemmaSvc.Status(p, c.ProgramId));
+    var busy = Ops.IsRunning(p.Id, WorkspaceActions.GemmaDesign) || Ops.IsRunning(p.Id, WorkspaceActions.GemmaPublish);
+    <p class="muted">Gemma 4 (<code>@Path.GetFileName(Config.Settings.GemmaModel)</code>, llama.cpp, local) works from the published estate
+    <code>@p.Publish.Last!.Path</code>: it designs each program from its requirements packet and COBOL-85 AST outline, implements its own design on
+    the platform layer, and is judged by the program's equivalence test (normalized vs faithful in every scenario, and vs the GnuCOBOL oracle);
+    compiler errors and every differing byte go back to it until it passes or the attempts run out.</p>
+
+    <div class="panel">
+        <h3>1. Choose the COBOL programs</h3>
+        <div class="row">
+            <label>Number of programs</label>
+            <input type="number" min="1" max="@caps.Count" @bind="count" style="width:5rem" />
+            <button class="secondary" @onclick="() => SelectFirst(caps)">Select the first @count</button>
+            <span class="muted">or tick them below</span>
+        </div>
+        <table class="grid">
+            <tr><th></th><th>Program</th><th>Kind</th><th>Job</th><th>Entry class</th><th>Design</th><th>Implementation (equivalence test)</th></tr>
+            @foreach (var c in caps)
+            {
+                var s = statuses[c.ProgramId];
+                <tr class="@(chosen.Contains(c.ProgramId) ? "selected" : "")">
+                    <td><input type="checkbox" checked="@chosen.Contains(c.ProgramId)" @onchange="e => Toggle(c.ProgramId, (bool)e.Value!)" /></td>
+                    <td>@c.ProgramId</td><td>@c.Kind</td><td>@c.Job</td><td class="muted">@c.EntryClass</td>
+                    <td>@if (!s.Designed) { <span class="muted">—</span> } else { <span class="@(s.DesignValid ? "ok" : "bad")">@(s.DesignValid ? "valid" : "invalid") (@s.DesignAttempts attempt(s))</span> }</td>
+                    <td>@if (!s.Implemented) { <span class="muted">—</span> }
+                        else if (!s.Compiled) { <span class="bad">does not compile (@s.Attempts attempts)</span> }
+                        else { <span class="@(s.TestsTotal > 0 && s.TestsPassed == s.TestsTotal ? "ok" : "bad")">@s.TestsPassed/@s.TestsTotal scenarios</span>
+                               <span class="muted"> attempt @s.BestAttempt of @s.Attempts@(s.Minutes is { } m ? $", {m:N1} min" : "")@(s.AstOutline ? ", with AST outline" : "")</span> }</td>
+                </tr>
+            }
+        </table>
+        <div class="row">
+            <label>Options</label>
+            <span>design attempts <input type="number" min="1" max="5" @bind="designAttempts" style="width:4rem" /></span>
+            <span>implementation attempts <input type="number" min="1" max="30" @bind="implAttempts" style="width:4rem" /></span>
+            <label style="min-width:auto"><input type="checkbox" @bind="astOutline" /> AST outline in the prompts</label>
+            <label style="min-width:auto"><input type="checkbox" @bind="examples" /> worked examples + parity notes</label>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>2. Design</h3>
+        <div class="row">
+            <button disabled="@(busy || chosen.Count == 0)" @onclick="() => Actions.StartGemmaDesign(p.Id, Ordered(caps), Options())">Design @chosen.Count program(s) with Gemma 4</button>
+            <span class="muted">one model load (about 25 s), then one design per program (about 1–3 min each)</span>
+        </div>
+        <OperationPanel ProjectId="@p.Id" Kind="@WorkspaceActions.GemmaDesign" Completed="_ => Refresh()" Lines="25" />
+        @foreach (var c in caps.Where(c => chosen.Contains(c.ProgramId) && statuses[c.ProgramId].Design is not null))
+        {
+            <DesignView ProgramId="@c.ProgramId" Design="@(statuses[c.ProgramId].Design!)" Valid="@statuses[c.ProgramId].DesignValid" />
+        }
+    </div>
+
+    <div class="panel">
+        <h3>3. Publish Gemma's design to the service</h3>
+        <p class="muted">Gemma implements each valid design; every attempt is compiled in a harness (the published project without the
+        capability's classes) and run against its equivalence test. The best attempt goes into a copy of the published project:
+        <code>@Path.Combine(GemmaSvc.Dir(p), "service")</code>.</p>
+        <div class="row">
+            <button disabled="@(busy || !chosen.Any(x => statuses.GetValueOrDefault(x)?.DesignValid == true))"
+                    @onclick="() => Actions.StartGemmaPublish(p.Id, Ordered(caps).Where(x => statuses[x].DesignValid).ToList(), Options())">Publish design to service</button>
+            @if (p.Gemma.ServicePath is { } sp) { <span class="muted">service: <code>@sp</code></span> }
+            @if (GemmaSvc.HasCode(p)) { <a href="gemma-code">View Gemma 4's code</a> }
+        </div>
+        <OperationPanel ProjectId="@p.Id" Kind="@WorkspaceActions.GemmaPublish" Completed="_ => Refresh()" Lines="30" />
+    </div>
+
+    <div class="panel">
+        <h3>4. Test the service — GnuCOBOL as the oracle</h3>
+        <p class="muted">Every test of the service, then each job run with <code>--mlcpu.implementation=normalized</code> (Gemma's code for its
+        programs) and every output compared byte for byte with the GnuCOBOL oracle.</p>
+        <div class="row">
+            <button disabled="@(p.Gemma.ServicePath is null || Ops.IsRunning(p.Id, WorkspaceActions.GemmaTest))" @onclick="() => Actions.StartGemmaTest(p.Id)">Test with GnuCOBOL</button>
+        </div>
+        <OperationPanel ProjectId="@p.Id" Kind="@WorkspaceActions.GemmaTest" Completed="_ => Refresh()" Lines="20" />
+        @if (p.Gemma.ServicePath is not null && Parity.LastReport(p, "gemma") is { } report) { <TestReport Report="report" /> }
+    </div>
+}
+
+@code {
+    readonly HashSet<string> chosen = new(StringComparer.OrdinalIgnoreCase);
+    int count = 1, designAttempts = 3, implAttempts = 15;
+    bool astOutline = true, examples = true;
+    string? loadedFor;
+
+    protected override void OnInitialized() => Projects.Changed += Refresh;
+
+    protected override void OnParametersSet()
+    {
+        if (Projects.Active is { } p && loadedFor != p.Id)
+        {
+            loadedFor = p.Id;
+            chosen.Clear();
+            var caps = GemmaSvc.Capabilities(p);
+            foreach (var c in caps.Where(c => GemmaSvc.Status(p, c.ProgramId).Designed)) chosen.Add(c.ProgramId);
+            if (chosen.Count == 0 && caps.Count > 0) chosen.Add(caps[0].ProgramId);
+            count = Math.Max(1, chosen.Count);
+        }
+    }
+
+    GemmaOptions Options() => new(designAttempts, implAttempts, astOutline, examples);
+
+    List<string> Ordered(IReadOnlyList<GemmaCapability> caps) => caps.Select(c => c.ProgramId).Where(chosen.Contains).ToList();
+
+    void SelectFirst(IReadOnlyList<GemmaCapability> caps)
+    {
+        chosen.Clear();
+        foreach (var c in caps.Take(Math.Clamp(count, 1, caps.Count))) chosen.Add(c.ProgramId);
+    }
+
+    void Toggle(string pid, bool on)
+    {
+        if (on) chosen.Add(pid); else chosen.Remove(pid);
+        count = Math.Max(1, chosen.Count);
+    }
+
+    void Refresh() => InvokeAsync(() => { OnParametersSet(); StateHasChanged(); });
+
+    public void Dispose() => Projects.Changed -= Refresh;
+}

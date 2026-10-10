@@ -1,0 +1,184 @@
+{
+  "schema": "mlcpu.project.v1",
+  "id": "zopeneditor-sample",
+  "name": "zopeneditor-sample",
+  "origin": "C:\\Users\\Tomrodgers\\Source\\zopeneditor-sample-main",
+  "onboardedAt": "2026-10-09T19:00:36",
+  "layout": {
+    "sourceDir": "source",
+    "codeRoots": [
+      "COBOL"
+    ],
+    "copybookRoots": [
+      "COPYBOOK",
+      "COPYLIB-MVS",
+      "COPYLIB",
+      "multiroot/copybooks/cust",
+      "multiroot/copybooks/trans"
+    ],
+    "jclRoots": [
+      "JCLLIB",
+      "JCL"
+    ],
+    "procRoots": [
+      "JCLPROC"
+    ],
+    "controlCardRoots": [],
+    "dataRoots": [
+      "RESOURCES"
+    ]
+  },
+  "programs": [
+    {
+      "id": "SAM1",
+      "path": "COBOL/SAM1.cbl",
+      "kind": "batch",
+      "lines": 505,
+      "calledBy": [],
+      "jobs": [
+        "ZDERUN"
+      ]
+    },
+    {
+      "id": "SAM2",
+      "path": "COBOL/SAM2.cbl",
+      "kind": "subprogram",
+      "lines": 159,
+      "calledBy": [
+        "SAM1"
+      ],
+      "jobs": []
+    }
+  ],
+  "excluded": [
+    {
+      "path": "multiroot/sam/SAM1.cbl",
+      "reason": "duplicate PROGRAM-ID SAM1 (kept COBOL/SAM1.cbl)"
+    },
+    {
+      "path": "COBOL/SAM1LIB.cbl",
+      "reason": "duplicate PROGRAM-ID SAM1 (kept COBOL/SAM1.cbl)"
+    },
+    {
+      "path": "multiroot/sam/SAM2.cbl",
+      "reason": "duplicate PROGRAM-ID SAM2 (kept COBOL/SAM2.cbl)"
+    }
+  ],
+  "oracle": {
+    "provider": "generic",
+    "clock": "2022-07-05T10:11:12-07:00",
+    "cobcFlags": [
+      "-std=ibm",
+      "-fsign=EBCDIC",
+      "-fstatic-call",
+      "-Wno-others"
+    ],
+    "jobs": [
+      "ZDERUN"
+    ],
+    "datasets": [
+      {
+        "dsn": "IBMUSER.SAMPLE.CUSTFILE",
+        "source": "RESOURCES/SAMPLE.CUSTFILE.txt",
+        "format": "variable",
+        "lrecl": 596,
+        "minRecord": 20,
+        "alternateKeys": [],
+        "from": "SAM1:CUSTOMER-FILE"
+      },
+      {
+        "dsn": "IBMUSER.SAMPLE.TRANFILE",
+        "source": "RESOURCES/SAMPLE.TRANFILE.txt",
+        "format": "fixed",
+        "lrecl": 80,
+        "minRecord": 80,
+        "alternateKeys": [],
+        "from": "SAM1:TRANSACTION-FILE"
+      }
+    ],
+    "scenarios": [
+      "all-transactions"
+    ],
+    "jobChecks": [
+      {
+        "job": "ZDERUN",
+        "scenario": "base",
+        "inputs": {
+          "IBMUSER.SAMPLE.CUSTFILE": "oracle/runs/base/jobs/ZDERUN/in/IBMUSER.SAMPLE.CUSTFILE",
+          "IBMUSER.SAMPLE.TRANFILE": "oracle/runs/base/jobs/ZDERUN/in/IBMUSER.SAMPLE.TRANFILE"
+        },
+        "outputs": {
+          "data:IBMUSER.SAMPLE.CUSTOUT": "oracle/runs/base/jobs/ZDERUN/out/IBMUSER.SAMPLE.CUSTOUT",
+          "data:IBMUSER.SAMPLE.CUSTRPT": "oracle/runs/base/jobs/ZDERUN/out/IBMUSER.SAMPLE.CUSTRPT",
+          "sysout:SAM1.SYSOUT.txt": "oracle/runs/base/jobs/ZDERUN/out/sysout/SAM1.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "ZDERUN",
+        "scenario": "all-transactions",
+        "inputs": {
+          "IBMUSER.SAMPLE.CUSTFILE": "oracle/runs/all-transactions/jobs/ZDERUN/in/IBMUSER.SAMPLE.CUSTFILE",
+          "IBMUSER.SAMPLE.TRANFILE": "oracle/runs/all-transactions/jobs/ZDERUN/in/IBMUSER.SAMPLE.TRANFILE"
+        },
+        "outputs": {
+          "data:IBMUSER.SAMPLE.CUSTOUT": "oracle/runs/all-transactions/jobs/ZDERUN/out/IBMUSER.SAMPLE.CUSTOUT",
+          "data:IBMUSER.SAMPLE.CUSTRPT": "oracle/runs/all-transactions/jobs/ZDERUN/out/IBMUSER.SAMPLE.CUSTRPT",
+          "sysout:SAM1.SYSOUT.txt": "oracle/runs/all-transactions/jobs/ZDERUN/out/sysout/SAM1.SYSOUT.txt"
+        }
+      }
+    ],
+    "jobCheckRoot": ".",
+    "status": {
+      "builtAt": "2026-10-09T19:02:00",
+      "units": 1,
+      "unitsCached": 1,
+      "runAt": "2026-10-09T19:02:00",
+      "scenarios": [
+        "base",
+        "all-transactions"
+      ],
+      "problems": []
+    }
+  },
+  "publish": {
+    "jobs": [
+      "ZDERUN"
+    ],
+    "capabilities": [
+      "SAM1",
+      "SAM2"
+    ],
+    "last": {
+      "path": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\zopeneditor-sample\\publish\\zopeneditor-sample-normalized-spring",
+      "at": "2026-10-09T22:16:01",
+      "programs": 2,
+      "capabilities": 2,
+      "lastTest": {
+        "at": "2026-10-09T22:16:15",
+        "tests": 61,
+        "failed": 0,
+        "outputs": 6,
+        "match": 6,
+        "implementation": "legacy"
+      }
+    }
+  },
+  "gemma": {
+    "designed": [
+      "SAM1",
+      "SAM2"
+    ],
+    "servicePath": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\zopeneditor-sample\\gemma\\service\\zopeneditor-sample-normalized-spring",
+    "lastTest": {
+      "at": "2026-10-09T22:42:11",
+      "tests": 61,
+      "failed": 0,
+      "outputs": 6,
+      "match": 6,
+      "implementation": "normalized"
+    }
+  },
+  "notes": [
+    "Scenario all-transactions (scenarios/all-transactions): authored to exercise every SAM1/SAM2 path the 4-line sample does not (numeric REPLACE/ADD with signs, invalid data/action/field/tran codes, comments, out-of-sequence keys, duplicate ADD, DELETE of missing keys, the contact record)."
+  ]
+}

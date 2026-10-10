@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MlCpu.DesignModel</RootNamespace>
+    <AssemblyName>MlCpu.DesignModel</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="LM-Kit.NET" Version="2026.10.3" />
+    <PackageReference Include="LM-Kit.NET.Backend.Cuda13.Windows" Version="2026.10.3" />
+  </ItemGroup>
+</Project>

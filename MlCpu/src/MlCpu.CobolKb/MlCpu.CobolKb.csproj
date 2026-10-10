@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MlCpu.CobolKb</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MlCpu.Core\MlCpu.Core.csproj" />
+  </ItemGroup>
+</Project>

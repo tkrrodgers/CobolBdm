@@ -1,0 +1,13 @@
+@* A progress bar: Value 0..1, or null while the total is unknown (indeterminate). *@
+<div class="progress @(Failed ? "failed" : Done ? "done" : Value is null ? "indeterminate" : "")" role="progressbar"
+     aria-valuenow="@((int)((Value ?? 0) * 100))" aria-valuemin="0" aria-valuemax="100">
+    <div class="bar" style="width:@((Value ?? 0.35) * 100)%"></div>
+    <div class="label">@(Value is null ? Label : $"{Value * 100:N0}%  {Label}")</div>
+</div>
+
+@code {
+    [Parameter] public double? Value { get; set; }
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public bool Done { get; set; }
+    [Parameter] public bool Failed { get; set; }
+}

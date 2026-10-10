@@ -1,0 +1,57 @@
+@* An explorer tree in the style of VS Code. A click on a folder expands or collapses it; a click on a file raises Open.
+   Expanded holds the paths of the open folders and belongs to the caller, so it survives a refreshed tree. *@
+@using Microsoft.AspNetCore.Components.Rendering
+
+<div class="tree" role="tree">
+    @foreach (var n in Nodes)
+    {
+        Node(__builder, n, 0);
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<GemmaCodeNode> Nodes { get; set; } = [];
+    [Parameter, EditorRequired] public HashSet<string> Expanded { get; set; } = [];
+    [Parameter] public string? Selected { get; set; }
+    /// <summary>A short note shown at the right of a node (e.g. a program's acceptance result), with its CSS class.</summary>
+    [Parameter] public IReadOnlyDictionary<string, (string Text, string Css, string Title)>? Badges { get; set; }
+    [Parameter] public EventCallback<GemmaCodeNode> Open { get; set; }
+
+    void Node(RenderTreeBuilder __builder, GemmaCodeNode n, int depth)
+    {
+        var open = n.IsDir && Expanded.Contains(n.Path);
+        <div class="tnode @(n.Path == Selected ? "selected" : "")" role="treeitem" title="@n.Path" style="padding-left:@(6 + depth * 12)px"
+             @onclick="() => Click(n)">
+            @if (n.IsDir)
+            {
+                <svg class="chev @(open ? "open" : "")" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" /></svg>
+            }
+            else
+            {
+                <span class="ic @Icon(n.Name)"></span>
+            }
+            <span class="name">@n.Name</span>
+            @if (Badges?.GetValueOrDefault(n.Path) is { Text: not null } b)
+            {
+                <span class="badge @b.Css" title="@b.Title">@b.Text</span>
+            }
+        </div>
+        if (open)
+        {
+            foreach (var c in n.Children!) Node(__builder, c, depth + 1);
+        }
+    }
+
+    Task Click(GemmaCodeNode n)
+    {
+        if (!n.IsDir) return Open.InvokeAsync(n);
+        if (!Expanded.Remove(n.Path)) Expanded.Add(n.Path);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>The icon class for a file name (CSS draws the glyph).</summary>
+    public static string Icon(string name) => Path.GetExtension(name).ToLowerInvariant() switch
+    {
+        ".java" => "java", ".json" => "json", ".md" => "md", ".xml" => "xml", _ => "txt"
+    };
+}

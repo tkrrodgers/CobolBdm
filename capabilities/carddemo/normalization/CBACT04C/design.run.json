@@ -1,0 +1,45 @@
+{
+  "schema": "mlcpu.design-run.v1",
+  "programId": "CBACT04C",
+  "requirementsHash": "2bf0c7cfda6bce92c8ac3a954229a5fa9c4bdefa3ab72307b8484f1256747f36",
+  "model": "gpt-oss-120b-MXFP4.gguf",
+  "lmkit": "2026.10.3",
+  "reasoning": "Medium",
+  "context": 65536,
+  "valid": true,
+  "attempts": [
+    {
+      "attempt": 1,
+      "promptTokens": 23400,
+      "generatedTokens": 3581,
+      "tokensPerSecond": 150.89427316118483,
+      "seconds": 30.8660677,
+      "stop": "EndOfGeneration",
+      "problems": [
+        "output dataset ACCTFILE is not produced by any design element",
+        "package 'interestcalculation' is not a Java package name"
+      ]
+    },
+    {
+      "attempt": 2,
+      "promptTokens": 48,
+      "generatedTokens": 3142,
+      "tokensPerSecond": 145.44898504615006,
+      "seconds": 21.6676804,
+      "stop": "EndOfGeneration",
+      "problems": [
+        "output dataset ACCTFILE is not produced by any design element"
+      ]
+    },
+    {
+      "attempt": 3,
+      "promptTokens": 34,
+      "generatedTokens": 3113,
+      "tokensPerSecond": 139.55638928555888,
+      "seconds": 22.3655988,
+      "stop": "EndOfGeneration",
+      "problems": []
+    }
+  ],
+  "remainingProblems": []
+}

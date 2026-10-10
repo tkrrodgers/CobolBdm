@@ -1,0 +1,313 @@
+﻿{
+    "schema":  "mlcpu.capability-evidence.v1",
+    "programId":  "CBTRN02C",
+    "requirementsHash":  "044b30b08318ba6a0c3ade1bdfcddb4e01f19669d1cc0508fdc9e3b8d8fe2f7c",
+    "sourceHash":  "9679abeab16211d5bf91be8417922fc3b17646f16f69ca368d37cdee826ed1b7",
+    "collectedAt":  "2026-10-06T06:28:18.4200966-07:00",
+    "project":  "carddemo-normalized-spring",
+    "tests":  {
+                  "capability":  25,
+                  "platform":  13,
+                  "failed":  0,
+                  "failures":  [
+
+                               ]
+              },
+    "equivalence":  {
+                        "scenarios":  22,
+                        "failed":  0,
+                        "names":  [
+                                      "normalizedEqualsFaithfulWithSpaceStorageDefault()",
+                                      "CardDemo day",
+                                      "unknown cards (reason 100)",
+                                      "accounts missing (reason 101)",
+                                      "over limit (reason 102)",
+                                      "expired (reason 103)",
+                                      "over limit and expired: 103 wins (Q-03)",
+                                      "expiry on the transaction date boundary",
+                                      "credits and debits",
+                                      "zero amounts",
+                                      "credit limit reached exactly",
+                                      "transaction on the expiry day",
+                                      "blank origin timestamps",
+                                      "positive numbers stored unsigned (F-sign)",
+                                      "F-sign with zero amounts",
+                                      "distinct category-balance fillers (Q-04)",
+                                      "balances overflow their pictures",
+                                      "no category balances yet",
+                                      "empty day",
+                                      "transaction id already posted (abend)",
+                                      "account file missing (abend)",
+                                      "daily file missing (abend)"
+                                  ]
+                    },
+    "oracleParity":  {
+                         "verdict":  "MATCH",
+                         "programOracleTest":  "PASS",
+                         "jobParity":  [
+                                           {
+                                               "output":  "TRANSACT.VSAM.KSDS",
+                                               "verdict":  "MATCH",
+                                               "normalized":  true
+                                           },
+                                           {
+                                               "output":  "DALYREJS",
+                                               "verdict":  "MATCH",
+                                               "normalized":  true
+                                           },
+                                           {
+                                               "output":  "ACCTDATA.VSAM.KSDS",
+                                               "verdict":  "MATCH",
+                                               "normalized":  true
+                                           },
+                                           {
+                                               "output":  "TCATBALF.VSAM.KSDS",
+                                               "verdict":  "MATCH",
+                                               "normalized":  true
+                                           },
+                                           {
+                                               "output":  "STEP15.SYSOUT.txt",
+                                               "verdict":  "MATCH",
+                                               "normalized":  true
+                                           },
+                                           {
+                                               "output":  "TRANSACT.VSAM.KSDS (wall clock)",
+                                               "verdict":  "EQUIVALENT_EXCEPT_VOLATILE",
+                                               "normalized":  null
+                                           }
+                                       ]
+                     },
+    "coverage":  {
+                     "line":  0.9844,
+                     "branch":  0.974,
+                     "lines":  {
+                                   "covered":  378,
+                                   "missed":  6
+                               },
+                     "branches":  {
+                                      "covered":  150,
+                                      "missed":  4
+                                  },
+                     "classes":  49
+                 },
+    "mutation":  {
+                     "score":  0.9116,
+                     "generated":  294,
+                     "detected":  268,
+                     "byStatus":  {
+                                      "SURVIVED":  23,
+                                      "KILLED":  268,
+                                      "NO_COVERAGE":  3
+                                  },
+                     "survivors":  [
+                                       {
+                                           "class":  "com.mlcpu.capabilities.transactionposting.TransactionPostingService",
+                                           "method":  "postAll",
+                                           "line":  62,
+                                           "mutator":  "MathMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "Replaced long addition with subtraction"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.capabilities.transactionposting.TransactionPostingStep",
+                                           "method":  "run",
+                                           "line":  58,
+                                           "mutator":  "VoidMethodCallMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "removed call to com/mlcpu/capabilities/transactionposting/TransactionPostingStep::close"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.capabilities.transactionposting.TransactionPostingStep",
+                                           "method":  "run",
+                                           "line":  60,
+                                           "mutator":  "VoidMethodCallMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "removed call to com/mlcpu/capabilities/transactionposting/TransactionPostingStep::close"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.data.FileRepositories$Accounts",
+                                           "method":  "lambda$update$0",
+                                           "line":  34,
+                                           "mutator":  "NullReturnValsMutator",
+                                           "status":  "NO_COVERAGE",
+                                           "description":  "replaced return value with null for com/mlcpu/carddemo/data/FileRepositories$Accounts::lambda$update$0"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.data.FileRepositories$CategoryBalances",
+                                           "method":  "find",
+                                           "line":  74,
+                                           "mutator":  "VoidMethodCallMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "removed call to java/util/Optional::ifPresent"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.data.FileRepositories$CategoryBalances",
+                                           "method":  "lambda$update$1",
+                                           "line":  87,
+                                           "mutator":  "NullReturnValsMutator",
+                                           "status":  "NO_COVERAGE",
+                                           "description":  "replaced return value with null for com/mlcpu/carddemo/data/FileRepositories$CategoryBalances::lambda$update$1"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.domain.Transaction",
+                                           "method":  "originDate",
+                                           "line":  14,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.domain.Transaction",
+                                           "method":  "processedDate",
+                                           "line":  18,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.batch.BatchFailure",
+                                           "method":  "statusDigits",
+                                           "line":  53,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.numeric.Decimals",
+                                           "method":  "fit",
+                                           "line":  18,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  36,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  36,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  38,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  38,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  41,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  42,
+                                           "mutator":  "MathMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "Replaced bitwise AND with OR"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  42,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  42,
+                                           "mutator":  "NegateConditionalsMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "negated conditional"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "zoned",
+                                           "line":  46,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "putZoned",
+                                           "line":  57,
+                                           "mutator":  "MathMutator",
+                                           "status":  "NO_COVERAGE",
+                                           "description":  "Replaced integer subtraction with addition"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "putZoned",
+                                           "line":  57,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.Fields",
+                                           "method":  "digits",
+                                           "line":  75,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.records.SequentialDataset$Reader",
+                                           "method":  "close",
+                                           "line":  45,
+                                           "mutator":  "VoidMethodCallMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "removed call to java/io/InputStream::close"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.text.Formats",
+                                           "method":  "signedAmount",
+                                           "line":  23,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.text.Formats",
+                                           "method":  "zeroPad",
+                                           "line":  38,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       },
+                                       {
+                                           "class":  "com.mlcpu.carddemo.platform.text.Formats",
+                                           "method":  "column",
+                                           "line":  63,
+                                           "mutator":  "ConditionalsBoundaryMutator",
+                                           "status":  "SURVIVED",
+                                           "description":  "changed conditional boundary"
+                                       }
+                                   ]
+                 }
+}

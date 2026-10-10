@@ -1,0 +1,81 @@
+{
+  "schema": "mlcpu.design-conformance.v1",
+  "programId": "CBACT04C",
+  "requirementsHash": "2bf0c7cfda6bce92c8ac3a954229a5fa9c4bdefa3ab72307b8484f1256747f36",
+  "design": "design.json (gpt-oss-120b, attempt 3, validated)",
+  "implementationPackage": "com.mlcpu.capabilities.interestcalculation",
+  "reviewer": { "role": "SME and architect (GitHub Copilot, acting on the user's instruction)", "humanConfirmation": "pending" },
+  "elements": [
+    { "design": "InterestCalculationService", "kind": "service", "status": "conforms",
+      "implementation": ["com.mlcpu.capabilities.interestcalculation.InterestCalculationService#run"] },
+    { "design": "InterestCalculationService.computeInterest", "kind": "method", "status": "extracted",
+      "implementation": ["com.mlcpu.capabilities.interestcalculation.InterestPolicy#monthlyInterest", "com.mlcpu.capabilities.interestcalculation.InterestPolicy#charges"],
+      "note": "The interest formula is a pure policy class, testable without files." },
+    { "design": "InterestCalculationService.updateAccount", "kind": "method", "status": "moved to entity",
+      "implementation": ["com.mlcpu.carddemo.domain.Account#closeCycleWithInterest"] },
+    { "design": "InterestCalculationService.writeInterestTransaction", "kind": "method", "status": "conforms",
+      "implementation": ["com.mlcpu.capabilities.interestcalculation.InterestCalculationService#interestTransaction"] },
+    { "design": "TransactionCategoryBalanceRepository", "kind": "port", "status": "simplified",
+      "implementation": ["com.mlcpu.carddemo.platform.records.IndexedDataset#inKeyOrder"],
+      "note": "Only streamAll() is used; findByAccountId is not needed by any rule." },
+    { "design": "XrefRepository", "kind": "port", "status": "conforms", "implementation": ["com.mlcpu.carddemo.data.FileRepositories#findByAccountId"] },
+    { "design": "AccountRepository", "kind": "port", "status": "conforms",
+      "implementation": ["com.mlcpu.carddemo.data.FileRepositories#findById", "com.mlcpu.carddemo.data.FileRepositories#update", "com.mlcpu.carddemo.data.RecordLayouts#account(Account.Change,byte[])"],
+      "note": "update takes an Account.Change: only the balances the operation assigned are rewritten, over the stored image (see X-01)." },
+    { "design": "DisclosureGroupRepository", "kind": "port", "status": "conforms",
+      "implementation": ["com.mlcpu.carddemo.data.FileRepositories#find", "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#rateFor"],
+      "note": "findDefaultByGroupId became a second find with the DEFAULT group id (rateFor)." },
+    { "design": "TransactionWriter", "kind": "port", "status": "conforms", "implementation": ["com.mlcpu.carddemo.platform.records.SequentialDataset#writer"] },
+    { "design": "ConsolePort", "kind": "port", "status": "conforms", "implementation": ["com.mlcpu.rt.ModernStep.Context#display"] },
+    { "design": "ClockPort", "kind": "port", "status": "conforms", "implementation": ["com.mlcpu.rt.ModernStep.Context#now", "com.mlcpu.carddemo.platform.time.BatchTimestamps#db2"] },
+    { "design": "domainModel", "kind": "entities", "status": "conforms",
+      "implementation": ["com.mlcpu.carddemo.domain.CategoryBalance", "com.mlcpu.carddemo.domain.Account", "com.mlcpu.carddemo.domain.Transaction", "com.mlcpu.carddemo.domain.Reference"],
+      "note": "AccountStatus is kept as the stored text: no rule in this program reads it." }
+  ],
+  "rules": [
+    { "ruleId": "R-CBACT04C-001", "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#run", "verifiedBy": ["CardDemo month"],
+      "note": "The record count is never displayed or written by the program, so it has no normalized counterpart." },
+    { "ruleId": "R-CBACT04C-002", "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#run", "verifiedBy": ["CardDemo month", "one account only (Q-01)"] },
+    { "ruleId": "R-CBACT04C-003", "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#run", "verifiedBy": ["account missing (abend)", "cross-reference missing (abend)"] },
+    { "ruleId": "R-CBACT04C-004", "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#rateFor", "verifiedBy": ["group rates missing: DEFAULT used", "only DEFAULT rates", "no rates at all (abend)"] },
+    { "ruleId": "R-CBACT04C-005", "implementation": "com.mlcpu.carddemo.domain.Account#closeCycleWithInterest",
+      "verifiedBy": ["CardDemo month", "interest overflows its picture", "negative category balances", "positive numbers stored unsigned (F-sign)"],
+      "note": "The balance (ADD) and both cycle totals (MOVE 0) are rewritten; the credit limits keep their stored bytes." },
+    { "ruleId": "R-CBACT04C-006", "implementation": "com.mlcpu.capabilities.interestcalculation.InterestPolicy#monthlyInterest", "verifiedBy": ["CardDemo month", "zero rates", "negative rates", "interest overflows its picture", "positive numbers stored unsigned (F-sign)"] },
+    { "ruleId": "R-CBACT04C-007", "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#interestTransaction", "verifiedBy": ["CardDemo month", "another run date", "short PARM"] },
+    { "ruleId": "R-CBACT04C-008", "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#interestTransaction", "verifiedBy": ["CardDemo month", "wall-clock RecordCompare (TRAN-ORIG-TS, TRAN-PROC-TS volatile)"] },
+    { "ruleId": "R-CBACT04C-009", "implementation": "com.mlcpu.carddemo.platform.time.BatchTimestamps#db2", "verifiedBy": ["db2TimestampsAreHundredthsPaddedWithZeros"] }
+  ],
+  "quirks": [
+    { "quirkId": "Q-01", "designDisposition": "fix", "implemented": "fix (branch removed)",
+      "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#run",
+      "note": "The unreachable end-of-file branch is not carried over; removing dead code changes nothing. Because that branch never runs, the last account's cycle is never closed (see F-01). The implementation reproduces this consequence.",
+      "verifiedBy": ["one account only (Q-01)", "CardDemo month"] },
+    { "quirkId": "Q-02", "designDisposition": "preserve", "implemented": "not observable", "note": "A missing account abends the step before the stale record could be used.", "verifiedBy": ["account missing (abend)"] },
+    { "quirkId": "Q-03", "designDisposition": "preserve", "implemented": "not observable", "note": "A missing cross-reference abends the step.", "verifiedBy": ["cross-reference missing (abend)"] },
+    { "quirkId": "Q-04", "designDisposition": "preserve", "implemented": "not observable", "note": "A missing group rate falls back to DEFAULT; a missing DEFAULT abends.", "verifiedBy": ["group rates missing: DEFAULT used", "no rates at all (abend)"] },
+    { "quirkId": "Q-05", "designDisposition": "preserve", "implemented": "preserve",
+      "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#run",
+      "note": "The transaction id is the 10-character PARM prefix followed by a 6-digit sequence; a short PARM is space-padded, as the STRING statement leaves it.", "verifiedBy": ["short PARM", "another run date"] },
+    { "quirkId": "Q-06", "designDisposition": "preserve", "implemented": "preserve",
+      "implementation": "com.mlcpu.capabilities.interestcalculation.InterestCalculationService#interestTransaction",
+      "note": "Unused description bytes hold the storage default (x'00' in the oracle), not spaces.", "verifiedBy": ["normalizedEqualsGnuCobolOracle"] }
+  ],
+  "deviations": [
+    { "id": "D-01", "kind": "structure", "what": "computeInterest became InterestPolicy; updateAccount became Account.closeCycleWithInterest.", "behaviour": "none (byte-identical outputs in every scenario)" }
+  ],
+  "implementationDefects": [
+    { "id": "X-01", "status": "fixed", "fixedOn": "2026-10-06", "shared": ["CBTRN02C"],
+      "symptom": "ACCTDATA differed from the faithful program when positive amounts were stored with an unsigned zone (F-sign).",
+      "cause": "The account rewrite re-encoded every numeric field, so unsigned-zone credit limits came back with a signed zone. COBOL REWRITE changes only the fields the program assigned.",
+      "fix": "Account.closeCycleWithInterest returns an Account.Change assigning the balance and both cycle totals; RecordLayouts.account(Change, stored) writes exactly those and keeps every other stored byte.",
+      "exposedBy": ["positive numbers stored unsigned (F-sign)"],
+      "guardNote": "Re-verified 2026-10-06 by mutation: re-encoding every field, or writing only fields whose value changed, both fail 'positive numbers stored unsigned (F-sign)'." }
+  ],
+  "smeFindings": [
+    { "id": "F-01", "severity": "high", "quirk": "Q-01",
+      "finding": "Interest for the last account in the category-balance file is written as transactions, but that account's balance is never increased and its cycle credit/debit are never reset. Every run under-posts one account.",
+      "evidence": "Scenario 'one account only (Q-01)': SYSTRAN has the interest transactions while ACCTDATA is unchanged; the GnuCOBOL oracle behaves the same for the last account of the CardDemo month (normalizedEqualsGnuCobolOracle matches it byte for byte).",
+      "recommendation": "Keep for parity until the business confirms the defect. The fix is one call after the loop (close the last account's cycle); it would make the normalized implementation differ from the oracle on purpose, so it needs a new approved requirement and a new requirementsHash." }
+  ]
+}

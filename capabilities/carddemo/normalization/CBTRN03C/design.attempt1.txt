@@ -1,0 +1,357 @@
+{
+  "schema": "mlcpu.capability-design.v1",
+  "programId": "CBTRN03C",
+  "requirementsHash": "ebb35e155bebfd0f07c630690551e5f86565ccf08d789f9ac9eaa40791e7ec3e",
+  "capability": "TransactionDetailReport",
+  "package": "com.mlcpu.capabilities.transactionreporting",
+  "summary": "Prints a transaction detail report for a given date range. Reads transaction, card‑xref, transaction‑type and transaction‑category files, joins the data, aggregates page, account and grand totals and writes a fixed‑length report file. All console messages and file‑status handling are preserved for byte‑for‑byte parity with the original COBOL program.",
+  "domainModel": [
+    {
+      "name": "Transaction",
+      "kind": "record",
+      "source": "TRAN-RECORD (CVTRA05Y)",
+      "fields": [
+        { "name": "transactionId", "type": "String", "cobol": "X(16)" },
+        { "name": "typeCode", "type": "String", "cobol": "X(2)" },
+        { "name": "categoryCode", "type": "String", "cobol": "9(04)" },
+        { "name": "source", "type": "String", "cobol": "X(10)" },
+        { "name": "description", "type": "String", "cobol": "X(100)" },
+        { "name": "amount", "type": "java.math.BigDecimal", "cobol": "S9(09)V99" },
+        { "name": "merchantId", "type": "String", "cobol": "9(09)" },
+        { "name": "merchantName", "type": "String", "cobol": "X(50)" },
+        { "name": "merchantCity", "type": "String", "cobol": "X(50)" },
+        { "name": "merchantZip", "type": "String", "cobol": "X(10)" },
+        { "name": "cardNumber", "type": "String", "cobol": "X(16)" },
+        { "name": "origTimestamp", "type": "String", "cobol": "X(26)" },
+        { "name": "procTimestamp", "type": "String", "cobol": "X(26)" }
+      ]
+    },
+    {
+      "name": "CardXref",
+      "kind": "record",
+      "source": "CARD-XREF-RECORD (CVACT03Y)",
+      "fields": [
+        { "name": "cardNumber", "type": "String", "cobol": "X(16)" },
+        { "name": "customerId", "type": "String", "cobol": "9(09)" },
+        { "name": "accountId", "type": "String", "cobol": "9(11)" }
+      ]
+    },
+    {
+      "name": "TransactionType",
+      "kind": "record",
+      "source": "TRAN-TYPE-RECORD (CVTRA03Y)",
+      "fields": [
+        { "name": "typeCode", "type": "String", "cobol": "X(2)" },
+        { "name": "description", "type": "String", "cobol": "X(50)" }
+      ]
+    },
+    {
+      "name": "TransactionCategory",
+      "kind": "record",
+      "source": "TRAN-CAT-RECORD (CVTRA04Y)",
+      "fields": [
+        { "name": "typeCode", "type": "String", "cobol": "X(2)" },
+        { "name": "categoryCode", "type": "String", "cobol": "9(04)" },
+        { "name": "description", "type": "String", "cobol": "X(50)" }
+      ]
+    },
+    {
+      "name": "ReportHeader",
+      "kind": "record",
+      "source": "REPORT-NAME-HEADER (CVTRA07Y)",
+      "fields": [
+        { "name": "shortName", "type": "String", "cobol": "X(38)" },
+        { "name": "longName", "type": "String", "cobol": "X(41)" },
+        { "name": "dateHeader", "type": "String", "cobol": "X(12)" },
+        { "name": "startDate", "type": "String", "cobol": "X(10)" },
+        { "name": "endDate", "type": "String", "cobol": "X(10)" }
+      ]
+    },
+    {
+      "name": "TransactionDetailLine",
+      "kind": "record",
+      "source": "TRANSACTION-DETAIL-REPORT (CVTRA07Y)",
+      "fields": [
+        { "name": "transactionId", "type": "String", "cobol": "X(16)" },
+        { "name": "accountId", "type": "String", "cobol": "X(11)" },
+        { "name": "typeCode", "type": "String", "cobol": "X(2)" },
+        { "name": "typeDesc", "type": "String", "cobol": "X(15)" },
+        { "name": "categoryCode", "type": "String", "cobol": "9(04)" },
+        { "name": "categoryDesc", "type": "String", "cobol": "X(29)" },
+        { "name": "source", "type": "String", "cobol": "X(10)" },
+        { "name": "amount", "type": "java.math.BigDecimal", "cobol": "-ZZZ,ZZZ,ZZZ.ZZ" }
+      ]
+    },
+    {
+      "name": "ReportPageTotals",
+      "kind": "record",
+      "source": "REPORT-PAGE-TOTALS (CVTRA07Y)",
+      "fields": [
+        { "name": "pageTotal", "type": "java.math.BigDecimal", "cobol": "+ZZZ,ZZZ,ZZZ.ZZ" }
+      ]
+    },
+    {
+      "name": "ReportAccountTotals",
+      "kind": "record",
+      "source": "REPORT-ACCOUNT-TOTALS (CVTRA07Y)",
+      "fields": [
+        { "name": "accountTotal", "type": "java.math.BigDecimal", "cobol": "+ZZZ,ZZZ,ZZZ.ZZ" }
+      ]
+    },
+    {
+      "name": "ReportGrandTotals",
+      "kind": "record",
+      "source": "REPORT-GRAND-TOTALS (CVTRA07Y)",
+      "fields": [
+        { "name": "grandTotal", "type": "java.math.BigDecimal", "cobol": "+ZZZ,ZZZ,ZZZ.ZZ" }
+      ]
+    }
+  ],
+  "ports": [
+    {
+      "name": "TransactionFilePort",
+      "kind": "reader",
+      "file": "TRANSACT-FILE",
+      "methods": [ "open", "readNext", "close", "status" ]
+    },
+    {
+      "name": "CardXrefPort",
+      "kind": "reader",
+      "file": "XREF-FILE",
+      "methods": [ "open", "readByCardNumber", "close", "status" ]
+    },
+    {
+      "name": "TransactionTypePort",
+      "kind": "reader",
+      "file": "TRANTYPE-FILE",
+      "methods": [ "open", "readByTypeCode", "close", "status" ]
+    },
+    {
+      "name": "TransactionCategoryPort",
+      "kind": "reader",
+      "file": "TRANCATG-FILE",
+      "methods": [ "open", "readByKey", "close", "status" ]
+    },
+    {
+      "name": "DateParmPort",
+      "kind": "reader",
+      "file": "DATE-PARMS-FILE",
+      "methods": [ "open", "read", "close", "status" ]
+    },
+    {
+      "name": "ReportFilePort",
+      "kind": "writer",
+      "file": "REPORT-FILE",
+      "methods": [ "open", "write", "close", "status" ]
+    },
+    {
+      "name": "ConsolePort",
+      "kind": "console",
+      "file": "SYSOUT",
+      "methods": [ "display" ]
+    }
+  ],
+  "services": [
+    {
+      "name": "TransactionDetailReportService",
+      "responsibility": "Orchestrates the whole report generation: opens inputs, reads date parameters, streams transactions, performs look‑ups, aggregates totals, writes headers, detail lines and totals, and closes all resources.",
+      "methods": [ "generateReport" ]
+    }
+  ],
+  "rules": [
+    {
+      "ruleId": "R-CBTRN03C-001",
+      "disposition": "implemented",
+      "element": "TransactionDetailReportService.generateReport",
+      "description": "When a new card number is encountered, store it in the current‑card context and perform XREF lookup.",
+      "reason": "Implemented as part of the per‑record processing loop."
+    },
+    {
+      "ruleId": "R-CBTRN03C-002",
+      "disposition": "implemented",
+      "element": "TransactionDetailReportService.generateReport",
+      "description": "Move transaction type code into the FD‑TRAN‑TYPE work field for later lookup.",
+      "reason": "Direct mapping of COBOL MOVE preserved."
+    },
+    {
+      "ruleId": "R-CBTRN03C-003",
+      "disposition": "implemented",
+      "element": "TransactionDetailReportService.generateReport",
+      "description": "Populate the composite key (type‑code + category‑code) for category lookup.",
+      "reason": "Required for correct join semantics."
+    },
+    {
+      "ruleId": "R-CBTRN03C-004",
+      "disposition": "implemented",
+      "element": "TransactionDetailReportService.generateReport",
+      "description": "Add transaction amount to page‑total and account‑total accumulators.",
+      "reason": "Business aggregation rule."
+    },
+    {
+      "ruleId": "R-CBTRN03C-005",
+      "disposition": "implemented",
+      "element": "ReportHeaderWriter.writeHeaderIfFirstTime",
+      "description": "On first detail line, write report header with start/end dates.",
+      "reason": "Preserves first‑time flag handling."
+    },
+    {
+      "ruleId": "R-CBTRN03C-006",
+      "disposition": "implemented",
+      "element": "TransactionDetailReportService.generateReport",
+      "description": "Add transaction amount to page‑total and account‑total (duplicate of R‑004 within page‑total routine).",
+      "reason": "Retained for parity with original flow."
+    },
+    {
+      "ruleId": "R-CBTRN03C-007",
+      "disposition": "implemented",
+      "element": "PageTotalsWriter.writePageTotals",
+      "description": "Write page total line and reset page total accumulator.",
+      "reason": "Matches COBOL logic."
+    },
+    {
+      "ruleId": "R-CBTRN03C-008",
+      "disposition": "implemented",
+      "element": "PageTotalsWriter.updateGrandTotal",
+      "description": "Add page total to grand total, zero page total, increment line counter, write page‑break header.",
+      "reason": "Business rule for paging."
+    },
+    {
+      "ruleId": "R-CBTRN03C-009",
+      "disposition": "implemented",
+      "element": "PageTotalsWriter.incrementLineCounter",
+      "description": "Increment line counter after page total record.",
+      "reason": "Preserves line‑counting semantics."
+    },
+    {
+      "ruleId": "R-CBTRN03C-010",
+      "disposition": "implemented",
+      "element": "AccountTotalsWriter.writeAccountTotals",
+      "description": "Write account total line and reset account total accumulator.",
+      "reason": "Business aggregation."
+    },
+    {
+      "ruleId": "R-CBTRN03C-011",
+      "disposition": "implemented",
+      "element": "AccountTotalsWriter.resetAndAdvance",
+      "description": "Zero account total, increment line counter, write account‑break header.",
+      "reason": "Parity with original."
+    },
+    {
+      "ruleId": "R-CBTRN03C-012",
+      "disposition": "implemented",
+      "element": "AccountTotalsWriter.incrementLineCounter",
+      "description": "Increment line counter after account total record.",
+      "reason": "Preserves line‑counting."
+    },
+    {
+      "ruleId": "R-CBTRN03C-013",
+      "disposition": "implemented",
+      "element": "GrandTotalsWriter.writeGrandTotals",
+      "description": "Write grand total line and terminate report.",
+      "reason": "Finalisation rule."
+    },
+    {
+      "ruleId": "R-CBTRN03C-014",
+      "disposition": "implemented",
+      "element": "HeadersWriter.writeReportNameHeader",
+      "description": "Write the static report name header record.",
+      "reason": "Direct mapping of MOVE."
+    },
+    {
+      "ruleId": "R-CBTRN03C-015",
+      "disposition": "implemented",
+      "element": "HeadersWriter.writeBlankLine",
+      "description": "Write a blank line after the name header.",
+      "reason": "Preserves layout."
+    },
+    {
+      "ruleId": "R-CBTRN03C-016",
+      "disposition": "implemented",
+      "element": "HeadersWriter.writeTransactionHeader1",
+      "description": "Write first transaction header block.",
+      "reason": "Layout requirement."
+    },
+    {
+      "ruleId": "R-CBTRN03C-017",
+      "disposition": "implemented",
+      "element": "HeadersWriter.writeTransactionHeader2",
+      "description": "Write second transaction header block.",
+      "reason": "Layout requirement."
+    },
+    {
+      "ruleId": "R-CBTRN03C-018",
+      "disposition": "implemented",
+      "element": "HeadersWriter.incrementLineCounterAfterHeaders",
+      "description": "Increment line counter for each header line written.",
+      "reason": "Line‑counter parity."
+    },
+    {
+      "ruleId": "R-CBTRN03C-019",
+      "disposition": "implemented",
+      "element": "DetailWriter.writeDetailLine",
+      "description": "Populate and write a transaction‑detail line record.",
+      "reason": "Core business output."
+    },
+    {
+      "ruleId": "R-CBTRN03C-020",
+      "disposition": "implemented",
+      "element": "DetailWriter.incrementLineCounter",
+      "description": "Increment line counter after detail line.",
+      "reason": "Parity with original."
+    }
+  ],
+  "quirks": [
+    {
+      "quirkId": "Q-01",
+      "disposition": "preserve",
+      "reason": "NEXT SENTENCE semantics affect loop exit; required for identical control flow.",
+      "element": "TransactionDetailReportService.generateReport"
+    },
+    {
+      "quirkId": "Q-02",
+      "disposition": "preserve",
+      "reason": "Use of fields after EOF relies on the last successfully read record; must be retained to produce identical totals and messages.",
+      "element": "TransactionDetailReportService.generateReport"
+    },
+    {
+      "quirkId": "Q-03",
+      "disposition": "preserve",
+      "reason": "Stale record on INVALID KEY is used in error messages; preserving behaviour ensures the same DISPLAY output.",
+      "element": "CardXrefPort.readByCardNumber"
+    },
+    {
+      "quirkId": "Q-04",
+      "disposition": "preserve",
+      "reason": "Stale transaction‑type record on INVALID KEY is displayed in error handling; required for identical console output.",
+      "element": "TransactionTypePort.readByTypeCode"
+    },
+    {
+      "quirkId": "Q-05",
+      "disposition": "preserve",
+      "reason": "Stale transaction‑category record on INVALID KEY is displayed; must be kept for parity.",
+      "element": "TransactionCategoryPort.readByKey"
+    }
+  ],
+  "outputs": [
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "plain text lines"
+    },
+    {
+      "output": "TRANREPT",
+      "producedBy": "ReportFilePort.write",
+      "format": "fixed length 133‑byte records"
+    }
+  ],
+  "tests": [
+    {
+      "name": "ReportGenerationParityTest",
+      "kind": "equivalence",
+      "covers": [
+        "TransactionDetailReportService.generateReport"
+      ]
+    }
+  ],
+  "openQuestions": []
+}

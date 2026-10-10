@@ -1,0 +1,72 @@
+@* A capability design (mlcpu.capability-design.v1) as Gemma returned it. *@
+@using System.Text.Json.Nodes
+
+<div class="panel" style="background:#fbfcfd">
+    <h4 style="margin-top:0">@ProgramId — @Str(Design["capability"]) <span class="chip @(Valid ? "ok" : "bad")">@(Valid ? "valid design" : "invalid design")</span>
+        <span class="muted" style="font-weight:normal">package <code>@Str(Design["package"])</code></span></h4>
+    @if (Str(Design["summary"]) is { Length: > 0 } summary) { <p>@summary</p> }
+    <div class="split">
+        <div>
+            <b>Domain model</b>
+            <table class="grid">
+                <tr><th>Type</th><th>Kind</th><th>Fields</th><th>From COBOL</th></tr>
+                @foreach (var d in Arr(Design["domainModel"]))
+                {
+                    <tr><td>@Str(d["name"])</td><td>@Str(d["kind"])</td>
+                        <td>@string.Join(", ", Arr(d["fields"]).Select(f => $"{Str(f["name"])}: {Str(f["type"])}"))</td><td class="muted">@Str(d["source"])</td></tr>
+                }
+            </table>
+        </div>
+        <div>
+            <b>Ports</b>
+            <table class="grid">
+                <tr><th>Port</th><th>Kind</th><th>File</th><th>Methods</th></tr>
+                @foreach (var x in Arr(Design["ports"]))
+                {
+                    <tr><td>@Str(x["name"])</td><td>@Str(x["kind"])</td><td>@Str(x["file"])</td><td class="muted">@string.Join("; ", Arr(x["methods"]).Select(m => m?.ToString()))</td></tr>
+                }
+            </table>
+            <b>Services</b>
+            <table class="grid">
+                <tr><th>Service</th><th>Responsibility</th><th>Methods</th></tr>
+                @foreach (var x in Arr(Design["services"]))
+                {
+                    <tr><td>@Str(x["name"])</td><td>@Str(x["responsibility"])</td><td class="muted">@string.Join("; ", Arr(x["methods"]).Select(m => m?.ToString()))</td></tr>
+                }
+            </table>
+        </div>
+    </div>
+    <details>
+        <summary>@Arr(Design["rules"]).Count rule(s) traced, @Arr(Design["quirks"]).Count quirk(s), @Arr(Design["outputs"]).Count output(s), @Arr(Design["tests"]).Count test(s)</summary>
+        <table class="grid">
+            <tr><th>Rule</th><th>Disposition</th><th>Element</th><th>Description</th></tr>
+            @foreach (var r in Arr(Design["rules"]))
+            {
+                <tr><td>@Str(r["ruleId"])</td><td>@Str(r["disposition"])</td><td>@Str(r["element"])</td><td>@(Str(r["description"]) ?? Str(r["reason"]))</td></tr>
+            }
+        </table>
+        <table class="grid">
+            <tr><th>Quirk</th><th>Disposition</th><th>Reason</th></tr>
+            @foreach (var q in Arr(Design["quirks"])) { <tr><td>@Str(q["quirkId"])</td><td>@Str(q["disposition"])</td><td>@Str(q["reason"])</td></tr> }
+        </table>
+        <table class="grid">
+            <tr><th>Output</th><th>Produced by</th><th>Format</th></tr>
+            @foreach (var o in Arr(Design["outputs"])) { <tr><td>@Str(o["output"])</td><td>@Str(o["producedBy"])</td><td>@Str(o["format"])</td></tr> }
+        </table>
+    </details>
+    @if (Arr(Design["openQuestions"]).Count > 0)
+    {
+        <p><b>Open questions</b></p>
+        <ul>@foreach (var q in Arr(Design["openQuestions"])) { <li>@q</li> }</ul>
+    }
+    <details><summary>design.json</summary><pre class="code">@Design.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true })</pre></details>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string ProgramId { get; set; } = "";
+    [Parameter, EditorRequired] public JsonObject Design { get; set; } = null!;
+    [Parameter] public bool Valid { get; set; }
+
+    static List<JsonNode> Arr(JsonNode? n) => n is JsonArray a ? a.OfType<JsonNode>().ToList() : [];
+    static string? Str(JsonNode? n) => n is JsonValue v && v.TryGetValue<string>(out var s) ? s : n?.ToJsonString();
+}

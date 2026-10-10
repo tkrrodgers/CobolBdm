@@ -1,0 +1,22 @@
+{
+  "schema": "mlcpu.design-run.v1",
+  "programId": "CBTRN03C",
+  "requirementsHash": "ebb35e155bebfd0f07c630690551e5f86565ccf08d789f9ac9eaa40791e7ec3e",
+  "model": "gpt-oss-120b-MXFP4.gguf",
+  "lmkit": "2026.10.3",
+  "reasoning": "Medium",
+  "context": 65536,
+  "valid": true,
+  "attempts": [
+    {
+      "attempt": 1,
+      "promptTokens": 27837,
+      "generatedTokens": 4019,
+      "tokensPerSecond": 141.31056544816244,
+      "seconds": 37.1865994,
+      "stop": "EndOfGeneration",
+      "problems": []
+    }
+  ],
+  "remainingProblems": []
+}

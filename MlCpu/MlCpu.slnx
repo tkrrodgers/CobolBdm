@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MlCpu.Cobol.Analysis/MlCpu.Cobol.Analysis.csproj" />
+    <Project Path="src/MlCpu.Cobol.Antlr/MlCpu.Cobol.Antlr.csproj" />
+    <Project Path="src/MlCpu.CobolKb.Knowledge/MlCpu.CobolKb.Knowledge.csproj" />
+    <Project Path="src/MlCpu.CobolKb/MlCpu.CobolKb.csproj" />
+    <Project Path="src/MlCpu.Core/MlCpu.Core.csproj" />
+    <Project Path="src/MlCpu.DesignModel/MlCpu.DesignModel.csproj" />
+    <Project Path="src/MlCpu.Host/MlCpu.Host.csproj" />
+    <Project Path="src/MlCpu.JavaBridge/MlCpu.JavaBridge.csproj" />
+  </Folder>
+  <Folder Name="/src/CobolConformance/">
+    <Project Path="src/CobolConformance/MlCpu.Cobol.Conformance.csproj" />
+  </Folder>
+</Solution>

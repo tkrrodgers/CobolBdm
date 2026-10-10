@@ -1,0 +1,179 @@
+@page "/settings"
+@implements IDisposable
+@inject ProjectService Projects
+@inject WorkspaceActions Actions
+@inject OperationService Ops
+@inject EstateService Estate
+@inject ConfigService Config
+@inject JavaSidecarService Sidecar
+@inject GraphService Graphs
+
+<PageTitle>Settings</PageTitle>
+<h2>Settings</h2>
+
+<div class="panel">
+    <h3>Projects</h3>
+    <p class="muted">Each project is onboarded into <code>@Projects.Root</code>: its source is cloned there once, and its GnuCOBOL executables are built
+    there once and reused while the source is unchanged. Select the project the other pages work on.</p>
+    @if (Projects.Projects.Count == 0)
+    {
+        <p>No project yet: onboard one below.</p>
+    }
+    else
+    {
+        <table class="grid">
+            <tr><th></th><th>Project</th><th>Origin</th><th>Programs</th><th>Oracle (GnuCOBOL)</th><th>Published</th><th>Gemma 4</th></tr>
+            @foreach (var p in Projects.Projects)
+            {
+                var active = Projects.Active?.Id == p.Id;
+                <tr class="@(active ? "selected" : "")">
+                    <td>@if (active) { <span class="chip ok">active</span> } else { <button @onclick="() => Select(p.Id)">Select</button> }</td>
+                    <td><b>@p.Name</b><br /><span class="muted">@p.Id</span></td>
+                    <td class="muted">@p.Origin</td>
+                    <td>@p.Programs.Count(x => x.Kind == "batch") batch, @p.Programs.Count(x => x.Kind == "subprogram") subprogram, @p.Programs.Count(x => x.Kind == "online") online@(p.Programs.Any(x => x.Kind == "unreferenced") ? $", {p.Programs.Count(x => x.Kind == "unreferenced")} unreferenced" : "")</td>
+                    <td>@(p.Oracle.JobChecks.Count == 0 ? "not run" : $"{p.Oracle.Provider}: {p.Oracle.JobChecks.Count} job check(s), {p.Oracle.JobChecks.Sum(c => c.Outputs.Count)} outputs")</td>
+                    <td>@(p.Publish.Last is { } l ? $"{l.At.Replace('T', ' ')}" : "—")</td>
+                    <td>@(p.Gemma.LastTest is { } g ? $"tests {g.Tests - g.Failed}/{g.Tests}, GnuCOBOL {g.Match}/{g.Outputs}" : p.Gemma.Designed.Count > 0 ? $"{p.Gemma.Designed.Count} design(s)" : "—")</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+
+<div class="panel">
+    <h3>Onboard a project</h3>
+    <div class="row"><label>Name</label><input type="text" @bind="newName" placeholder="e.g. zopeneditor-sample" /></div>
+    <div class="row"><label>Source</label><input type="text" class="wide" @bind="newSource" placeholder="a directory (git repository or plain) or a git URL" /></div>
+    <div class="row"><label></label>
+        <label style="min-width:auto"><input type="checkbox" @bind="newOracle" /> build &amp; run the GnuCOBOL oracle</label>
+        <label style="min-width:auto"><input type="checkbox" @bind="newGraphs" /> build the graphs (AST, call graph, DDG)</label>
+    </div>
+    <div class="row"><label></label><button disabled="@(string.IsNullOrWhiteSpace(newName) || string.IsNullOrWhiteSpace(newSource))" @onclick="Onboard">Onboard</button>
+        <span class="muted">git repositories and URLs are cloned; other directories are copied. Programs are de-duplicated by PROGRAM-ID.</span></div>
+    @if (onboardId is not null) { <OperationPanel ProjectId="@onboardId" Kind="@WorkspaceActions.Onboard" Completed="OnboardDone" /> }
+</div>
+
+@if (Projects.Active is { } a)
+{
+    var src = Projects.SourceDir(a);
+    <div class="panel">
+        <h3>Active project: @a.Name</h3>
+        <div class="kv">
+            <div>Directory</div><div><code>@Projects.Paths(a).Dir</code></div>
+            <div>Source</div><div><code>@src</code> (from @a.Origin, onboarded @a.OnboardedAt.Replace('T', ' '))</div>
+            <div>Programs</div><div>@string.Join(", ", a.Layout.CodeRoots)</div>
+            <div>Copybooks</div><div>@string.Join(", ", a.Layout.CopybookRoots)</div>
+            <div>JCL / PROCs</div><div>@string.Join(", ", a.Layout.JclRoots) / @string.Join(", ", a.Layout.ProcRoots)</div>
+            <div>Data</div><div>@string.Join(", ", a.Layout.DataRoots)</div>
+            <div>Graphs</div><div>@(Graphs.BuiltAt(a)?.Replace('T', ' ') ?? "not built") — <a href="graphs">Graphs</a></div>
+        </div>
+        @foreach (var n in a.Notes) { <p class="muted">• @n</p> }
+
+        <h4>Programs</h4>
+        <table class="grid">
+            <tr><th>Program</th><th>Kind</th><th>Source</th><th>Lines</th><th>Jobs</th><th>Called by</th></tr>
+            @foreach (var p in a.Programs)
+            {
+                <tr><td>@p.Id</td><td>@p.Kind</td><td class="muted">@p.Path</td><td>@p.Lines</td><td>@string.Join(", ", p.Jobs)</td><td>@string.Join(", ", p.CalledBy)</td></tr>
+            }
+        </table>
+        @if (a.Excluded.Count > 0)
+        {
+            <details><summary>@a.Excluded.Count member(s) not in the estate</summary>
+                <ul>@foreach (var x in a.Excluded) { <li><code>@x.Path</code>: @x.Reason</li> }</ul>
+            </details>
+        }
+    </div>
+
+    <div class="panel">
+        <h3>GnuCOBOL oracle</h3>
+        <p class="muted">The original COBOL compiled with <code>cobc @string.Join(" ", a.Oracle.CobcFlags)</code> and run job by job with the clock pinned at
+        <code>@a.Oracle.Clock</code>. Executables are cached by content hash in <code>oracle/bin</code>: a run rebuilds only what changed.</p>
+        <div class="kv">
+            <div>Provider</div><div>@a.Oracle.Provider</div>
+            <div>Jobs (in order)</div><div>@string.Join(" → ", a.Oracle.Jobs)</div>
+            <div>Scenarios</div><div>base@(a.Oracle.Scenarios.Count > 0 ? ", " + string.Join(", ", a.Oracle.Scenarios) : "") <span class="muted">(extra scenarios: files under <code>scenarios/&lt;name&gt;/</code> override datasets by file name)</span></div>
+            <div>Last build</div><div>@(a.Oracle.Status is { } st ? $"{st.BuiltAt.Replace('T', ' ')}: {st.Units} executable(s), {st.UnitsCached} reused from the cache" : "—")</div>
+            <div>Job checks</div><div>@a.Oracle.JobChecks.Count (@a.Oracle.JobChecks.Sum(c => c.Outputs.Count) outputs compared)</div>
+        </div>
+        @if (a.Oracle.Status?.Problems is { Count: > 0 } probs) { <ul>@foreach (var pr in probs) { <li class="bad">@pr</li> }</ul> }
+        @if (a.Oracle.Datasets.Count > 0)
+        {
+            <table class="grid">
+                <tr><th>Dataset (DSN)</th><th>Format</th><th>LRECL</th><th>Key</th><th>From</th><th>Source file</th></tr>
+                @foreach (var d in a.Oracle.Datasets)
+                {
+                    <tr><td>@d.Dsn</td><td>@d.Format</td><td>@d.Lrecl</td><td>@d.Key @(d.AlternateKeys.Count > 0 ? "+ " + string.Join(", ", d.AlternateKeys) : "")</td><td class="muted">@d.From</td><td>@(d.Source ?? "(empty)")</td></tr>
+                }
+            </table>
+        }
+        <div class="row">
+            <button disabled="@Running(a.Id, WorkspaceActions.Oracle)" @onclick="() => Actions.StartOracle(a.Id, false)">Build (cached) &amp; run oracle</button>
+            <button class="secondary" disabled="@Running(a.Id, WorkspaceActions.Oracle)" @onclick="() => Actions.StartOracle(a.Id, true)">Force rebuild</button>
+        </div>
+        <OperationPanel ProjectId="@a.Id" Kind="@WorkspaceActions.Oracle" Completed="_ => Refresh()" />
+    </div>
+}
+
+<div class="panel">
+    <h3>Toolchain</h3>
+    <div class="kv">
+        <div>Java sidecar</div><div>@Config.Settings.SidecarUrl — <span class="@(sidecarUp ? "ok" : "bad")">@(sidecarUp ? "up" : "down (run tools\\Start-Sidecar.ps1)")</span></div>
+        <div>GnuCOBOL</div><div><code>@Toolchain.Cobc</code></div>
+        <div>JDK</div><div><code>@Toolchain.JavaHome</code></div>
+        <div>Gradle</div><div><code>@Toolchain.Gradle</code></div>
+        <div>Workspace</div><div><code>@Projects.Root</code></div>
+    </div>
+    <h4>Gemma 4 (llama.cpp)</h4>
+    <div class="row"><label>Model (first GGUF shard)</label><input type="text" class="wide" @bind="gemmaModel" /> <span class="@(File.Exists(gemmaModel) ? "ok" : "bad")">@(File.Exists(gemmaModel) ? "found" : "not found")</span></div>
+    <div class="row"><label>llama.cpp directory</label><input type="text" class="wide" @bind="llamaDir" /> <span class="@(File.Exists(Path.Combine(llamaDir, "llama-server.exe")) ? "ok" : "bad")">@(File.Exists(Path.Combine(llamaDir, "llama-server.exe")) ? "llama-server found" : "llama-server.exe not found")</span></div>
+    <div class="row"><label></label><button @onclick="SaveModel">Save</button> <span class="muted">@saved</span></div>
+</div>
+
+@code {
+    string newName = "", newSource = "";
+    bool newOracle = true, newGraphs = true;
+    string? onboardId;
+    bool sidecarUp;
+    string gemmaModel = "", llamaDir = "", saved = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Projects.Changed += Refresh;
+        gemmaModel = Config.Settings.GemmaModel;
+        llamaDir = Config.Settings.LlamaDir;
+        onboardId = Ops.All.FirstOrDefault(o => o.Kind == WorkspaceActions.Onboard)?.ProjectId;
+        sidecarUp = await Sidecar.HealthAsync() is not null;
+    }
+
+    bool Running(string id, string kind) => Ops.IsRunning(id, kind);
+
+    void Select(string id)
+    {
+        Projects.Activate(id);
+        Estate.Reload();
+    }
+
+    void Onboard()
+    {
+        var op = Actions.StartOnboard(newName.Trim(), newSource.Trim(), newOracle, newGraphs);
+        onboardId = op.ProjectId;
+    }
+
+    void OnboardDone(Operation o)
+    {
+        Projects.Reload();
+        if (o.Succeeded) { newName = ""; newSource = ""; }
+        Refresh();
+    }
+
+    void SaveModel()
+    {
+        Config.SaveOverlay(new Dictionary<string, string> { ["GemmaModel"] = gemmaModel.Trim(), ["LlamaDir"] = llamaDir.Trim() });
+        saved = "saved to %LOCALAPPDATA%\\MlCpu\\settings.json";
+    }
+
+    void Refresh() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Projects.Changed -= Refresh;
+}

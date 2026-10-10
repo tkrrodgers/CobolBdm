@@ -1,0 +1,57 @@
+@page "/parity"
+@implements IDisposable
+@inject ParityService Runner
+
+<PageTitle>Parity</PageTitle>
+<h2>Parity — original COBOL (GnuCOBOL oracle) vs generated Java</h2>
+@if (!Runner.Applies)
+{
+    <p>This page runs the CardDemo step-by-step harness (<code>tools\carddemo\Invoke-CardDemoParity.ps1</code>). For the active project the
+    GnuCOBOL oracle is built and run from <a href="settings">Settings</a>, and the published estate is compared with it under
+    <a href="convert">Conversion → Build &amp; test</a>.</p>
+    return;
+}
+<p class="muted">Both sides run the CardDemo batch flow on the same inputs with the clock pinned; every dataset is compared byte for byte,
+SYSOUT line by line, and return codes exactly.</p>
+
+<p>
+    <button disabled="@Runner.Running" @onclick="() => Runner.Start(false)">Convert &amp; run parity</button>
+    <button disabled="@Runner.Running" @onclick="() => Runner.Start(true)">Re-run (skip convert)</button>
+    @if (Runner.Running) { <span class="muted">running…</span> }
+    else if (Runner.LastExitCode is int rc) { <span class="@(rc == 0 ? "ok" : "bad")">last exit code @rc</span> }
+</p>
+
+@if (rows.Count > 0)
+{
+    <p>@(rows.Count - rows.Count(r => r.Verdict != "MATCH")) of @rows.Count comparisons match — report from @when</p>
+    <table class="grid">
+        <tr><th>Step</th><th>Artifact</th><th>Verdict</th><th>Detail</th></tr>
+        @foreach (var r in rows)
+        {
+            <tr><td>@r.Step</td><td>@r.Artifact</td><td class="@(r.Verdict == "MATCH" ? "ok" : "bad")">@r.Verdict</td><td><pre style="margin:0">@r.Detail</pre></td></tr>
+        }
+    </table>
+}
+
+@if (Runner.Log.Count > 0)
+{
+    <h3>Run log</h3>
+    <pre class="code">@string.Join("\n", Runner.Log)</pre>
+}
+
+@code {
+    IReadOnlyList<ParityRow> rows = [];
+    DateTime? when;
+
+    protected override void OnInitialized()
+    {
+        Load();
+        Runner.Changed += OnChanged;
+    }
+
+    void Load() => (when, rows) = Runner.Report();
+
+    void OnChanged() => InvokeAsync(() => { if (!Runner.Running) Load(); StateHasChanged(); });
+
+    public void Dispose() => Runner.Changed -= OnChanged;
+}

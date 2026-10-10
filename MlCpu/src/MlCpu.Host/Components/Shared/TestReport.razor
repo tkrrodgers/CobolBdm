@@ -1,0 +1,33 @@
+@* Results of a build & test: test suites, then each job output against the GnuCOBOL oracle. *@
+@{
+    var r = Report;
+    bool green = r.Compiled && r.Failed == 0 && r.Match == r.Parity.Count && r.Parity.Count > 0;
+}
+<div class="cards">
+    <div class="card"><div class="muted">Tests</div><div class="n @(r.Failed == 0 && r.Tests > 0 ? "ok" : "bad")">@(r.Tests - r.Failed)/@r.Tests</div><div class="muted">@r.Suites.Count suites</div></div>
+    <div class="card"><div class="muted">Job outputs vs GnuCOBOL</div><div class="n @(r.Match == r.Parity.Count && r.Parity.Count > 0 ? "ok" : "bad")">@r.Match/@r.Parity.Count</div><div class="muted">implementation: @r.Implementation</div></div>
+    <div class="card"><div class="muted">Verdict</div><div class="n @(green ? "ok" : "bad")">@(green ? "byte-identical" : r.Compiled ? "differences" : "does not build")</div><div class="muted">@r.At.Replace('T', ' ')</div></div>
+</div>
+@if (r.FailedTests.Count > 0)
+{
+    <p class="bad">Failed tests:</p>
+    <ul>@foreach (var f in r.FailedTests.Take(40)) { <li>@f</li> }</ul>
+}
+<details>
+    <summary>@r.Suites.Count test suite(s)</summary>
+    <table class="grid">
+        <tr><th>Suite</th><th>Tests</th><th>Failed</th><th>Skipped</th></tr>
+        @foreach (var s in r.Suites) { <tr><td>@s.Suite</td><td>@s.Tests</td><td class="@(s.Failed > 0 ? "bad" : "")">@s.Failed</td><td>@s.Skipped</td></tr> }
+    </table>
+</details>
+<table class="grid">
+    <tr><th>Job</th><th>Scenario</th><th>Output</th><th>Verdict</th><th>Detail</th></tr>
+    @foreach (var x in r.Parity)
+    {
+        <tr><td>@x.Job</td><td>@x.Scenario</td><td>@x.Output</td><td class="@(x.Verdict == "MATCH" ? "ok" : "bad")">@x.Verdict</td><td><span class="muted" style="font-family:Consolas,monospace;font-size:.8rem">@x.Detail</span></td></tr>
+    }
+</table>
+
+@code {
+    [Parameter, EditorRequired] public BuildTestReport Report { get; set; } = null!;
+}

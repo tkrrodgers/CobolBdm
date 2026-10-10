@@ -1,0 +1,139 @@
+@page "/convert"
+@page "/programs"
+@implements IDisposable
+@inject ProjectService Projects
+@inject WorkspaceActions Actions
+@inject OperationService Ops
+@inject ConversionService Conversion
+@inject JobParityService Parity
+@inject JavaSidecarService Sidecar
+
+<PageTitle>Conversion</PageTitle>
+<h2>Conversion — COBOL to Java</h2>
+
+@if (Projects.Active is not { } p)
+{
+    <p>Select or onboard a project in <a href="settings">Settings</a>.</p>
+}
+else
+{
+    var rows = Conversion.Report(p);
+    <p class="muted">Each program goes COBOL → IR (C#: parser, semantic tree, PDG) → Java (the sidecar's emitter) on the byte-backed
+    <code>com.mlcpu.rt</code> runtime. Statements it cannot lower faithfully become frontiers that stop the program if reached.
+    Sidecar: <span class="@(sidecarUp ? "ok" : "bad")">@(sidecarUp ? "up" : "down — run tools\\Start-Sidecar.ps1")</span>.</p>
+
+    <div class="panel">
+        <h3>1. Transpile</h3>
+        <div class="row">
+            <button disabled="@(Ops.IsRunning(p.Id, WorkspaceActions.Transpile) || !sidecarUp)" @onclick="() => Actions.StartTranspile(p.Id)">Transpile all (@p.Programs.Count programs)</button>
+            @if (rows.Count > 0) { <span class="muted">last run: @rows.Count(r => r.Compiled)/@rows.Count transpiled, @rows.Sum(r => r.Lowered) statements lowered, @rows.Sum(r => r.Abstained) abstained</span> }
+        </div>
+        <OperationPanel ProjectId="@p.Id" Kind="@WorkspaceActions.Transpile" Completed="_ => Refresh()" Lines="20" />
+        @if (rows.Count > 0)
+        {
+            <table class="grid">
+                <tr><th>Program</th><th>Kind</th><th>Source</th><th>Verdict</th><th>Lowered</th><th>Abstained</th><th>Seconds</th><th></th></tr>
+                @foreach (var r in rows)
+                {
+                    <tr class="@(selected?.Program == r.Program ? "selected" : "")">
+                        <td>@r.Program</td><td>@r.Kind</td><td class="muted">@r.Path</td>
+                        <td class="@(r.Compiled ? "ok" : "bad")">@r.Verdict</td><td>@r.Lowered</td><td class="@(r.Abstained > 0 ? "bad" : "")">@r.Abstained</td><td>@r.Seconds</td>
+                        <td>@if (r.ClassName is not null) { <button class="secondary" @onclick="() => Show(p, r)">View Java</button> }</td>
+                    </tr>
+                }
+            </table>
+        }
+        @if (selected is not null)
+        {
+            <h4>@selected.Program → @selected.ClassName</h4>
+            @if (selected.Frontiers.Count > 0)
+            {
+                <p class="bad">Frontiers (abstained statements):</p>
+                <ul>@foreach (var f in selected.Frontiers) { <li>@f</li> }</ul>
+            }
+            @if (selected.Error is not null) { <p class="bad">@selected.Error</p> }
+            <pre class="code">@source</pre>
+        }
+    </div>
+
+    @if (rows.Count > 0)
+    {
+        <div class="panel">
+            <h3>2. Publish the normalized Spring estate</h3>
+            <p class="muted">One Gradle project (Spring Boot, Java 21): the faithful programs and frozen baselines, the harvested JCL jobs as a typed
+            JobDefinition run by the JobEngine, projections 2–10, the <b>capabilities layer</b> (platform, normalized capability classes, equivalence tests
+            with GnuCOBOL oracle resources) and the <b>modernization kit</b> a model needs: requirements packets, design schema, AST outlines,
+            worked examples, parity notes, call graph, AST and DDG JSON.</p>
+            <div class="kv">
+                <div>Jobs</div><div>@string.Join(", ", p.Publish.Jobs)</div>
+                <div>Capabilities</div><div>@(p.Publish.Capabilities.Count == 0 ? "—" : string.Join(", ", p.Publish.Capabilities)) @(p.Publish.CapabilitiesRoot is { } cr ? $"(authored: {cr})" : "(generated at publish)")</div>
+            </div>
+            <div class="row"><label>Publish to</label><input type="text" class="wide" @bind="publishDir" />
+                <button disabled="@(Ops.IsRunning(p.Id, WorkspaceActions.Publish) || p.Oracle.JobChecks.Count == 0)" @onclick="() => Actions.StartPublish(p.Id, publishDir)">Publish</button>
+                @if (p.Oracle.JobChecks.Count == 0) { <span class="bad">run the GnuCOBOL oracle first (Settings)</span> }
+            </div>
+            <OperationPanel ProjectId="@p.Id" Kind="@WorkspaceActions.Publish" Completed="_ => Refresh()" Lines="20" />
+            @if (p.Publish.Last is { } last)
+            {
+                <p>Published <code>@last.Path</code> at @last.At.Replace('T', ' '): @last.Programs program(s), @last.Capabilities capability packet(s).</p>
+                @if (Ops.Latest(p.Id, WorkspaceActions.Publish)?.Result is PublishResult pr && pr.Kit.Count > 0)
+                {
+                    <table class="grid">
+                        <tr><th>Capability</th><th>Kind</th><th>Runs in</th><th>Entry class</th><th>Acceptance test</th><th>Oracle scenarios</th><th>Notes</th></tr>
+                        @foreach (var k in pr.Kit)
+                        {
+                            <tr><td>@k.ProgramId</td><td>@k.Kind</td><td>@k.Job.@k.StepId (@k.HostProgram)</td><td>@k.Package.@k.ClassName</td><td>@k.TestClass</td><td>@string.Join(", ", k.Scenarios)</td><td>@string.Join("; ", k.Notes)</td></tr>
+                        }
+                    </table>
+                }
+
+                <h3>3. Build &amp; test against GnuCOBOL</h3>
+                <p class="muted"><code>gradle test</code> (equivalence, oracle, characterization, codec and context tests), then every job check: the
+                oracle's input datasets staged, the job run through the generated JobRunner, each output dataset compared byte for byte and SYSOUT
+                line by line with the GnuCOBOL oracle.</p>
+                <div class="row">
+                    <button disabled="@Ops.IsRunning(p.Id, WorkspaceActions.Test)" @onclick="() => Actions.StartTest(p.Id)">Build &amp; test</button>
+                </div>
+                <OperationPanel ProjectId="@p.Id" Kind="@WorkspaceActions.Test" Completed="_ => Refresh()" Lines="20" />
+                @if (Parity.LastReport(p, "publish") is { } report)
+                {
+                    <TestReport Report="report" />
+                }
+            }
+        </div>
+    }
+}
+
+@code {
+    TranspileRow? selected;
+    string? source;
+    string publishDir = "";
+    string? publishFor;
+    bool sidecarUp;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Projects.Changed += Refresh;
+        sidecarUp = await Sidecar.HealthAsync() is not null;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Projects.Active is { } p && publishFor != p.Id)
+        {
+            publishFor = p.Id;
+            publishDir = Conversion.DefaultPublishDir(p);
+            selected = null;
+        }
+    }
+
+    void Show(ProjectDefinition p, TranspileRow r)
+    {
+        selected = r;
+        source = Conversion.JavaSource(p, r);
+    }
+
+    void Refresh() => InvokeAsync(() => { OnParametersSet(); StateHasChanged(); });
+
+    public void Dispose() => Projects.Changed -= Refresh;
+}

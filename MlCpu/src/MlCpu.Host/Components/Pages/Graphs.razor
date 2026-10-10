@@ -1,0 +1,174 @@
+@page "/graphs"
+@using System.Text.Json.Nodes
+@implements IDisposable
+@inject ProjectService Projects
+@inject WorkspaceActions Actions
+@inject OperationService Ops
+@inject GraphService GraphSvc
+
+<PageTitle>Graphs</PageTitle>
+<h2>Graphs — call graph, AST, PDG, DDG</h2>
+
+@if (Projects.Active is not { } p)
+{
+    <p>Select or onboard a project in <a href="settings">Settings</a>.</p>
+}
+else
+{
+    var index = GraphSvc.Index(p);
+    <p class="muted">Per program: the COBOL-85 parse tree (grammars-v4 <code>Cobol85.g4</code> via ANTLR 4.13.1) as <code>graphs/ast/&lt;PID&gt;.ast.json</code>
+    and an outline; the data dependence graph (reaching definitions over byte ranges) as <code>graphs/ddg/&lt;PID&gt;.ddg.json</code>; the estate call
+    graph (jobs → programs → CALLs, paragraphs → PERFORM / GO TO) as <code>graphs/callgraph.json</code>. The PDG (control + data dependences) is built in
+    memory when you open a paragraph below. Files: <code>@GraphSvc.Dir(p)</code></p>
+    <div class="row">
+        <button disabled="@Ops.IsRunning(p.Id, WorkspaceActions.Graphs)" @onclick="() => Actions.StartGraphs(p.Id)">Rebuild all graphs</button>
+        <span class="muted">last built: @(GraphSvc.BuiltAt(p)?.Replace('T', ' ') ?? "never")</span>
+    </div>
+    <OperationPanel ProjectId="@p.Id" Kind="@WorkspaceActions.Graphs" Completed="_ => Reload()" Lines="15" />
+
+    @if (callGraph is not null)
+    {
+        <h3>Estate call graph</h3>
+        <div class="legend">
+            <span><i style="background:#0969da"></i>job</span><span><i style="background:#1a7f37"></i>batch program</span><span><i style="background:#2da44e"></i>subprogram</span>
+            <span><i style="background:#9a6700"></i>online</span><span><i style="background:#6e7781"></i>utility</span><span><i style="background:#cf222e"></i>external</span>
+            <span class="muted">— edges: exec (blue), CALL (green). Click a program to open its paragraph graph.</span>
+        </div>
+        <CytoscapeGraph Elements="callGraph" Layout="breadthfirst" NodeTapped="OnEstateTap" />
+    }
+
+    @if (index.Count > 0)
+    {
+        <h3>Programs</h3>
+        <table class="grid">
+            <tr><th>Program</th><th>COBOL-85 AST</th><th>Parse ms</th><th>AST JSON</th><th>Paragraphs</th><th>Statements</th><th>Data deps</th><th>Control deps</th><th>CALLs</th><th>Dead paragraphs</th><th></th></tr>
+            @foreach (var s in index)
+            {
+                <tr class="@(program == s.ProgramId ? "selected" : "")">
+                    <td>@s.ProgramId</td>
+                    <td class="@(s.AstOk ? "ok" : "bad")" title="@s.FirstError">@(s.AstOk ? "ok" : $"{s.AstErrors} error(s)")</td>
+                    <td>@s.ParseMs</td><td>@($"{s.AstBytes / 1024:N0} KB")</td><td>@s.Paragraphs</td><td>@s.Statements</td><td>@s.DataDeps</td><td>@s.CtrlDeps</td><td>@s.Calls</td>
+                    <td class="@(s.DeadParagraphs > 0 ? "bad" : "")">@s.DeadParagraphs</td>
+                    <td><button class="secondary" @onclick="() => Open(p, s.ProgramId)">Open</button></td>
+                </tr>
+            }
+        </table>
+    }
+
+    @if (program is not null)
+    {
+        <h3>@program</h3>
+        <div class="split">
+            <div>
+                <h4>Paragraph graph</h4>
+                <div class="legend"><span><i style="background:#8250df"></i>paragraph</span><span><i style="background:#cf222e"></i>unreachable</span>
+                    <span class="muted">PERFORM (purple), GO TO (dashed), fall-through (dotted). Click a paragraph for its PDG.</span></div>
+                @if (paragraphGraph is not null) { <CytoscapeGraph Elements="paragraphGraph" Layout="breadthfirst" Css="small" NodeTapped="OnParagraphTap" /> }
+            </div>
+            <div>
+                <h4>PDG @(paragraph is null ? "" : "— " + paragraph) <span class="muted">(in memory)</span></h4>
+                <div class="legend"><span class="muted">statements; control dependence (orange), data dependence (teal, labelled with the field)</span></div>
+                @if (pdg is not null) { <CytoscapeGraph Elements="pdg" Layout="breadthfirst" Css="small" /> }
+                else { <p class="muted">Click a paragraph.</p> }
+                @if (pdgStats is not null) { <p class="muted">@pdgStats</p> }
+            </div>
+        </div>
+        <details open>
+            <summary>COBOL-85 AST outline (what a model reads: data division with VALUE clauses, nested procedure logic)</summary>
+            <pre class="code">@outline</pre>
+        </details>
+    }
+}
+
+@code {
+    JsonObject? callGraph, paragraphGraph, pdg;
+    string? program, paragraph, outline, pdgStats, loadedFor;
+
+    protected override void OnInitialized() => Projects.Changed += Changed;
+
+    protected override void OnParametersSet()
+    {
+        if (Projects.Active?.Id != loadedFor) Reload();
+    }
+
+    void Changed() => InvokeAsync(() => { if (Projects.Active?.Id != loadedFor) Reload(); StateHasChanged(); });
+
+    void Reload()
+    {
+        loadedFor = Projects.Active?.Id;
+        program = paragraph = outline = pdgStats = null;
+        paragraphGraph = pdg = null;
+        callGraph = Projects.Active is { } p && GraphSvc.CallGraphJson(p) is { } g ? Estate(g, p) : null;
+        InvokeAsync(StateHasChanged);
+    }
+
+    static JsonObject Estate(JsonObject g, ProjectDefinition p)
+    {
+        var kinds = p.Programs.ToDictionary(x => x.Id, x => x.Kind, StringComparer.OrdinalIgnoreCase);
+        var nodes = new JsonArray();
+        foreach (var n in g["nodes"]!.AsArray().OfType<JsonObject>())
+        {
+            var kind = n["kind"]!.GetValue<string>();
+            var label = n["label"]!.GetValue<string>();
+            var color = kind == "program" ? (kinds.GetValueOrDefault(label) is "subprogram" or "online" or "unreferenced" ? kinds[label] : "program") : kind;
+            nodes.Add(new JsonObject { ["data"] = new JsonObject { ["id"] = n["id"]!.GetValue<string>(), ["label"] = label, ["kind"] = kind, ["color"] = color,
+                ["title"] = kind == "program" ? $"{label} ({kinds.GetValueOrDefault(label)}, {n["lines"]} lines)" : $"{kind} {label}" } });
+        }
+        var edges = new JsonArray();
+        int i = 0;
+        foreach (var e in g["edges"]!.AsArray().OfType<JsonObject>())
+            edges.Add(new JsonObject { ["data"] = new JsonObject { ["id"] = "e" + i++, ["source"] = e["source"]!.GetValue<string>(), ["target"] = e["target"]!.GetValue<string>(),
+                ["kind"] = e["kind"]!.GetValue<string>(), ["label"] = e["kind"]!.GetValue<string>() == "exec" ? e["label"]?.GetValue<string>() ?? "" : "" } });
+        return new JsonObject { ["nodes"] = nodes, ["edges"] = edges };
+    }
+
+    Task OnEstateTap(string id)
+    {
+        if (Projects.Active is { } p && id.StartsWith("P:")) Open(p, id[2..]);
+        return Task.CompletedTask;
+    }
+
+    void Open(ProjectDefinition p, string pid)
+    {
+        program = pid;
+        paragraph = null;
+        pdg = null;
+        pdgStats = null;
+        outline = GraphSvc.Outline(p, pid) ?? "(rebuild the graphs)";
+        var g = GraphSvc.CallGraphJson(p)?["programs"]?[pid];
+        if (g is null) { paragraphGraph = null; StateHasChanged(); return; }
+        var nodes = new JsonArray();
+        foreach (var n in g["paragraphs"]!.AsArray().OfType<JsonObject>())
+        {
+            bool dead = n["dead"]?.GetValue<bool>() == true;
+            nodes.Add(new JsonObject { ["data"] = new JsonObject { ["id"] = n["id"]!.GetValue<string>(), ["label"] = n["id"]!.GetValue<string>(), ["kind"] = "paragraph",
+                ["color"] = dead ? "dead" : "paragraph", ["title"] = $"{n["id"]} (line {n["line"]}, {n["statements"]} statements{(dead ? ", unreachable" : "")})" } });
+        }
+        var ids = nodes.Select(n => n!["data"]!["id"]!.GetValue<string>()).ToHashSet();
+        var edges = new JsonArray();
+        int i = 0;
+        foreach (var e in g["edges"]!.AsArray().OfType<JsonObject>())
+        {
+            var s = e["source"]!.GetValue<string>();
+            var t = e["target"]!.GetValue<string>();
+            if (!ids.Contains(s) || !ids.Contains(t)) continue;
+            edges.Add(new JsonObject { ["data"] = new JsonObject { ["id"] = "p" + i++, ["source"] = s, ["target"] = t, ["kind"] = e["kind"]!.GetValue<string>() } });
+        }
+        paragraphGraph = new JsonObject { ["nodes"] = nodes, ["edges"] = edges };
+        StateHasChanged();
+    }
+
+    Task OnParagraphTap(string id)
+    {
+        if (Projects.Active is not { } p || program is null) return Task.CompletedTask;
+        paragraph = id;
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        pdg = GraphSvc.PdgElements(p, program, id);
+        pdgStats = $"{pdg["nodes"]!.AsArray().Count} statement(s), {pdg["edges"]!.AsArray().Count(e => e!["data"]!["kind"]!.GetValue<string>() == "control")} control and " +
+                   $"{pdg["edges"]!.AsArray().Count(e => e!["data"]!["kind"]!.GetValue<string>() == "data")} data dependence(s) within the paragraph — built in {sw.ElapsedMilliseconds} ms";
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    public void Dispose() => Projects.Changed -= Changed;
+}

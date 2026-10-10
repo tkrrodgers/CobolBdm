@@ -1,0 +1,711 @@
+{
+  "schema": "mlcpu.capability-design.v1",
+  "programId": "CBTRN02C",
+  "requirementsHash": "044b30b08318ba6a0c3ade1bdfcddb4e01f19669d1cc0508fdc9e3b8d8fe2f7c",
+  "capability": "TransactionPosting",
+  "package": "com.mlcpu.capabilities.transactionposting",
+  "summary": "Posts daily transaction records to the transaction, account and category‑balance data sets, writes reject records and produces console diagnostics.",
+  "domainModel": [
+    {
+      "name": "TransactionRecord",
+      "kind": "record",
+      "source": "DALYTRAN-RECORD / TRAN-RECORD",
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "cobol": "X(16)"
+        },
+        {
+          "name": "typeCode",
+          "type": "String",
+          "cobol": "X(2)"
+        },
+        {
+          "name": "categoryCode",
+          "type": "String",
+          "cobol": "9(4)"
+        },
+        {
+          "name": "source",
+          "type": "String",
+          "cobol": "X(10)"
+        },
+        {
+          "name": "description",
+          "type": "String",
+          "cobol": "X(100)"
+        },
+        {
+          "name": "amount",
+          "type": "BigDecimal",
+          "cobol": "S9(9)V99"
+        },
+        {
+          "name": "merchantId",
+          "type": "String",
+          "cobol": "9(9)"
+        },
+        {
+          "name": "merchantName",
+          "type": "String",
+          "cobol": "X(50)"
+        },
+        {
+          "name": "merchantCity",
+          "type": "String",
+          "cobol": "X(50)"
+        },
+        {
+          "name": "merchantZip",
+          "type": "String",
+          "cobol": "X(10)"
+        },
+        {
+          "name": "cardNumber",
+          "type": "String",
+          "cobol": "X(16)"
+        },
+        {
+          "name": "origTimestamp",
+          "type": "String",
+          "cobol": "X(26)"
+        },
+        {
+          "name": "procTimestamp",
+          "type": "String",
+          "cobol": "X(26)"
+        }
+      ]
+    },
+    {
+      "name": "AccountRecord",
+      "kind": "record",
+      "source": "ACCOUNT-RECORD",
+      "fields": [
+        {
+          "name": "accountId",
+          "type": "String",
+          "cobol": "9(11)"
+        },
+        {
+          "name": "activeStatus",
+          "type": "String",
+          "cobol": "X(1)"
+        },
+        {
+          "name": "currentBalance",
+          "type": "BigDecimal",
+          "cobol": "S9(10)V99"
+        },
+        {
+          "name": "creditLimit",
+          "type": "BigDecimal",
+          "cobol": "S9(10)V99"
+        },
+        {
+          "name": "cashCreditLimit",
+          "type": "BigDecimal",
+          "cobol": "S9(10)V99"
+        },
+        {
+          "name": "openDate",
+          "type": "String",
+          "cobol": "X(10)"
+        },
+        {
+          "name": "expirationDate",
+          "type": "String",
+          "cobol": "X(10)"
+        },
+        {
+          "name": "reissueDate",
+          "type": "String",
+          "cobol": "X(10)"
+        },
+        {
+          "name": "currentCycleCredit",
+          "type": "BigDecimal",
+          "cobol": "S9(10)V99"
+        },
+        {
+          "name": "currentCycleDebit",
+          "type": "BigDecimal",
+          "cobol": "S9(10)V99"
+        },
+        {
+          "name": "addressZip",
+          "type": "String",
+          "cobol": "X(10)"
+        },
+        {
+          "name": "groupId",
+          "type": "String",
+          "cobol": "X(10)"
+        }
+      ]
+    },
+    {
+      "name": "CardXrefRecord",
+      "kind": "record",
+      "source": "CARD-XREF-RECORD",
+      "fields": [
+        {
+          "name": "cardNumber",
+          "type": "String",
+          "cobol": "X(16)"
+        },
+        {
+          "name": "customerId",
+          "type": "String",
+          "cobol": "9(9)"
+        },
+        {
+          "name": "accountId",
+          "type": "String",
+          "cobol": "9(11)"
+        }
+      ]
+    },
+    {
+      "name": "TransactionCategoryBalanceRecord",
+      "kind": "record",
+      "source": "TRAN-CAT-BAL-RECORD",
+      "fields": [
+        {
+          "name": "accountId",
+          "type": "String",
+          "cobol": "9(11)"
+        },
+        {
+          "name": "typeCode",
+          "type": "String",
+          "cobol": "X(2)"
+        },
+        {
+          "name": "categoryCode",
+          "type": "String",
+          "cobol": "9(4)"
+        },
+        {
+          "name": "balance",
+          "type": "BigDecimal",
+          "cobol": "S9(9)V99"
+        }
+      ]
+    },
+    {
+      "name": "RejectRecord",
+      "kind": "record",
+      "source": "FD-REJS-RECORD",
+      "fields": [
+        {
+          "name": "originalRecord",
+          "type": "String",
+          "cobol": "X(350)"
+        },
+        {
+          "name": "validationTrailer",
+          "type": "String",
+          "cobol": "X(80)"
+        }
+      ]
+    },
+    {
+      "name": "ValidationFailureCode",
+      "kind": "enum",
+      "source": "N/A",
+      "fields": [
+        {
+          "name": "NONE",
+          "type": "int",
+          "cobol": "0"
+        },
+        {
+          "name": "INVALID_CARD",
+          "type": "int",
+          "cobol": "100"
+        },
+        {
+          "name": "ACCOUNT_NOT_FOUND",
+          "type": "int",
+          "cobol": "101"
+        },
+        {
+          "name": "OVERLIMIT",
+          "type": "int",
+          "cobol": "102"
+        },
+        {
+          "name": "EXPIRED_ACCOUNT",
+          "type": "int",
+          "cobol": "103"
+        },
+        {
+          "name": "ACCOUNT_REWRITE_FAIL",
+          "type": "int",
+          "cobol": "109"
+        }
+      ]
+    }
+  ],
+  "ports": [
+    {
+      "name": "DalYtranReader",
+      "kind": "reader",
+      "file": "DALYTRAN-FILE",
+      "methods": [
+        "open",
+        "readNext",
+        "close"
+      ]
+    },
+    {
+      "name": "TransactionFileWriter",
+      "kind": "writer",
+      "file": "TRANSACT-FILE",
+      "methods": [
+        "open",
+        "write",
+        "close"
+      ]
+    },
+    {
+      "name": "XrefRepository",
+      "kind": "repository",
+      "file": "XREF-FILE",
+      "methods": [
+        "open",
+        "findByCardNumber",
+        "close"
+      ]
+    },
+    {
+      "name": "RejectFileWriter",
+      "kind": "writer",
+      "file": "DALYREJS-FILE",
+      "methods": [
+        "open",
+        "write",
+        "close"
+      ]
+    },
+    {
+      "name": "AccountRepository",
+      "kind": "repository",
+      "file": "ACCOUNT-FILE",
+      "methods": [
+        "open",
+        "findByAccountId",
+        "update",
+        "close"
+      ]
+    },
+    {
+      "name": "CategoryBalanceRepository",
+      "kind": "repository",
+      "file": "TCATBAL-FILE",
+      "methods": [
+        "open",
+        "find",
+        "create",
+        "update",
+        "close"
+      ]
+    },
+    {
+      "name": "ConsolePort",
+      "kind": "console",
+      "file": "SYSOUT",
+      "methods": [
+        "display"
+      ]
+    },
+    {
+      "name": "ClockPort",
+      "kind": "clock",
+      "file": "SYSTEM-CLK",
+      "methods": [
+        "now"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "TransactionPostingService",
+      "responsibility": "Orchestrates the whole posting workflow",
+      "methods": [
+        "run"
+      ]
+    },
+    {
+      "name": "ValidationService",
+      "responsibility": "Performs XREF lookup and account validation",
+      "methods": [
+        "validate",
+        "lookupXref",
+        "lookupAccount",
+        "checkLimits",
+        "checkExpiration"
+      ]
+    },
+    {
+      "name": "PostingService",
+      "responsibility": "Writes a validated transaction to the transaction file",
+      "methods": [
+        "postTransaction"
+      ]
+    },
+    {
+      "name": "BalanceUpdateService",
+      "responsibility": "Updates transaction‑category balance and account balances",
+      "methods": [
+        "updateCategoryBalance",
+        "updateAccount"
+      ]
+    },
+    {
+      "name": "RejectService",
+      "responsibility": "Writes reject records when validation fails",
+      "methods": [
+        "writeReject"
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "ruleId": "R-CBTRN02C-001",
+      "disposition": "implemented",
+      "element": "TransactionPostingService.run",
+      "description": "Initialize counters and reset validation reason at start of each record loop",
+      "reason": "Direct mapping of MAINLINE loop logic"
+    },
+    {
+      "ruleId": "R-CBTRN02C-002",
+      "disposition": "implemented",
+      "element": "TransactionPostingService.run",
+      "description": "Increment reject count when validation fails",
+      "reason": "Corresponds to MAINLINE reject‑count increment"
+    },
+    {
+      "ruleId": "R-CBTRN02C-003",
+      "disposition": "implemented",
+      "element": "TransactionPostingService.run",
+      "description": "Set return‑code 4 when any rejects occurred",
+      "reason": "Matches MAINLINE return‑code logic"
+    },
+    {
+      "ruleId": "R-CBTRN02C-004",
+      "disposition": "implemented",
+      "element": "ValidationService.lookupXref",
+      "description": "Move card number into XREF key",
+      "reason": "Straight copy of MOVE statement"
+    },
+    {
+      "ruleId": "R-CBTRN02C-005",
+      "disposition": "implemented",
+      "element": "ValidationService.lookupXref",
+      "description": "Set validation failure 100 on XREF NOT FOUND",
+      "reason": "Implements INVALID KEY handling"
+    },
+    {
+      "ruleId": "R-CBTRN02C-006",
+      "disposition": "implemented",
+      "element": "ValidationService.lookupAccount",
+      "description": "Move account id from XREF to ACCOUNT key",
+      "reason": "Direct mapping"
+    },
+    {
+      "ruleId": "R-CBTRN02C-007",
+      "disposition": "implemented",
+      "element": "ValidationService.lookupAccount",
+      "description": "Set validation failure 101 on ACCOUNT NOT FOUND",
+      "reason": "Implements INVALID KEY handling"
+    },
+    {
+      "ruleId": "R-CBTRN02C-008",
+      "disposition": "implemented",
+      "element": "ValidationService.lookupAccount",
+      "description": "Compute temporary balance for limit check",
+      "reason": "Corresponds to COMPUTE statement"
+    },
+    {
+      "ruleId": "R-CBTRN02C-009",
+      "disposition": "implemented",
+      "element": "ValidationService.checkLimits",
+      "description": "Set failure 102 when credit limit would be exceeded",
+      "reason": "Implements over‑limit IF"
+    },
+    {
+      "ruleId": "R-CBTRN02C-010",
+      "disposition": "implemented",
+      "element": "ValidationService.checkExpiration",
+      "description": "Set failure 103 when transaction date after account expiration",
+      "reason": "Implements expiration IF"
+    },
+    {
+      "ruleId": "R-CBTRN02C-011",
+      "disposition": "implemented",
+      "element": "PostingService.postTransaction",
+      "description": "Copy fields from DALYTRAN to TRAN record",
+      "reason": "Direct field mapping"
+    },
+    {
+      "ruleId": "R-CBTRN02C-012",
+      "disposition": "implemented",
+      "element": "PostingService.postTransaction",
+      "description": "Populate PROC‑TS with DB2 formatted timestamp",
+      "reason": "Matches MOVE DB2‑FORMAT‑TS"
+    },
+    {
+      "ruleId": "R-CBTRN02C-013",
+      "disposition": "implemented",
+      "element": "RejectService.writeReject",
+      "description": "Copy original record and validation trailer into reject record",
+      "reason": "Direct mapping"
+    },
+    {
+      "ruleId": "R-CBTRN02C-014",
+      "disposition": "implemented",
+      "element": "BalanceUpdateService.updateCategoryBalance",
+      "description": "Prepare key fields for TCATBAL read/write",
+      "reason": "Corresponds to MOVE statements"
+    },
+    {
+      "ruleId": "R-CBTRN02C-015",
+      "disposition": "implemented",
+      "element": "BalanceUpdateService.updateCategoryBalance",
+      "description": "Create new TCATBAL record when not found",
+      "reason": "Implements INVALID KEY path"
+    },
+    {
+      "ruleId": "R-CBTRN02C-016",
+      "disposition": "implemented",
+      "element": "BalanceUpdateService.updateCategoryBalance",
+      "description": "Add transaction amount to existing balance",
+      "reason": "ADD statement"
+    },
+    {
+      "ruleId": "R-CBTRN02C-017",
+      "disposition": "implemented",
+      "element": "BalanceUpdateService.updateAccount",
+      "description": "Add transaction amount to account current balance",
+      "reason": "ADD statement"
+    },
+    {
+      "ruleId": "R-CBTRN02C-018",
+      "disposition": "implemented",
+      "element": "BalanceUpdateService.updateAccount",
+      "description": "Set failure 109 on account rewrite error",
+      "reason": "Implements REWRITE INVALID KEY handling"
+    },
+    {
+      "ruleId": "R-CBTRN02C-019",
+      "disposition": "implemented",
+      "element": "ClockPort.now",
+      "description": "Build DB2 timestamp from CURRENT‑DATE",
+      "reason": "Matches Z‑GET‑DB2‑FORMAT‑TIMESTAMP logic"
+    }
+  ],
+  "quirks": [
+    {
+      "quirkId": "Q-01",
+      "disposition": "preserve",
+      "reason": "Stale XREF record on INVALID KEY must be retained for byte‑identical reject output",
+      "element": "XrefRepository.findByCardNumber"
+    },
+    {
+      "quirkId": "Q-02",
+      "disposition": "preserve",
+      "reason": "Stale ACCOUNT record on INVALID KEY must be retained for later balance calculations",
+      "element": "AccountRepository.findByAccountId"
+    },
+    {
+      "quirkId": "Q-03",
+      "disposition": "preserve",
+      "reason": "Last‑assignment‑wins semantics for WS‑VALIDATION‑FAIL‑REASON must be reproduced",
+      "element": "ValidationService.validate"
+    },
+    {
+      "quirkId": "Q-04",
+      "disposition": "preserve",
+      "reason": "Stale TCATBAL record on INVALID KEY must be kept to allow correct creation path",
+      "element": "CategoryBalanceRepository.find"
+    }
+  ],
+  "outputs": [
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "START OF EXECUTION OF PROGRAM CBTRN02C"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "TRANSACTIONS PROCESSED :"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "TRANSACTIONS REJECTED :"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "END OF EXECUTION OF PROGRAM CBTRN02C"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR OPENING DALYTRAN"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR OPENING TRANSACTION FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR OPENING CROSS REF FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR OPENING DALY REJECTS FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR OPENING ACCOUNT MASTER FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR OPENING TRANSACTION BALANCE FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR READING DALYTRAN FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR WRITING TO REJECTS FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "TCATBAL record not found for key :"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR READING TRANSACTION BALANCE FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR WRITING TRANSACTION BALANCE FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR REWRITING TRANSACTION BALANCE FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR WRITING TO TRANSACTION FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR CLOSING DALYTRAN FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR CLOSING TRANSACTION FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR CLOSING CROSS REF FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR CLOSING DAILY REJECTS FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR CLOSING ACCOUNT FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ERROR CLOSING TRANSACTION BALANCE FILE"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "ABENDING PROGRAM"
+    },
+    {
+      "output": "SYSOUT",
+      "producedBy": "ConsolePort.display",
+      "format": "FILE STATUS IS: NNNN"
+    },
+    {
+      "output": "TRANFILE",
+      "producedBy": "TransactionFileWriter.write",
+      "format": "FD-TRANFILE-REC (transaction record)"
+    },
+    {
+      "output": "DALYREJS",
+      "producedBy": "RejectFileWriter.write",
+      "format": "FD-REJS-RECORD (reject record)"
+    },
+    {
+      "output": "ACCTFILE",
+      "producedBy": "AccountRepository.update",
+      "format": "FD-ACCTFILE-REC (account record)"
+    },
+    {
+      "output": "TCATBALF",
+      "producedBy": "CategoryBalanceRepository.updateOrCreate",
+      "format": "FD-TRAN-CAT-BAL-RECORD (category balance record)"
+    }
+  ],
+  "tests": [
+    {
+      "name": "TransactionPostingService_UnitTest",
+      "kind": "unit",
+      "covers": [
+        "TransactionPostingService.run"
+      ]
+    },
+    {
+      "name": "ValidationService_Equivalence",
+      "kind": "equivalence",
+      "covers": [
+        "ValidationService.validate"
+      ]
+    },
+    {
+      "name": "EndToEnd_TransactionPosting",
+      "kind": "property",
+      "covers": [
+        "TransactionPostingService.run"
+      ]
+    }
+  ],
+  "openQuestions": [
+    "How should the implementation handle the clock pinning for volatile fields in regression tests?",
+    "Do we need to expose the low‑level file‑status codes through the ports for possible future monitoring?",
+    "Are there any business expectations around the order of reject records when multiple validation failures occur on the same input record?"
+  ]
+}

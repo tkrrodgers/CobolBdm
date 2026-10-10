@@ -1,0 +1,7 @@
+# relative-path	accept|xfail	note
+accept/ACCEPT01.cbl	accept	PERFORM VARYING, EVALUATE, IF/ELSE, COMP-3
+accept/ACCEPT02.cbl	accept	COPY REPLACING from cpy/
+accept/ACCEPT03.cbl	accept	sequential I/O, FILE STATUS, 88 SET
+accept/ACCEPT04.cbl	accept	OCCURS INDEXED BY, UNSTRING, STRING, INSPECT
+accept/ACCEPT05.cbl	accept	REDEFINES, PERFORM THRU, GO TO
+accept/XFAIL01.cbl	xfail	undeclared data name must be reported, not defaulted (I5)
