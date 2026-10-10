@@ -1,0 +1,5 @@
+# Datasets, oracle outputs, requirements packets, designs and evidence are compared byte for byte or pinned by hash,
+# so they are stored exactly as written: no line-ending conversion (core.autocrlf would otherwise turn LF scenario
+# inputs into CRLF on a Windows checkout, and CRLF oracle outputs into LF elsewhere). Source code is normalized as usual.
+projects/** -text
+capabilities/** -text
