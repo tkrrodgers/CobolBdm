@@ -120,6 +120,7 @@ public static class ImplementStep
         var written = new HashSet<string>(StringComparer.Ordinal);
         var runs = new JsonArray();
         var fixes = new List<string>();
+        string lastFeedback = "";
         bool compiled = false, firstPassed = false;
         int total = 0, passed = 0, used = 0;
         (int Attempt, bool Compiled, int Passed, int Total, int Diffs, SortedDictionary<string, string>? Files) best = (0, false, 0, 0, int.MaxValue, null);
@@ -127,7 +128,26 @@ public static class ImplementStep
         for (int attempt = 1; attempt <= attempts; attempt++)
         {
             used = attempt;
-            var r = chat.Complete(messages, maxTokens, reasoning);
+            ChatResult r;
+            try
+            {
+                r = chat.Complete(messages, maxTokens, reasoning);
+            }
+            catch (HttpRequestException e) when (e.Message.StartsWith("llama-server error:", StringComparison.Ordinal) && e.Message.Contains("\"code\":500"))
+            {
+                // The server could not read the model's reply (for instance a reply outside the chat template's format): a
+                // malformed reply, so a failed attempt; the model is asked to answer again. A server that is down still ends the run.
+                Program.Log($"implement attempt {attempt}: the server could not read the model's reply ({Clip(e.Message, 200)}); counted as a failed attempt");
+                File.WriteAllText(Path.Combine(outDir, $"implementation.attempt{attempt}.txt"), "(no reply: " + e.Message + ")\n");
+                var failed = new JsonObject { ["attempt"] = attempt, ["backend"] = chat.Name, ["replyError"] = Clip(e.Message, 500), ["problems"] = new JsonArray() };
+                runs.Add(failed);
+                fixes.Add("the reply could not be read by the server");
+                if (attempt == attempts) break;
+                messages = [.. baseMessages, new("assistant", Render(files)), new("user",
+                    "Your last reply could not be read: the server rejected its format. Answer again, in the format asked for." +
+                    (lastFeedback.Length > 0 ? "\n\nThe feedback you were answering:\n" + lastFeedback : "\n\n" + Edits.Instructions))];
+                continue;
+            }
             backend = r.Backend;
             Program.Log($"implement attempt {attempt}: prompt {r.PromptTokens} tok @ {r.PromptTokensPerSecond:N0} tok/s, generated {r.GeneratedTokens} tok @ {r.TokensPerSecond:N1} tok/s, {r.Seconds:N0}s, stop={r.Stop} [{r.Backend}]");
             File.WriteAllText(Path.Combine(outDir, $"implementation.attempt{attempt}.txt"), r.Content);
@@ -232,7 +252,8 @@ public static class ImplementStep
             fixes.Add(Clip(message.Split('\n').FirstOrDefault(l => l.Trim().Length > 0) ?? "", 300));
             runs.Add(attemptJson);
             if (attempt == attempts) break;
-            messages = [.. baseMessages, new("assistant", Render(files)), new("user", message + "\nFix the cause. " + Edits.Instructions)];
+            lastFeedback = message + "\nFix the cause. " + Edits.Instructions;
+            messages = [.. baseMessages, new("assistant", Render(files)), new("user", lastFeedback)];
         }
         // The deliverable is the best attempt (most scenarios passed, then fewest output differences); a later attempt that
         // regressed (for instance stopped compiling) does not replace it.
