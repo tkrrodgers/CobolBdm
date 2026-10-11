@@ -1,0 +1,105 @@
+{
+  "id" : "post-197",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 197' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 23,
+      "activeStatus" : "Y",
+      "currentBalance" : "104.00",
+      "creditLimit" : "3377.00",
+      "cashCreditLimit" : "2904.00",
+      "openDate" : "2012-03-15",
+      "expirationDate" : "2025-03-18",
+      "reissueDate" : "2025-03-18",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "8112545834239735",
+      "customerId" : 23,
+      "accountId" : 23
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 23,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000618712102",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Hahn-Lueilwitz",
+        "amount" : "21.11",
+        "merchantId" : 800000000,
+        "merchantName" : "Hahn-Lueilwitz",
+        "merchantCity" : "Deondreville",
+        "merchantZip" : "55366-2298",
+        "cardNumber" : "8112545834239735",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000618712102",
+        "accountId" : 23,
+        "newBalance" : "125.11"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 23,
+      "activeStatus" : "Y",
+      "currentBalance" : "125.11",
+      "creditLimit" : "3377.00",
+      "cashCreditLimit" : "2904.00",
+      "openDate" : "2012-03-15",
+      "expirationDate" : "2025-03-18",
+      "reissueDate" : "2025-03-18",
+      "currentCycleCredit" : "21.11",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 23,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "21.11"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000618712102",
+      "accountId" : 23,
+      "cardNumber" : "8112545834239735",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Hahn-Lueilwitz",
+      "amount" : "21.11",
+      "merchantId" : 800000000,
+      "merchantName" : "Hahn-Lueilwitz",
+      "merchantCity" : "Deondreville",
+      "merchantZip" : "55366-2298",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

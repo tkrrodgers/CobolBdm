@@ -1,0 +1,34 @@
+{
+  "id" : "post-batch-14",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'empty day' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-12", "POST-13" ],
+  "initial" : {
+    "accounts" : [ ],
+    "cards" : [ ],
+    "categoryBalances" : [ ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postBatch",
+    "input" : {
+      "key" : "batch-1",
+      "transactions" : [ ]
+    },
+    "expect" : {
+      "result" : {
+        "processed" : 0,
+        "posted" : 0,
+        "rejected" : 0,
+        "outcomes" : [ ]
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ ],
+    "categoryBalances" : [ ],
+    "ledger" : [ ],
+    "rejections" : [ ]
+  }
+}

@@ -1,0 +1,2001 @@
+{
+  "schema" : "mlcpu.cas-scenarios.v1",
+  "seed" : 20260010,
+  "note" : "Built by forward/cas/sme (ScenarioBuild). Expected values: the reference implementation, cross-checked against the faithful programs (cross-check.md).",
+  "scenarios" : [ {
+    "id" : "idem-batch-replay",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "IDEM-01",
+    "rules" : [ "IDEM-01", "POST-02", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "authored by the SME: the same postBatch key twice"
+  }, {
+    "id" : "idem-failed-not-recorded",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "IDEM-02",
+    "rules" : [ "IDEM-02", "INT-05", "INT-10" ],
+    "origin" : "authored by the SME: an interest run that throws is not recorded: the same key throws again"
+  }, {
+    "id" : "idem-post-duplicate-id",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "IDEM-04",
+    "rules" : [ "IDEM-04", "POST-01", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11" ],
+    "origin" : "authored by the SME: a transaction id already in the ledger, under a new key, is rejected with 104"
+  }, {
+    "id" : "idem-post-replay",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "IDEM-01",
+    "rules" : [ "IDEM-01", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "authored by the SME: the same postTransaction key twice: the second call returns the first result and changes nothing"
+  }, {
+    "id" : "interest-01",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-07",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'CardDemo month' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-02",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-05",
+    "rules" : [ "INT-01", "INT-05", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'group rates missing: DEFAULT used' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-03",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-05",
+    "rules" : [ "INT-01", "INT-05", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'only DEFAULT rates' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-04",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "INT-05",
+    "rules" : [ "INT-05", "INT-10" ],
+    "origin" : "legacy CBACT04C: 'no rates at all (abend)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-05",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-06",
+    "rules" : [ "INT-01", "INT-06", "INT-09", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'zero rates' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-06",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-07",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'negative rates' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-07",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-07",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'negative category balances' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-08",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "INT-07",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'one account only (Q-01)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-09",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-01",
+    "rules" : [ "INT-01", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'no category balances' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-10",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-03",
+    "rules" : [ "INT-03", "INT-10" ],
+    "origin" : "legacy CBACT04C: 'account missing (abend)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-11",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "INT-04",
+    "rules" : [ "INT-04", "INT-10" ],
+    "origin" : "legacy CBACT04C: 'cross-reference missing (abend)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-12",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-07",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "legacy CBACT04C: 'another run date' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "interest-after-postings",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-07",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-07", "POST-08", "POST-09", "POST-10", "POST-12", "POST-13" ],
+    "origin" : "authored by the SME: postings during the cycle, then the cycle close: interest on the new balances, cycle totals reset"
+  }, {
+    "id" : "interest-all-or-nothing",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-05",
+    "rules" : [ "INT-05", "INT-10" ],
+    "origin" : "authored by the SME: the third account's rate is missing: the run throws and changes nothing"
+  }, {
+    "id" : "interest-group-rate",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-05",
+    "rules" : [ "INT-01", "INT-05", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "authored by the SME: accounts with a disclosure group use its rates; others and missing entries fall back to DEFAULT"
+  }, {
+    "id" : "interest-ids-continue",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-07",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "authored by the SME: interest ids continue after the cycle's interest entries already in the ledger"
+  }, {
+    "id" : "interest-missing-card-second",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-04",
+    "rules" : [ "INT-04", "INT-10" ],
+    "origin" : "authored by the SME: the second account has no card: the run throws and changes nothing"
+  }, {
+    "id" : "interest-new-key-same-cycle",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "IDEM-03",
+    "rules" : [ "IDEM-03", "INT-01", "INT-02", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "authored by the SME: a second run for the same cycle under a new key skips every account"
+  }, {
+    "id" : "interest-next-cycle",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "INT-07",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "authored by the SME: July, then August: ids restart per cycle, accounts are closed again"
+  }, {
+    "id" : "interest-preclosed",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "IDEM-03",
+    "rules" : [ "IDEM-03", "INT-01", "INT-02", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "authored by the SME: accounts already closed for the cycle or a later one are skipped"
+  }, {
+    "id" : "interest-replay-same-key",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "IDEM-01",
+    "rules" : [ "IDEM-01", "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "authored by the SME: the same accrueInterest key twice"
+  }, {
+    "id" : "interest-skipped-without-card",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-02",
+    "rules" : [ "INT-01", "INT-02", "INT-04", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "authored by the SME: a skipped account needs no card; a processed one does"
+  }, {
+    "id" : "interest-truncation",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "INT-06",
+    "rules" : [ "INT-01", "INT-06", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+    "origin" : "authored by the SME: interest truncated toward zero to the cent, for positive and negative balances and odd rates"
+  }, {
+    "id" : "post-001",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-002",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-007",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 7' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-008",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 8' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-013",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 13' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-016",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 16' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-017",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 17' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-021",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 21' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-031",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 31' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-032",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 32' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-035",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 35' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-038",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 38' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-040",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 40' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-043",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 43' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-050",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 50' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-055",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 55' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-057",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 57' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-060",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 60' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-061",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 61' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-062",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 62' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-066",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 66' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-067",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 67' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-073",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 73' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-079",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 79' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-083",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 83' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-090",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 90' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-093",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 93' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-094",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 94' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-095",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 95' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-100",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 100' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-101",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 101' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-104",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 104' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-116",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 116' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-143",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 143' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-147",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 147' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-151",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 151' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-165",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 165' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-169",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 169' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-171",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 171' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-175",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 175' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-182",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 182' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-185",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 185' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-187",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 187' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-190",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 190' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-197",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 197' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-200",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 200' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-215",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 215' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-220",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 220' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-223",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 223' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-224",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 224' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-227",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 227' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-228",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 228' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-230",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 230' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-233",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 233' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-234",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 234' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-235",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 235' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-236",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 236' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-239",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 239' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-260",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 260' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-263",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 263' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-265",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 265' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-273",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 273' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-279",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 279' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-284",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 284' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-286",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 286' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-287",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 287' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-288",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 288' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-292",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 292' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-299",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 299' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-302",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-02",
+    "rules" : [ "POST-02", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'unknown cards (reason 100) / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-306",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-02",
+    "rules" : [ "POST-02", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'unknown cards (reason 100) / transaction 6' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-310",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-02",
+    "rules" : [ "POST-02", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'unknown cards (reason 100) / transaction 10' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-313",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-03",
+    "rules" : [ "POST-03", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'accounts missing (reason 101) / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-314",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'accounts missing (reason 101) / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-315",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'accounts missing (reason 101) / transaction 3' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-317",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-03",
+    "rules" : [ "POST-03", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'accounts missing (reason 101) / transaction 5' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-319",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-03",
+    "rules" : [ "POST-03", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'accounts missing (reason 101) / transaction 7' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-323",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-03",
+    "rules" : [ "POST-03", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'accounts missing (reason 101) / transaction 11' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-324",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'accounts missing (reason 101) / transaction 12' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-325",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-326",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-327",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 3' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-328",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 4' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-329",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 5' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-330",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 6' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-331",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 7' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-332",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 8' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-333",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 9' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-334",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 10' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-335",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 11' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-336",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 12' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-337",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103) / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-338",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103) / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-339",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103) / transaction 3' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-340",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103) / transaction 4' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-342",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103) / transaction 6' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-343",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103) / transaction 7' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-346",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103) / transaction 10' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-348",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103) / transaction 12' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-349",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-350",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-351",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 3' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-352",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 4' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-353",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 5' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-354",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 6' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-355",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 7' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-356",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 8' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-357",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 9' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-358",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 10' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-359",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 11' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-360",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 12' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-361",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-01",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10", "RPT-01" ],
+    "origin" : "legacy CBTRN02C: 'expiry on the transaction date boundary / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-362",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-01",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10", "RPT-01" ],
+    "origin" : "legacy CBTRN02C: 'expiry on the transaction date boundary / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-376",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'credits and debits / transaction 4' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-378",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'credits and debits / transaction 6' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-381",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'credits and debits / transaction 9' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-385",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'zero amounts / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-408",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'credit limit reached exactly / transaction 12' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-409",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'transaction on the expiry day / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-410",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'transaction on the expiry day / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-414",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'transaction on the expiry day / transaction 6' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-415",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'transaction on the expiry day / transaction 7' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-422",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'blank origin timestamps / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-427",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-05",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'blank origin timestamps / transaction 7' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-433",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'no category balances yet / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-434",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'no category balances yet / transaction 2' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-441",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'no category balances yet / transaction 9' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-445",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-01",
+    "rules" : [ "POST-01", "POST-11" ],
+    "origin" : "legacy CBTRN02C: 'transaction id already posted (abend) / transaction 1' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-447",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'transaction id already posted (abend) / transaction 3' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-453",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'transaction id already posted (abend) / transaction 9' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-455",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-07",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+    "origin" : "legacy CBTRN02C: 'transaction id already posted (abend) / transaction 11' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-01",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'CardDemo day' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-02",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-02",
+    "rules" : [ "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'unknown cards (reason 100)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-03",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-03",
+    "rules" : [ "POST-03", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'accounts missing (reason 101)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-04",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'over limit (reason 102)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-05",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-04", "POST-05", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'expired (reason 103)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-06",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-07",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "RPT-01",
+    "rules" : [ "POST-04", "POST-05", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "RPT-01" ],
+    "origin" : "legacy CBTRN02C: 'expiry on the transaction date boundary' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-08",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'credits and debits' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-09",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'zero amounts' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-10",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'credit limit reached exactly' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-11",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'transaction on the expiry day' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-12",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-04", "POST-05", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'blank origin timestamps' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-13",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'no category balances yet' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-14",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'empty day' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-15",
+    "slice" : "accounts",
+    "visibility" : "public",
+    "primaryRule" : "POST-01",
+    "rules" : [ "POST-01", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "legacy CBTRN02C: 'transaction id already posted (abend)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "post-batch-duplicate-within",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-01",
+    "rules" : [ "POST-01", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "authored by the SME: a batch that carries the same transaction id twice: the second is a duplicate"
+  }, {
+    "id" : "post-expiry-boundary",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-01",
+    "rules" : [ "POST-05", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "RPT-01" ],
+    "origin" : "authored by the SME: expiry: on the expiration day it posts, the day after it is refused, without an origin timestamp it posts"
+  }, {
+    "id" : "post-limit-sequence-batch",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+    "origin" : "authored by the SME: the projected cycle balance (credit - debit + amount) over a sequence of credits and debits, batch"
+  }, {
+    "id" : "post-limit-sequence-realtime",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-04",
+    "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11" ],
+    "origin" : "authored by the SME: the projected cycle balance (credit - debit + amount) over a sequence of credits and debits, realtime"
+  }, {
+    "id" : "post-new-category-balance",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-12",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10", "POST-12", "POST-13" ],
+    "origin" : "authored by the SME: a category the account has no balance for yet is created with the amount"
+  }, {
+    "id" : "post-overlimit-and-expired",
+    "slice" : "accounts",
+    "visibility" : "hidden",
+    "primaryRule" : "POST-06",
+    "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+    "origin" : "authored by the SME: over the limit and expired at once: 103 wins"
+  }, {
+    "id" : "cust-001",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-01", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'oracle scenario base' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-002",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-03",
+    "rules" : [ "CUST-01", "CUST-02", "CUST-03", "CUST-04", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-09", "CUST-10", "UPD-01", "UPD-02", "UPD-03", "UPD-05", "UPD-06", "UPD-07", "UPD-08", "UPD-09" ],
+    "origin" : "legacy SAM1: 'oracle scenario all-transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-003",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-01", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'CUSTFILE: empty' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-004",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-01", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-09", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'CUSTFILE: first record only' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-005",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-08",
+    "rules" : [ "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'TRANFILE: empty' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-006",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'TRANFILE: first record only' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-007",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-03",
+    "rules" : [ "CUST-01", "CUST-03", "CUST-07", "CUST-08", "CUST-09", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'TRANFILE: records in reverse order' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-008",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-01", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-09", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'TRANFILE: every record twice' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-009",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-02",
+    "rules" : [ "CUST-02", "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 1 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-010",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-08",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 2 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-011",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-09" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 3 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-012",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 4 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-013",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-08",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 5 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-014",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-01",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-01", "UPD-03" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 6 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-015",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-05",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-05" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 7 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-016",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-06",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-06" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 8 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-017",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-05",
+    "rules" : [ "CUST-05", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 9 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-018",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-06", "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 10 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-019",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 11 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-020",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-05",
+    "rules" : [ "CUST-05", "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 12 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-021",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 13 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-022",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-06", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 14 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-023",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-04",
+    "rules" : [ "CUST-04", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 15 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-024",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 16 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-025",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-01",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-01", "UPD-02", "UPD-03" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 17 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-026",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-09" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 18 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-027",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-08",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 19 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-028",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-09" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 20 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-029",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-04",
+    "rules" : [ "CUST-04", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 21 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-030",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'all-transactions / change 22 alone' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-031",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-08",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored change 1: UPDATE 00001A        REPLACE  BALANCE    01 999999999' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-032",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-08",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored change 2: UPDATE 00001A        ADD      BALANCE    01 +999999999' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-033",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-08",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored change 3: UPDATE 00001A        ADD      BALANCE    01 -999999999' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-034",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-08",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored change 4: UPDATE 00001A        REPLACE  BALANCE    01 -000012345' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-035",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-01",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-01", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored change 5: UPDATE 00001A        REPLACE  BALANCE    01 0000123AB' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-036",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-08",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored change 6: UPDATE 00001A        REPLACE  BALANCE    01 +12345678' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-037",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-01",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-01", "UPD-02", "UPD-03", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored change 7: UPDATE 00001A        REPLACE  BALANCE    01 +0000001.5' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-038",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-01",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-01", "UPD-03" ],
+    "origin" : "legacy SAM1: 'authored change 8: UPDATE 00001A        REPLACE  BALANCE    01' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-039",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-09" ],
+    "origin" : "legacy SAM1: 'authored change 9: UPDATE 00001A        REPLACE  ORDERS     01 +000123456' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-040",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-09" ],
+    "origin" : "legacy SAM1: 'authored change 10: UPDATE 00001A        ADD      ORDERS     01 -000009999' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-041",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-09" ],
+    "origin" : "legacy SAM1: 'authored change 11: UPDATE 00001A        ADD      ORDERS     01 +999999999' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-042",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-01",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-01", "UPD-03", "UPD-09" ],
+    "origin" : "legacy SAM1: 'authored change 12: UPDATE 00001A        REPLACE  ORDERS     01 1234567AB' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-043",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-03", "UPD-09" ],
+    "origin" : "legacy SAM1: 'authored change 13: UPDATE 00001A        ADD      ORDERS     01 000000099' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-044",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'authored change 14: UPDATE 00001A        REPLACE  NAME       01 A VERY LONG CUSTOMER NAME THAT IS CUT' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-045",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'authored change 15: UPDATE 00001A        ADD      NAME       01 ADDED NAME' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-046",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'authored change 16: UPDATE 00001A        REPLACE  NAME       01' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-047",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-04",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-01", "UPD-04", "UPD-05" ],
+    "origin" : "legacy SAM1: 'authored change 17: UPDATE 00001A        DELETE   BALANCE    01 ABCDEFGHI' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-048",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-05",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-05" ],
+    "origin" : "legacy SAM1: 'authored change 18: UPDATE 00001A        DELETE   PHONE      01 5551212' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-049",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "UPD-06",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-06" ],
+    "origin" : "legacy SAM1: 'authored change 19: UPDATE 00001A        REPLACE  balance    01 +000000100' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-050",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-05",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-05" ],
+    "origin" : "legacy SAM1: 'authored change 20: UPDATE 00001A        MERGE    NAME       01 X' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-051",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-07",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'authored change 21: UPDATE 99999C        REPLACE  NAME       01 NEW CONTACT NAME' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-052",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-06",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-02", "UPD-06" ],
+    "origin" : "legacy SAM1: 'authored change 22: UPDATE 99999C        REPLACE  BALANCE    01 +000000100' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-053",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-06",
+    "rules" : [ "CUST-08", "CUST-09", "CUST-10", "UPD-02", "UPD-06" ],
+    "origin" : "legacy SAM1: 'authored change 23: UPDATE 99999C        ADD      ORDERS     01 +000000100' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-054",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-09",
+    "rules" : [ "CUST-07", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 24: UPDATE 00006A        REPLACE  NAME       01 NOBODY' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-055",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-05",
+    "rules" : [ "CUST-05", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 25: ADD    00001A' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-056",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-05",
+    "rules" : [ "CUST-05", "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 26: ADD    00006A' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-057",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "CUST-05",
+    "rules" : [ "CUST-05", "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 27: ADD    99998C' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-058",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-06", "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 28: DELETE 00001A' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-059",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-06", "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 29: DELETE 99999C' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-060",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-06", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 30: DELETE 00006A' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-061",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-04",
+    "rules" : [ "CUST-04", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 31: update 00001A        REPLACE  NAME       01 LOWER CASE' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-062",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "CUST-04",
+    "rules" : [ "CUST-04", "CUST-08", "CUST-09", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 32: REMOVE 00001A' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-063",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "CUST-02",
+    "rules" : [ "CUST-02", "CUST-08", "CUST-10" ],
+    "origin" : "legacy SAM1: 'authored change 33: *      00001A        REPLACE  NAME       01 COMMENTED OUT' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-064",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-01", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-07", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored batch: added then changed in the same batch (D-7)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-065",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-02",
+    "rules" : [ "CUST-01", "CUST-02", "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-07", "UPD-08" ],
+    "origin" : "legacy SAM1: 'authored batch: comment before a lower key (D-4)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-066",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-06",
+    "rules" : [ "CUST-01", "CUST-05", "CUST-07", "CUST-08", "CUST-09", "CUST-10", "UPD-02", "UPD-06", "UPD-07" ],
+    "origin" : "legacy SAM1: 'authored batch: contact added and named (D-6)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-067",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "CUST-06",
+    "rules" : [ "CUST-01", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'authored batch: delete then add the same key' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-068",
+    "slice" : "customers",
+    "visibility" : "public",
+    "primaryRule" : "CUST-03",
+    "rules" : [ "CUST-01", "CUST-03", "CUST-07", "CUST-08", "CUST-09", "CUST-10", "UPD-07" ],
+    "origin" : "legacy SAM1: 'authored batch: same key twice and a key going back' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "cust-069",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "UPD-09",
+    "rules" : [ "CUST-01", "CUST-07", "CUST-08", "CUST-10", "UPD-02", "UPD-03", "UPD-07", "UPD-08", "UPD-09" ],
+    "origin" : "legacy SAM1: 'authored batch: updates accumulate' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "idem-customers-replay",
+    "slice" : "customers",
+    "visibility" : "hidden",
+    "primaryRule" : "IDEM-01",
+    "rules" : [ "CUST-01", "CUST-05", "CUST-07", "CUST-08", "CUST-10", "IDEM-01", "UPD-03", "UPD-08" ],
+    "origin" : "authored by the SME: the same applyCustomerChanges key twice"
+  }, {
+    "id" : "report-01",
+    "slice" : "reporting",
+    "visibility" : "public",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'CardDemo report' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-02",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'one transaction' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-03",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'seven transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-04",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'nineteen transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-05",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'twenty transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-06",
+    "slice" : "reporting",
+    "visibility" : "public",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'twenty-one transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-07",
+    "slice" : "reporting",
+    "visibility" : "public",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'forty transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-08",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-09",
+    "rules" : [ "RPT-01", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'no transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-09",
+    "slice" : "reporting",
+    "visibility" : "public",
+    "primaryRule" : "RPT-09",
+    "rules" : [ "RPT-01", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'period ends mid-file (Q-01 stops early)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-10",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-09",
+    "rules" : [ "RPT-01", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'period before every transaction' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-11",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'negative amounts' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-12",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'zero amounts' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-13",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'period boundaries are inclusive' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-14",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "legacy CBTRN03C: 'blank processed timestamp ends the report (Q-01)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-15",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-03",
+    "rules" : [ "RPT-03" ],
+    "origin" : "legacy CBTRN03C: 'unknown card (abend)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-16",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-04",
+    "rules" : [ "RPT-04" ],
+    "origin" : "legacy CBTRN03C: 'unknown transaction type (abend)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-17",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-05",
+    "rules" : [ "RPT-05" ],
+    "origin" : "legacy CBTRN03C: 'unknown category (abend)' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)"
+  }, {
+    "id" : "report-after-posting",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10", "POST-12", "POST-13", "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "authored by the SME: today's postings reported next to older ledger entries"
+  }, {
+    "id" : "report-ledger-order",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "authored by the SME: the ledger holds entries out of card and id order: the report sorts them"
+  }, {
+    "id" : "report-lookups-in-period-only",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "authored by the SME: an entry outside the period with an unknown type is never looked up"
+  }, {
+    "id" : "report-unknown-category-in-period",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-05",
+    "rules" : [ "RPT-05" ],
+    "origin" : "authored by the SME: an in-period entry with an unknown category stops the report"
+  }, {
+    "id" : "report-with-interest",
+    "slice" : "reporting",
+    "visibility" : "hidden",
+    "primaryRule" : "RPT-02",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+    "origin" : "authored by the SME: interest transactions are reported on their processed date"
+  }, {
+    "id" : "stmt-after-customer-changes",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-04",
+    "rules" : [ "AVG-01", "CUST-01", "CUST-07", "CUST-08", "CUST-10", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-07", "STMT-08", "STMT-10", "UPD-03", "UPD-07", "UPD-09" ],
+    "origin" : "authored by the SME: the statement reflects customer changes applied before it"
+  }, {
+    "id" : "stmt-august-one-account",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-05",
+    "rules" : [ "AVG-01", "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-05", "STMT-06", "STMT-07", "STMT-08", "STMT-10" ],
+    "origin" : "authored by the SME: August for the same customer"
+  }, {
+    "id" : "stmt-before-activity",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-04",
+    "rules" : [ "AVG-01", "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-07", "STMT-08", "STMT-10" ],
+    "origin" : "authored by the SME: a cycle before any activity: opening equals closing"
+  }, {
+    "id" : "stmt-contact-only",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-01",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01" ],
+    "origin" : "authored by the SME: the id has a contact but no profile"
+  }, {
+    "id" : "stmt-july-one-account",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-05",
+    "rules" : [ "AVG-01", "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-05", "STMT-06", "STMT-07", "STMT-08", "STMT-10" ],
+    "origin" : "authored by the SME: July for a customer with one account: postings by category, interest charged in August for July, later activity excluded"
+  }, {
+    "id" : "stmt-june",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-05",
+    "rules" : [ "AVG-01", "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-05", "STMT-07", "STMT-08", "STMT-10" ],
+    "origin" : "authored by the SME: June: one posting, no interest"
+  }, {
+    "id" : "stmt-migrated-ledger",
+    "slice" : "statements",
+    "visibility" : "public",
+    "primaryRule" : "STMT-05",
+    "rules" : [ "AVG-01", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-05", "STMT-06", "STMT-07", "STMT-08", "STMT-10" ],
+    "origin" : "authored by the SME: migrated ledger entries: unprocessed ones are ignored, processed ones count in their month"
+  }, {
+    "id" : "stmt-missing-account",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-02",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-02" ],
+    "origin" : "authored by the SME: a linked account that does not exist"
+  }, {
+    "id" : "stmt-monthly-average",
+    "slice" : "statements",
+    "visibility" : "public",
+    "primaryRule" : "STMT-04",
+    "rules" : [ "AVG-01", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-07", "STMT-08", "STMT-10" ],
+    "origin" : "authored by the SME: the 12-month average sums whole units and truncates"
+  }, {
+    "id" : "stmt-no-accounts",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "AVG-01",
+    "rules" : [ "AVG-01", "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01", "STMT-02", "STMT-03", "STMT-10" ],
+    "origin" : "authored by the SME: a link with no accounts"
+  }, {
+    "id" : "stmt-no-link",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-02",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-02" ],
+    "origin" : "authored by the SME: a customer without a link"
+  }, {
+    "id" : "stmt-two-accounts-august",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-09",
+    "rules" : [ "AVG-01", "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-06", "STMT-07", "STMT-08", "STMT-09", "STMT-10" ],
+    "origin" : "authored by the SME: two linked accounts in August: an over-limit rejection"
+  }, {
+    "id" : "stmt-two-accounts-july",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-09",
+    "rules" : [ "AVG-01", "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01", "STMT-02", "STMT-03", "STMT-04", "STMT-05", "STMT-06", "STMT-07", "STMT-08", "STMT-09", "STMT-10" ],
+    "origin" : "authored by the SME: two linked accounts in link order, rejections of the cycle"
+  }, {
+    "id" : "stmt-unknown-customer",
+    "slice" : "statements",
+    "visibility" : "hidden",
+    "primaryRule" : "STMT-01",
+    "rules" : [ "INT-01", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12", "POST-02", "POST-04", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13", "STMT-01" ],
+    "origin" : "authored by the SME: no such customer"
+  } ]
+}

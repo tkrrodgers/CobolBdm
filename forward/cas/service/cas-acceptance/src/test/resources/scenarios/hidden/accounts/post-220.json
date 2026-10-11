@@ -1,0 +1,105 @@
+{
+  "id" : "post-220",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 220' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 15,
+      "activeStatus" : "Y",
+      "currentBalance" : "489.00",
+      "creditLimit" : "8441.00",
+      "cashCreditLimit" : "3833.00",
+      "openDate" : "2009-10-06",
+      "expirationDate" : "2025-06-09",
+      "reissueDate" : "2025-06-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "6349250331648509",
+      "customerId" : 15,
+      "accountId" : 15
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 15,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000727152111",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Von, Klein and Cremin",
+        "amount" : "983.55",
+        "merchantId" : 800000000,
+        "merchantName" : "Von, Klein and Cremin",
+        "merchantCity" : "Evansfurt",
+        "merchantZip" : "36814-9049",
+        "cardNumber" : "6349250331648509",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000727152111",
+        "accountId" : 15,
+        "newBalance" : "1472.55"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 15,
+      "activeStatus" : "Y",
+      "currentBalance" : "1472.55",
+      "creditLimit" : "8441.00",
+      "cashCreditLimit" : "3833.00",
+      "openDate" : "2009-10-06",
+      "expirationDate" : "2025-06-09",
+      "reissueDate" : "2025-06-09",
+      "currentCycleCredit" : "983.55",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 15,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "983.55"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000727152111",
+      "accountId" : 15,
+      "cardNumber" : "6349250331648509",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Von, Klein and Cremin",
+      "amount" : "983.55",
+      "merchantId" : 800000000,
+      "merchantName" : "Von, Klein and Cremin",
+      "merchantCity" : "Evansfurt",
+      "merchantZip" : "36814-9049",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

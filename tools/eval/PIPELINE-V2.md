@@ -87,3 +87,41 @@ complete files, an unhandled server error); see `DEVIATIONS.md`. The run below i
 v2.1 candidates seen in this run (not applied, to keep the measured harness fixed): cite the packet's legacy quirk (Q-01
 test-after overrun) when the divergence falls in its paragraph; give the "one unit apart: truncation, not rounding" hint
 only for items with decimals.
+
+## Result: Gemma 4, arm A, pipeline v2 (2026-10-10, harness e9c1e61)
+
+The owner's direction: re-test only Gemma on v2 and compare it with Gemma on v1. One run, seed 42, no voided runs.
+
+| Program | Gemma, v2 | Attempts (C = compile errors, x/y = scenarios) | Gemma, v1 | Minutes v2 / v1 |
+|---|---|---|---|---|
+| CBTRN02C | 23/23, attempt 5 | C6 C1 3/23 22/23 **23/23** | 23/23, attempt 5 | 7.9 / 11.3 |
+| CBACT04C | 17/17, attempt 6 | C1 C1 3/17 15/17 16/17 **17/17** | 17/17, attempt 10 | 7.7 / 19.2 |
+| CBTRN03C | 23/23, attempt 11 | C19 C19 C1 3/23 C1 4/23 18/23 C1 20/23 20/23 **23/23** | 23/23, attempt 6 | 13.2 / 9.9 |
+| SAM1 | 13/13, attempt 5 | C14 C1 C3 0/13 **13/13** | 13/13, attempt 8 | 9.0 / 20.1 |
+| SAM2 | 13/13, attempt 1 | **13/13** | 13/13, attempt 2 | 3.1 / 4.1 |
+
+* **5/5 programs on both pipelines.**
+  * Attempts: 28 on v2 against 31 on v1 (−10%).
+  * Minutes (design and implementation): 40.9 against 64.6 (−37%).
+  * Wall clock with model load and verification: 47.6 against 72.9 minutes.
+* **Services:**
+  * CardDemo with Gemma's code for all three programs: 122/122 tests, 11/11 job outputs.
+  * zopeneditor: 65/65 tests, 6/6 job outputs.
+  * v1 had 116/116 and 61/61. The v2 estates add `RecordKitTest`.
+* **Where v2 helped:**
+  * SAM1 passed at attempt 5 against 8. Its first compiled run scored 0/13, then 13/13 after the field-level feedback.
+  * CBACT04C passed at attempt 6 against 10.
+  * Minutes fell more than attempts, because SEARCH/REPLACE edits shorten the replies: 19 edits applied.
+* **Where it did not:** CBTRN03C took 11 attempts against 6. Five of them were compile failures (two of 19 errors, from
+  the model's own API misuse), and one seed cannot tell this from variance.
+* **Against gpt-oss-120b on v2:** Gemma passed 5/5 against 4/5, in 28 attempts against 46. gpt-oss generates 2.8 times
+  faster (about 140 against 50 tokens/s).
+* **Conclusion so far:**
+  * v2 cuts Gemma's time by a third with the same pass rate.
+  * The attempt difference (−10%) is within the protocol's "close" band (under 30%). Seeds 7 and 1234 would be needed
+    before claiming v2 cuts attempts. That is about an hour of GPU each, and the owner decides.
+* **Caveats:**
+  * During this run the SME built the forward-engineering package on the same machine (Gradle builds, CPU only). This may
+    have lengthened the compile and test steps somewhat; the GPU work was not shared.
+  * The service verification waited 16 minutes on an isolated host it had started (see `DEVIATIONS.md`). That wait is
+    not in the run's minutes.

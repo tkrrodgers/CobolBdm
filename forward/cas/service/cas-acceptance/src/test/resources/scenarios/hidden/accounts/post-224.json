@@ -1,0 +1,106 @@
+{
+  "id" : "post-224",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 224' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-04", "POST-11" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 17,
+      "activeStatus" : "Y",
+      "currentBalance" : "33.00",
+      "creditLimit" : "568.00",
+      "cashCreditLimit" : "510.00",
+      "openDate" : "2014-05-17",
+      "expirationDate" : "2025-03-01",
+      "reissueDate" : "2025-03-01",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "9349107475869214",
+      "customerId" : 17,
+      "accountId" : 17
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 17,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000741999667",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Corkery, Boehm and Hudson",
+        "amount" : "643.44",
+        "merchantId" : 800000000,
+        "merchantName" : "Corkery, Boehm and Hudson",
+        "merchantCity" : "Walkermouth",
+        "merchantZip" : "83831",
+        "cardNumber" : "9349107475869214",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Rejected",
+        "transactionId" : "0000000741999667",
+        "reason" : "OVERLIMIT"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 17,
+      "activeStatus" : "Y",
+      "currentBalance" : "33.00",
+      "creditLimit" : "568.00",
+      "cashCreditLimit" : "510.00",
+      "openDate" : "2014-05-17",
+      "expirationDate" : "2025-03-01",
+      "reissueDate" : "2025-03-01",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 17,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ],
+    "rejections" : [ {
+      "transaction" : {
+        "transactionId" : "0000000741999667",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Corkery, Boehm and Hudson",
+        "amount" : "643.44",
+        "merchantId" : 800000000,
+        "merchantName" : "Corkery, Boehm and Hudson",
+        "merchantCity" : "Walkermouth",
+        "merchantZip" : "83831",
+        "cardNumber" : "9349107475869214",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      },
+      "accountId" : 17,
+      "reason" : "OVERLIMIT",
+      "rejectedAt" : "2022-07-05T10:11:12.000000"
+    } ]
+  }
+}

@@ -41,7 +41,8 @@ foreach ($src in $sources) {
                 $d = J (Join-Path $pd 'design.run.json')
                 $i = J (Join-Path $pd 'implementation.run.json')
                 if (-not $d -and -not $i) { continue }
-                $atts = if ($i) { @($i.attempts) } else { @() }
+                # @() around the if: PowerShell unrolls a one-element array returned by if, which would lose .Count.
+                $atts = @(if ($i) { $i.attempts })
                 $firstPass = $atts | Where-Object { $_.tests -and $_.tests.total -gt 0 -and $_.tests.passed -eq $_.tests.total } | Select-Object -First 1
                 $genTok = Sum ($atts | ForEach-Object { $_.generatedTokens }); $genSec = Sum ($atts | ForEach-Object { $_.seconds })
                 $designMin = if ($d) { [math]::Round((Sum (@($d.attempts) | ForEach-Object { $_.seconds })) / 60, 1) } else { 0 }

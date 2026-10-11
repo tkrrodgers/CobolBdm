@@ -1,0 +1,39 @@
+{
+  "schema": "mlcpu.forward-eval-config.v1",
+  "about": "Forward-engineering evaluation, revision 3 (tools/eval/PROTOCOL-forward.md): Gemma 4 designs and implements, gpt-oss-120b designs only. The SME package is forward/cas (Phase 0, gate.json). Same llama.cpp build, context and per-model sampling as eval-config-v2.json.",
+  "pipeline": "v2 (complete files or SEARCH/REPLACE edits, missing imports added, compiler errors with source lines)",
+  "evalRoot": "C:\\Users\\Tomrodgers\\Source\\modelEval",
+  "forward": "forward",
+  "cas": "forward\\cas",
+  "llamaDir": "C:\\models\\llama.cpp-unsloth-b11539",
+  "llamaBuild": "unslothai/llama.cpp b11539-mix-2500203 (upstream b11539 + Inkling PR #25731), CUDA 13.3 portable",
+  "port": 8190,
+  "context": 131072,
+  "normalization": [
+    "C:\\Users\\Tomrodgers\\Source\\modelEval\\workspace-v2\\projects\\carddemo\\publish\\carddemo-normalized-spring\\normalization",
+    "C:\\Users\\Tomrodgers\\Source\\modelEval\\workspace-v2\\projects\\zopeneditor-sample\\publish\\zopeneditor-sample-normalized-spring\\normalization"
+  ],
+  "design": { "seeds": [42, 7, 1234], "attempts": 3, "maxTokens": 32768 },
+  "review": { "attempts": 3, "maxTokens": 16384 },
+  "implementation": { "seed": 42, "attempts": 15, "maxTokens": 49152, "plateau": 3, "testTimeoutMinutes": 15 },
+  "models": [
+    {
+      "name": "gpt-oss-120b",
+      "roles": ["design"],
+      "gguf": "C:\\models\\gpt-oss-120b-GGUF\\gpt-oss-120b-MXFP4.gguf",
+      "sampling": { "temp": 1.0, "top_p": 1.0, "top_k": 0, "min_p": 0.0 },
+      "serverArgs": "",
+      "reasoning": "high",
+      "about": "OpenAI's sampling; reasoning effort high through the chat template (protocol section 10)"
+    },
+    {
+      "name": "gemma-4-31B-it",
+      "roles": ["design", "implementation"],
+      "gguf": "C:\\models\\gemma-4-31B-it-GGUF\\BF16\\gemma-4-31B-it-BF16-00001-of-00002.gguf",
+      "sampling": { "temp": 1.0, "top_p": 0.95, "top_k": 64, "min_p": 0.0 },
+      "serverArgs": "--spec-type draft-mtp --spec-draft-model C:\\models\\gemma-4-31B-it-GGUF\\MTP\\mtp-gemma-4-31B-it-BF16.gguf",
+      "reasoning": "high",
+      "about": "google/gemma-4-31B-it generation_config.json; thinking on (the template has no effort levels)"
+    }
+  ]
+}

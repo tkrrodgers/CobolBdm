@@ -1,0 +1,2726 @@
+{
+  "id" : "post-batch-09",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'zero amounts' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10", "POST-12", "POST-13" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 2,
+      "activeStatus" : "Y",
+      "currentBalance" : "158.00",
+      "creditLimit" : "6130.00",
+      "cashCreditLimit" : "5448.00",
+      "openDate" : "2013-06-19",
+      "expirationDate" : "2024-08-11",
+      "reissueDate" : "2024-08-11",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 3,
+      "activeStatus" : "Y",
+      "currentBalance" : "147.00",
+      "creditLimit" : "4909.00",
+      "cashCreditLimit" : "538.00",
+      "openDate" : "2013-08-23",
+      "expirationDate" : "2024-01-10",
+      "reissueDate" : "2024-01-10",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 5,
+      "activeStatus" : "Y",
+      "currentBalance" : "345.00",
+      "creditLimit" : "3819.00",
+      "cashCreditLimit" : "2430.00",
+      "openDate" : "2012-10-03",
+      "expirationDate" : "2025-03-09",
+      "reissueDate" : "2025-03-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 7,
+      "activeStatus" : "Y",
+      "currentBalance" : "193.00",
+      "creditLimit" : "2065.00",
+      "cashCreditLimit" : "264.00",
+      "openDate" : "2012-10-12",
+      "expirationDate" : "2024-12-13",
+      "reissueDate" : "2024-12-13",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 8,
+      "activeStatus" : "Y",
+      "currentBalance" : "605.00",
+      "creditLimit" : "6104.00",
+      "cashCreditLimit" : "1318.00",
+      "openDate" : "2012-01-04",
+      "expirationDate" : "2024-05-20",
+      "reissueDate" : "2024-05-20",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 9,
+      "activeStatus" : "Y",
+      "currentBalance" : "560.00",
+      "creditLimit" : "8201.00",
+      "cashCreditLimit" : "2065.00",
+      "openDate" : "2016-08-27",
+      "expirationDate" : "2024-12-27",
+      "reissueDate" : "2024-12-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 10,
+      "activeStatus" : "Y",
+      "currentBalance" : "159.00",
+      "creditLimit" : "5401.00",
+      "cashCreditLimit" : "4442.00",
+      "openDate" : "2015-09-13",
+      "expirationDate" : "2023-01-27",
+      "reissueDate" : "2023-01-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 13,
+      "activeStatus" : "Y",
+      "currentBalance" : "41.00",
+      "creditLimit" : "7542.00",
+      "cashCreditLimit" : "4922.00",
+      "openDate" : "2017-10-01",
+      "expirationDate" : "2024-08-04",
+      "reissueDate" : "2024-08-04",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 15,
+      "activeStatus" : "Y",
+      "currentBalance" : "489.00",
+      "creditLimit" : "8441.00",
+      "cashCreditLimit" : "3833.00",
+      "openDate" : "2009-10-06",
+      "expirationDate" : "2025-06-09",
+      "reissueDate" : "2025-06-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 17,
+      "activeStatus" : "Y",
+      "currentBalance" : "33.00",
+      "creditLimit" : "568.00",
+      "cashCreditLimit" : "510.00",
+      "openDate" : "2014-05-17",
+      "expirationDate" : "2025-03-01",
+      "reissueDate" : "2025-03-01",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 18,
+      "activeStatus" : "Y",
+      "currentBalance" : "144.00",
+      "creditLimit" : "2903.00",
+      "cashCreditLimit" : "1496.00",
+      "openDate" : "2018-11-15",
+      "expirationDate" : "2023-09-10",
+      "reissueDate" : "2023-09-10",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 20,
+      "activeStatus" : "Y",
+      "currentBalance" : "369.00",
+      "creditLimit" : "3767.00",
+      "cashCreditLimit" : "1040.00",
+      "openDate" : "2014-02-27",
+      "expirationDate" : "2024-03-13",
+      "reissueDate" : "2024-03-13",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 22,
+      "activeStatus" : "Y",
+      "currentBalance" : "55.00",
+      "creditLimit" : "8599.00",
+      "cashCreditLimit" : "4712.00",
+      "openDate" : "2016-11-21",
+      "expirationDate" : "2025-12-28",
+      "reissueDate" : "2025-12-28",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 26,
+      "activeStatus" : "Y",
+      "currentBalance" : "46.00",
+      "creditLimit" : "2181.00",
+      "cashCreditLimit" : "1375.00",
+      "openDate" : "2009-04-20",
+      "expirationDate" : "2024-12-19",
+      "reissueDate" : "2024-12-19",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 27,
+      "activeStatus" : "Y",
+      "currentBalance" : "284.00",
+      "creditLimit" : "5572.00",
+      "cashCreditLimit" : "2075.00",
+      "openDate" : "2012-09-30",
+      "expirationDate" : "2025-07-13",
+      "reissueDate" : "2025-07-13",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 28,
+      "activeStatus" : "Y",
+      "currentBalance" : "68.00",
+      "creditLimit" : "868.00",
+      "cashCreditLimit" : "547.00",
+      "openDate" : "2015-05-20",
+      "expirationDate" : "2024-05-09",
+      "reissueDate" : "2024-05-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 29,
+      "activeStatus" : "Y",
+      "currentBalance" : "339.00",
+      "creditLimit" : "5511.00",
+      "cashCreditLimit" : "4361.00",
+      "openDate" : "2015-11-03",
+      "expirationDate" : "2024-06-04",
+      "reissueDate" : "2024-06-04",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 30,
+      "activeStatus" : "Y",
+      "currentBalance" : "2.00",
+      "creditLimit" : "120.00",
+      "cashCreditLimit" : "93.00",
+      "openDate" : "2011-08-26",
+      "expirationDate" : "2024-06-27",
+      "reissueDate" : "2024-06-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 32,
+      "activeStatus" : "Y",
+      "currentBalance" : "30.00",
+      "creditLimit" : "1175.00",
+      "cashCreditLimit" : "846.00",
+      "openDate" : "2013-11-10",
+      "expirationDate" : "2025-05-19",
+      "reissueDate" : "2025-05-19",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 33,
+      "activeStatus" : "Y",
+      "currentBalance" : "410.00",
+      "creditLimit" : "6404.00",
+      "cashCreditLimit" : "951.00",
+      "openDate" : "2012-10-11",
+      "expirationDate" : "2025-10-07",
+      "reissueDate" : "2025-10-07",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 36,
+      "activeStatus" : "Y",
+      "currentBalance" : "110.00",
+      "creditLimit" : "3328.00",
+      "cashCreditLimit" : "839.00",
+      "openDate" : "2018-07-18",
+      "expirationDate" : "2024-12-23",
+      "reissueDate" : "2024-12-23",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 37,
+      "activeStatus" : "Y",
+      "currentBalance" : "7.00",
+      "creditLimit" : "446.00",
+      "cashCreditLimit" : "166.00",
+      "openDate" : "2016-09-10",
+      "expirationDate" : "2023-10-24",
+      "reissueDate" : "2023-10-24",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 39,
+      "activeStatus" : "Y",
+      "currentBalance" : "843.00",
+      "creditLimit" : "9750.00",
+      "cashCreditLimit" : "6212.00",
+      "openDate" : "2018-08-26",
+      "expirationDate" : "2025-09-08",
+      "reissueDate" : "2025-09-08",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 40,
+      "activeStatus" : "Y",
+      "currentBalance" : "43.00",
+      "creditLimit" : "5823.00",
+      "cashCreditLimit" : "1674.00",
+      "openDate" : "2010-02-13",
+      "expirationDate" : "2023-10-27",
+      "reissueDate" : "2023-10-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 41,
+      "activeStatus" : "Y",
+      "currentBalance" : "375.00",
+      "creditLimit" : "6721.00",
+      "cashCreditLimit" : "3429.00",
+      "openDate" : "2015-02-07",
+      "expirationDate" : "2023-04-24",
+      "reissueDate" : "2023-04-24",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 44,
+      "activeStatus" : "Y",
+      "currentBalance" : "263.00",
+      "creditLimit" : "6899.00",
+      "cashCreditLimit" : "4432.00",
+      "openDate" : "2018-12-01",
+      "expirationDate" : "2024-01-17",
+      "reissueDate" : "2024-01-17",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 45,
+      "activeStatus" : "Y",
+      "currentBalance" : "186.00",
+      "creditLimit" : "2719.00",
+      "cashCreditLimit" : "688.00",
+      "openDate" : "2010-12-31",
+      "expirationDate" : "2025-07-09",
+      "reissueDate" : "2025-07-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 46,
+      "activeStatus" : "Y",
+      "currentBalance" : "396.00",
+      "creditLimit" : "7007.00",
+      "cashCreditLimit" : "5438.00",
+      "openDate" : "2013-09-06",
+      "expirationDate" : "2025-06-20",
+      "reissueDate" : "2025-06-20",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 47,
+      "activeStatus" : "Y",
+      "currentBalance" : "32.00",
+      "creditLimit" : "2338.00",
+      "cashCreditLimit" : "159.00",
+      "openDate" : "2014-04-03",
+      "expirationDate" : "2025-08-23",
+      "reissueDate" : "2025-08-23",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 48,
+      "activeStatus" : "Y",
+      "currentBalance" : "226.00",
+      "creditLimit" : "2306.00",
+      "cashCreditLimit" : "612.00",
+      "openDate" : "2017-03-18",
+      "expirationDate" : "2025-02-06",
+      "reissueDate" : "2025-02-06",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 50,
+      "activeStatus" : "Y",
+      "currentBalance" : "492.00",
+      "creditLimit" : "6169.00",
+      "cashCreditLimit" : "4587.00",
+      "openDate" : "2011-04-22",
+      "expirationDate" : "2023-03-09",
+      "reissueDate" : "2023-03-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "0500024453765740",
+      "customerId" : 50,
+      "accountId" : 50
+    }, {
+      "cardNumber" : "0683586198171516",
+      "customerId" : 27,
+      "accountId" : 27
+    }, {
+      "cardNumber" : "0923877193247330",
+      "customerId" : 2,
+      "accountId" : 2
+    }, {
+      "cardNumber" : "0927987108636232",
+      "customerId" : 20,
+      "accountId" : 20
+    }, {
+      "cardNumber" : "1014086565224350",
+      "customerId" : 44,
+      "accountId" : 44
+    }, {
+      "cardNumber" : "1142167692878931",
+      "customerId" : 37,
+      "accountId" : 37
+    }, {
+      "cardNumber" : "2745303720002090",
+      "customerId" : 39,
+      "accountId" : 39
+    }, {
+      "cardNumber" : "2940139362300449",
+      "customerId" : 22,
+      "accountId" : 22
+    }, {
+      "cardNumber" : "3260763612337560",
+      "customerId" : 10,
+      "accountId" : 10
+    }, {
+      "cardNumber" : "3766281984155154",
+      "customerId" : 41,
+      "accountId" : 41
+    }, {
+      "cardNumber" : "3999169246375885",
+      "customerId" : 3,
+      "accountId" : 3
+    }, {
+      "cardNumber" : "4011500891777367",
+      "customerId" : 13,
+      "accountId" : 13
+    }, {
+      "cardNumber" : "4534784102713951",
+      "customerId" : 36,
+      "accountId" : 36
+    }, {
+      "cardNumber" : "4859452612877065",
+      "customerId" : 7,
+      "accountId" : 7
+    }, {
+      "cardNumber" : "5656830544981216",
+      "customerId" : 46,
+      "accountId" : 46
+    }, {
+      "cardNumber" : "5671184478505844",
+      "customerId" : 18,
+      "accountId" : 18
+    }, {
+      "cardNumber" : "5787351228879339",
+      "customerId" : 47,
+      "accountId" : 47
+    }, {
+      "cardNumber" : "6009619150674526",
+      "customerId" : 5,
+      "accountId" : 5
+    }, {
+      "cardNumber" : "6349250331648509",
+      "customerId" : 15,
+      "accountId" : 15
+    }, {
+      "cardNumber" : "6503535181795992",
+      "customerId" : 48,
+      "accountId" : 48
+    }, {
+      "cardNumber" : "6509230362553816",
+      "customerId" : 30,
+      "accountId" : 30
+    }, {
+      "cardNumber" : "6723000463207764",
+      "customerId" : 28,
+      "accountId" : 28
+    }, {
+      "cardNumber" : "6832676047698087",
+      "customerId" : 33,
+      "accountId" : 33
+    }, {
+      "cardNumber" : "7094142751055551",
+      "customerId" : 32,
+      "accountId" : 32
+    }, {
+      "cardNumber" : "7251508149188883",
+      "customerId" : 29,
+      "accountId" : 29
+    }, {
+      "cardNumber" : "7379335634661142",
+      "customerId" : 45,
+      "accountId" : 45
+    }, {
+      "cardNumber" : "8040580410348680",
+      "customerId" : 26,
+      "accountId" : 26
+    }, {
+      "cardNumber" : "8931369351894783",
+      "customerId" : 8,
+      "accountId" : 8
+    }, {
+      "cardNumber" : "9349107475869214",
+      "customerId" : 17,
+      "accountId" : 17
+    }, {
+      "cardNumber" : "9501733721429893",
+      "customerId" : 9,
+      "accountId" : 9
+    }, {
+      "cardNumber" : "9805583408996588",
+      "customerId" : 40,
+      "accountId" : 40
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 2,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 3,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 5,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 7,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 8,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 9,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 10,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 13,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 15,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 17,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 18,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 20,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 22,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 26,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 27,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 28,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 29,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 30,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 32,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 33,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 36,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 37,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 39,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 40,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 41,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 44,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 45,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 46,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 47,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 48,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 50,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postBatch",
+    "input" : {
+      "key" : "batch-1",
+      "transactions" : [ {
+        "transactionId" : "0000000000683580",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Abshire-Lowe",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Abshire-Lowe",
+        "merchantCity" : "North Enoshaven",
+        "merchantZip" : "72112",
+        "cardNumber" : "4859452612877065",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000001774260",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Nitzsche, Nicolas and Lowe",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Nitzsche, Nicolas and Lowe",
+        "merchantCity" : "Fidelshire",
+        "merchantZip" : "53378",
+        "cardNumber" : "0927987108636232",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000006292564",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Ernser, Roob and Gleason",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Ernser, Roob and Gleason",
+        "merchantCity" : "North Makenziemouth",
+        "merchantZip" : "78487-7965",
+        "cardNumber" : "6009619150674526",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000009101861",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Guann LLC",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Guann LLC",
+        "merchantCity" : "South Lynn",
+        "merchantZip" : "51508-9166",
+        "cardNumber" : "8040580410348680",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000010142252",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Kertzmann-Schoen",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Kertzmann-Schoen",
+        "merchantCity" : "East Eulahstad",
+        "merchantZip" : "98754-1089",
+        "cardNumber" : "5656830544981216",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000010229018",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gislason-Medhurst",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Gislason-Medhurst",
+        "merchantCity" : "Colleenburgh",
+        "merchantZip" : "23712-2080",
+        "cardNumber" : "7379335634661142",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000016259484",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Sipes Inc",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Sipes Inc",
+        "merchantCity" : "Emilioside",
+        "merchantZip" : "93329",
+        "cardNumber" : "4011500891777367",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000017874199",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Legros Group",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Legros Group",
+        "merchantCity" : "Carmeloborough",
+        "merchantZip" : "34849-5127",
+        "cardNumber" : "8040580410348680",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000019065428",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Turcotte Group",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Turcotte Group",
+        "merchantCity" : "Andrewfurt",
+        "merchantZip" : "41346-3789",
+        "cardNumber" : "6503535181795992",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000021711604",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gleason, Shanahan and Reynolds",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Gleason, Shanahan and Reynolds",
+        "merchantCity" : "Myrticeport",
+        "merchantZip" : "21768-0823",
+        "cardNumber" : "9501733721429893",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000025430891",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Beatty-Hessel",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Beatty-Hessel",
+        "merchantCity" : "Simonisport",
+        "merchantZip" : "52595",
+        "cardNumber" : "3260763612337560",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000028097268",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Wolf, Cruickshank and Bode",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Wolf, Cruickshank and Bode",
+        "merchantCity" : "Fritzchester",
+        "merchantZip" : "20195-5156",
+        "cardNumber" : "7094142751055551",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000030755266",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Ratke LLC",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Ratke LLC",
+        "merchantCity" : "Brendenfort",
+        "merchantZip" : "35302-6495",
+        "cardNumber" : "3766281984155154",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000032979555",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Treutel-Leffler",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Treutel-Leffler",
+        "merchantCity" : "New Nicolette",
+        "merchantZip" : "65014-0045",
+        "cardNumber" : "6509230362553816",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000033688127",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Schinner-Steuber",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Schinner-Steuber",
+        "merchantCity" : "Schmittchester",
+        "merchantZip" : "50777-5535",
+        "cardNumber" : "3766281984155154",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000040455859",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Brekke, Bradtke and Weimann",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Brekke, Bradtke and Weimann",
+        "merchantCity" : "Veummouth",
+        "merchantZip" : "18481-5013",
+        "cardNumber" : "1142167692878931",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000043636099",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Nader-Bayer",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Nader-Bayer",
+        "merchantCity" : "Goyetteville",
+        "merchantZip" : "35324",
+        "cardNumber" : "2940139362300449",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000051205286",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Goodwin, Von and Krajcik",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Goodwin, Von and Krajcik",
+        "merchantCity" : "Ericmouth",
+        "merchantZip" : "03874",
+        "cardNumber" : "7094142751055551",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000054288996",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Cremin and Sons",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Cremin and Sons",
+        "merchantCity" : "Bartonside",
+        "merchantZip" : "08677",
+        "cardNumber" : "4534784102713951",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000054727064",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at McDermott, Lockman and Weimann",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "McDermott, Lockman and Weimann",
+        "merchantCity" : "West Nedra",
+        "merchantZip" : "05293",
+        "cardNumber" : "1014086565224350",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000058866561",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Blick-Rippin",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Blick-Rippin",
+        "merchantCity" : "East Julien",
+        "merchantZip" : "87157",
+        "cardNumber" : "0500024453765740",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000060921254",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Kihn-Quigley",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Kihn-Quigley",
+        "merchantCity" : "New Katrine",
+        "merchantZip" : "42756-0584",
+        "cardNumber" : "5787351228879339",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000061394789",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Heaney-Raynor",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Heaney-Raynor",
+        "merchantCity" : "North Daisy",
+        "merchantZip" : "28696",
+        "cardNumber" : "2745303720002090",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000070754800",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Blick, Kris and Gerlach",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Blick, Kris and Gerlach",
+        "merchantCity" : "Lake Shawnabury",
+        "merchantZip" : "65183-0963",
+        "cardNumber" : "0923877193247330",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000072220498",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Graham LLC",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Graham LLC",
+        "merchantCity" : "Ozellaside",
+        "merchantZip" : "89313-0747",
+        "cardNumber" : "6349250331648509",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000084515950",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Bradtke Group",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Bradtke Group",
+        "merchantCity" : "Gerardland",
+        "merchantZip" : "63873",
+        "cardNumber" : "8931369351894783",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000085824369",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Pollich-Mosciski",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Pollich-Mosciski",
+        "merchantCity" : "Georgettemouth",
+        "merchantZip" : "85890",
+        "cardNumber" : "3999169246375885",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000095706092",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Swift, Wolf and Goldner",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Swift, Wolf and Goldner",
+        "merchantCity" : "Keeblerborough",
+        "merchantZip" : "31923-4503",
+        "cardNumber" : "8931369351894783",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000099965527",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Jaskolski-Rolfson",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Jaskolski-Rolfson",
+        "merchantCity" : "Lake Arjuntown",
+        "merchantZip" : "90924-2951",
+        "cardNumber" : "0927987108636232",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000100915314",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gislason and Daughters",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Gislason and Daughters",
+        "merchantCity" : "Torphyville",
+        "merchantZip" : "09737",
+        "cardNumber" : "9805583408996588",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000107748365",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Waelchi and Daughters",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Waelchi and Daughters",
+        "merchantCity" : "Dickensborough",
+        "merchantZip" : "86052-1154",
+        "cardNumber" : "7094142751055551",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000108402349",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Lynch-Bode",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Lynch-Bode",
+        "merchantCity" : "New Cieloberg",
+        "merchantZip" : "85766",
+        "cardNumber" : "9349107475869214",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000109340521",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Runte and Sons",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Runte and Sons",
+        "merchantCity" : "Lake Chesleyfurt",
+        "merchantZip" : "94215",
+        "cardNumber" : "7379335634661142",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000109506921",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Will, Frami and Lynch",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Will, Frami and Lynch",
+        "merchantCity" : "South Cadefort",
+        "merchantZip" : "47040-3550",
+        "cardNumber" : "6832676047698087",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000111054243",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Pollich and Sons",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Pollich and Sons",
+        "merchantCity" : "West Burdetteburgh",
+        "merchantZip" : "51061-7710",
+        "cardNumber" : "6723000463207764",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000115716061",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Bednar, Marvin and Kozey",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Bednar, Marvin and Kozey",
+        "merchantCity" : "Port Marisolshire",
+        "merchantZip" : "89976-0867",
+        "cardNumber" : "2940139362300449",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000130111733",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Rogahn Group",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Rogahn Group",
+        "merchantCity" : "Keltonton",
+        "merchantZip" : "18842",
+        "cardNumber" : "0683586198171516",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000132831571",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Boehm-Sanford",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Boehm-Sanford",
+        "merchantCity" : "Winifredville",
+        "merchantZip" : "93238-7169",
+        "cardNumber" : "1014086565224350",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000137879630",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Wiza-Langworth",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Wiza-Langworth",
+        "merchantCity" : "South Jayson",
+        "merchantZip" : "83135",
+        "cardNumber" : "5671184478505844",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }, {
+        "transactionId" : "0000000139910093",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Harris, Johnston and Harris",
+        "amount" : "0.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Harris, Johnston and Harris",
+        "merchantCity" : "New Aurelia",
+        "merchantZip" : "81068",
+        "cardNumber" : "7251508149188883",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      } ]
+    },
+    "expect" : {
+      "result" : {
+        "processed" : 40,
+        "posted" : 40,
+        "rejected" : 0,
+        "outcomes" : [ {
+          "@type" : "Posted",
+          "transactionId" : "0000000000683580",
+          "accountId" : 7,
+          "newBalance" : "193.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000001774260",
+          "accountId" : 20,
+          "newBalance" : "369.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000006292564",
+          "accountId" : 5,
+          "newBalance" : "345.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000009101861",
+          "accountId" : 26,
+          "newBalance" : "46.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000010142252",
+          "accountId" : 46,
+          "newBalance" : "396.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000010229018",
+          "accountId" : 45,
+          "newBalance" : "186.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000016259484",
+          "accountId" : 13,
+          "newBalance" : "41.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000017874199",
+          "accountId" : 26,
+          "newBalance" : "46.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000019065428",
+          "accountId" : 48,
+          "newBalance" : "226.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000021711604",
+          "accountId" : 9,
+          "newBalance" : "560.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000025430891",
+          "accountId" : 10,
+          "newBalance" : "159.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000028097268",
+          "accountId" : 32,
+          "newBalance" : "30.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000030755266",
+          "accountId" : 41,
+          "newBalance" : "375.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000032979555",
+          "accountId" : 30,
+          "newBalance" : "2.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000033688127",
+          "accountId" : 41,
+          "newBalance" : "375.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000040455859",
+          "accountId" : 37,
+          "newBalance" : "7.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000043636099",
+          "accountId" : 22,
+          "newBalance" : "55.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000051205286",
+          "accountId" : 32,
+          "newBalance" : "30.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000054288996",
+          "accountId" : 36,
+          "newBalance" : "110.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000054727064",
+          "accountId" : 44,
+          "newBalance" : "263.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000058866561",
+          "accountId" : 50,
+          "newBalance" : "492.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000060921254",
+          "accountId" : 47,
+          "newBalance" : "32.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000061394789",
+          "accountId" : 39,
+          "newBalance" : "843.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000070754800",
+          "accountId" : 2,
+          "newBalance" : "158.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000072220498",
+          "accountId" : 15,
+          "newBalance" : "489.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000084515950",
+          "accountId" : 8,
+          "newBalance" : "605.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000085824369",
+          "accountId" : 3,
+          "newBalance" : "147.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000095706092",
+          "accountId" : 8,
+          "newBalance" : "605.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000099965527",
+          "accountId" : 20,
+          "newBalance" : "369.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000100915314",
+          "accountId" : 40,
+          "newBalance" : "43.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000107748365",
+          "accountId" : 32,
+          "newBalance" : "30.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000108402349",
+          "accountId" : 17,
+          "newBalance" : "33.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000109340521",
+          "accountId" : 45,
+          "newBalance" : "186.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000109506921",
+          "accountId" : 33,
+          "newBalance" : "410.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000111054243",
+          "accountId" : 28,
+          "newBalance" : "68.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000115716061",
+          "accountId" : 22,
+          "newBalance" : "55.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000130111733",
+          "accountId" : 27,
+          "newBalance" : "284.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000132831571",
+          "accountId" : 44,
+          "newBalance" : "263.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000137879630",
+          "accountId" : 18,
+          "newBalance" : "144.00"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000139910093",
+          "accountId" : 29,
+          "newBalance" : "339.00"
+        } ]
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 2,
+      "activeStatus" : "Y",
+      "currentBalance" : "158.00",
+      "creditLimit" : "6130.00",
+      "cashCreditLimit" : "5448.00",
+      "openDate" : "2013-06-19",
+      "expirationDate" : "2024-08-11",
+      "reissueDate" : "2024-08-11",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 3,
+      "activeStatus" : "Y",
+      "currentBalance" : "147.00",
+      "creditLimit" : "4909.00",
+      "cashCreditLimit" : "538.00",
+      "openDate" : "2013-08-23",
+      "expirationDate" : "2024-01-10",
+      "reissueDate" : "2024-01-10",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 5,
+      "activeStatus" : "Y",
+      "currentBalance" : "345.00",
+      "creditLimit" : "3819.00",
+      "cashCreditLimit" : "2430.00",
+      "openDate" : "2012-10-03",
+      "expirationDate" : "2025-03-09",
+      "reissueDate" : "2025-03-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 7,
+      "activeStatus" : "Y",
+      "currentBalance" : "193.00",
+      "creditLimit" : "2065.00",
+      "cashCreditLimit" : "264.00",
+      "openDate" : "2012-10-12",
+      "expirationDate" : "2024-12-13",
+      "reissueDate" : "2024-12-13",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 8,
+      "activeStatus" : "Y",
+      "currentBalance" : "605.00",
+      "creditLimit" : "6104.00",
+      "cashCreditLimit" : "1318.00",
+      "openDate" : "2012-01-04",
+      "expirationDate" : "2024-05-20",
+      "reissueDate" : "2024-05-20",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 9,
+      "activeStatus" : "Y",
+      "currentBalance" : "560.00",
+      "creditLimit" : "8201.00",
+      "cashCreditLimit" : "2065.00",
+      "openDate" : "2016-08-27",
+      "expirationDate" : "2024-12-27",
+      "reissueDate" : "2024-12-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 10,
+      "activeStatus" : "Y",
+      "currentBalance" : "159.00",
+      "creditLimit" : "5401.00",
+      "cashCreditLimit" : "4442.00",
+      "openDate" : "2015-09-13",
+      "expirationDate" : "2023-01-27",
+      "reissueDate" : "2023-01-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 13,
+      "activeStatus" : "Y",
+      "currentBalance" : "41.00",
+      "creditLimit" : "7542.00",
+      "cashCreditLimit" : "4922.00",
+      "openDate" : "2017-10-01",
+      "expirationDate" : "2024-08-04",
+      "reissueDate" : "2024-08-04",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 15,
+      "activeStatus" : "Y",
+      "currentBalance" : "489.00",
+      "creditLimit" : "8441.00",
+      "cashCreditLimit" : "3833.00",
+      "openDate" : "2009-10-06",
+      "expirationDate" : "2025-06-09",
+      "reissueDate" : "2025-06-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 17,
+      "activeStatus" : "Y",
+      "currentBalance" : "33.00",
+      "creditLimit" : "568.00",
+      "cashCreditLimit" : "510.00",
+      "openDate" : "2014-05-17",
+      "expirationDate" : "2025-03-01",
+      "reissueDate" : "2025-03-01",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 18,
+      "activeStatus" : "Y",
+      "currentBalance" : "144.00",
+      "creditLimit" : "2903.00",
+      "cashCreditLimit" : "1496.00",
+      "openDate" : "2018-11-15",
+      "expirationDate" : "2023-09-10",
+      "reissueDate" : "2023-09-10",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 20,
+      "activeStatus" : "Y",
+      "currentBalance" : "369.00",
+      "creditLimit" : "3767.00",
+      "cashCreditLimit" : "1040.00",
+      "openDate" : "2014-02-27",
+      "expirationDate" : "2024-03-13",
+      "reissueDate" : "2024-03-13",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 22,
+      "activeStatus" : "Y",
+      "currentBalance" : "55.00",
+      "creditLimit" : "8599.00",
+      "cashCreditLimit" : "4712.00",
+      "openDate" : "2016-11-21",
+      "expirationDate" : "2025-12-28",
+      "reissueDate" : "2025-12-28",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 26,
+      "activeStatus" : "Y",
+      "currentBalance" : "46.00",
+      "creditLimit" : "2181.00",
+      "cashCreditLimit" : "1375.00",
+      "openDate" : "2009-04-20",
+      "expirationDate" : "2024-12-19",
+      "reissueDate" : "2024-12-19",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 27,
+      "activeStatus" : "Y",
+      "currentBalance" : "284.00",
+      "creditLimit" : "5572.00",
+      "cashCreditLimit" : "2075.00",
+      "openDate" : "2012-09-30",
+      "expirationDate" : "2025-07-13",
+      "reissueDate" : "2025-07-13",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 28,
+      "activeStatus" : "Y",
+      "currentBalance" : "68.00",
+      "creditLimit" : "868.00",
+      "cashCreditLimit" : "547.00",
+      "openDate" : "2015-05-20",
+      "expirationDate" : "2024-05-09",
+      "reissueDate" : "2024-05-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 29,
+      "activeStatus" : "Y",
+      "currentBalance" : "339.00",
+      "creditLimit" : "5511.00",
+      "cashCreditLimit" : "4361.00",
+      "openDate" : "2015-11-03",
+      "expirationDate" : "2024-06-04",
+      "reissueDate" : "2024-06-04",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 30,
+      "activeStatus" : "Y",
+      "currentBalance" : "2.00",
+      "creditLimit" : "120.00",
+      "cashCreditLimit" : "93.00",
+      "openDate" : "2011-08-26",
+      "expirationDate" : "2024-06-27",
+      "reissueDate" : "2024-06-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 32,
+      "activeStatus" : "Y",
+      "currentBalance" : "30.00",
+      "creditLimit" : "1175.00",
+      "cashCreditLimit" : "846.00",
+      "openDate" : "2013-11-10",
+      "expirationDate" : "2025-05-19",
+      "reissueDate" : "2025-05-19",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 33,
+      "activeStatus" : "Y",
+      "currentBalance" : "410.00",
+      "creditLimit" : "6404.00",
+      "cashCreditLimit" : "951.00",
+      "openDate" : "2012-10-11",
+      "expirationDate" : "2025-10-07",
+      "reissueDate" : "2025-10-07",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 36,
+      "activeStatus" : "Y",
+      "currentBalance" : "110.00",
+      "creditLimit" : "3328.00",
+      "cashCreditLimit" : "839.00",
+      "openDate" : "2018-07-18",
+      "expirationDate" : "2024-12-23",
+      "reissueDate" : "2024-12-23",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 37,
+      "activeStatus" : "Y",
+      "currentBalance" : "7.00",
+      "creditLimit" : "446.00",
+      "cashCreditLimit" : "166.00",
+      "openDate" : "2016-09-10",
+      "expirationDate" : "2023-10-24",
+      "reissueDate" : "2023-10-24",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 39,
+      "activeStatus" : "Y",
+      "currentBalance" : "843.00",
+      "creditLimit" : "9750.00",
+      "cashCreditLimit" : "6212.00",
+      "openDate" : "2018-08-26",
+      "expirationDate" : "2025-09-08",
+      "reissueDate" : "2025-09-08",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 40,
+      "activeStatus" : "Y",
+      "currentBalance" : "43.00",
+      "creditLimit" : "5823.00",
+      "cashCreditLimit" : "1674.00",
+      "openDate" : "2010-02-13",
+      "expirationDate" : "2023-10-27",
+      "reissueDate" : "2023-10-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 41,
+      "activeStatus" : "Y",
+      "currentBalance" : "375.00",
+      "creditLimit" : "6721.00",
+      "cashCreditLimit" : "3429.00",
+      "openDate" : "2015-02-07",
+      "expirationDate" : "2023-04-24",
+      "reissueDate" : "2023-04-24",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 44,
+      "activeStatus" : "Y",
+      "currentBalance" : "263.00",
+      "creditLimit" : "6899.00",
+      "cashCreditLimit" : "4432.00",
+      "openDate" : "2018-12-01",
+      "expirationDate" : "2024-01-17",
+      "reissueDate" : "2024-01-17",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 45,
+      "activeStatus" : "Y",
+      "currentBalance" : "186.00",
+      "creditLimit" : "2719.00",
+      "cashCreditLimit" : "688.00",
+      "openDate" : "2010-12-31",
+      "expirationDate" : "2025-07-09",
+      "reissueDate" : "2025-07-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 46,
+      "activeStatus" : "Y",
+      "currentBalance" : "396.00",
+      "creditLimit" : "7007.00",
+      "cashCreditLimit" : "5438.00",
+      "openDate" : "2013-09-06",
+      "expirationDate" : "2025-06-20",
+      "reissueDate" : "2025-06-20",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 47,
+      "activeStatus" : "Y",
+      "currentBalance" : "32.00",
+      "creditLimit" : "2338.00",
+      "cashCreditLimit" : "159.00",
+      "openDate" : "2014-04-03",
+      "expirationDate" : "2025-08-23",
+      "reissueDate" : "2025-08-23",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 48,
+      "activeStatus" : "Y",
+      "currentBalance" : "226.00",
+      "creditLimit" : "2306.00",
+      "cashCreditLimit" : "612.00",
+      "openDate" : "2017-03-18",
+      "expirationDate" : "2025-02-06",
+      "reissueDate" : "2025-02-06",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 50,
+      "activeStatus" : "Y",
+      "currentBalance" : "492.00",
+      "creditLimit" : "6169.00",
+      "cashCreditLimit" : "4587.00",
+      "openDate" : "2011-04-22",
+      "expirationDate" : "2023-03-09",
+      "reissueDate" : "2023-03-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 2,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 3,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 5,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 7,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 8,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 9,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 10,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 13,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 13,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 15,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 17,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 18,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 20,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 20,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 22,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 22,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 26,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 27,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 28,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 29,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 30,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 32,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 33,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 36,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 37,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 39,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 39,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 40,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 41,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 44,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 44,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 45,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 46,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 47,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 48,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 48,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 50,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000000683580",
+      "accountId" : 7,
+      "cardNumber" : "4859452612877065",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Abshire-Lowe",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Abshire-Lowe",
+      "merchantCity" : "North Enoshaven",
+      "merchantZip" : "72112",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000001774260",
+      "accountId" : 20,
+      "cardNumber" : "0927987108636232",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Nitzsche, Nicolas and Lowe",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Nitzsche, Nicolas and Lowe",
+      "merchantCity" : "Fidelshire",
+      "merchantZip" : "53378",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000006292564",
+      "accountId" : 5,
+      "cardNumber" : "6009619150674526",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Ernser, Roob and Gleason",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Ernser, Roob and Gleason",
+      "merchantCity" : "North Makenziemouth",
+      "merchantZip" : "78487-7965",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000009101861",
+      "accountId" : 26,
+      "cardNumber" : "8040580410348680",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Guann LLC",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Guann LLC",
+      "merchantCity" : "South Lynn",
+      "merchantZip" : "51508-9166",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000010142252",
+      "accountId" : 46,
+      "cardNumber" : "5656830544981216",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Kertzmann-Schoen",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Kertzmann-Schoen",
+      "merchantCity" : "East Eulahstad",
+      "merchantZip" : "98754-1089",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000010229018",
+      "accountId" : 45,
+      "cardNumber" : "7379335634661142",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Gislason-Medhurst",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Gislason-Medhurst",
+      "merchantCity" : "Colleenburgh",
+      "merchantZip" : "23712-2080",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000016259484",
+      "accountId" : 13,
+      "cardNumber" : "4011500891777367",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Sipes Inc",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Sipes Inc",
+      "merchantCity" : "Emilioside",
+      "merchantZip" : "93329",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000017874199",
+      "accountId" : 26,
+      "cardNumber" : "8040580410348680",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Legros Group",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Legros Group",
+      "merchantCity" : "Carmeloborough",
+      "merchantZip" : "34849-5127",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000019065428",
+      "accountId" : 48,
+      "cardNumber" : "6503535181795992",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Turcotte Group",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Turcotte Group",
+      "merchantCity" : "Andrewfurt",
+      "merchantZip" : "41346-3789",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000021711604",
+      "accountId" : 9,
+      "cardNumber" : "9501733721429893",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Gleason, Shanahan and Reynolds",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Gleason, Shanahan and Reynolds",
+      "merchantCity" : "Myrticeport",
+      "merchantZip" : "21768-0823",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000025430891",
+      "accountId" : 10,
+      "cardNumber" : "3260763612337560",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Beatty-Hessel",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Beatty-Hessel",
+      "merchantCity" : "Simonisport",
+      "merchantZip" : "52595",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000028097268",
+      "accountId" : 32,
+      "cardNumber" : "7094142751055551",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Wolf, Cruickshank and Bode",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Wolf, Cruickshank and Bode",
+      "merchantCity" : "Fritzchester",
+      "merchantZip" : "20195-5156",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000030755266",
+      "accountId" : 41,
+      "cardNumber" : "3766281984155154",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Ratke LLC",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Ratke LLC",
+      "merchantCity" : "Brendenfort",
+      "merchantZip" : "35302-6495",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000032979555",
+      "accountId" : 30,
+      "cardNumber" : "6509230362553816",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Treutel-Leffler",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Treutel-Leffler",
+      "merchantCity" : "New Nicolette",
+      "merchantZip" : "65014-0045",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000033688127",
+      "accountId" : 41,
+      "cardNumber" : "3766281984155154",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Schinner-Steuber",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Schinner-Steuber",
+      "merchantCity" : "Schmittchester",
+      "merchantZip" : "50777-5535",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000040455859",
+      "accountId" : 37,
+      "cardNumber" : "1142167692878931",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Brekke, Bradtke and Weimann",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Brekke, Bradtke and Weimann",
+      "merchantCity" : "Veummouth",
+      "merchantZip" : "18481-5013",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000043636099",
+      "accountId" : 22,
+      "cardNumber" : "2940139362300449",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Nader-Bayer",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Nader-Bayer",
+      "merchantCity" : "Goyetteville",
+      "merchantZip" : "35324",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000051205286",
+      "accountId" : 32,
+      "cardNumber" : "7094142751055551",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Goodwin, Von and Krajcik",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Goodwin, Von and Krajcik",
+      "merchantCity" : "Ericmouth",
+      "merchantZip" : "03874",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000054288996",
+      "accountId" : 36,
+      "cardNumber" : "4534784102713951",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Cremin and Sons",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Cremin and Sons",
+      "merchantCity" : "Bartonside",
+      "merchantZip" : "08677",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000054727064",
+      "accountId" : 44,
+      "cardNumber" : "1014086565224350",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at McDermott, Lockman and Weimann",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "McDermott, Lockman and Weimann",
+      "merchantCity" : "West Nedra",
+      "merchantZip" : "05293",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000058866561",
+      "accountId" : 50,
+      "cardNumber" : "0500024453765740",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Blick-Rippin",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Blick-Rippin",
+      "merchantCity" : "East Julien",
+      "merchantZip" : "87157",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000060921254",
+      "accountId" : 47,
+      "cardNumber" : "5787351228879339",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Kihn-Quigley",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Kihn-Quigley",
+      "merchantCity" : "New Katrine",
+      "merchantZip" : "42756-0584",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000061394789",
+      "accountId" : 39,
+      "cardNumber" : "2745303720002090",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Heaney-Raynor",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Heaney-Raynor",
+      "merchantCity" : "North Daisy",
+      "merchantZip" : "28696",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000070754800",
+      "accountId" : 2,
+      "cardNumber" : "0923877193247330",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Blick, Kris and Gerlach",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Blick, Kris and Gerlach",
+      "merchantCity" : "Lake Shawnabury",
+      "merchantZip" : "65183-0963",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000072220498",
+      "accountId" : 15,
+      "cardNumber" : "6349250331648509",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Graham LLC",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Graham LLC",
+      "merchantCity" : "Ozellaside",
+      "merchantZip" : "89313-0747",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000084515950",
+      "accountId" : 8,
+      "cardNumber" : "8931369351894783",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Bradtke Group",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Bradtke Group",
+      "merchantCity" : "Gerardland",
+      "merchantZip" : "63873",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000085824369",
+      "accountId" : 3,
+      "cardNumber" : "3999169246375885",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Pollich-Mosciski",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Pollich-Mosciski",
+      "merchantCity" : "Georgettemouth",
+      "merchantZip" : "85890",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000095706092",
+      "accountId" : 8,
+      "cardNumber" : "8931369351894783",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Swift, Wolf and Goldner",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Swift, Wolf and Goldner",
+      "merchantCity" : "Keeblerborough",
+      "merchantZip" : "31923-4503",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000099965527",
+      "accountId" : 20,
+      "cardNumber" : "0927987108636232",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Jaskolski-Rolfson",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Jaskolski-Rolfson",
+      "merchantCity" : "Lake Arjuntown",
+      "merchantZip" : "90924-2951",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000100915314",
+      "accountId" : 40,
+      "cardNumber" : "9805583408996588",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Gislason and Daughters",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Gislason and Daughters",
+      "merchantCity" : "Torphyville",
+      "merchantZip" : "09737",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000107748365",
+      "accountId" : 32,
+      "cardNumber" : "7094142751055551",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Waelchi and Daughters",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Waelchi and Daughters",
+      "merchantCity" : "Dickensborough",
+      "merchantZip" : "86052-1154",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000108402349",
+      "accountId" : 17,
+      "cardNumber" : "9349107475869214",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Lynch-Bode",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Lynch-Bode",
+      "merchantCity" : "New Cieloberg",
+      "merchantZip" : "85766",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000109340521",
+      "accountId" : 45,
+      "cardNumber" : "7379335634661142",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Runte and Sons",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Runte and Sons",
+      "merchantCity" : "Lake Chesleyfurt",
+      "merchantZip" : "94215",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000109506921",
+      "accountId" : 33,
+      "cardNumber" : "6832676047698087",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Will, Frami and Lynch",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Will, Frami and Lynch",
+      "merchantCity" : "South Cadefort",
+      "merchantZip" : "47040-3550",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000111054243",
+      "accountId" : 28,
+      "cardNumber" : "6723000463207764",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Pollich and Sons",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Pollich and Sons",
+      "merchantCity" : "West Burdetteburgh",
+      "merchantZip" : "51061-7710",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000115716061",
+      "accountId" : 22,
+      "cardNumber" : "2940139362300449",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Bednar, Marvin and Kozey",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Bednar, Marvin and Kozey",
+      "merchantCity" : "Port Marisolshire",
+      "merchantZip" : "89976-0867",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000130111733",
+      "accountId" : 27,
+      "cardNumber" : "0683586198171516",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Rogahn Group",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Rogahn Group",
+      "merchantCity" : "Keltonton",
+      "merchantZip" : "18842",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000132831571",
+      "accountId" : 44,
+      "cardNumber" : "1014086565224350",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Boehm-Sanford",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Boehm-Sanford",
+      "merchantCity" : "Winifredville",
+      "merchantZip" : "93238-7169",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000137879630",
+      "accountId" : 18,
+      "cardNumber" : "5671184478505844",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Wiza-Langworth",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Wiza-Langworth",
+      "merchantCity" : "South Jayson",
+      "merchantZip" : "83135",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000139910093",
+      "accountId" : 29,
+      "cardNumber" : "7251508149188883",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Harris, Johnston and Harris",
+      "amount" : "0.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Harris, Johnston and Harris",
+      "merchantCity" : "New Aurelia",
+      "merchantZip" : "81068",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "id" : "post-185",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 185' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 5,
+      "activeStatus" : "Y",
+      "currentBalance" : "345.00",
+      "creditLimit" : "3819.00",
+      "cashCreditLimit" : "2430.00",
+      "openDate" : "2012-10-03",
+      "expirationDate" : "2025-03-09",
+      "reissueDate" : "2025-03-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "6009619150674526",
+      "customerId" : 5,
+      "accountId" : 5
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 5,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000585883106",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Heathcote Inc",
+        "amount" : "435.44",
+        "merchantId" : 800000000,
+        "merchantName" : "Heathcote Inc",
+        "merchantCity" : "Marlenemouth",
+        "merchantZip" : "72239-5071",
+        "cardNumber" : "6009619150674526",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000585883106",
+        "accountId" : 5,
+        "newBalance" : "780.44"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 5,
+      "activeStatus" : "Y",
+      "currentBalance" : "780.44",
+      "creditLimit" : "3819.00",
+      "cashCreditLimit" : "2430.00",
+      "openDate" : "2012-10-03",
+      "expirationDate" : "2025-03-09",
+      "reissueDate" : "2025-03-09",
+      "currentCycleCredit" : "435.44",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 5,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "435.44"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000585883106",
+      "accountId" : 5,
+      "cardNumber" : "6009619150674526",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Heathcote Inc",
+      "amount" : "435.44",
+      "merchantId" : 800000000,
+      "merchantName" : "Heathcote Inc",
+      "merchantCity" : "Marlenemouth",
+      "merchantZip" : "72239-5071",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

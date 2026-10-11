@@ -1,0 +1,110 @@
+{
+  "id" : "post-331",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'over limit (reason 102) / transaction 7' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-04", "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 13,
+      "activeStatus" : "Y",
+      "currentBalance" : "41.00",
+      "creditLimit" : "50.00",
+      "cashCreditLimit" : "4922.00",
+      "openDate" : "2017-10-01",
+      "expirationDate" : "2024-08-04",
+      "reissueDate" : "2024-08-04",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "4011500891777367",
+      "customerId" : 13,
+      "accountId" : 13
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 13,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000016259484",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Sipes Inc",
+        "amount" : "-56.77",
+        "merchantId" : 800000000,
+        "merchantName" : "Sipes Inc",
+        "merchantCity" : "Emilioside",
+        "merchantZip" : "93329",
+        "cardNumber" : "4011500891777367",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000016259484",
+        "accountId" : 13,
+        "newBalance" : "-15.77"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 13,
+      "activeStatus" : "Y",
+      "currentBalance" : "-15.77",
+      "creditLimit" : "50.00",
+      "cashCreditLimit" : "4922.00",
+      "openDate" : "2017-10-01",
+      "expirationDate" : "2024-08-04",
+      "reissueDate" : "2024-08-04",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "-56.77",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 13,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 13,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-56.77"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000016259484",
+      "accountId" : 13,
+      "cardNumber" : "4011500891777367",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Sipes Inc",
+      "amount" : "-56.77",
+      "merchantId" : 800000000,
+      "merchantName" : "Sipes Inc",
+      "merchantCity" : "Emilioside",
+      "merchantZip" : "93329",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

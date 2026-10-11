@@ -1,0 +1,105 @@
+{
+  "id" : "post-260",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 260' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 4,
+      "activeStatus" : "Y",
+      "currentBalance" : "40.00",
+      "creditLimit" : "3503.00",
+      "cashCreditLimit" : "2789.00",
+      "openDate" : "2012-11-17",
+      "expirationDate" : "2023-12-16",
+      "reissueDate" : "2023-12-16",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "2988091353094312",
+      "customerId" : 4,
+      "accountId" : 4
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 4,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000841555701",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Kub, Gislason and Haraann",
+        "amount" : "281.55",
+        "merchantId" : 800000000,
+        "merchantName" : "Kub, Gislason and Haraann",
+        "merchantCity" : "Port Bryonfurt",
+        "merchantZip" : "16314-3731",
+        "cardNumber" : "2988091353094312",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000841555701",
+        "accountId" : 4,
+        "newBalance" : "321.55"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 4,
+      "activeStatus" : "Y",
+      "currentBalance" : "321.55",
+      "creditLimit" : "3503.00",
+      "cashCreditLimit" : "2789.00",
+      "openDate" : "2012-11-17",
+      "expirationDate" : "2023-12-16",
+      "reissueDate" : "2023-12-16",
+      "currentCycleCredit" : "281.55",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 4,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "281.55"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000841555701",
+      "accountId" : 4,
+      "cardNumber" : "2988091353094312",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Kub, Gislason and Haraann",
+      "amount" : "281.55",
+      "merchantId" : 800000000,
+      "merchantName" : "Kub, Gislason and Haraann",
+      "merchantCity" : "Port Bryonfurt",
+      "merchantZip" : "16314-3731",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id" : "post-306",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'unknown cards (reason 100) / transaction 6' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-02", "POST-11" ],
+  "initial" : {
+    "accounts" : [ ],
+    "cards" : [ ],
+    "categoryBalances" : [ ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000010229018",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gislason-Medhurst",
+        "amount" : "849.99",
+        "merchantId" : 800000000,
+        "merchantName" : "Gislason-Medhurst",
+        "merchantCity" : "Colleenburgh",
+        "merchantZip" : "23712-2080",
+        "cardNumber" : "9999999999999999",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Rejected",
+        "transactionId" : "0000000010229018",
+        "reason" : "INVALID_CARD"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ ],
+    "categoryBalances" : [ ],
+    "ledger" : [ ],
+    "rejections" : [ {
+      "transaction" : {
+        "transactionId" : "0000000010229018",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gislason-Medhurst",
+        "amount" : "849.99",
+        "merchantId" : 800000000,
+        "merchantName" : "Gislason-Medhurst",
+        "merchantCity" : "Colleenburgh",
+        "merchantZip" : "23712-2080",
+        "cardNumber" : "9999999999999999",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      },
+      "accountId" : null,
+      "reason" : "INVALID_CARD",
+      "rejectedAt" : "2022-07-05T10:11:12.000000"
+    } ]
+  }
+}

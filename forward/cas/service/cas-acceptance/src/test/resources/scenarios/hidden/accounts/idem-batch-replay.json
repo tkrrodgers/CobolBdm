@@ -1,0 +1,665 @@
+{
+  "id" : "idem-batch-replay",
+  "slice" : "accounts",
+  "origin" : "authored by the SME: the same postBatch key twice",
+  "rules" : [ "IDEM-01", "POST-02", "POST-07", "POST-08", "POST-09", "POST-10", "POST-11", "POST-12", "POST-13" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 1,
+      "activeStatus" : "Y",
+      "currentBalance" : "1288.10",
+      "creditLimit" : "2020.00",
+      "cashCreditLimit" : "1020.00",
+      "openDate" : "2014-11-20",
+      "expirationDate" : "2025-05-20",
+      "reissueDate" : "2025-05-20",
+      "currentCycleCredit" : "1164.87",
+      "currentCycleDebit" : "-70.77",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 2,
+      "activeStatus" : "Y",
+      "currentBalance" : "1734.97",
+      "creditLimit" : "6130.00",
+      "cashCreditLimit" : "5448.00",
+      "openDate" : "2013-06-19",
+      "expirationDate" : "2024-08-11",
+      "reissueDate" : "2024-08-11",
+      "currentCycleCredit" : "2339.97",
+      "currentCycleDebit" : "-763.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "0923877193247330",
+      "customerId" : 2,
+      "accountId" : 2
+    }, {
+      "cardNumber" : "9680294154603697",
+      "customerId" : 1,
+      "accountId" : 1
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 1,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "1164.87"
+    }, {
+      "accountId" : 1,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-70.77"
+    }, {
+      "accountId" : 2,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "2339.97"
+    }, {
+      "accountId" : 2,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-763.00"
+    } ],
+    "disclosureRates" : [ {
+      "groupId" : "A000000000",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    } ],
+    "transactionTypes" : [ {
+      "typeCode" : "01",
+      "description" : "Purchase"
+    }, {
+      "typeCode" : "02",
+      "description" : "Payment"
+    }, {
+      "typeCode" : "03",
+      "description" : "Credit"
+    }, {
+      "typeCode" : "04",
+      "description" : "Authorization"
+    }, {
+      "typeCode" : "05",
+      "description" : "Refund"
+    }, {
+      "typeCode" : "06",
+      "description" : "Reversal"
+    }, {
+      "typeCode" : "07",
+      "description" : "Adjustment"
+    } ],
+    "transactionCategories" : [ {
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "description" : "Regular Sales Draft"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "description" : "Regular Cash Advance"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "description" : "Convenience Check Debit"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "description" : "ATM Cash Advance"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 5,
+      "description" : "Interest Amount"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "description" : "Cash payment"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "description" : "Electronic payment"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "description" : "Check payment"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "description" : "Credit to Account"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "description" : "Credit to Purchase balance"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "description" : "Credit to Cash balance"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "description" : "Zero dollar authorization"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "description" : "Online purchase authorization"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "description" : "Travel booking authorization"
+    }, {
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "description" : "Refund credit"
+    }, {
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "description" : "Fraud reversal"
+    }, {
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "description" : "Non-fraud reversal"
+    }, {
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "description" : "Sales draft credit adjustment"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postBatch",
+    "input" : {
+      "key" : "night-1",
+      "transactions" : [ {
+        "transactionId" : "0000000100000003",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Store 003",
+        "amount" : "10.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Store 003",
+        "merchantCity" : "Springfield",
+        "merchantZip" : "12345",
+        "cardNumber" : "9680294154603697",
+        "originTimestamp" : "2022-07-04T18:00:00.000000"
+      }, {
+        "transactionId" : "0000000100000004",
+        "typeCode" : "01",
+        "categoryCode" : 2,
+        "source" : "POS TERM",
+        "description" : "Purchase at Store 004",
+        "amount" : "20.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Store 004",
+        "merchantCity" : "Springfield",
+        "merchantZip" : "12345",
+        "cardNumber" : "0923877193247330",
+        "originTimestamp" : "2022-07-04T18:00:00.000000"
+      }, {
+        "transactionId" : "0000000100000005",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Store 005",
+        "amount" : "30.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Store 005",
+        "merchantCity" : "Springfield",
+        "merchantZip" : "12345",
+        "cardNumber" : "9999999999999999",
+        "originTimestamp" : "2022-07-04T18:00:00.000000"
+      } ]
+    },
+    "expect" : {
+      "result" : {
+        "processed" : 3,
+        "posted" : 2,
+        "rejected" : 1,
+        "outcomes" : [ {
+          "@type" : "Posted",
+          "transactionId" : "0000000100000003",
+          "accountId" : 1,
+          "newBalance" : "1298.10"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000100000004",
+          "accountId" : 2,
+          "newBalance" : "1754.97"
+        }, {
+          "@type" : "Rejected",
+          "transactionId" : "0000000100000005",
+          "reason" : "INVALID_CARD"
+        } ]
+      }
+    }
+  }, {
+    "at" : "2022-07-05T15:30:00.000000",
+    "command" : "postBatch",
+    "input" : {
+      "key" : "night-1",
+      "transactions" : [ {
+        "transactionId" : "0000000100000003",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Store 003",
+        "amount" : "10.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Store 003",
+        "merchantCity" : "Springfield",
+        "merchantZip" : "12345",
+        "cardNumber" : "9680294154603697",
+        "originTimestamp" : "2022-07-04T18:00:00.000000"
+      }, {
+        "transactionId" : "0000000100000004",
+        "typeCode" : "01",
+        "categoryCode" : 2,
+        "source" : "POS TERM",
+        "description" : "Purchase at Store 004",
+        "amount" : "20.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Store 004",
+        "merchantCity" : "Springfield",
+        "merchantZip" : "12345",
+        "cardNumber" : "0923877193247330",
+        "originTimestamp" : "2022-07-04T18:00:00.000000"
+      }, {
+        "transactionId" : "0000000100000005",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Store 005",
+        "amount" : "30.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Store 005",
+        "merchantCity" : "Springfield",
+        "merchantZip" : "12345",
+        "cardNumber" : "9999999999999999",
+        "originTimestamp" : "2022-07-04T18:00:00.000000"
+      } ]
+    },
+    "expect" : {
+      "result" : {
+        "processed" : 3,
+        "posted" : 2,
+        "rejected" : 1,
+        "outcomes" : [ {
+          "@type" : "Posted",
+          "transactionId" : "0000000100000003",
+          "accountId" : 1,
+          "newBalance" : "1298.10"
+        }, {
+          "@type" : "Posted",
+          "transactionId" : "0000000100000004",
+          "accountId" : 2,
+          "newBalance" : "1754.97"
+        }, {
+          "@type" : "Rejected",
+          "transactionId" : "0000000100000005",
+          "reason" : "INVALID_CARD"
+        } ]
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 1,
+      "activeStatus" : "Y",
+      "currentBalance" : "1298.10",
+      "creditLimit" : "2020.00",
+      "cashCreditLimit" : "1020.00",
+      "openDate" : "2014-11-20",
+      "expirationDate" : "2025-05-20",
+      "reissueDate" : "2025-05-20",
+      "currentCycleCredit" : "1174.87",
+      "currentCycleDebit" : "-70.77",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 2,
+      "activeStatus" : "Y",
+      "currentBalance" : "1754.97",
+      "creditLimit" : "6130.00",
+      "cashCreditLimit" : "5448.00",
+      "openDate" : "2013-06-19",
+      "expirationDate" : "2024-08-11",
+      "reissueDate" : "2024-08-11",
+      "currentCycleCredit" : "2359.97",
+      "currentCycleDebit" : "-763.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 1,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "1174.87"
+    }, {
+      "accountId" : 1,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-70.77"
+    }, {
+      "accountId" : 2,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "2339.97"
+    }, {
+      "accountId" : 2,
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "balance" : "20.00"
+    }, {
+      "accountId" : 2,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-763.00"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000100000003",
+      "accountId" : 1,
+      "cardNumber" : "9680294154603697",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Store 003",
+      "amount" : "10.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Store 003",
+      "merchantCity" : "Springfield",
+      "merchantZip" : "12345",
+      "originTimestamp" : "2022-07-04T18:00:00.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000100000004",
+      "accountId" : 2,
+      "cardNumber" : "0923877193247330",
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "source" : "POS TERM",
+      "description" : "Purchase at Store 004",
+      "amount" : "20.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Store 004",
+      "merchantCity" : "Springfield",
+      "merchantZip" : "12345",
+      "originTimestamp" : "2022-07-04T18:00:00.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ {
+      "transaction" : {
+        "transactionId" : "0000000100000005",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Store 005",
+        "amount" : "30.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Store 005",
+        "merchantCity" : "Springfield",
+        "merchantZip" : "12345",
+        "cardNumber" : "9999999999999999",
+        "originTimestamp" : "2022-07-04T18:00:00.000000"
+      },
+      "accountId" : null,
+      "reason" : "INVALID_CARD",
+      "rejectedAt" : "2022-07-05T10:11:12.000000"
+    } ]
+  }
+}

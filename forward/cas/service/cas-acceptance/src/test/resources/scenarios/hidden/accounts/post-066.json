@@ -1,0 +1,106 @@
+{
+  "id" : "post-066",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 66' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-04", "POST-11" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 30,
+      "activeStatus" : "Y",
+      "currentBalance" : "2.00",
+      "creditLimit" : "120.00",
+      "cashCreditLimit" : "93.00",
+      "openDate" : "2011-08-26",
+      "expirationDate" : "2024-06-27",
+      "reissueDate" : "2024-06-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "6509230362553816",
+      "customerId" : 30,
+      "accountId" : 30
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 30,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000220001505",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Schmeler Group",
+        "amount" : "929.77",
+        "merchantId" : 800000000,
+        "merchantName" : "Schmeler Group",
+        "merchantCity" : "New Kennediburgh",
+        "merchantZip" : "39202-2380",
+        "cardNumber" : "6509230362553816",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Rejected",
+        "transactionId" : "0000000220001505",
+        "reason" : "OVERLIMIT"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 30,
+      "activeStatus" : "Y",
+      "currentBalance" : "2.00",
+      "creditLimit" : "120.00",
+      "cashCreditLimit" : "93.00",
+      "openDate" : "2011-08-26",
+      "expirationDate" : "2024-06-27",
+      "reissueDate" : "2024-06-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 30,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ],
+    "rejections" : [ {
+      "transaction" : {
+        "transactionId" : "0000000220001505",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Schmeler Group",
+        "amount" : "929.77",
+        "merchantId" : 800000000,
+        "merchantName" : "Schmeler Group",
+        "merchantCity" : "New Kennediburgh",
+        "merchantZip" : "39202-2380",
+        "cardNumber" : "6509230362553816",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      },
+      "accountId" : 30,
+      "reason" : "OVERLIMIT",
+      "rejectedAt" : "2022-07-05T10:11:12.000000"
+    } ]
+  }
+}

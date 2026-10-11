@@ -1,0 +1,100 @@
+{
+  "id" : "post-441",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'no category balances yet / transaction 9' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 48,
+      "activeStatus" : "Y",
+      "currentBalance" : "226.00",
+      "creditLimit" : "2306.00",
+      "cashCreditLimit" : "612.00",
+      "openDate" : "2017-03-18",
+      "expirationDate" : "2025-02-06",
+      "reissueDate" : "2025-02-06",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "6503535181795992",
+      "customerId" : 48,
+      "accountId" : 48
+    } ],
+    "categoryBalances" : [ ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000019065428",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Turcotte Group",
+        "amount" : "-535.88",
+        "merchantId" : 800000000,
+        "merchantName" : "Turcotte Group",
+        "merchantCity" : "Andrewfurt",
+        "merchantZip" : "41346-3789",
+        "cardNumber" : "6503535181795992",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000019065428",
+        "accountId" : 48,
+        "newBalance" : "-309.88"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 48,
+      "activeStatus" : "Y",
+      "currentBalance" : "-309.88",
+      "creditLimit" : "2306.00",
+      "cashCreditLimit" : "612.00",
+      "openDate" : "2017-03-18",
+      "expirationDate" : "2025-02-06",
+      "reissueDate" : "2025-02-06",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "-535.88",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 48,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-535.88"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000019065428",
+      "accountId" : 48,
+      "cardNumber" : "6503535181795992",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Turcotte Group",
+      "amount" : "-535.88",
+      "merchantId" : 800000000,
+      "merchantName" : "Turcotte Group",
+      "merchantCity" : "Andrewfurt",
+      "merchantZip" : "41346-3789",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

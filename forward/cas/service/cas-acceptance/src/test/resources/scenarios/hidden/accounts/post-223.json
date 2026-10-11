@@ -1,0 +1,105 @@
+{
+  "id" : "post-223",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 223' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 21,
+      "activeStatus" : "Y",
+      "currentBalance" : "112.00",
+      "creditLimit" : "1264.00",
+      "cashCreditLimit" : "180.00",
+      "openDate" : "2011-10-19",
+      "expirationDate" : "2023-01-06",
+      "reissueDate" : "2023-01-06",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "5407099850479866",
+      "customerId" : 21,
+      "accountId" : 21
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 21,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000735823935",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Johnston and Daughters",
+        "amount" : "910.11",
+        "merchantId" : 800000000,
+        "merchantName" : "Johnston and Daughters",
+        "merchantCity" : "Delaneymouth",
+        "merchantZip" : "49269-2667",
+        "cardNumber" : "5407099850479866",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000735823935",
+        "accountId" : 21,
+        "newBalance" : "1022.11"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 21,
+      "activeStatus" : "Y",
+      "currentBalance" : "1022.11",
+      "creditLimit" : "1264.00",
+      "cashCreditLimit" : "180.00",
+      "openDate" : "2011-10-19",
+      "expirationDate" : "2023-01-06",
+      "reissueDate" : "2023-01-06",
+      "currentCycleCredit" : "910.11",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 21,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "910.11"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000735823935",
+      "accountId" : 21,
+      "cardNumber" : "5407099850479866",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Johnston and Daughters",
+      "amount" : "910.11",
+      "merchantId" : 800000000,
+      "merchantName" : "Johnston and Daughters",
+      "merchantCity" : "Delaneymouth",
+      "merchantZip" : "49269-2667",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

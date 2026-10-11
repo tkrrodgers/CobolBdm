@@ -1,0 +1,106 @@
+{
+  "id" : "post-292",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 292' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-04", "POST-11" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 37,
+      "activeStatus" : "Y",
+      "currentBalance" : "7.00",
+      "creditLimit" : "446.00",
+      "cashCreditLimit" : "166.00",
+      "openDate" : "2016-09-10",
+      "expirationDate" : "2023-10-24",
+      "reissueDate" : "2023-10-24",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "1142167692878931",
+      "customerId" : 37,
+      "accountId" : 37
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 37,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000961186055",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Bartell-Fadel",
+        "amount" : "548.33",
+        "merchantId" : 800000000,
+        "merchantName" : "Bartell-Fadel",
+        "merchantCity" : "Lebsackchester",
+        "merchantZip" : "88382-6538",
+        "cardNumber" : "1142167692878931",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Rejected",
+        "transactionId" : "0000000961186055",
+        "reason" : "OVERLIMIT"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 37,
+      "activeStatus" : "Y",
+      "currentBalance" : "7.00",
+      "creditLimit" : "446.00",
+      "cashCreditLimit" : "166.00",
+      "openDate" : "2016-09-10",
+      "expirationDate" : "2023-10-24",
+      "reissueDate" : "2023-10-24",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 37,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ],
+    "rejections" : [ {
+      "transaction" : {
+        "transactionId" : "0000000961186055",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Bartell-Fadel",
+        "amount" : "548.33",
+        "merchantId" : 800000000,
+        "merchantName" : "Bartell-Fadel",
+        "merchantCity" : "Lebsackchester",
+        "merchantZip" : "88382-6538",
+        "cardNumber" : "1142167692878931",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      },
+      "accountId" : 37,
+      "reason" : "OVERLIMIT",
+      "rejectedAt" : "2022-07-05T10:11:12.000000"
+    } ]
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "id" : "post-353",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 5' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 46,
+      "activeStatus" : "Y",
+      "currentBalance" : "396.00",
+      "creditLimit" : "1.00",
+      "cashCreditLimit" : "5438.00",
+      "openDate" : "2013-09-06",
+      "expirationDate" : "2000-01-01",
+      "reissueDate" : "2025-06-20",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "5656830544981216",
+      "customerId" : 46,
+      "accountId" : 46
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 46,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000010142252",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Kertzmann-Schoen",
+        "amount" : "454.66",
+        "merchantId" : 800000000,
+        "merchantName" : "Kertzmann-Schoen",
+        "merchantCity" : "East Eulahstad",
+        "merchantZip" : "98754-1089",
+        "cardNumber" : "5656830544981216",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Rejected",
+        "transactionId" : "0000000010142252",
+        "reason" : "EXPIRED_ACCOUNT"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 46,
+      "activeStatus" : "Y",
+      "currentBalance" : "396.00",
+      "creditLimit" : "1.00",
+      "cashCreditLimit" : "5438.00",
+      "openDate" : "2013-09-06",
+      "expirationDate" : "2000-01-01",
+      "reissueDate" : "2025-06-20",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 46,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ],
+    "rejections" : [ {
+      "transaction" : {
+        "transactionId" : "0000000010142252",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Kertzmann-Schoen",
+        "amount" : "454.66",
+        "merchantId" : 800000000,
+        "merchantName" : "Kertzmann-Schoen",
+        "merchantCity" : "East Eulahstad",
+        "merchantZip" : "98754-1089",
+        "cardNumber" : "5656830544981216",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      },
+      "accountId" : 46,
+      "reason" : "EXPIRED_ACCOUNT",
+      "rejectedAt" : "2022-07-05T10:11:12.000000"
+    } ]
+  }
+}

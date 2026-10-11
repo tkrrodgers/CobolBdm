@@ -1,0 +1,93 @@
+{
+  "id" : "cust-003",
+  "slice" : "customers",
+  "origin" : "legacy SAM1: 'CUSTFILE: empty' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "CUST-01", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-09", "CUST-10" ],
+  "initial" : {
+    "customers" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "applyCustomerChanges",
+    "input" : {
+      "key" : "changes-1",
+      "changes" : [ {
+        "code" : "UPDATE",
+        "customerKey" : "00001A",
+        "action" : "REPLACE",
+        "fieldName" : "NAME",
+        "value" : "IBM-RTP"
+      }, {
+        "code" : "DELETE",
+        "customerKey" : "00003A",
+        "action" : "",
+        "fieldName" : "",
+        "value" : ""
+      }, {
+        "code" : "ADD",
+        "customerKey" : "00004A",
+        "action" : "",
+        "fieldName" : "",
+        "value" : ""
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "99999C",
+        "action" : "REPLACE",
+        "fieldName" : "NAME",
+        "value" : "CONTACT2"
+      } ]
+    },
+    "expect" : {
+      "result" : {
+        "totals" : [ {
+          "changeType" : "ADD",
+          "requested" : 1,
+          "processed" : 1,
+          "inError" : 0
+        }, {
+          "changeType" : "DELETE",
+          "requested" : 1,
+          "processed" : 0,
+          "inError" : 1
+        }, {
+          "changeType" : "UPDATE",
+          "requested" : 2,
+          "processed" : 0,
+          "inError" : 2
+        } ],
+        "errors" : [ {
+          "index" : 0,
+          "customerKey" : "00001A",
+          "reason" : "NO_MATCHING_KEY"
+        }, {
+          "index" : 1,
+          "customerKey" : "00003A",
+          "reason" : "NO_MATCHING_KEY"
+        }, {
+          "index" : 3,
+          "customerKey" : "99999C",
+          "reason" : "NO_MATCHING_KEY"
+        } ],
+        "changesRead" : 4
+      }
+    }
+  } ],
+  "expectState" : {
+    "customers" : [ {
+      "@type" : "CustomerProfile",
+      "customerId" : "00004",
+      "name" : "",
+      "accountBalance" : "0.00",
+      "ordersYtd" : 0,
+      "address" : "",
+      "city" : "",
+      "state" : "",
+      "country" : "",
+      "monthlyAmounts" : [ "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00" ],
+      "occupation" : "",
+      "notes" : "",
+      "data1" : "",
+      "data2" : ""
+    } ]
+  }
+}

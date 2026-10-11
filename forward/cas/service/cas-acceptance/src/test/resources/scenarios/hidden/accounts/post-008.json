@@ -1,0 +1,105 @@
+{
+  "id" : "post-008",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 8' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 26,
+      "activeStatus" : "Y",
+      "currentBalance" : "46.00",
+      "creditLimit" : "2181.00",
+      "cashCreditLimit" : "1375.00",
+      "openDate" : "2009-04-20",
+      "expirationDate" : "2024-12-19",
+      "reissueDate" : "2024-12-19",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "8040580410348680",
+      "customerId" : 26,
+      "accountId" : 26
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 26,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000017874199",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Legros Group",
+        "amount" : "373.66",
+        "merchantId" : 800000000,
+        "merchantName" : "Legros Group",
+        "merchantCity" : "Carmeloborough",
+        "merchantZip" : "34849-5127",
+        "cardNumber" : "8040580410348680",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000017874199",
+        "accountId" : 26,
+        "newBalance" : "419.66"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 26,
+      "activeStatus" : "Y",
+      "currentBalance" : "419.66",
+      "creditLimit" : "2181.00",
+      "cashCreditLimit" : "1375.00",
+      "openDate" : "2009-04-20",
+      "expirationDate" : "2024-12-19",
+      "reissueDate" : "2024-12-19",
+      "currentCycleCredit" : "373.66",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 26,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "373.66"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000017874199",
+      "accountId" : 26,
+      "cardNumber" : "8040580410348680",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Legros Group",
+      "amount" : "373.66",
+      "merchantId" : 800000000,
+      "merchantName" : "Legros Group",
+      "merchantCity" : "Carmeloborough",
+      "merchantZip" : "34849-5127",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

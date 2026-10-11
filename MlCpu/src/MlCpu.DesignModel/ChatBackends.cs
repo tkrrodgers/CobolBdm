@@ -50,6 +50,7 @@ public sealed class FallbackBackend(BackendOptions o, string preferred) : IChatB
     {
         if (preferred == "lmkit") return new LmKitBackend(o);
         if (preferred == "exchange") return new FileExchangeBackend(o.ExchangeDir ?? throw new ArgumentException("--exchange <dir> is required for --backend exchange"));
+        if (preferred == "scripted") return new ScriptedBackend(o.ExchangeDir ?? throw new ArgumentException("--exchange <dir> is required for --backend scripted"));
         try { return new LlamaServerBackend(o); }
         catch (Exception e) when (o.AllowFallback)
         {
@@ -329,6 +330,26 @@ public sealed class FileExchangeBackend : IChatBackend
         sw.Stop();
         var content = File.ReadAllText(response);
         return new ChatResult(content, null, 0, 0, 0, 0, sw.Elapsed.TotalSeconds, "stop", Name);
+    }
+
+    public void Dispose() { }
+}
+/// <summary>
+/// Prepared replies for testing the harness without a model (--backend scripted --exchange dir): call N returns
+/// dir/reply-N.md, and the prompt it answered is kept as dir/request-N.md.
+/// </summary>
+public sealed class ScriptedBackend(string dir) : IChatBackend
+{
+    int n;
+    public string Name => "scripted replies";
+
+    public ChatResult Complete(IReadOnlyList<ChatMessage> messages, int? maxTokens = null, string? reasoning = null)
+    {
+        n++;
+        File.WriteAllText(Path.Combine(dir, $"request-{n}.md"), string.Join("\n\n", messages.Select(m => $"## {m.Role}\n{m.Content}")));
+        var reply = Path.Combine(dir, $"reply-{n}.md");
+        if (!File.Exists(reply)) throw new InvalidOperationException($"no prepared reply {reply}");
+        return new ChatResult(File.ReadAllText(reply), null, 0, 0, 0, 0, 0, "stop", Name);
     }
 
     public void Dispose() { }

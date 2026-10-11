@@ -1,0 +1,110 @@
+{
+  "id" : "post-200",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 200' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 38,
+      "activeStatus" : "Y",
+      "currentBalance" : "612.00",
+      "creditLimit" : "6505.00",
+      "cashCreditLimit" : "3476.00",
+      "openDate" : "2010-08-12",
+      "expirationDate" : "2023-07-23",
+      "reissueDate" : "2023-07-23",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "7443870988897530",
+      "customerId" : 38,
+      "accountId" : 38
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 38,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000627601011",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Stokes Inc",
+        "amount" : "-538.22",
+        "merchantId" : 800000000,
+        "merchantName" : "Stokes Inc",
+        "merchantCity" : "Koeppfurt",
+        "merchantZip" : "91991",
+        "cardNumber" : "7443870988897530",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000627601011",
+        "accountId" : 38,
+        "newBalance" : "73.78"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 38,
+      "activeStatus" : "Y",
+      "currentBalance" : "73.78",
+      "creditLimit" : "6505.00",
+      "cashCreditLimit" : "3476.00",
+      "openDate" : "2010-08-12",
+      "expirationDate" : "2023-07-23",
+      "reissueDate" : "2023-07-23",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "-538.22",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 38,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 38,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-538.22"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000627601011",
+      "accountId" : 38,
+      "cardNumber" : "7443870988897530",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Stokes Inc",
+      "amount" : "-538.22",
+      "merchantId" : 800000000,
+      "merchantName" : "Stokes Inc",
+      "merchantCity" : "Koeppfurt",
+      "merchantZip" : "91991",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

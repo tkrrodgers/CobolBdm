@@ -1,0 +1,105 @@
+{
+  "id" : "post-090",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 90' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 42,
+      "activeStatus" : "Y",
+      "currentBalance" : "302.00",
+      "creditLimit" : "6563.00",
+      "cashCreditLimit" : "5103.00",
+      "openDate" : "2016-09-19",
+      "expirationDate" : "2025-09-19",
+      "reissueDate" : "2025-09-19",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "5975117516616077",
+      "customerId" : 42,
+      "accountId" : 42
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 42,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000283702177",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Bradtke-Considine",
+        "amount" : "89.99",
+        "merchantId" : 800000000,
+        "merchantName" : "Bradtke-Considine",
+        "merchantCity" : "Geovannyville",
+        "merchantZip" : "39499-2169",
+        "cardNumber" : "5975117516616077",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000283702177",
+        "accountId" : 42,
+        "newBalance" : "391.99"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 42,
+      "activeStatus" : "Y",
+      "currentBalance" : "391.99",
+      "creditLimit" : "6563.00",
+      "cashCreditLimit" : "5103.00",
+      "openDate" : "2016-09-19",
+      "expirationDate" : "2025-09-19",
+      "reissueDate" : "2025-09-19",
+      "currentCycleCredit" : "89.99",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 42,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "89.99"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000283702177",
+      "accountId" : 42,
+      "cardNumber" : "5975117516616077",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Bradtke-Considine",
+      "amount" : "89.99",
+      "merchantId" : 800000000,
+      "merchantName" : "Bradtke-Considine",
+      "merchantCity" : "Geovannyville",
+      "merchantZip" : "39499-2169",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

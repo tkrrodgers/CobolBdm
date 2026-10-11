@@ -1,0 +1,608 @@
+{
+  "id" : "interest-new-key-same-cycle",
+  "slice" : "accounts",
+  "origin" : "authored by the SME: a second run for the same cycle under a new key skips every account",
+  "rules" : [ "IDEM-03", "INT-01", "INT-02", "INT-07", "INT-08", "INT-09", "INT-11", "INT-12" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 11,
+      "activeStatus" : "Y",
+      "currentBalance" : "1539.99",
+      "creditLimit" : "4998.00",
+      "cashCreditLimit" : "3175.00",
+      "openDate" : "2014-09-12",
+      "expirationDate" : "2025-03-12",
+      "reissueDate" : "2025-03-12",
+      "currentCycleCredit" : "2072.76",
+      "currentCycleDebit" : "-744.77",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 12,
+      "activeStatus" : "Y",
+      "currentBalance" : "1770.65",
+      "creditLimit" : "4636.00",
+      "cashCreditLimit" : "388.00",
+      "openDate" : "2009-06-17",
+      "expirationDate" : "2023-07-07",
+      "reissueDate" : "2023-07-07",
+      "currentCycleCredit" : "2357.09",
+      "currentCycleDebit" : "-762.44",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 13,
+      "activeStatus" : "Y",
+      "currentBalance" : "2860.10",
+      "creditLimit" : "7542.00",
+      "cashCreditLimit" : "4922.00",
+      "openDate" : "2017-10-01",
+      "expirationDate" : "2024-08-04",
+      "reissueDate" : "2024-08-04",
+      "currentCycleCredit" : "2875.87",
+      "currentCycleDebit" : "-56.77",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "0982496213629795",
+      "customerId" : 12,
+      "accountId" : 12
+    }, {
+      "cardNumber" : "4011500891777367",
+      "customerId" : 13,
+      "accountId" : 13
+    }, {
+      "cardNumber" : "7427684863423209",
+      "customerId" : 11,
+      "accountId" : 11
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 11,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "2072.76"
+    }, {
+      "accountId" : 11,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-744.77"
+    }, {
+      "accountId" : 12,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "2357.09"
+    }, {
+      "accountId" : 12,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-762.44"
+    }, {
+      "accountId" : 13,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "2875.87"
+    }, {
+      "accountId" : 13,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-56.77"
+    } ],
+    "disclosureRates" : [ {
+      "groupId" : "A000000000",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "A000000000",
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "annualRatePercent" : "25.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "annualRatePercent" : "15.00"
+    }, {
+      "groupId" : "DEFAULT",
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "annualRatePercent" : "0.00"
+    }, {
+      "groupId" : "ZEROAPR",
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "annualRatePercent" : "0.00"
+    } ],
+    "transactionTypes" : [ {
+      "typeCode" : "01",
+      "description" : "Purchase"
+    }, {
+      "typeCode" : "02",
+      "description" : "Payment"
+    }, {
+      "typeCode" : "03",
+      "description" : "Credit"
+    }, {
+      "typeCode" : "04",
+      "description" : "Authorization"
+    }, {
+      "typeCode" : "05",
+      "description" : "Refund"
+    }, {
+      "typeCode" : "06",
+      "description" : "Reversal"
+    }, {
+      "typeCode" : "07",
+      "description" : "Adjustment"
+    } ],
+    "transactionCategories" : [ {
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "description" : "Regular Sales Draft"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "description" : "Regular Cash Advance"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "description" : "Convenience Check Debit"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "description" : "ATM Cash Advance"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 5,
+      "description" : "Interest Amount"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "description" : "Cash payment"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "description" : "Electronic payment"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "description" : "Check payment"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "description" : "Credit to Account"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "description" : "Credit to Purchase balance"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "description" : "Credit to Cash balance"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "description" : "Zero dollar authorization"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "description" : "Online purchase authorization"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "description" : "Travel booking authorization"
+    }, {
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "description" : "Refund credit"
+    }, {
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "description" : "Fraud reversal"
+    }, {
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "description" : "Non-fraud reversal"
+    }, {
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "description" : "Sales draft credit adjustment"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-08-01T02:00:00.000000",
+    "command" : "accrueInterest",
+    "input" : {
+      "key" : "int-3",
+      "cycle" : "2022-07"
+    },
+    "expect" : {
+      "result" : {
+        "cycle" : "2022-07",
+        "charges" : [ {
+          "accountId" : 11,
+          "typeCode" : "01",
+          "categoryCode" : 1,
+          "categoryBalance" : "2072.76",
+          "annualRatePercent" : "15.00",
+          "interest" : "25.90",
+          "transactionId" : "IN20220700000001"
+        }, {
+          "accountId" : 12,
+          "typeCode" : "01",
+          "categoryCode" : 1,
+          "categoryBalance" : "2357.09",
+          "annualRatePercent" : "15.00",
+          "interest" : "29.46",
+          "transactionId" : "IN20220700000002"
+        }, {
+          "accountId" : 13,
+          "typeCode" : "01",
+          "categoryCode" : 1,
+          "categoryBalance" : "2875.87",
+          "annualRatePercent" : "15.00",
+          "interest" : "35.94",
+          "transactionId" : "IN20220700000003"
+        } ],
+        "accounts" : [ {
+          "accountId" : 11,
+          "totalInterest" : "25.90",
+          "newBalance" : "1565.89"
+        }, {
+          "accountId" : 12,
+          "totalInterest" : "29.46",
+          "newBalance" : "1800.11"
+        }, {
+          "accountId" : 13,
+          "totalInterest" : "35.94",
+          "newBalance" : "2896.04"
+        } ],
+        "skippedAccounts" : [ ]
+      }
+    }
+  }, {
+    "at" : "2022-08-02T02:00:00.000000",
+    "command" : "accrueInterest",
+    "input" : {
+      "key" : "int-4",
+      "cycle" : "2022-07"
+    },
+    "expect" : {
+      "result" : {
+        "cycle" : "2022-07",
+        "charges" : [ ],
+        "accounts" : [ ],
+        "skippedAccounts" : [ 11, 12, 13 ]
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 11,
+      "activeStatus" : "Y",
+      "currentBalance" : "1565.89",
+      "creditLimit" : "4998.00",
+      "cashCreditLimit" : "3175.00",
+      "openDate" : "2014-09-12",
+      "expirationDate" : "2025-03-12",
+      "reissueDate" : "2025-03-12",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : "2022-07"
+    }, {
+      "accountId" : 12,
+      "activeStatus" : "Y",
+      "currentBalance" : "1800.11",
+      "creditLimit" : "4636.00",
+      "cashCreditLimit" : "388.00",
+      "openDate" : "2009-06-17",
+      "expirationDate" : "2023-07-07",
+      "reissueDate" : "2023-07-07",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : "2022-07"
+    }, {
+      "accountId" : 13,
+      "activeStatus" : "Y",
+      "currentBalance" : "2896.04",
+      "creditLimit" : "7542.00",
+      "cashCreditLimit" : "4922.00",
+      "openDate" : "2017-10-01",
+      "expirationDate" : "2024-08-04",
+      "reissueDate" : "2024-08-04",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : "2022-07"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "IN20220700000001",
+      "accountId" : 11,
+      "cardNumber" : "7427684863423209",
+      "typeCode" : "01",
+      "categoryCode" : 5,
+      "source" : "System",
+      "description" : "Int. for a/c 00000000011",
+      "amount" : "25.90",
+      "merchantId" : 0,
+      "merchantName" : "",
+      "merchantCity" : "",
+      "merchantZip" : "",
+      "originTimestamp" : "2022-08-01T02:00:00.000000",
+      "processedTimestamp" : "2022-08-01T02:00:00.000000",
+      "interestCycle" : "2022-07"
+    }, {
+      "transactionId" : "IN20220700000002",
+      "accountId" : 12,
+      "cardNumber" : "0982496213629795",
+      "typeCode" : "01",
+      "categoryCode" : 5,
+      "source" : "System",
+      "description" : "Int. for a/c 00000000012",
+      "amount" : "29.46",
+      "merchantId" : 0,
+      "merchantName" : "",
+      "merchantCity" : "",
+      "merchantZip" : "",
+      "originTimestamp" : "2022-08-01T02:00:00.000000",
+      "processedTimestamp" : "2022-08-01T02:00:00.000000",
+      "interestCycle" : "2022-07"
+    }, {
+      "transactionId" : "IN20220700000003",
+      "accountId" : 13,
+      "cardNumber" : "4011500891777367",
+      "typeCode" : "01",
+      "categoryCode" : 5,
+      "source" : "System",
+      "description" : "Int. for a/c 00000000013",
+      "amount" : "35.94",
+      "merchantId" : 0,
+      "merchantName" : "",
+      "merchantCity" : "",
+      "merchantZip" : "",
+      "originTimestamp" : "2022-08-01T02:00:00.000000",
+      "processedTimestamp" : "2022-08-01T02:00:00.000000",
+      "interestCycle" : "2022-07"
+    } ]
+  }
+}

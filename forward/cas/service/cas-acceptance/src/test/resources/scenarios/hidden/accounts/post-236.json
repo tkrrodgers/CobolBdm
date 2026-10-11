@@ -1,0 +1,105 @@
+{
+  "id" : "post-236",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 236' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 20,
+      "activeStatus" : "Y",
+      "currentBalance" : "369.00",
+      "creditLimit" : "3767.00",
+      "cashCreditLimit" : "1040.00",
+      "openDate" : "2014-02-27",
+      "expirationDate" : "2024-03-13",
+      "reissueDate" : "2024-03-13",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "0927987108636232",
+      "customerId" : 20,
+      "accountId" : 20
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 20,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000767314476",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Renner Inc",
+        "amount" : "273.11",
+        "merchantId" : 800000000,
+        "merchantName" : "Renner Inc",
+        "merchantCity" : "Lednerberg",
+        "merchantZip" : "11838",
+        "cardNumber" : "0927987108636232",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000767314476",
+        "accountId" : 20,
+        "newBalance" : "642.11"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 20,
+      "activeStatus" : "Y",
+      "currentBalance" : "642.11",
+      "creditLimit" : "3767.00",
+      "cashCreditLimit" : "1040.00",
+      "openDate" : "2014-02-27",
+      "expirationDate" : "2024-03-13",
+      "reissueDate" : "2024-03-13",
+      "currentCycleCredit" : "273.11",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 20,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "273.11"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000767314476",
+      "accountId" : 20,
+      "cardNumber" : "0927987108636232",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Renner Inc",
+      "amount" : "273.11",
+      "merchantId" : 800000000,
+      "merchantName" : "Renner Inc",
+      "merchantCity" : "Lednerberg",
+      "merchantZip" : "11838",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

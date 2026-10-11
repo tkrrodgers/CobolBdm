@@ -1,0 +1,105 @@
+{
+  "id" : "post-288",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 288' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 41,
+      "activeStatus" : "Y",
+      "currentBalance" : "375.00",
+      "creditLimit" : "6721.00",
+      "cashCreditLimit" : "3429.00",
+      "openDate" : "2015-02-07",
+      "expirationDate" : "2023-04-24",
+      "reissueDate" : "2023-04-24",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "3766281984155154",
+      "customerId" : 41,
+      "accountId" : 41
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 41,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000946277676",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Kemmer, Wyman and Ondricka",
+        "amount" : "220.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Kemmer, Wyman and Ondricka",
+        "merchantCity" : "Marcellechester",
+        "merchantZip" : "28632",
+        "cardNumber" : "3766281984155154",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000946277676",
+        "accountId" : 41,
+        "newBalance" : "595.00"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 41,
+      "activeStatus" : "Y",
+      "currentBalance" : "595.00",
+      "creditLimit" : "6721.00",
+      "cashCreditLimit" : "3429.00",
+      "openDate" : "2015-02-07",
+      "expirationDate" : "2023-04-24",
+      "reissueDate" : "2023-04-24",
+      "currentCycleCredit" : "220.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 41,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "220.00"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000946277676",
+      "accountId" : 41,
+      "cardNumber" : "3766281984155154",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Kemmer, Wyman and Ondricka",
+      "amount" : "220.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Kemmer, Wyman and Ondricka",
+      "merchantCity" : "Marcellechester",
+      "merchantZip" : "28632",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

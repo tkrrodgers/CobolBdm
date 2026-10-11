@@ -1,0 +1,105 @@
+{
+  "id" : "post-378",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'credits and debits / transaction 6' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 45,
+      "activeStatus" : "Y",
+      "currentBalance" : "186.00",
+      "creditLimit" : "2719.00",
+      "cashCreditLimit" : "688.00",
+      "openDate" : "2010-12-31",
+      "expirationDate" : "2025-07-09",
+      "reissueDate" : "2025-07-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "7379335634661142",
+      "customerId" : 45,
+      "accountId" : 45
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 45,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000010229018",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gislason-Medhurst",
+        "amount" : "849.99",
+        "merchantId" : 800000000,
+        "merchantName" : "Gislason-Medhurst",
+        "merchantCity" : "Colleenburgh",
+        "merchantZip" : "23712-2080",
+        "cardNumber" : "7379335634661142",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000010229018",
+        "accountId" : 45,
+        "newBalance" : "1035.99"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 45,
+      "activeStatus" : "Y",
+      "currentBalance" : "1035.99",
+      "creditLimit" : "2719.00",
+      "cashCreditLimit" : "688.00",
+      "openDate" : "2010-12-31",
+      "expirationDate" : "2025-07-09",
+      "reissueDate" : "2025-07-09",
+      "currentCycleCredit" : "849.99",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 45,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "849.99"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000010229018",
+      "accountId" : 45,
+      "cardNumber" : "7379335634661142",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Gislason-Medhurst",
+      "amount" : "849.99",
+      "merchantId" : 800000000,
+      "merchantName" : "Gislason-Medhurst",
+      "merchantCity" : "Colleenburgh",
+      "merchantZip" : "23712-2080",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

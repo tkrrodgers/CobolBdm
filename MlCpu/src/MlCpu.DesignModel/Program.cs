@@ -106,6 +106,25 @@ public static class Program
                     Console.WriteLine(detail ?? "(no differences or the probe could not run)");
                     return detail is null ? 1 : 0;
                 }
+                // Forward engineering (tools/eval/PROTOCOL-forward.md): --cas forward/cas is the SME package.
+                case "fwd-architecture":
+                    return Forward.ForwardDesign.Architecture(chat, new Forward.ForwardInputs(Need("cas")), outArg, designAttempts, name, reasoning, maxTokens) ? 0 : 1;
+                case "fwd-slices":
+                    return Forward.ForwardDesign.Slices(chat, new Forward.ForwardInputs(Need("cas")), Need("architecture"),
+                        Need("normalization").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), outArg, designAttempts, name,
+                        reasoning, maxTokens, ctx, a.GetValueOrDefault("only")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) ? 0 : 1;
+                case "fwd-review":
+                {
+                    // --designs "P=path\architecture.json;Q=path\architecture.json"
+                    var designs = Need("designs").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                        .Select(d => d.Split('=', 2)).ToDictionary(d => d[0], d => d[1], StringComparer.Ordinal);
+                    return Forward.ForwardDesign.Review(chat, new Forward.ForwardInputs(Need("cas")), designs, outArg, designAttempts, name, reasoning, maxTokens) ? 0 : 1;
+                }
+                case "fwd-implement":
+                    return Forward.ForwardImplement.Run(chat, new Forward.ForwardInputs(Need("cas")), Need("design"), outArg,
+                        a.GetValueOrDefault("harness") ?? Path.Combine(Path.GetTempPath(), "mlcpu-forward-harness", Safe(name)), implAttempts, name, implReasoning,
+                        maxTokens, ctx, testTimeout, a.GetValueOrDefault("arm") ?? "S", a.GetValueOrDefault("designer") ?? name,
+                        int.Parse(a.GetValueOrDefault("plateau") ?? "3"));
                 default:
                     Console.Error.WriteLine($"unknown verb '{verb}' (design | implement | run)");
                     return 2;

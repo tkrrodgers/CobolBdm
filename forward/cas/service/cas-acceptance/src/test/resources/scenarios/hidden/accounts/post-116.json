@@ -1,0 +1,105 @@
+{
+  "id" : "post-116",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 116' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 18,
+      "activeStatus" : "Y",
+      "currentBalance" : "144.00",
+      "creditLimit" : "2903.00",
+      "cashCreditLimit" : "1496.00",
+      "openDate" : "2018-11-15",
+      "expirationDate" : "2023-09-10",
+      "reissueDate" : "2023-09-10",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "5671184478505844",
+      "customerId" : 18,
+      "accountId" : 18
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 18,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000382291356",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Jacobi and Daughters",
+        "amount" : "860.77",
+        "merchantId" : 800000000,
+        "merchantName" : "Jacobi and Daughters",
+        "merchantCity" : "Carterland",
+        "merchantZip" : "70592-5640",
+        "cardNumber" : "5671184478505844",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000382291356",
+        "accountId" : 18,
+        "newBalance" : "1004.77"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 18,
+      "activeStatus" : "Y",
+      "currentBalance" : "1004.77",
+      "creditLimit" : "2903.00",
+      "cashCreditLimit" : "1496.00",
+      "openDate" : "2018-11-15",
+      "expirationDate" : "2023-09-10",
+      "reissueDate" : "2023-09-10",
+      "currentCycleCredit" : "860.77",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 18,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "860.77"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000382291356",
+      "accountId" : 18,
+      "cardNumber" : "5671184478505844",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Jacobi and Daughters",
+      "amount" : "860.77",
+      "merchantId" : 800000000,
+      "merchantName" : "Jacobi and Daughters",
+      "merchantCity" : "Carterland",
+      "merchantZip" : "70592-5640",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "id" : "post-233",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 233' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 19,
+      "activeStatus" : "Y",
+      "currentBalance" : "480.00",
+      "creditLimit" : "6986.00",
+      "cashCreditLimit" : "3723.00",
+      "openDate" : "2011-12-14",
+      "expirationDate" : "2025-07-23",
+      "reissueDate" : "2025-07-23",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "3940246016141489",
+      "customerId" : 19,
+      "accountId" : 19
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 19,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000762269241",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Kuvalis Group",
+        "amount" : "988.88",
+        "merchantId" : 800000000,
+        "merchantName" : "Kuvalis Group",
+        "merchantCity" : "Lake Cierrashire",
+        "merchantZip" : "92525",
+        "cardNumber" : "3940246016141489",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000762269241",
+        "accountId" : 19,
+        "newBalance" : "1468.88"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 19,
+      "activeStatus" : "Y",
+      "currentBalance" : "1468.88",
+      "creditLimit" : "6986.00",
+      "cashCreditLimit" : "3723.00",
+      "openDate" : "2011-12-14",
+      "expirationDate" : "2025-07-23",
+      "reissueDate" : "2025-07-23",
+      "currentCycleCredit" : "988.88",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 19,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "988.88"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000762269241",
+      "accountId" : 19,
+      "cardNumber" : "3940246016141489",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Kuvalis Group",
+      "amount" : "988.88",
+      "merchantId" : 800000000,
+      "merchantName" : "Kuvalis Group",
+      "merchantCity" : "Lake Cierrashire",
+      "merchantZip" : "92525",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

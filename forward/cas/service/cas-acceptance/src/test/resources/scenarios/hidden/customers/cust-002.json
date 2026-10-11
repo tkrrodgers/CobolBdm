@@ -1,0 +1,386 @@
+{
+  "id" : "cust-002",
+  "slice" : "customers",
+  "origin" : "legacy SAM1: 'oracle scenario all-transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "CUST-01", "CUST-02", "CUST-03", "CUST-04", "CUST-05", "CUST-06", "CUST-07", "CUST-08", "CUST-09", "CUST-10", "UPD-01", "UPD-02", "UPD-03", "UPD-05", "UPD-06", "UPD-07", "UPD-08", "UPD-09" ],
+  "initial" : {
+    "customers" : [ {
+      "@type" : "CustomerProfile",
+      "customerId" : "00001",
+      "name" : "IBM",
+      "accountBalance" : "4455.99",
+      "ordersYtd" : 25,
+      "address" : "4205 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "OCCUPATION",
+      "notes" : "NOTES----1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerProfile",
+      "customerId" : "00002",
+      "name" : "WIDGET MAKERS",
+      "accountBalance" : "25.99",
+      "ordersYtd" : 6,
+      "address" : "4206 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "WIDGET DESIGNER",
+      "notes" : "WIDGET NOTES-------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerProfile",
+      "customerId" : "00003",
+      "name" : "CAFE RTP",
+      "accountBalance" : "33.99",
+      "ordersYtd" : 6,
+      "address" : "4208 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "DONUT BAKER",
+      "notes" : "CAFE NOTES  -------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerProfile",
+      "customerId" : "00005",
+      "name" : "ACME SUPPLY",
+      "accountBalance" : "25.99",
+      "ordersYtd" : 6,
+      "address" : "4206 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "WIDGET DESIGNER",
+      "notes" : "WIDGET NOTES-------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerProfile",
+      "customerId" : "00007",
+      "name" : "GLOBEX",
+      "accountBalance" : "4455.99",
+      "ordersYtd" : 25,
+      "address" : "4205 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "OCCUPATION",
+      "notes" : "NOTES----1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerContact",
+      "customerId" : "99999",
+      "recordType" : "C",
+      "name" : "CONTACT NAME----|",
+      "description" : "CNCT DESC|",
+      "contactInfo" : "CONTACT INFO-------|",
+      "data3" : "DATA3",
+      "data4" : "DATA4",
+      "data5" : "DATA5",
+      "data6" : "6"
+    } ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "applyCustomerChanges",
+    "input" : {
+      "key" : "changes-1",
+      "changes" : [ {
+        "code" : "* ALL",
+        "customerKey" : "RANSAC",
+        "action" : "DS: a co",
+        "fieldName" : "ment line",
+        "value" : "choed without the processed tag"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00001A",
+        "action" : "REPLACE",
+        "fieldName" : "BALANCE",
+        "value" : "+000012345"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00001A",
+        "action" : "ADD",
+        "fieldName" : "ORDERS",
+        "value" : "+000000010"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00001A",
+        "action" : "REPLACE",
+        "fieldName" : "NAME",
+        "value" : "BIG BLUE"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00002A",
+        "action" : "ADD",
+        "fieldName" : "BALANCE",
+        "value" : "-000001050"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00002A",
+        "action" : "REPLACE",
+        "fieldName" : "BALANCE",
+        "value" : "ABCDEFGHI"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00002A",
+        "action" : "DELETE",
+        "fieldName" : "NAME",
+        "value" : "X"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00002A",
+        "action" : "REPLACE",
+        "fieldName" : "PHONE",
+        "value" : "5551212"
+      }, {
+        "code" : "ADD",
+        "customerKey" : "00002A",
+        "action" : "",
+        "fieldName" : "",
+        "value" : ""
+      }, {
+        "code" : "DELETE",
+        "customerKey" : "00003A",
+        "action" : "",
+        "fieldName" : "",
+        "value" : ""
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00003A",
+        "action" : "REPLACE",
+        "fieldName" : "NAME",
+        "value" : "GONE"
+      }, {
+        "code" : "ADD",
+        "customerKey" : "00004A",
+        "action" : "",
+        "fieldName" : "",
+        "value" : ""
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00004A",
+        "action" : "REPLACE",
+        "fieldName" : "NAME",
+        "value" : "NEWCO"
+      }, {
+        "code" : "DELETE",
+        "customerKey" : "00004B",
+        "action" : "",
+        "fieldName" : "",
+        "value" : ""
+      }, {
+        "code" : "CRUNCH",
+        "customerKey" : "00005A",
+        "action" : "",
+        "fieldName" : "",
+        "value" : "000000100"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00001A",
+        "action" : "REPLACE",
+        "fieldName" : "NAME",
+        "value" : "LATE"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00005A",
+        "action" : "REPLACE",
+        "fieldName" : "BALANCE",
+        "value" : "+1500"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00005A",
+        "action" : "ADD",
+        "fieldName" : "ORDERS",
+        "value" : "+000000250"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00007A",
+        "action" : "ADD",
+        "fieldName" : "BALANCE",
+        "value" : "+000000099"
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "00007A",
+        "action" : "REPLACE",
+        "fieldName" : "ORDERS",
+        "value" : "-000000007"
+      }, {
+        "code" : "XXXXXX",
+        "customerKey" : "00008A",
+        "action" : "",
+        "fieldName" : "",
+        "value" : ""
+      }, {
+        "code" : "UPDATE",
+        "customerKey" : "99999C",
+        "action" : "REPLACE",
+        "fieldName" : "NAME",
+        "value" : "CONTACT3"
+      } ]
+    },
+    "expect" : {
+      "result" : {
+        "totals" : [ {
+          "changeType" : "ADD",
+          "requested" : 2,
+          "processed" : 1,
+          "inError" : 1
+        }, {
+          "changeType" : "DELETE",
+          "requested" : 2,
+          "processed" : 1,
+          "inError" : 1
+        }, {
+          "changeType" : "UPDATE",
+          "requested" : 14,
+          "processed" : 9,
+          "inError" : 5
+        } ],
+        "errors" : [ {
+          "index" : 5,
+          "customerKey" : "00002A",
+          "reason" : "NOT_NUMERIC"
+        }, {
+          "index" : 6,
+          "customerKey" : "00002A",
+          "reason" : "INVALID_ACTION"
+        }, {
+          "index" : 7,
+          "customerKey" : "00002A",
+          "reason" : "INVALID_FIELD"
+        }, {
+          "index" : 8,
+          "customerKey" : "00002A",
+          "reason" : "DUPLICATE_KEY"
+        }, {
+          "index" : 10,
+          "customerKey" : "00003A",
+          "reason" : "NO_MATCHING_KEY"
+        }, {
+          "index" : 13,
+          "customerKey" : "00004B",
+          "reason" : "NO_MATCHING_KEY"
+        }, {
+          "index" : 14,
+          "customerKey" : "00005A",
+          "reason" : "INVALID_CODE"
+        }, {
+          "index" : 15,
+          "customerKey" : "00001A",
+          "reason" : "OUT_OF_SEQUENCE"
+        }, {
+          "index" : 16,
+          "customerKey" : "00005A",
+          "reason" : "NOT_NUMERIC"
+        }, {
+          "index" : 20,
+          "customerKey" : "00008A",
+          "reason" : "INVALID_CODE"
+        } ],
+        "changesRead" : 21
+      }
+    }
+  } ],
+  "expectState" : {
+    "customers" : [ {
+      "@type" : "CustomerProfile",
+      "customerId" : "00001",
+      "name" : "BIG BLUE",
+      "accountBalance" : "12.34",
+      "ordersYtd" : 25,
+      "address" : "4205 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "OCCUPATION",
+      "notes" : "NOTES----1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerProfile",
+      "customerId" : "00002",
+      "name" : "WIDGET MAKERS",
+      "accountBalance" : "24.94",
+      "ordersYtd" : 6,
+      "address" : "4206 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "WIDGET DESIGNER",
+      "notes" : "WIDGET NOTES-------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerProfile",
+      "customerId" : "00004",
+      "name" : "NEWCO",
+      "accountBalance" : "0.00",
+      "ordersYtd" : 0,
+      "address" : "",
+      "city" : "",
+      "state" : "",
+      "country" : "",
+      "monthlyAmounts" : [ "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00", "0.00" ],
+      "occupation" : "",
+      "notes" : "",
+      "data1" : "",
+      "data2" : ""
+    }, {
+      "@type" : "CustomerProfile",
+      "customerId" : "00005",
+      "name" : "ACME SUPPLY",
+      "accountBalance" : "25.99",
+      "ordersYtd" : 6,
+      "address" : "4206 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "WIDGET DESIGNER",
+      "notes" : "WIDGET NOTES-------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerProfile",
+      "customerId" : "00007",
+      "name" : "GLOBEX",
+      "accountBalance" : "4456.08",
+      "ordersYtd" : 0,
+      "address" : "4205 S MIAMI BLVD--|",
+      "city" : "RALEIGH------|",
+      "state" : "NC",
+      "country" : "USA-------|",
+      "monthlyAmounts" : [ "1000000.01", "2000000.02", "3000000.03", "4000000.04", "5000000.05", "6000000.06", "7000000.07", "8000000.08", "9000000.09", "1000000.10", "1100000.11", "1200000.12" ],
+      "occupation" : "OCCUPATION",
+      "notes" : "NOTES----1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------|",
+      "data1" : "DATA1",
+      "data2" : "DATA2----1---------2---------3---------|"
+    }, {
+      "@type" : "CustomerContact",
+      "customerId" : "99999",
+      "recordType" : "C",
+      "name" : "CONTACT3",
+      "description" : "CNCT DESC|",
+      "contactInfo" : "CONTACT INFO-------|",
+      "data3" : "DATA3",
+      "data4" : "DATA4",
+      "data5" : "DATA5",
+      "data6" : "6"
+    } ]
+  }
+}

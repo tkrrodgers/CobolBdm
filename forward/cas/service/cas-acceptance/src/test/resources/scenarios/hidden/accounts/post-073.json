@@ -1,0 +1,110 @@
+{
+  "id" : "post-073",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 73' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 33,
+      "activeStatus" : "Y",
+      "currentBalance" : "410.00",
+      "creditLimit" : "6404.00",
+      "cashCreditLimit" : "951.00",
+      "openDate" : "2012-10-11",
+      "expirationDate" : "2025-10-07",
+      "reissueDate" : "2025-10-07",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "6832676047698087",
+      "customerId" : 33,
+      "accountId" : 33
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 33,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000241121967",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Kulas and Daughters",
+        "amount" : "-445.55",
+        "merchantId" : 800000000,
+        "merchantName" : "Kulas and Daughters",
+        "merchantCity" : "Billybury",
+        "merchantZip" : "68626-4996",
+        "cardNumber" : "6832676047698087",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000241121967",
+        "accountId" : 33,
+        "newBalance" : "-35.55"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 33,
+      "activeStatus" : "Y",
+      "currentBalance" : "-35.55",
+      "creditLimit" : "6404.00",
+      "cashCreditLimit" : "951.00",
+      "openDate" : "2012-10-11",
+      "expirationDate" : "2025-10-07",
+      "reissueDate" : "2025-10-07",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "-445.55",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 33,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 33,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-445.55"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000241121967",
+      "accountId" : 33,
+      "cardNumber" : "6832676047698087",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Kulas and Daughters",
+      "amount" : "-445.55",
+      "merchantId" : 800000000,
+      "merchantName" : "Kulas and Daughters",
+      "merchantCity" : "Billybury",
+      "merchantZip" : "68626-4996",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "id" : "post-067",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 67' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 31,
+      "activeStatus" : "Y",
+      "currentBalance" : "31.00",
+      "creditLimit" : "1140.00",
+      "cashCreditLimit" : "1077.00",
+      "openDate" : "2017-02-25",
+      "expirationDate" : "2025-06-08",
+      "reissueDate" : "2025-06-08",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "7026637615032277",
+      "customerId" : 31,
+      "accountId" : 31
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 31,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000220745261",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Swaniawski, Torphy and Bruen",
+        "amount" : "495.66",
+        "merchantId" : 800000000,
+        "merchantName" : "Swaniawski, Torphy and Bruen",
+        "merchantCity" : "East Devenborough",
+        "merchantZip" : "70124",
+        "cardNumber" : "7026637615032277",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000220745261",
+        "accountId" : 31,
+        "newBalance" : "526.66"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 31,
+      "activeStatus" : "Y",
+      "currentBalance" : "526.66",
+      "creditLimit" : "1140.00",
+      "cashCreditLimit" : "1077.00",
+      "openDate" : "2017-02-25",
+      "expirationDate" : "2025-06-08",
+      "reissueDate" : "2025-06-08",
+      "currentCycleCredit" : "495.66",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 31,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "495.66"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000220745261",
+      "accountId" : 31,
+      "cardNumber" : "7026637615032277",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Swaniawski, Torphy and Bruen",
+      "amount" : "495.66",
+      "merchantId" : 800000000,
+      "merchantName" : "Swaniawski, Torphy and Bruen",
+      "merchantCity" : "East Devenborough",
+      "merchantZip" : "70124",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

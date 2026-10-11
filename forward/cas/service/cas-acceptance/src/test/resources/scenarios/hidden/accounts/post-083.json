@@ -1,0 +1,105 @@
+{
+  "id" : "post-083",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 83' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 12,
+      "activeStatus" : "Y",
+      "currentBalance" : "176.00",
+      "creditLimit" : "4636.00",
+      "cashCreditLimit" : "388.00",
+      "openDate" : "2009-06-17",
+      "expirationDate" : "2023-07-07",
+      "reissueDate" : "2023-07-07",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "0982496213629795",
+      "customerId" : 12,
+      "accountId" : 12
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 12,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000263926805",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Batz-Gaylord",
+        "amount" : "210.33",
+        "merchantId" : 800000000,
+        "merchantName" : "Batz-Gaylord",
+        "merchantCity" : "Beahanhaven",
+        "merchantZip" : "00022",
+        "cardNumber" : "0982496213629795",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000263926805",
+        "accountId" : 12,
+        "newBalance" : "386.33"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 12,
+      "activeStatus" : "Y",
+      "currentBalance" : "386.33",
+      "creditLimit" : "4636.00",
+      "cashCreditLimit" : "388.00",
+      "openDate" : "2009-06-17",
+      "expirationDate" : "2023-07-07",
+      "reissueDate" : "2023-07-07",
+      "currentCycleCredit" : "210.33",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 12,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "210.33"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000263926805",
+      "accountId" : 12,
+      "cardNumber" : "0982496213629795",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Batz-Gaylord",
+      "amount" : "210.33",
+      "merchantId" : 800000000,
+      "merchantName" : "Batz-Gaylord",
+      "merchantCity" : "Beahanhaven",
+      "merchantZip" : "00022",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

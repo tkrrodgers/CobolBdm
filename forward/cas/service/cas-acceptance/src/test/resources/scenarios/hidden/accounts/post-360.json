@@ -1,0 +1,106 @@
+{
+  "id" : "post-360",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 12' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 32,
+      "activeStatus" : "Y",
+      "currentBalance" : "30.00",
+      "creditLimit" : "1.00",
+      "cashCreditLimit" : "846.00",
+      "openDate" : "2013-11-10",
+      "expirationDate" : "2000-01-01",
+      "reissueDate" : "2025-05-19",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "7094142751055551",
+      "customerId" : 32,
+      "accountId" : 32
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 32,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000028097268",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Wolf, Cruickshank and Bode",
+        "amount" : "250.22",
+        "merchantId" : 800000000,
+        "merchantName" : "Wolf, Cruickshank and Bode",
+        "merchantCity" : "Fritzchester",
+        "merchantZip" : "20195-5156",
+        "cardNumber" : "7094142751055551",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Rejected",
+        "transactionId" : "0000000028097268",
+        "reason" : "EXPIRED_ACCOUNT"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 32,
+      "activeStatus" : "Y",
+      "currentBalance" : "30.00",
+      "creditLimit" : "1.00",
+      "cashCreditLimit" : "846.00",
+      "openDate" : "2013-11-10",
+      "expirationDate" : "2000-01-01",
+      "reissueDate" : "2025-05-19",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 32,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ],
+    "rejections" : [ {
+      "transaction" : {
+        "transactionId" : "0000000028097268",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Wolf, Cruickshank and Bode",
+        "amount" : "250.22",
+        "merchantId" : 800000000,
+        "merchantName" : "Wolf, Cruickshank and Bode",
+        "merchantCity" : "Fritzchester",
+        "merchantZip" : "20195-5156",
+        "cardNumber" : "7094142751055551",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      },
+      "accountId" : 32,
+      "reason" : "EXPIRED_ACCOUNT",
+      "rejectedAt" : "2022-07-05T10:11:12.000000"
+    } ]
+  }
+}

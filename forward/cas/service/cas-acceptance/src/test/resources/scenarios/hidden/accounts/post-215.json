@@ -1,0 +1,105 @@
+{
+  "id" : "post-215",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 215' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 40,
+      "activeStatus" : "Y",
+      "currentBalance" : "43.00",
+      "creditLimit" : "5823.00",
+      "cashCreditLimit" : "1674.00",
+      "openDate" : "2010-02-13",
+      "expirationDate" : "2023-10-27",
+      "reissueDate" : "2023-10-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "9805583408996588",
+      "customerId" : 40,
+      "accountId" : 40
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 40,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000686167627",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gibson, Beahan and Reichert",
+        "amount" : "81.44",
+        "merchantId" : 800000000,
+        "merchantName" : "Gibson, Beahan and Reichert",
+        "merchantCity" : "Maeveland",
+        "merchantZip" : "51385-6031",
+        "cardNumber" : "9805583408996588",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000686167627",
+        "accountId" : 40,
+        "newBalance" : "124.44"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 40,
+      "activeStatus" : "Y",
+      "currentBalance" : "124.44",
+      "creditLimit" : "5823.00",
+      "cashCreditLimit" : "1674.00",
+      "openDate" : "2010-02-13",
+      "expirationDate" : "2023-10-27",
+      "reissueDate" : "2023-10-27",
+      "currentCycleCredit" : "81.44",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 40,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "81.44"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000686167627",
+      "accountId" : 40,
+      "cardNumber" : "9805583408996588",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Gibson, Beahan and Reichert",
+      "amount" : "81.44",
+      "merchantId" : 800000000,
+      "merchantName" : "Gibson, Beahan and Reichert",
+      "merchantCity" : "Maeveland",
+      "merchantZip" : "51385-6031",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

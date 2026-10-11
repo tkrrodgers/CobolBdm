@@ -1,0 +1,110 @@
+{
+  "id" : "post-017",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 17' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 22,
+      "activeStatus" : "Y",
+      "currentBalance" : "55.00",
+      "creditLimit" : "8599.00",
+      "cashCreditLimit" : "4712.00",
+      "openDate" : "2016-11-21",
+      "expirationDate" : "2025-12-28",
+      "reissueDate" : "2025-12-28",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "2940139362300449",
+      "customerId" : 22,
+      "accountId" : 22
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 22,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000043636099",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Nader-Bayer",
+        "amount" : "-945.66",
+        "merchantId" : 800000000,
+        "merchantName" : "Nader-Bayer",
+        "merchantCity" : "Goyetteville",
+        "merchantZip" : "35324",
+        "cardNumber" : "2940139362300449",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000043636099",
+        "accountId" : 22,
+        "newBalance" : "-890.66"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 22,
+      "activeStatus" : "Y",
+      "currentBalance" : "-890.66",
+      "creditLimit" : "8599.00",
+      "cashCreditLimit" : "4712.00",
+      "openDate" : "2016-11-21",
+      "expirationDate" : "2025-12-28",
+      "reissueDate" : "2025-12-28",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "-945.66",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 22,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 22,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-945.66"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000043636099",
+      "accountId" : 22,
+      "cardNumber" : "2940139362300449",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Nader-Bayer",
+      "amount" : "-945.66",
+      "merchantId" : 800000000,
+      "merchantName" : "Nader-Bayer",
+      "merchantCity" : "Goyetteville",
+      "merchantZip" : "35324",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

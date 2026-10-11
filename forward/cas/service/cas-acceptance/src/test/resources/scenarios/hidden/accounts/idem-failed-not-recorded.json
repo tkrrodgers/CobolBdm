@@ -1,0 +1,225 @@
+{
+  "id" : "idem-failed-not-recorded",
+  "slice" : "accounts",
+  "origin" : "authored by the SME: an interest run that throws is not recorded: the same key throws again",
+  "rules" : [ "IDEM-02", "INT-05", "INT-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 7,
+      "activeStatus" : "Y",
+      "currentBalance" : "900.21",
+      "creditLimit" : "2065.00",
+      "cashCreditLimit" : "264.00",
+      "openDate" : "2012-10-12",
+      "expirationDate" : "2024-12-13",
+      "reissueDate" : "2024-12-13",
+      "currentCycleCredit" : "1287.09",
+      "currentCycleDebit" : "-579.88",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 8,
+      "activeStatus" : "Y",
+      "currentBalance" : "2138.08",
+      "creditLimit" : "6104.00",
+      "cashCreditLimit" : "1318.00",
+      "openDate" : "2012-01-04",
+      "expirationDate" : "2024-05-20",
+      "reissueDate" : "2024-05-20",
+      "currentCycleCredit" : "2368.19",
+      "currentCycleDebit" : "-835.11",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "4859452612877065",
+      "customerId" : 7,
+      "accountId" : 7
+    }, {
+      "cardNumber" : "8931369351894783",
+      "customerId" : 8,
+      "accountId" : 8
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 7,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "1287.09"
+    }, {
+      "accountId" : 7,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-579.88"
+    }, {
+      "accountId" : 8,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "2368.19"
+    }, {
+      "accountId" : 8,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-835.11"
+    } ],
+    "disclosureRates" : [ ],
+    "transactionTypes" : [ {
+      "typeCode" : "01",
+      "description" : "Purchase"
+    }, {
+      "typeCode" : "02",
+      "description" : "Payment"
+    }, {
+      "typeCode" : "03",
+      "description" : "Credit"
+    }, {
+      "typeCode" : "04",
+      "description" : "Authorization"
+    }, {
+      "typeCode" : "05",
+      "description" : "Refund"
+    }, {
+      "typeCode" : "06",
+      "description" : "Reversal"
+    }, {
+      "typeCode" : "07",
+      "description" : "Adjustment"
+    } ],
+    "transactionCategories" : [ {
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "description" : "Regular Sales Draft"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "description" : "Regular Cash Advance"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "description" : "Convenience Check Debit"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "description" : "ATM Cash Advance"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 5,
+      "description" : "Interest Amount"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "description" : "Cash payment"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "description" : "Electronic payment"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "description" : "Check payment"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "description" : "Credit to Account"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "description" : "Credit to Purchase balance"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "description" : "Credit to Cash balance"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "description" : "Zero dollar authorization"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "description" : "Online purchase authorization"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "description" : "Travel booking authorization"
+    }, {
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "description" : "Refund credit"
+    }, {
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "description" : "Fraud reversal"
+    }, {
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "description" : "Non-fraud reversal"
+    }, {
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "description" : "Sales draft credit adjustment"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-08-01T02:00:00.000000",
+    "command" : "accrueInterest",
+    "input" : {
+      "key" : "int-1",
+      "cycle" : "2022-07"
+    },
+    "expect" : {
+      "throws" : {
+        "type" : "ReferenceDataMissing",
+        "what" : "disclosure group",
+        "key" : "DEFAULT010001"
+      }
+    }
+  }, {
+    "at" : "2022-08-01T02:05:00.000000",
+    "command" : "accrueInterest",
+    "input" : {
+      "key" : "int-1",
+      "cycle" : "2022-07"
+    },
+    "expect" : {
+      "throws" : {
+        "type" : "ReferenceDataMissing",
+        "what" : "disclosure group",
+        "key" : "DEFAULT010001"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 7,
+      "activeStatus" : "Y",
+      "currentBalance" : "900.21",
+      "creditLimit" : "2065.00",
+      "cashCreditLimit" : "264.00",
+      "openDate" : "2012-10-12",
+      "expirationDate" : "2024-12-13",
+      "reissueDate" : "2024-12-13",
+      "currentCycleCredit" : "1287.09",
+      "currentCycleDebit" : "-579.88",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    }, {
+      "accountId" : 8,
+      "activeStatus" : "Y",
+      "currentBalance" : "2138.08",
+      "creditLimit" : "6104.00",
+      "cashCreditLimit" : "1318.00",
+      "openDate" : "2012-01-04",
+      "expirationDate" : "2024-05-20",
+      "reissueDate" : "2024-05-20",
+      "currentCycleCredit" : "2368.19",
+      "currentCycleDebit" : "-835.11",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "ledger" : [ ]
+  }
+}

@@ -1,0 +1,502 @@
+{
+  "id" : "report-03",
+  "slice" : "reporting",
+  "origin" : "legacy CBTRN03C: 'seven transactions' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "RPT-01", "RPT-02", "RPT-03", "RPT-04", "RPT-05", "RPT-06", "RPT-07", "RPT-08", "RPT-09" ],
+  "initial" : {
+    "cards" : [ {
+      "cardNumber" : "0500024453765740",
+      "customerId" : 50,
+      "accountId" : 50
+    }, {
+      "cardNumber" : "0683586198171516",
+      "customerId" : 27,
+      "accountId" : 27
+    }, {
+      "cardNumber" : "0923877193247330",
+      "customerId" : 2,
+      "accountId" : 2
+    }, {
+      "cardNumber" : "0927987108636232",
+      "customerId" : 20,
+      "accountId" : 20
+    }, {
+      "cardNumber" : "0982496213629795",
+      "customerId" : 12,
+      "accountId" : 12
+    }, {
+      "cardNumber" : "1014086565224350",
+      "customerId" : 44,
+      "accountId" : 44
+    }, {
+      "cardNumber" : "1142167692878931",
+      "customerId" : 37,
+      "accountId" : 37
+    }, {
+      "cardNumber" : "1561409106491600",
+      "customerId" : 35,
+      "accountId" : 35
+    }, {
+      "cardNumber" : "2745303720002090",
+      "customerId" : 39,
+      "accountId" : 39
+    }, {
+      "cardNumber" : "2760836797107565",
+      "customerId" : 24,
+      "accountId" : 24
+    }, {
+      "cardNumber" : "2871968252812490",
+      "customerId" : 6,
+      "accountId" : 6
+    }, {
+      "cardNumber" : "2940139362300449",
+      "customerId" : 22,
+      "accountId" : 22
+    }, {
+      "cardNumber" : "2988091353094312",
+      "customerId" : 4,
+      "accountId" : 4
+    }, {
+      "cardNumber" : "3260763612337560",
+      "customerId" : 10,
+      "accountId" : 10
+    }, {
+      "cardNumber" : "3766281984155154",
+      "customerId" : 41,
+      "accountId" : 41
+    }, {
+      "cardNumber" : "3940246016141489",
+      "customerId" : 19,
+      "accountId" : 19
+    }, {
+      "cardNumber" : "3999169246375885",
+      "customerId" : 3,
+      "accountId" : 3
+    }, {
+      "cardNumber" : "4011500891777367",
+      "customerId" : 13,
+      "accountId" : 13
+    }, {
+      "cardNumber" : "4385271476627819",
+      "customerId" : 34,
+      "accountId" : 34
+    }, {
+      "cardNumber" : "4534784102713951",
+      "customerId" : 36,
+      "accountId" : 36
+    }, {
+      "cardNumber" : "4859452612877065",
+      "customerId" : 7,
+      "accountId" : 7
+    }, {
+      "cardNumber" : "5407099850479866",
+      "customerId" : 21,
+      "accountId" : 21
+    }, {
+      "cardNumber" : "5656830544981216",
+      "customerId" : 46,
+      "accountId" : 46
+    }, {
+      "cardNumber" : "5671184478505844",
+      "customerId" : 18,
+      "accountId" : 18
+    }, {
+      "cardNumber" : "5787351228879339",
+      "customerId" : 47,
+      "accountId" : 47
+    }, {
+      "cardNumber" : "5975117516616077",
+      "customerId" : 42,
+      "accountId" : 42
+    }, {
+      "cardNumber" : "6009619150674526",
+      "customerId" : 5,
+      "accountId" : 5
+    }, {
+      "cardNumber" : "6349250331648509",
+      "customerId" : 15,
+      "accountId" : 15
+    }, {
+      "cardNumber" : "6503535181795992",
+      "customerId" : 48,
+      "accountId" : 48
+    }, {
+      "cardNumber" : "6509230362553816",
+      "customerId" : 30,
+      "accountId" : 30
+    }, {
+      "cardNumber" : "6723000463207764",
+      "customerId" : 28,
+      "accountId" : 28
+    }, {
+      "cardNumber" : "6727055190616014",
+      "customerId" : 16,
+      "accountId" : 16
+    }, {
+      "cardNumber" : "6832676047698087",
+      "customerId" : 33,
+      "accountId" : 33
+    }, {
+      "cardNumber" : "7026637615032277",
+      "customerId" : 31,
+      "accountId" : 31
+    }, {
+      "cardNumber" : "7058267261837752",
+      "customerId" : 43,
+      "accountId" : 43
+    }, {
+      "cardNumber" : "7094142751055551",
+      "customerId" : 32,
+      "accountId" : 32
+    }, {
+      "cardNumber" : "7251508149188883",
+      "customerId" : 29,
+      "accountId" : 29
+    }, {
+      "cardNumber" : "7379335634661142",
+      "customerId" : 45,
+      "accountId" : 45
+    }, {
+      "cardNumber" : "7427684863423209",
+      "customerId" : 11,
+      "accountId" : 11
+    }, {
+      "cardNumber" : "7443870988897530",
+      "customerId" : 38,
+      "accountId" : 38
+    }, {
+      "cardNumber" : "8040580410348680",
+      "customerId" : 26,
+      "accountId" : 26
+    }, {
+      "cardNumber" : "8112545834239735",
+      "customerId" : 23,
+      "accountId" : 23
+    }, {
+      "cardNumber" : "8262593602473076",
+      "customerId" : 49,
+      "accountId" : 49
+    }, {
+      "cardNumber" : "8517866958206008",
+      "customerId" : 14,
+      "accountId" : 14
+    }, {
+      "cardNumber" : "8931369351894783",
+      "customerId" : 8,
+      "accountId" : 8
+    }, {
+      "cardNumber" : "9056297931664011",
+      "customerId" : 25,
+      "accountId" : 25
+    }, {
+      "cardNumber" : "9349107475869214",
+      "customerId" : 17,
+      "accountId" : 17
+    }, {
+      "cardNumber" : "9501733721429893",
+      "customerId" : 9,
+      "accountId" : 9
+    }, {
+      "cardNumber" : "9680294154603697",
+      "customerId" : 1,
+      "accountId" : 1
+    }, {
+      "cardNumber" : "9805583408996588",
+      "customerId" : 40,
+      "accountId" : 40
+    } ],
+    "transactionTypes" : [ {
+      "typeCode" : "01",
+      "description" : "Purchase"
+    }, {
+      "typeCode" : "02",
+      "description" : "Payment"
+    }, {
+      "typeCode" : "03",
+      "description" : "Credit"
+    }, {
+      "typeCode" : "04",
+      "description" : "Authorization"
+    }, {
+      "typeCode" : "05",
+      "description" : "Refund"
+    }, {
+      "typeCode" : "06",
+      "description" : "Reversal"
+    }, {
+      "typeCode" : "07",
+      "description" : "Adjustment"
+    } ],
+    "transactionCategories" : [ {
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "description" : "Regular Sales Draft"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 2,
+      "description" : "Regular Cash Advance"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 3,
+      "description" : "Convenience Check Debit"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 4,
+      "description" : "ATM Cash Advance"
+    }, {
+      "typeCode" : "01",
+      "categoryCode" : 5,
+      "description" : "Interest Amount"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 1,
+      "description" : "Cash payment"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 2,
+      "description" : "Electronic payment"
+    }, {
+      "typeCode" : "02",
+      "categoryCode" : 3,
+      "description" : "Check payment"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "description" : "Credit to Account"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 2,
+      "description" : "Credit to Purchase balance"
+    }, {
+      "typeCode" : "03",
+      "categoryCode" : 3,
+      "description" : "Credit to Cash balance"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 1,
+      "description" : "Zero dollar authorization"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 2,
+      "description" : "Online purchase authorization"
+    }, {
+      "typeCode" : "04",
+      "categoryCode" : 3,
+      "description" : "Travel booking authorization"
+    }, {
+      "typeCode" : "05",
+      "categoryCode" : 1,
+      "description" : "Refund credit"
+    }, {
+      "typeCode" : "06",
+      "categoryCode" : 1,
+      "description" : "Fraud reversal"
+    }, {
+      "typeCode" : "06",
+      "categoryCode" : 2,
+      "description" : "Non-fraud reversal"
+    }, {
+      "typeCode" : "07",
+      "categoryCode" : 1,
+      "description" : "Sales draft credit adjustment"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000058866561",
+      "accountId" : 50,
+      "cardNumber" : "0500024453765740",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Blick-Rippin",
+      "amount" : "183.88",
+      "merchantId" : 800000000,
+      "merchantName" : "Blick-Rippin",
+      "merchantCity" : "East Julien",
+      "merchantZip" : "87157",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000329724245",
+      "accountId" : 50,
+      "cardNumber" : "0500024453765740",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Reichel Group",
+      "amount" : "14.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Reichel Group",
+      "merchantCity" : "Port Romanfort",
+      "merchantZip" : "95843",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000475746885",
+      "accountId" : 50,
+      "cardNumber" : "0500024453765740",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Adams-Watsica",
+      "amount" : "967.44",
+      "merchantId" : 800000000,
+      "merchantName" : "Adams-Watsica",
+      "merchantCity" : "Ratkemouth",
+      "merchantZip" : "55474-0373",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000577826814",
+      "accountId" : 50,
+      "cardNumber" : "0500024453765740",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at DuBuque, Wuckert and Mraz",
+      "amount" : "-47.88",
+      "merchantId" : 800000000,
+      "merchantName" : "DuBuque, Wuckert and Mraz",
+      "merchantCity" : "South Lurline",
+      "merchantZip" : "37081",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000685488982",
+      "accountId" : 50,
+      "cardNumber" : "0500024453765740",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Williamson Group",
+      "amount" : "94.77",
+      "merchantId" : 800000000,
+      "merchantName" : "Williamson Group",
+      "merchantCity" : "Lake Bradyport",
+      "merchantZip" : "32996",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "0000000838587312",
+      "accountId" : 50,
+      "cardNumber" : "0500024453765740",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Abbott-Gerlach",
+      "amount" : "241.66",
+      "merchantId" : 800000000,
+      "merchantName" : "Abbott-Gerlach",
+      "merchantCity" : "McClureburgh",
+      "merchantZip" : "95049",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    }, {
+      "transactionId" : "2022071800000050",
+      "accountId" : 50,
+      "cardNumber" : "0500024453765740",
+      "typeCode" : "01",
+      "categoryCode" : 5,
+      "source" : "System",
+      "description" : "Int. for a/c 00000000050",
+      "amount" : "18.77",
+      "merchantId" : 0,
+      "merchantName" : "",
+      "merchantCity" : "",
+      "merchantZip" : "",
+      "originTimestamp" : "2022-07-05T10:11:12.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-06T08:00:00.000000",
+    "command" : "transactionReport",
+    "input" : {
+      "startDate" : "2022-01-01",
+      "endDate" : "2022-07-06"
+    },
+    "expect" : {
+      "result" : {
+        "startDate" : "2022-01-01",
+        "endDate" : "2022-07-06",
+        "cards" : [ {
+          "cardNumber" : "0500024453765740",
+          "accountId" : 50,
+          "lines" : [ {
+            "transactionId" : "0000000058866561",
+            "accountId" : 50,
+            "typeCode" : "01",
+            "typeDescription" : "Purchase",
+            "categoryCode" : 1,
+            "categoryDescription" : "Regular Sales Draft",
+            "source" : "POS TERM",
+            "amount" : "183.88"
+          }, {
+            "transactionId" : "0000000329724245",
+            "accountId" : 50,
+            "typeCode" : "01",
+            "typeDescription" : "Purchase",
+            "categoryCode" : 1,
+            "categoryDescription" : "Regular Sales Draft",
+            "source" : "POS TERM",
+            "amount" : "14.00"
+          }, {
+            "transactionId" : "0000000475746885",
+            "accountId" : 50,
+            "typeCode" : "01",
+            "typeDescription" : "Purchase",
+            "categoryCode" : 1,
+            "categoryDescription" : "Regular Sales Draft",
+            "source" : "POS TERM",
+            "amount" : "967.44"
+          }, {
+            "transactionId" : "0000000577826814",
+            "accountId" : 50,
+            "typeCode" : "03",
+            "typeDescription" : "Credit",
+            "categoryCode" : 1,
+            "categoryDescription" : "Credit to Account",
+            "source" : "OPERATOR",
+            "amount" : "-47.88"
+          }, {
+            "transactionId" : "0000000685488982",
+            "accountId" : 50,
+            "typeCode" : "01",
+            "typeDescription" : "Purchase",
+            "categoryCode" : 1,
+            "categoryDescription" : "Regular Sales Draft",
+            "source" : "POS TERM",
+            "amount" : "94.77"
+          }, {
+            "transactionId" : "0000000838587312",
+            "accountId" : 50,
+            "typeCode" : "01",
+            "typeDescription" : "Purchase",
+            "categoryCode" : 1,
+            "categoryDescription" : "Regular Sales Draft",
+            "source" : "POS TERM",
+            "amount" : "241.66"
+          }, {
+            "transactionId" : "2022071800000050",
+            "accountId" : 50,
+            "typeCode" : "01",
+            "typeDescription" : "Purchase",
+            "categoryCode" : 5,
+            "categoryDescription" : "Interest Amount",
+            "source" : "System",
+            "amount" : "18.77"
+          } ],
+          "accountTotal" : "1472.64"
+        } ],
+        "grandTotal" : "1472.64"
+      }
+    }
+  } ],
+  "expectState" : { }
+}

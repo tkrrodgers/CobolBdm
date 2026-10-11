@@ -1,0 +1,36 @@
+﻿{
+    "schema":  "mlcpu.cas-gate.v1",
+    "checked":  "2026-10-10T22:00:42.4012397-07:00",
+    "pass":  true,
+    "reference":  {
+                      "architectureTests":  {
+                                                "total":  7,
+                                                "failed":  0
+                                            },
+                      "scenarios":  {
+                                        "total":  285,
+                                        "failed":  0
+                                    }
+                  },
+    "mutation":  {
+                     "scope":  "cas-accounts, cas-customers, cas-reporting, cas-statements",
+                     "mutants":  164,
+                     "killed":  161,
+                     "scorePercent":  98.2,
+                     "threshold":  85
+                 },
+    "traceability":  {
+                         "rules":  68,
+                         "untraced":  [
+
+                                      ],
+                         "withoutPublicScenario":  [
+
+                                                   ]
+                     },
+    "scenarios":  {
+                      "total":  285,
+                      "public":  58,
+                      "hidden":  227
+                  }
+}

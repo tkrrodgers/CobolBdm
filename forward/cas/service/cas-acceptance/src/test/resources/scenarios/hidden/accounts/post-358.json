@@ -1,0 +1,106 @@
+{
+  "id" : "post-358",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'over limit and expired: 103 wins (Q-03) / transaction 10' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-04", "POST-05", "POST-06", "POST-11" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 9,
+      "activeStatus" : "Y",
+      "currentBalance" : "560.00",
+      "creditLimit" : "1.00",
+      "cashCreditLimit" : "2065.00",
+      "openDate" : "2016-08-27",
+      "expirationDate" : "2000-01-01",
+      "reissueDate" : "2024-12-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "9501733721429893",
+      "customerId" : 9,
+      "accountId" : 9
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 9,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000021711604",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gleason, Shanahan and Reynolds",
+        "amount" : "416.11",
+        "merchantId" : 800000000,
+        "merchantName" : "Gleason, Shanahan and Reynolds",
+        "merchantCity" : "Myrticeport",
+        "merchantZip" : "21768-0823",
+        "cardNumber" : "9501733721429893",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Rejected",
+        "transactionId" : "0000000021711604",
+        "reason" : "EXPIRED_ACCOUNT"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 9,
+      "activeStatus" : "Y",
+      "currentBalance" : "560.00",
+      "creditLimit" : "1.00",
+      "cashCreditLimit" : "2065.00",
+      "openDate" : "2016-08-27",
+      "expirationDate" : "2000-01-01",
+      "reissueDate" : "2024-12-27",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 9,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ],
+    "rejections" : [ {
+      "transaction" : {
+        "transactionId" : "0000000021711604",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Gleason, Shanahan and Reynolds",
+        "amount" : "416.11",
+        "merchantId" : 800000000,
+        "merchantName" : "Gleason, Shanahan and Reynolds",
+        "merchantCity" : "Myrticeport",
+        "merchantZip" : "21768-0823",
+        "cardNumber" : "9501733721429893",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      },
+      "accountId" : 9,
+      "reason" : "EXPIRED_ACCOUNT",
+      "rejectedAt" : "2022-07-05T10:11:12.000000"
+    } ]
+  }
+}

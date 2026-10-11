@@ -1,0 +1,105 @@
+{
+  "id" : "post-239",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 239' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 34,
+      "activeStatus" : "Y",
+      "currentBalance" : "253.00",
+      "creditLimit" : "3642.00",
+      "cashCreditLimit" : "2770.00",
+      "openDate" : "2009-05-10",
+      "expirationDate" : "2025-10-06",
+      "reissueDate" : "2025-10-06",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "4385271476627819",
+      "customerId" : 34,
+      "accountId" : 34
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 34,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000772421231",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Pfeffer, Rogahn and Hessel",
+        "amount" : "405.33",
+        "merchantId" : 800000000,
+        "merchantName" : "Pfeffer, Rogahn and Hessel",
+        "merchantCity" : "Christborough",
+        "merchantZip" : "21176-4420",
+        "cardNumber" : "4385271476627819",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000772421231",
+        "accountId" : 34,
+        "newBalance" : "658.33"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 34,
+      "activeStatus" : "Y",
+      "currentBalance" : "658.33",
+      "creditLimit" : "3642.00",
+      "cashCreditLimit" : "2770.00",
+      "openDate" : "2009-05-10",
+      "expirationDate" : "2025-10-06",
+      "reissueDate" : "2025-10-06",
+      "currentCycleCredit" : "405.33",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 34,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "405.33"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000772421231",
+      "accountId" : 34,
+      "cardNumber" : "4385271476627819",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Pfeffer, Rogahn and Hessel",
+      "amount" : "405.33",
+      "merchantId" : 800000000,
+      "merchantName" : "Pfeffer, Rogahn and Hessel",
+      "merchantCity" : "Christborough",
+      "merchantZip" : "21176-4420",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "id" : "post-038",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 38' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 44,
+      "activeStatus" : "Y",
+      "currentBalance" : "263.00",
+      "creditLimit" : "6899.00",
+      "cashCreditLimit" : "4432.00",
+      "openDate" : "2018-12-01",
+      "expirationDate" : "2024-01-17",
+      "reissueDate" : "2024-01-17",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "1014086565224350",
+      "customerId" : 44,
+      "accountId" : 44
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 44,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000132831571",
+        "typeCode" : "03",
+        "categoryCode" : 1,
+        "source" : "OPERATOR",
+        "description" : "Return item at Boehm-Sanford",
+        "amount" : "-215.33",
+        "merchantId" : 800000000,
+        "merchantName" : "Boehm-Sanford",
+        "merchantCity" : "Winifredville",
+        "merchantZip" : "93238-7169",
+        "cardNumber" : "1014086565224350",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000132831571",
+        "accountId" : 44,
+        "newBalance" : "47.67"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 44,
+      "activeStatus" : "Y",
+      "currentBalance" : "47.67",
+      "creditLimit" : "6899.00",
+      "cashCreditLimit" : "4432.00",
+      "openDate" : "2018-12-01",
+      "expirationDate" : "2024-01-17",
+      "reissueDate" : "2024-01-17",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "-215.33",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 44,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    }, {
+      "accountId" : 44,
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "balance" : "-215.33"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000132831571",
+      "accountId" : 44,
+      "cardNumber" : "1014086565224350",
+      "typeCode" : "03",
+      "categoryCode" : 1,
+      "source" : "OPERATOR",
+      "description" : "Return item at Boehm-Sanford",
+      "amount" : "-215.33",
+      "merchantId" : 800000000,
+      "merchantName" : "Boehm-Sanford",
+      "merchantCity" : "Winifredville",
+      "merchantZip" : "93238-7169",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}

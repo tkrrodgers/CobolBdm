@@ -1,0 +1,105 @@
+{
+  "id" : "post-095",
+  "slice" : "accounts",
+  "origin" : "legacy CBTRN02C: 'CardDemo day / transaction 95' (the faithful program, byte-identical to GnuCOBOL, run on the published estate's equivalence-test inputs)",
+  "rules" : [ "POST-07", "POST-08", "POST-09", "POST-10" ],
+  "initial" : {
+    "accounts" : [ {
+      "accountId" : 45,
+      "activeStatus" : "Y",
+      "currentBalance" : "186.00",
+      "creditLimit" : "2719.00",
+      "cashCreditLimit" : "688.00",
+      "openDate" : "2010-12-31",
+      "expirationDate" : "2025-07-09",
+      "reissueDate" : "2025-07-09",
+      "currentCycleCredit" : "0.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "cards" : [ {
+      "cardNumber" : "7379335634661142",
+      "customerId" : 45,
+      "accountId" : 45
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 45,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "0.00"
+    } ],
+    "ledger" : [ ]
+  },
+  "steps" : [ {
+    "at" : "2022-07-05T10:11:12.000000",
+    "command" : "postTransaction",
+    "input" : {
+      "key" : "post-1",
+      "transaction" : {
+        "transactionId" : "0000000312054308",
+        "typeCode" : "01",
+        "categoryCode" : 1,
+        "source" : "POS TERM",
+        "description" : "Purchase at Bogan LLC",
+        "amount" : "717.00",
+        "merchantId" : 800000000,
+        "merchantName" : "Bogan LLC",
+        "merchantCity" : "Josiahhaven",
+        "merchantZip" : "59167",
+        "cardNumber" : "7379335634661142",
+        "originTimestamp" : "2022-06-10T19:27:53.000000"
+      }
+    },
+    "expect" : {
+      "result" : {
+        "@type" : "Posted",
+        "transactionId" : "0000000312054308",
+        "accountId" : 45,
+        "newBalance" : "903.00"
+      }
+    }
+  } ],
+  "expectState" : {
+    "accounts" : [ {
+      "accountId" : 45,
+      "activeStatus" : "Y",
+      "currentBalance" : "903.00",
+      "creditLimit" : "2719.00",
+      "cashCreditLimit" : "688.00",
+      "openDate" : "2010-12-31",
+      "expirationDate" : "2025-07-09",
+      "reissueDate" : "2025-07-09",
+      "currentCycleCredit" : "717.00",
+      "currentCycleDebit" : "0.00",
+      "addressZip" : "A000000000",
+      "groupId" : "",
+      "lastClosedCycle" : null
+    } ],
+    "categoryBalances" : [ {
+      "accountId" : 45,
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "balance" : "717.00"
+    } ],
+    "ledger" : [ {
+      "transactionId" : "0000000312054308",
+      "accountId" : 45,
+      "cardNumber" : "7379335634661142",
+      "typeCode" : "01",
+      "categoryCode" : 1,
+      "source" : "POS TERM",
+      "description" : "Purchase at Bogan LLC",
+      "amount" : "717.00",
+      "merchantId" : 800000000,
+      "merchantName" : "Bogan LLC",
+      "merchantCity" : "Josiahhaven",
+      "merchantZip" : "59167",
+      "originTimestamp" : "2022-06-10T19:27:53.000000",
+      "processedTimestamp" : "2022-07-05T10:11:12.000000",
+      "interestCycle" : null
+    } ],
+    "rejections" : [ ]
+  }
+}
