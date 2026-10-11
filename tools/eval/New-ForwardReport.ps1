@@ -85,26 +85,54 @@ foreach ($m in $designModels) {
     }
 }
 
-# ---- the implementation arms
+# ---- the implementation arms (seed 42; reruns of a close result in folders ending -seed-<n>)
 $arms = @()
 foreach ($dir in Get-ChildItem (Join-Path $fwd 'implementation') -Directory -ErrorAction SilentlyContinue | Sort-Object Name) {
     $s = J (Join-Path $dir.FullName 'summary.json')
     if (-not $s) { continue }
     $f = $s.final
+    $seed = if ($dir.Name -match '-seed-(\d+)$') { [int]$Matches[1] } else { [int]$cfg.implementation.seed }
+    # The attempt at which the slice's own scenarios (and the architecture tests) first all passed: unlike the slice's
+    # attempt count, it is not inflated by a hidden failure carried over from an earlier slice.
+    $slices = @()
+    foreach ($sl in @($s.slices)) {
+        $own = @($s.attempts | Where-Object { $_.slice -eq $sl.slice -and $_.verdict -and $_.verdict.compiled -and
+                $_.verdict.architecture.passed -eq $_.verdict.architecture.total -and $_.verdict.architecture.total -gt 0 -and
+                $_.verdict.slices.($sl.slice).publicPassed -eq $_.verdict.slices.($sl.slice).publicTotal -and
+                $_.verdict.slices.($sl.slice).hiddenPassed -eq $_.verdict.slices.($sl.slice).hiddenTotal } | Select-Object -First 1)
+        $slices += [ordered]@{ slice = $sl.slice; attempts = $sl.attempts; bestAttempt = $sl.bestAttempt; endedBy = $sl.endedBy; minutes = $sl.minutes
+            ownScenariosPassedAt = if ($own.Count) { $own[0].attempt } else { $null } }
+    }
     $arms += [pscustomobject][ordered]@{
-        arm = $s.arm; designer = $s.designer; implementer = $s.model; folder = "implementation\$($dir.Name)"
-        slices = @($s.slices | ForEach-Object { [ordered]@{ slice = $_.slice; attempts = $_.attempts; bestAttempt = $_.bestAttempt; endedBy = $_.endedBy; minutes = $_.minutes } })
+        arm = $s.arm; seed = $seed; designer = $s.designer; implementer = $s.model; folder = "implementation\$($dir.Name)"
+        slices = $slices
         final = if ($f) { [ordered]@{ architecture = "$($f.architecture.passed)/$($f.architecture.total)"; public = "$($f.public.passed)/$($f.public.total)"
                 hidden = "$($f.hidden.passed)/$($f.hidden.total)"; hiddenRate = if ($f.hidden.total) { [math]::Round(100.0 * $f.hidden.passed / $f.hidden.total, 1) } else { 0 }
                 architectureGreen = ($f.compiled -and $f.architecture.total -gt 0 -and $f.architecture.passed -eq $f.architecture.total) } } else { $null }
-        attempts = (@($s.slices) | Measure-Object attempts -Sum).Sum; minutes = $s.minutes; passed = [bool]$s.passed; exact = [bool]$s.exact; complete = [bool]$f
+        attempts = (@($s.slices) | Measure-Object attempts -Sum).Sum
+        attemptsToOwnPass = if (@($slices | Where-Object { $null -eq $_.ownScenariosPassedAt }).Count) { $null } else { (@($slices) | ForEach-Object { $_.ownScenariosPassedAt } | Measure-Object -Sum).Sum }
+        minutes = $s.minutes; passed = [bool]$s.passed; exact = [bool]$s.exact; complete = [bool]$f
+    }
+}
+$armMeans = @()
+foreach ($g in $arms | Where-Object complete | Group-Object arm) {
+    $armMeans += [pscustomobject][ordered]@{
+        arm = $g.Name; seeds = (@($g.Group | Sort-Object seed | ForEach-Object seed) -join ', ')
+        meanHiddenRate = [math]::Round((@($g.Group) | ForEach-Object { $_.final.hiddenRate } | Measure-Object -Average).Average, 1)
+        meanAttempts = [math]::Round((@($g.Group) | Measure-Object attempts -Average).Average, 1)
+        meanAttemptsToOwnPass = if (@($g.Group | Where-Object { $null -ne $_.attemptsToOwnPass }).Count) { [math]::Round((@($g.Group | Where-Object { $null -ne $_.attemptsToOwnPass }) | Measure-Object attemptsToOwnPass -Average).Average, 1) } else { $null }
+        meanMinutes = [math]::Round((@($g.Group) | Measure-Object minutes -Average).Average, 1)
+        exact = "$(@($g.Group | Where-Object exact).Count)/$(@($g.Group).Count)"
+        passed = "$(@($g.Group | Where-Object passed).Count)/$(@($g.Group).Count)"
     }
 }
 
 # ---- section 8
 $gemma = 'gemma-4-31B-it'; $challenger = 'gpt-oss-120b'
-$S = $arms | Where-Object { $_.arm -eq 'S' } | Select-Object -First 1
-$X = $arms | Where-Object { $_.arm -eq 'X' } | Select-Object -First 1
+$S = $arms | Where-Object { $_.arm -eq 'S' -and $_.seed -eq $cfg.implementation.seed } | Select-Object -First 1
+$X = $arms | Where-Object { $_.arm -eq 'X' -and $_.seed -eq $cfg.implementation.seed } | Select-Object -First 1
+$mS = $armMeans | Where-Object arm -eq 'S'; $mX = $armMeans | Where-Object arm -eq 'X'
+$reruns = @($arms | Where-Object { $_.seed -ne $cfg.implementation.seed -and $_.complete }).Count
 $gScore = ($designers | Where-Object model -eq $gemma).meanRubric
 $cScore = ($designers | Where-Object model -eq $challenger).meanRubric
 $lines = @()
@@ -120,12 +148,16 @@ if ($null -ne $gScore -and $null -ne $cScore -and $S -and $X -and $S.final -and 
     elseif ($margin -ge 0.5 -or $implementable) { $lines += "No role change: only one of the two conditions holds." }
     else { $lines += 'No role change: Gemma designs and implements.' }
     $close = [math]::Abs($X.final.hiddenRate - $S.final.hiddenRate) -lt 10 -or ($X.final.hiddenRate -eq $S.final.hiddenRate -and [math]::Abs($X.attempts - $S.attempts) -lt 0.3 * [math]::Max($X.attempts, $S.attempts))
-    if ($close) { $lines += 'Close result (hidden pass rates within 10 points, or attempts within 30% at equal rates): reruns with seeds 7 and 1234 are required before a conclusion.' }
+    if ($close -and $reruns -eq 0) { $lines += 'Close result (hidden pass rates within 10 points, or attempts within 30% at equal rates): reruns with seeds 7 and 1234 are required before a conclusion.' }
+    if ($reruns -gt 0 -and $mS -and $mX) {
+        $lines += "Over seeds $($mS.seeds) (S) and $($mX.seeds) (X): mean hidden $($mS.meanHiddenRate)% (S) against $($mX.meanHiddenRate)% (X); exact $($mS.exact) against $($mX.exact); mean attempts $($mS.meanAttempts) against $($mX.meanAttempts) (to each slice's own pass: $($mS.meanAttemptsToOwnPass) against $($mX.meanAttemptsToOwnPass)); mean minutes $($mS.meanMinutes) against $($mX.meanMinutes)."
+        if ($designer -eq $challenger -and $mX.meanHiddenRate -lt $mS.meanHiddenRate) { $designer = $gemma; $lines += 'Over all seeds arm X stays below arm S: no role change.' }
+    }
 } else { $lines += 'The design comparison is incomplete (scores or an arm are missing).' }
 
 $results = [ordered]@{
     schema = 'mlcpu.forward-results.v1'; generated = (Get-Date).ToString('s'); protocol = 'tools/eval/PROTOCOL-forward.md (revision 3)'
-    service = $service; designs = $designs; designers = $designers; arms = $arms
+    service = $service; designs = $designs; designers = $designers; arms = $arms; armMeans = $armMeans
     decision = [ordered]@{ forwardPass = $forwardPass; designer = $designer; implementer = $gemma; lines = $lines }
 }
 $results | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $fwd 'results.json') -Encoding UTF8
@@ -146,10 +178,14 @@ foreach ($d in $designs) {
 $md.Add(''); $md.Add('| Designer | Mean rubric | Valid | Mean peer review | Chosen seed |'); $md.Add('|---|---|---|---|---|')
 foreach ($s in $designers) { $md.Add("| $($s.model) | $($s.meanRubric) | $($s.valid) | $($s.meanPeerReview) | $($s.chosenSeed) |") }
 $md.Add(''); $md.Add('## Implementation (Gemma)'); $md.Add('')
-$md.Add('| Arm | Design by | Slices: attempts (best; ended by) | Architecture | Public | Hidden | Attempts | Minutes | Result |'); $md.Add('|---|---|---|---|---|---|---|---|---|')
+$md.Add('| Arm | Seed | Design by | Slices: attempts (best; ended by; own scenarios passed at) | Architecture | Public | Hidden | Attempts | To own pass | Minutes | Result |'); $md.Add('|---|---|---|---|---|---|---|---|---|---|---|')
 foreach ($a in $arms) {
-    $sl = ($a.slices | ForEach-Object { "$($_.slice) $($_.attempts) ($($_.bestAttempt); $($_.endedBy))" }) -join '; '
-    $md.Add("| $($a.arm) | $($a.designer) | $sl | $($a.final.architecture) | $($a.final.public) | $($a.final.hidden) ($($a.final.hiddenRate)%) | $($a.attempts) | $($a.minutes) | $(if ($a.exact) { 'exact' } elseif ($a.passed) { 'passed' } else { 'not passed' }) |")
+    $sl = ($a.slices | ForEach-Object { "$($_.slice) $($_.attempts) ($($_.bestAttempt); $($_.endedBy); $(if ($_.ownScenariosPassedAt) { $_.ownScenariosPassedAt } else { '-' }))" }) -join '; '
+    $md.Add("| $($a.arm) | $($a.seed) | $($a.designer) | $sl | $($a.final.architecture) | $($a.final.public) | $($a.final.hidden) ($($a.final.hiddenRate)%) | $($a.attempts) | $($a.attemptsToOwnPass) | $($a.minutes) | $(if ($a.exact) { 'exact' } elseif ($a.passed) { 'passed' } else { 'not passed' }) |")
+}
+if ($armMeans.Count) {
+    $md.Add(''); $md.Add('| Arm | Seeds | Mean hidden | Exact | Passed | Mean attempts | Mean attempts to own pass | Mean minutes |'); $md.Add('|---|---|---|---|---|---|---|---|')
+    foreach ($m in $armMeans) { $md.Add("| $($m.arm) | $($m.seeds) | $($m.meanHiddenRate)% | $($m.exact) | $($m.passed) | $($m.meanAttempts) | $($m.meanAttemptsToOwnPass) | $($m.meanMinutes) |") }
 }
 Set-Content (Join-Path $fwd 'REPORT.md') $md -Encoding UTF8
 Write-Host "wrote $fwd\REPORT.md and results.json"
