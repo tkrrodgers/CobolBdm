@@ -134,14 +134,19 @@ public static class ImplementStep
             if (r.Reasoning is not null) File.WriteAllText(Path.Combine(outDir, $"implementation.attempt{attempt}.reasoning.txt"), r.Reasoning);
 
             var problems = new List<string>();
+            // Complete files first; edits apply to the other files. An edit that does not apply is reported with the result,
+            // it does not void the attempt (the files it would have changed stay as they were).
             var (edits, rest) = Edits.Extract(r.Content);
-            int applied = edits.Count == 0 ? 0 : Edits.Apply(files, edits, problems);
             var returned = Parse(rest, problems);
+            var editProblems = new List<string>();
+            int applied = edits.Count == 0 ? 0 : Edits.Apply(files, edits, editProblems, returned.Keys.ToHashSet(StringComparer.Ordinal));
             foreach (var (name, src) in returned) files[name] = src;
             problems.AddRange(Check(files, cap, stepSimple, reserved));
             var attemptJson = Program.AttemptJson(attempt, r, problems);
             attemptJson["filesReturned"] = Program.Strings(returned.Keys);
-            attemptJson["edits"] = new JsonObject { ["blocks"] = edits.Count, ["applied"] = applied };
+            attemptJson["edits"] = new JsonObject { ["blocks"] = edits.Count, ["applied"] = applied, ["notApplied"] = Program.Strings(editProblems) };
+            if (editProblems.Count > 0) Program.Log($"  {editProblems.Count} edit(s) not applied; first: {Clip(editProblems[0], 160)}");
+            var editNote = editProblems.Count == 0 ? "" : "Some of your edits were not applied (their files stay as they were):\n- " + string.Join("\n- ", editProblems) + "\n\n";
             attemptJson["files"] = Program.Strings(files.Keys);
 
             string message;
@@ -223,6 +228,7 @@ public static class ImplementStep
                     }
                 }
             }
+            message = editNote + message;
             fixes.Add(Clip(message.Split('\n').FirstOrDefault(l => l.Trim().Length > 0) ?? "", 300));
             runs.Add(attemptJson);
             if (attempt == attempts) break;
@@ -624,8 +630,9 @@ public static class ImplementStep
         foreach (var reply in replies)
         {
             var (edits, rest) = Edits.Extract(reply);
-            if (edits.Count > 0) Edits.Apply(files, edits, problems);
-            foreach (var (name, src) in Parse(rest, problems)) files[name] = src;
+            var returned = Parse(rest, problems);
+            if (edits.Count > 0) Edits.Apply(files, edits, [], returned.Keys.ToHashSet(StringComparer.Ordinal));
+            foreach (var (name, src) in returned) files[name] = src;
         }
         problems.AddRange(Check(files, cap, stepSimple, reserved));
         if (problems.Count > 0) return "The files break the contract:\n- " + string.Join("\n- ", problems) + "\n";

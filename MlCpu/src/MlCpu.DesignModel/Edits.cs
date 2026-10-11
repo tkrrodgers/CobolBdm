@@ -71,20 +71,26 @@ public static class Edits
         return (edits, rest);
     }
 
-    /// <summary>Applies the edits to the files (keyed by type name); an edit that does not apply is reported, the file is left as it was.</summary>
-    public static int Apply(IDictionary<string, string> files, IEnumerable<Edit> edits, List<string> problems)
+    /// <summary>
+    /// Applies the edits to the files (keyed by type name); an edit that does not apply is reported and leaves its file as it
+    /// was. Edits to a file the reply also returns complete (<paramref name="superseded"/>) are skipped: the complete file wins.
+    /// </summary>
+    public static int Apply(IDictionary<string, string> files, IEnumerable<Edit> edits, List<string> problems, ISet<string>? superseded = null)
     {
         int applied = 0, n = 0;
         foreach (var e in edits)
         {
             n++;
             var type = TypeName(e.File);
+            if (type is not null && superseded?.Contains(type) == true) continue;
             string? key = type is not null && files.ContainsKey(type) ? type : null;
             if (key is null)
             {
                 var holders = files.Where(f => f.Value.Contains(e.Search, StringComparison.Ordinal)).Select(f => f.Key).ToList();
                 if (holders.Count == 1) key = holders[0];
             }
+            if (key is not null && superseded?.Contains(key) == true) continue;
+            if (key is null && superseded is { Count: > 0 }) continue;
             if (key is null)
             {
                 problems.Add($"edit {n} names {(e.File.Length == 0 ? "no file" : e.File)}, which is not one of your files ({string.Join(", ", files.Keys.Select(k => k + ".java"))})");
