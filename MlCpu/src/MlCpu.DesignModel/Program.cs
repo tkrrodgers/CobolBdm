@@ -116,7 +116,7 @@ public static class Program
                 case "fwd-review":
                 {
                     // --designs "P=path\architecture.json;Q=path\architecture.json"
-                    var designs = Need("designs").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    var designs = Need("designs").Split([';', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                         .Select(d => d.Split('=', 2)).ToDictionary(d => d[0], d => d[1], StringComparer.Ordinal);
                     return Forward.ForwardDesign.Review(chat, new Forward.ForwardInputs(Need("cas")), designs, outArg, designAttempts, name, reasoning, maxTokens) ? 0 : 1;
                 }
