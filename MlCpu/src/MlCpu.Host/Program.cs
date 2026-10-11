@@ -21,6 +21,7 @@ builder.Services.AddSingleton<CapabilityKitBuilder>();
 builder.Services.AddSingleton<JobParityService>();
 builder.Services.AddSingleton<ConversionService>();
 builder.Services.AddSingleton<GemmaService>();
+builder.Services.AddSingleton<ForwardService>();
 builder.Services.AddSingleton<WorkspaceActions>();
 
 var app = builder.Build();

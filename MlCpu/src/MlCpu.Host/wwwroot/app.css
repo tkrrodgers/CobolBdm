@@ -139,4 +139,5 @@ pre.code { background: #0d1117; color: #e6edf3; padding: .8rem; max-height: 70vh
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
-}
+}/* Forward Engineering: the code explorer sits below the result tables, at a fixed height. */
+.forward-ide { height: 640px; margin-bottom: 1rem; }

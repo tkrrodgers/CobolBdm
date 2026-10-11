@@ -26,6 +26,8 @@ public sealed class MlCpuSettings
     public string GemmaModel { get; set; } = @"C:\models\gemma-4-31B-it-GGUF\BF16\gemma-4-31B-it-BF16-00001-of-00002.gguf";
     public string GemmaName { get; set; } = "gemma-4-31B-it";
     public string LlamaDir { get; set; } = @"C:\models\llama.cpp";
+    /// <summary>The forward-engineering evaluation's output (results.json, designs, implementations); default &lt;RepoRoot&gt;\..\modelEvalorward.</summary>
+    public string ForwardRoot { get; set; } = "";
 }
 
 /// <summary>Settings from the "MlCpu" configuration section, overlaid with %LOCALAPPDATA%\MlCpu\settings.json.</summary>
@@ -57,6 +59,7 @@ public sealed class ConfigService
         if (Settings.CapabilitiesRoot.Length == 0) Settings.CapabilitiesRoot = Path.Combine(Settings.RepoRoot, "capabilities", "carddemo");
         if (Settings.WorkspaceRoot.Length == 0) Settings.WorkspaceRoot = Path.Combine(Settings.RepoRoot, "projects");
         else if (!Path.IsPathRooted(Settings.WorkspaceRoot)) Settings.WorkspaceRoot = Path.GetFullPath(Path.Combine(Settings.RepoRoot, Settings.WorkspaceRoot));
+        if (Settings.ForwardRoot.Length == 0) Settings.ForwardRoot = Path.GetFullPath(Path.Combine(Settings.RepoRoot, "..", "modelEval", "forward"));
         var sidecar = Environment.GetEnvironmentVariable("MLCPU_JAVA_SIDECAR");
         if (!string.IsNullOrEmpty(sidecar)) Settings.SidecarUrl = sidecar;
         _overlayFile = file;

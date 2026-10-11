@@ -3,6 +3,7 @@
 @inject ProjectService Projects
 @inject OperationService Ops
 @inject GemmaService Gemma
+@inject ForwardService Forward
 
 <div class="shell">
     <nav class="side">
@@ -29,6 +30,15 @@
         else
         {
             <span class="disabled" title="Run Gemma 4 Modernization (Design, then Publish design to service) first">View Gemma 4's Code<small>no Gemma code yet</small></span>
+        }
+        <div class="section">Forward engineering</div>
+        @if (Forward.HasResults())
+        {
+            <NavLink href="forward">Forward Engineering</NavLink>
+        }
+        else
+        {
+            <span class="disabled" title="Run the forward-engineering evaluation (tools/eval/PROTOCOL-forward.md) first">Forward Engineering<small>no results yet</small></span>
         }
     </nav>
     <div class="main">

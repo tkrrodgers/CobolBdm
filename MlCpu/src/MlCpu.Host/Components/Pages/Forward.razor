@@ -1,0 +1,199 @@
+@page "/forward"
+@implements IAsyncDisposable
+@inject ForwardService Fwd
+@inject IJSRuntime JS
+@using System.Text.Json.Nodes
+
+<PageTitle>Forward Engineering</PageTitle>
+<h2>Forward Engineering</h2>
+
+@if (results is null)
+{
+    <p>No forward-engineering results yet. The evaluation (<code>tools/eval/PROTOCOL-forward.md</code>) runs with
+    <code>tools/eval/Invoke-ForwardEval.ps1</code>; <code>New-ForwardReport.ps1</code> writes <code>results.json</code> to <code>@Fwd.Root</code>.</p>
+}
+else
+{
+    var svc = results["service"];
+    var decision = results["decision"];
+    <p class="muted">A new service, designed and implemented by local models from a specification, a fixed API and rule digests distilled
+    from five COBOL programs of two estates; judged by architecture tests and acceptance scenarios derived from the GnuCOBOL oracle,
+    most of them hidden from the implementer. Results from <code>@Fwd.Root</code>, generated @(results["generated"]?.ToString()[..16].Replace('T', ' ')).</p>
+
+    <div class="panel">
+        <h3>Target: @svc?["name"]</h3>
+        <p>@svc?["summary"]</p>
+        <span class="chip">@svc?["scenarios"]?["total"] scenarios</span>
+        <span class="chip">@svc?["scenarios"]?["public"] public</span>
+        <span class="chip">@svc?["scenarios"]?["hidden"] hidden</span>
+        <span class="chip @(svc?["gate"]?["pass"]?.GetValue<bool>() == true ? "ok" : "bad")" title="Phase 0: the reference implementation against every suite, mutation score, traceability">
+            gate: reference @svc?["gate"]?["reference"], mutation @svc?["gate"]?["mutation"]%</span>
+        <span class="chip">@svc?["decisions"] decisions (legacy behaviour not carried forward)</span>
+    </div>
+
+    @if (decision is not null)
+    {
+        <div class="panel">
+            <h3>Decision</h3>
+            <ul>
+                @foreach (var line in decision["lines"]?.AsArray() ?? [])
+                {
+                    <li>@line</li>
+                }
+            </ul>
+            <span class="chip @(decision["forwardPass"]?.GetValue<bool>() == true ? "ok" : "bad")">Gemma forward engineering: @(decision["forwardPass"]?.GetValue<bool>() == true ? "passed" : "not passed")</span>
+            <span class="chip info">designer: @decision["designer"]</span>
+            <span class="chip info">implementer: @decision["implementer"]</span>
+        </div>
+    }
+
+    <h3>Design round</h3>
+    <p class="muted">Each model designed the architecture with three seeds. The SME's rubric was applied blind (anonymized, shuffled); the peer review is the other model's.
+    The best-scored architecture of each model went on to the slice designs.</p>
+    <table class="grid">
+        <tr><th>Model</th><th>Seed</th><th>Valid</th><th>Automated checks</th><th>Rubric (weighted)</th><th>C1</th><th>C2</th><th>C3</th><th>C4</th><th>C5</th><th>C6</th><th>Peer review</th><th>Minutes</th><th></th></tr>
+        @foreach (var d in results["designs"]?.AsArray() ?? [])
+        {
+            <tr>
+                <td>@d?["model"]</td>
+                <td>@d?["seed"]</td>
+                <td>@(d?["valid"]?.GetValue<bool>() == true ? $"yes ({d["attempts"]})" : "no")</td>
+                <td>@d?["checks"]</td>
+                <td><b>@d?["rubric"]?["weighted"]</b></td>
+                @foreach (var c in new[] { "C1", "C2", "C3", "C4", "C5", "C6" })
+                {
+                    <td title="@d?["rubric"]?["justifications"]?[c]">@d?["rubric"]?[c]</td>
+                }
+                <td>@d?["peerReview"]</td>
+                <td>@d?["minutes"]</td>
+                <td>@(d?["chosen"]?.GetValue<bool>() == true ? "chosen" : "")</td>
+            </tr>
+        }
+    </table>
+    <table class="grid">
+        <tr><th>Designer</th><th>Mean rubric score</th><th>Valid designs</th><th>Peer review mean</th></tr>
+        @foreach (var s in results["designers"]?.AsArray() ?? [])
+        {
+            <tr><td>@s?["model"]</td><td><b>@s?["meanRubric"]</b></td><td>@s?["valid"]</td><td>@s?["meanPeerReview"]</td></tr>
+        }
+    </table>
+
+    <h3>Implementation</h3>
+    <p class="muted">Gemma implemented each design slice by slice (accounts, customers, reporting, statements), 15 attempts per slice, judged on every
+    scenario of every slice built so far. Pass: architecture green, every public scenario, at least 90% of the hidden ones.</p>
+    <table class="grid">
+        <tr><th>Arm</th><th>Seed</th><th>Design by</th><th>Code by</th><th>Slices (attempts; result)</th><th>Architecture</th><th>Public</th><th>Hidden</th><th>Minutes</th><th>Result</th></tr>
+        @foreach (var a in results["arms"]?.AsArray() ?? [])
+        {
+            <tr>
+                <td>@a?["arm"]</td>
+                <td>@a?["seed"]</td>
+                <td>@a?["designer"]</td>
+                <td>@a?["implementer"]</td>
+                <td>
+                    @foreach (var s in a?["slices"]?.AsArray() ?? [])
+                    {
+                        <div>@s?["slice"]: @s?["attempts"] attempt(s), best @s?["bestAttempt"]; @s?["endedBy"]@(s?["ownScenariosPassedAt"] is { } own ? $"; own scenarios at {own}" : "")</div>
+                    }
+                </td>
+                <td>@a?["final"]?["architecture"]</td>
+                <td>@a?["final"]?["public"]</td>
+                <td><b>@a?["final"]?["hidden"]</b></td>
+                <td>@a?["minutes"]</td>
+                <td><span class="chip @(a?["passed"]?.GetValue<bool>() == true ? "ok" : "bad")">@(a?["exact"]?.GetValue<bool>() == true ? "exact" : a?["passed"]?.GetValue<bool>() == true ? "passed" : "not passed")</span></td>
+            </tr>
+        }
+    </table>
+
+    @if ((results["armMeans"]?.AsArray().Count ?? 0) > 0)
+    {
+        <table class="grid">
+            <tr><th>Arm</th><th>Seeds</th><th>Mean hidden</th><th>Exact</th><th>Passed</th><th>Mean attempts</th><th>Mean attempts to own pass</th><th>Mean minutes</th></tr>
+            @foreach (var m in results["armMeans"]!.AsArray())
+            {
+                <tr><td>@m?["arm"]</td><td>@m?["seeds"]</td><td><b>@m?["meanHiddenRate"]%</b></td><td>@m?["exact"]</td><td>@m?["passed"]</td><td>@m?["meanAttempts"]</td><td>@m?["meanAttemptsToOwnPass"]</td><td>@m?["meanMinutes"]</td></tr>
+            }
+        </table>
+    }
+
+    <h3>Code</h3>
+    <p class="muted">The code of each arm (<code>java/</code>), each slice's prompt and every attempt with its reasoning, and the chosen designs. Files open in tabs (read-only).</p>
+    <div class="ide forward-ide">
+        <aside class="explorer">
+            <div class="pane-title">Explorer</div>
+            <CodeTree Nodes="tree" Expanded="expanded" Selected="@active" Open="Open" />
+        </aside>
+        <section class="editor">
+            <div class="tabs">
+                @foreach (var t in tabs)
+                {
+                    <div class="tab @(t == active ? "active" : "")" title="@t" @onclick="() => Activate(t)">
+                        <span class="ic @CodeTree.Icon(t)"></span>
+                        <span>@System.IO.Path.GetFileName(t)</span>
+                        <span class="x" title="Close" @onclick="() => Close(t)" @onclick:stopPropagation="true">×</span>
+                    </div>
+                }
+            </div>
+            <div class="editor-host">
+                <div id="@hostId" class="monaco-host"></div>
+                @if (active is null) { <div class="welcome">Select a file in the Explorer to open it in a tab.</div> }
+            </div>
+        </section>
+    </div>
+}
+
+@code {
+    readonly string hostId = "fwd" + Guid.NewGuid().ToString("n")[..10];
+    readonly HashSet<string> expanded = [];
+    readonly List<string> tabs = [];
+    JsonObject? results;
+    IReadOnlyList<GemmaCodeNode> tree = [];
+    string? active;
+    bool interactive;
+
+    protected override void OnInitialized()
+    {
+        results = Fwd.Results();
+        tree = results is null ? [] : Fwd.CodeTree(results);
+        foreach (var n in tree) expanded.Add(n.Path);
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) interactive = true;
+        return Task.CompletedTask;
+    }
+
+    async Task Open(GemmaCodeNode n)
+    {
+        if (!tabs.Contains(n.Path))
+        {
+            if (Fwd.Read(n.Path) is not { } text) return;
+            tabs.Add(n.Path);
+            await JS.InvokeVoidAsync("mlcpuCode.open", hostId, n.Path, text);
+        }
+        await Activate(n.Path);
+    }
+
+    async Task Activate(string path)
+    {
+        active = path;
+        await JS.InvokeVoidAsync("mlcpuCode.show", hostId, path);
+    }
+
+    async Task Close(string path)
+    {
+        tabs.Remove(path);
+        await JS.InvokeVoidAsync("mlcpuCode.close", hostId, path);
+        if (active != path) return;
+        active = null;
+        if (tabs.LastOrDefault() is { } previous) await Activate(previous);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!interactive) return;
+        try { await JS.InvokeVoidAsync("mlcpuCode.destroy", hostId); }
+        catch (Exception e) when (e is JSDisconnectedException or InvalidOperationException or TaskCanceledException) { }
+    }
+}
