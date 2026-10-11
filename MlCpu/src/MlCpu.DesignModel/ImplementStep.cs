@@ -7,11 +7,13 @@ using System.Xml.Linq;
 namespace MlCpu.DesignModel;
 
 /// <summary>
-/// Design -> Java. The model writes the whole capability (domain records, record layouts, repositories, services, step)
-/// on top of the platform layer only (com.mlcpu.carddemo.platform.* and com.mlcpu.rt.ModernStep). Each attempt is
+/// Design -> Java. The model writes the capability's business logic on top of the platform layer and the generated record kit
+/// (&lt;package&gt;.records: every record area and report line of the program, typed, with COBOL MOVE rules). Each attempt is
 /// compiled in a harness (a copy of the exported project with the authored capability classes removed) and judged by the
 /// program's equivalence test: the model's step against the faithful COBOL translation, every scenario, byte for byte.
-/// Compiler errors and failing scenarios go back to the model until everything passes or the attempts run out.
+/// Compiler errors (with the source lines, and the API of a platform or kit class the code misused) and failing scenarios
+/// (field by field, and where the logic parts from the faithful program) go back to the model, which may repair with
+/// SEARCH/REPLACE edits, until everything passes or the attempts run out.
 /// </summary>
 public static class ImplementStep
 {
@@ -20,7 +22,7 @@ public static class ImplementStep
         immutable records, small focused classes, BigDecimal for money, no reflection, no frameworks. The code replaces a
         COBOL batch program and must reproduce its observable behaviour exactly (output datasets byte for byte, console
         lines, return code), including the legacy quirks the design preserves. You answer with Java source files only,
-        each in its own ```java fenced block.
+        each in its own ```java fenced block (or, when repairing, with SEARCH/REPLACE edit blocks).
         """;
 
     static readonly Regex JavaBlock = new(@"```java[ \t]*\r?\n(.*?)```", RegexOptions.Singleline);
@@ -45,6 +47,9 @@ public static class ImplementStep
 
     static string EntryInterface(Capability cap) => cap.Kind == "subprogram" ? "com.mlcpu.rt.ModernProgram" : "com.mlcpu.rt.ModernStep";
 
+    /// <summary>The generated record kit's package (pipeline v2).</summary>
+    static string KitPackage(Capability cap) => cap.Package + ".records";
+
     public sealed record Result(bool Compiled, int TestsTotal, int TestsPassed, int AttemptsUsed, bool FirstAttemptPassed, int BestAttempt, int OutputDifferences);
 
     static readonly Regex Difference = new(@"first difference at byte|only the \w+ implementation wrote it|return code: legacy|: missing|: extra");
@@ -58,7 +63,8 @@ public static class ImplementStep
 
     public static Result Run(IChatBackend chat, Capability cap, string packetPath, string designPath, string projectDir, string outDir,
         string harnessDir, int attempts, string modelName, string reasoning, int maxTokens, TimeSpan testTimeout,
-        string? examplesPath = null, string? notesPath = null, string? outlinePath = null, int context = 131072)
+        string? examplesPath = null, string? notesPath = null, string? outlinePath = null, int context = 131072,
+        string? patternsDir = null, string? embeddingsUrl = null)
     {
         Directory.CreateDirectory(outDir);
         var stepSimple = cap.StepClass[(cap.StepClass.LastIndexOf('.') + 1)..];
@@ -69,11 +75,23 @@ public static class ImplementStep
             .Concat(Directory.Exists(Path.Combine(harnessDir, "src", "test", "java", pkgPath))
                 ? Directory.EnumerateFiles(Path.Combine(harnessDir, "src", "test", "java", pkgPath), "*.java").Select(Path.GetFileNameWithoutExtension) : [])
             .Select(n => n!).ToHashSet(StringComparer.Ordinal);
-        reserved.Add(ProbeClass);
+        reserved.Add(Probe.ProbeClass);
         var testFile = Directory.EnumerateFiles(Path.Combine(harnessDir, "src", "test", "java", pkgPath), "*EquivalenceTest.java").Single();
         var testClass = cap.Package + "." + Path.GetFileNameWithoutExtension(testFile);
+        // The record kit and its layouts sit next to the packet (normalization/<PID>/); a v1 publish has neither.
+        var normDir = Path.GetDirectoryName(Path.GetFullPath(packetPath))!;
+        var kitPath = Path.Combine(normDir, "record-kit.md");
+        var kit = File.Exists(kitPath) && Directory.Exists(Path.Combine(harnessPkg, "records")) ? File.ReadAllText(kitPath).Replace("\r\n", "\n") : null;
+        var layoutsPath = Path.Combine(normDir, "record-layouts.json");
+        var feedback = new FeedbackRenderer(File.Exists(layoutsPath) ? layoutsPath : null, packetPath, Path.Combine(harnessDir, "src", "main", "java"));
+        var api = PublicApi(harnessDir, cap);
 
-        var prompt = BuildPrompt(cap, stepSimple, packetPath, designPath, projectDir, File.ReadAllText(testFile), reserved, examplesPath, notesPath);
+        var patterns = patternsDir is null ? null : new PatternLibrary(patternsDir, embeddingsUrl);
+        string? patternFrom = null;
+        var pattern = patterns?.Retrieve(cap.ProgramId, packetPath, out patternFrom);
+        if (pattern is not null) Program.Log($"  pattern library: the verified solution of {patternFrom} goes into the prompt");
+
+        var prompt = BuildPrompt(cap, stepSimple, packetPath, designPath, projectDir, File.ReadAllText(testFile), reserved, examplesPath, notesPath, kit, pattern);
         // The AST outline goes in when the prompt, the outline and a full reply still fit the context (about 3.6 characters per token).
         bool outlineUsed = false;
         if (outlinePath is not null && File.Exists(outlinePath))
@@ -100,6 +118,7 @@ public static class ImplementStep
         var files = new SortedDictionary<string, string>(StringComparer.Ordinal);
         var written = new HashSet<string>(StringComparer.Ordinal);
         var runs = new JsonArray();
+        var fixes = new List<string>();
         bool compiled = false, firstPassed = false;
         int total = 0, passed = 0, used = 0;
         (int Attempt, bool Compiled, int Passed, int Total, int Diffs, SortedDictionary<string, string>? Files) best = (0, false, 0, 0, int.MaxValue, null);
@@ -114,18 +133,21 @@ public static class ImplementStep
             if (r.Reasoning is not null) File.WriteAllText(Path.Combine(outDir, $"implementation.attempt{attempt}.reasoning.txt"), r.Reasoning);
 
             var problems = new List<string>();
-            var returned = Parse(r.Content, problems);
+            var (edits, rest) = Edits.Extract(r.Content);
+            int applied = edits.Count == 0 ? 0 : Edits.Apply(files, edits, problems);
+            var returned = Parse(rest, problems);
             foreach (var (name, src) in returned) files[name] = src;
             problems.AddRange(Check(files, cap, stepSimple, reserved));
             var attemptJson = Program.AttemptJson(attempt, r, problems);
             attemptJson["filesReturned"] = Program.Strings(returned.Keys);
+            attemptJson["edits"] = new JsonObject { ["blocks"] = edits.Count, ["applied"] = applied };
             attemptJson["files"] = Program.Strings(files.Keys);
 
-            string feedback;
+            string message;
             if (problems.Count > 0 || files.Count == 0)
             {
                 if (files.Count == 0 && problems.Count == 0) problems.Add("no ```java code blocks were found in the reply");
-                feedback = "The files break the contract:\n- " + string.Join("\n- ", problems) + "\n";
+                message = "The files break the contract:\n- " + string.Join("\n- ", problems) + "\n";
                 compiled = false;
                 total = passed = 0;
             }
@@ -141,7 +163,7 @@ public static class ImplementStep
                 {
                     Program.Log($"  compile FAILED ({errors.Count} errors)");
                     foreach (var e in errors.Take(8)) Program.Log("  - " + e.Split('\n')[0]);
-                    feedback = "The code does not compile:\n" + string.Join("\n", errors.Take(30)) + (errors.Count == 0 ? Tail(build.Output, 40) : "") + "\n";
+                    message = errors.Count == 0 ? "The code does not compile:\n" + Tail(build.Output, 40) + "\n" : CompileFeedback(errors, harnessDir, api);
                     total = passed = 0;
                 }
                 else
@@ -173,25 +195,30 @@ public static class ImplementStep
                         runs.Add(attemptJson);
                         break;
                     }
-                    feedback = test.TimedOut
+                    message = test.TimedOut
                         ? $"The acceptance test did not finish within {testTimeout.TotalMinutes:N0} minutes (an endless loop?). {passed}/{total} scenarios had passed.\n"
                         : total == 0
                             ? "The acceptance test did not run:\n" + Tail(test.Output, 40) + "\n"
                             : $"{total - passed} of {total} acceptance scenarios fail. Each compares your step with the faithful COBOL program " +
                               "(datasets under data/, console under sysout/, return code):\n" +
-                              string.Join("\n", failing.Take(12).Select(f => $"- {f.Name}: {Clip(f.Failure!, 900)}")) + "\n";
-                    if (!test.TimedOut && failing.Count > 0 && Probe(harnessDir, testFile, cap.Package, failing.Select(f => f.Name), TimeSpan.FromMinutes(10)) is { } detail)
+                              string.Join("\n", failing.Take(12).Select(f => $"- {f.Name}: {Clip(f.Failure!, 400)}")) + "\n";
+                    if (!test.TimedOut && failing.Count > 0)
                     {
-                        feedback += "\n" + detail + "\n";
-                        attemptJson["probe"] = detail;
-                        Program.Log($"  probe: {detail.Split('\n').Length - 1} line(s) of differences");
+                        var chosen = ProbeScenarios(failing.Select(f => (f.Name, f.Failure!)));
+                        if (chosen.Count > 0 && RunProbe(harnessDir, testFile, cap, chosen, TimeSpan.FromMinutes(10)) is { } probed && probed.Count > 0)
+                        {
+                            var detail = feedback.Render(probed);
+                            message += $"\nDetail for {chosen.Count} failing scenario(s) with different symptoms (fields by their COBOL names; offsets count from 0):\n" + detail + "\n";
+                            attemptJson["probe"] = detail;
+                            Program.Log($"  probe: {probed.Count} scenario(s), {detail.Split('\n').Length} line(s) of feedback");
+                        }
                     }
                 }
             }
+            fixes.Add(Clip(message.Split('\n').FirstOrDefault(l => l.Trim().Length > 0) ?? "", 300));
             runs.Add(attemptJson);
             if (attempt == attempts) break;
-            messages = [.. baseMessages, new("assistant", Render(files)), new("user", feedback +
-                "Fix the cause. Return every file you change, complete, each in its own ```java block; files you do not return stay as they are.")];
+            messages = [.. baseMessages, new("assistant", Render(files)), new("user", message + "\nFix the cause. " + Edits.Instructions)];
         }
         // The deliverable is the best attempt (most scenarios passed, then fewest output differences); a later attempt that
         // regressed (for instance stopped compiling) does not replace it.
@@ -200,15 +227,19 @@ public static class ImplementStep
         var result = best.Files is not null
             ? new Result(true, best.Total, best.Passed, used, firstPassed, best.Attempt, best.Diffs)
             : new Result(false, 0, 0, used, false, 0, 0);
+        if (patterns is not null && best.Files is not null && result.TestsTotal > 0 && result.TestsPassed == result.TestsTotal)
+            patterns.Record(cap.ProgramId, modelName, packetPath, best.Files, fixes.Take(Math.Max(0, best.Attempt - 1)));
         File.WriteAllText(Path.Combine(outDir, "implementation.run.json"), new JsonObject
         {
-            ["schema"] = "mlcpu.implementation-run.v1", ["programId"] = cap.ProgramId, ["model"] = modelName, ["backend"] = backend,
+            ["schema"] = "mlcpu.implementation-run.v1", ["pipeline"] = "v2", ["programId"] = cap.ProgramId, ["model"] = modelName, ["backend"] = backend,
             ["reasoning"] = reasoning, ["design"] = Path.GetFileName(designPath), ["package"] = cap.Package, ["step"] = cap.StepClass,
-            ["allowedDependencies"] = Program.Strings(["java.*", EntryInterface(cap), cap.PlatformPackage + ".*"]),
-            ["kind"] = cap.Kind, ["astOutline"] = outlineUsed,
+            ["allowedDependencies"] = Program.Strings(["java.*", EntryInterface(cap), cap.PlatformPackage + ".*", KitPackage(cap) + ".*"]),
+            ["kind"] = cap.Kind, ["astOutline"] = outlineUsed, ["recordKit"] = kit is not null, ["fieldLayouts"] = feedback.HasLayouts,
+            ["patternFrom"] = patternFrom,
             ["acceptanceTest"] = testClass, ["acceptanceTestShownToModel"] = true,
-            ["feedback"] = "compiler errors; failing scenarios with the first difference per output; every differing region for the first failing scenario (" + ProbeClass + ")",
-            ["guidance"] = Program.Strings(new[] { examplesPath, notesPath, outlineUsed ? outlinePath : null }.OfType<string>().Select(Path.GetFileName).OfType<string>()),
+            ["feedback"] = "compiler errors with source lines and the API of misused classes; failing scenarios with the first difference per output; " +
+                           "for up to three failing scenarios with different symptoms, every differing record by field name and where the logic parts from the faithful program (" + Probe.ProbeClass + "); repairs as SEARCH/REPLACE edits or whole files",
+            ["guidance"] = Program.Strings(new[] { examplesPath, notesPath, outlineUsed ? outlinePath : null, kit is not null ? kitPath : null }.OfType<string>().Select(Path.GetFileName).OfType<string>()),
             ["result"] = new JsonObject
             {
                 ["deliverable"] = best.Files is not null ? $"best attempt ({best.Attempt})" : "last attempt (none compiled)",
@@ -224,7 +255,7 @@ public static class ImplementStep
     }
 
     static string BuildPrompt(Capability cap, string stepSimple, string packetPath, string designPath, string projectDir, string acceptanceTest, ISet<string> reserved,
-        string? examplesPath, string? notesPath)
+        string? examplesPath, string? notesPath, string? kit, string? pattern)
     {
         var main = Path.Combine(projectDir, "src", "main", "java");
         var platform = Directory.EnumerateFiles(Path.Combine(main, Path.Combine(cap.PlatformPackage.Split('.'))), "*.java", SearchOption.AllDirectories)
@@ -247,6 +278,11 @@ public static class ImplementStep
             sb.AppendLine("```");
         }
         sb.AppendLine();
+        if (kit is not null)
+        {
+            sb.AppendLine(kit.TrimEnd());
+            sb.AppendLine();
+        }
         sb.AppendLine("# Acceptance test (JUnit 5). It runs your step and the faithful COBOL translation on the same inputs and requires identical datasets, SYSOUT and return code");
         sb.AppendLine("```java");
         sb.AppendLine(acceptanceTest.Replace("\r\n", "\n").TrimEnd());
@@ -264,10 +300,22 @@ public static class ImplementStep
             sb.AppendLine("Use the worked examples as acceptance criteria: before you answer, walk each example through your code and check that it produces exactly these field values and bytes.");
             sb.AppendLine();
         }
+        if (pattern is not null)
+        {
+            sb.AppendLine(pattern.TrimEnd());
+            sb.AppendLine();
+        }
         var callPort = cap.PlatformPackage == "com.mlcpu.carddemo.platform" ? "" : """
 
               A `CALL 'PGM' USING a b ...` to another program of the job is `ctx.call("PGM", a, b, ...)` with byte arrays laid out like the
               arguments; the called program reads and writes them BY REFERENCE (reimplementing its logic in your own classes is fine too).
+            """.TrimEnd();
+        var kitDep = kit is null ? "" : $", the generated record kit `{KitPackage(cap)}.*`";
+        var kitUse = kit is null ? "" : $"""
+
+            - Records and report lines: use the generated record kit (`{KitPackage(cap)}`) for every record you read, write, rewrite or pass
+              to a CALL and for every report or message line. Where the design names record layouts, codecs or line formatters, the kit's
+              classes are those: do not write your own offsets, field codecs or edited-number formatting.
             """.TrimEnd();
         var entry = cap.Kind == "subprogram"
             ? $"""
@@ -277,19 +325,18 @@ public static class ImplementStep
               length, in the LINKAGE SECTION layout (dataContracts, AST outline). Arguments are BY REFERENCE: write your results into the same
               arrays; every byte you leave in them is what the caller sees after the CALL. One instance serves every CALL of the run, so keep what
               the COBOL subprogram keeps in WORKING-STORAGE between CALLs in instance fields.
-            - Dependencies: only the Java 21 standard library, `com.mlcpu.rt.ModernProgram` and the platform classes in
-              `{cap.PlatformPackage}.*` shown above. Write everything else yourself in `{cap.Package}`: domain records, record layouts
-              (byte offsets and PICTUREs from dataContracts), services and the entry point. Do not reference any other com.mlcpu class.
+            - Dependencies: only the Java 21 standard library, `com.mlcpu.rt.ModernProgram`, the platform classes in
+              `{cap.PlatformPackage}.*` shown above{kitDep}. Write everything else yourself in `{cap.Package}`: domain records,
+              services and the entry point. Do not reference any other com.mlcpu class.{kitUse}
             """
             : $"""
             - Entry point: `public final class {stepSimple} implements com.mlcpu.rt.ModernStep` with a public no-argument constructor.
               The job engine calls `run(ctx)`: datasets by DD name through `ctx.dataset(dd)` (a missing input file means the OPEN fails),
               console lines through `ctx.display(line)`, the PARM through `ctx.parm()`, the batch clock through `ctx.now()`. Return the step
               return code; end abnormally the way the COBOL program does (the platform's BatchFailure shows how).{callPort}
-            - Dependencies: only the Java 21 standard library, `com.mlcpu.rt.ModernStep` (with its nested types) and the platform classes in
-              `{cap.PlatformPackage}.*` shown above. Write everything else yourself in `{cap.Package}`: domain records, record layouts
-              (byte offsets and PICTUREs from dataContracts), repositories, readers and writers over the platform datasets, services and the step.
-              Do not reference any other com.mlcpu class.
+            - Dependencies: only the Java 21 standard library, `com.mlcpu.rt.ModernStep` (with its nested types), the platform classes in
+              `{cap.PlatformPackage}.*` shown above{kitDep}. Write everything else yourself in `{cap.Package}`: domain records,
+              repositories, readers and writers over the platform datasets, services and the step. Do not reference any other com.mlcpu class.{kitUse}
             """;
         sb.AppendLine($"""
             # Task
@@ -314,6 +361,7 @@ public static class ImplementStep
         foreach (Match m in JavaBlock.Matches(reply))
         {
             var src = m.Groups[1].Value.Replace("\r\n", "\n").TrimEnd() + "\n";
+            if (src.Trim().Length == 0) continue;
             var type = TopType.Matches(src).Select(t => t.Groups[1].Value).FirstOrDefault();
             if (type is null) { problems.Add($"a ```java block declares no top-level type: {Clip(src, 120)}"); continue; }
             if (files.ContainsKey(type)) problems.Add($"{type} is returned twice; return each file once");
@@ -324,14 +372,19 @@ public static class ImplementStep
 
     static IEnumerable<string> Check(IDictionary<string, string> files, Capability cap, string stepSimple, ISet<string> reserved)
     {
+        var kitPkg = KitPackage(cap) + ".";
         foreach (var (name, src) in files)
         {
             var pkg = PackageDecl.Match(src);
             if (!pkg.Success || pkg.Groups[1].Value != cap.Package) yield return $"{name}.java must declare `package {cap.Package};`";
             if (reserved.Contains(name)) yield return $"{name} is already a class in the package (generated); rename yours";
             foreach (var r in MlcpuRef.Matches(src).Select(m => m.Value).Distinct())
-                if (!r.StartsWith(EntryInterface(cap)) && !r.StartsWith("com.mlcpu.rt.ModernStep") && !r.StartsWith(cap.PlatformPackage + ".") && !r.StartsWith(cap.Package))
-                    yield return $"{name}.java references {r}; only {EntryInterface(cap)} and {cap.PlatformPackage}.* are allowed";
+            {
+                bool own = r == cap.Package || (r.StartsWith(cap.Package + ".") && !r[(cap.Package.Length + 1)..].Contains('.') && char.IsUpper(r[cap.Package.Length + 1]));
+                if (!r.StartsWith(EntryInterface(cap)) && !r.StartsWith("com.mlcpu.rt.ModernStep") && !r.StartsWith(cap.PlatformPackage + ".")
+                    && !r.StartsWith(kitPkg) && r != KitPackage(cap) && !own)
+                    yield return $"{name}.java references {r}; only {EntryInterface(cap)}, {cap.PlatformPackage}.*, {KitPackage(cap)}.* and your own classes are allowed";
+            }
         }
         var iface = cap.Kind == "subprogram" ? "ModernProgram" : "ModernStep";
         if (!files.TryGetValue(stepSimple, out var step)) yield return $"the entry point {stepSimple}.java is missing";
@@ -415,10 +468,86 @@ public static class ImplementStep
             if (Regex.IsMatch(lines[i], @"\.java:\d+: error:"))
             {
                 var e = new StringBuilder(Regex.Replace(lines[i], @"^.*[\\/](src[\\/])", "$1"));
-                for (int k = i + 1; k < lines.Count && k <= i + 3 && !Regex.IsMatch(lines[k], @"\.java:\d+: (error|warning):"); k++) e.Append('\n').Append(lines[k]);
+                for (int k = i + 1; k < lines.Count && k <= i + 5 && !Regex.IsMatch(lines[k], @"\.java:\d+: (error|warning):") && !lines[k].StartsWith("> Task", StringComparison.Ordinal)
+                                    && !Regex.IsMatch(lines[k], @"^\d+ errors?$"); k++) e.Append('\n').Append(lines[k]);
                 errors.Add(e.ToString());
             }
         return errors;
+    }
+
+    static readonly Regex ErrorHead = new(@"^(src[\\/].*?\.java):(\d+): error: (.*)$");
+    static readonly Regex SyntaxError = new(@"expected$|illegal start of|not a statement|unclosed|reached end of file|class, interface, enum, or record expected|orphaned|without 'if'|without 'try'|'catch' without|'finally' without|illegal character|invalid method declaration");
+
+    /// <summary>
+    /// Compiler errors for the model: per file, a syntax error shows only its first occurrence with the numbered source lines
+    /// around it (the errors after it follow from it); other errors keep javac's context, and an error about a platform or kit
+    /// class (cannot find symbol, no suitable method, cannot be applied) adds that class's public API.
+    /// </summary>
+    static string CompileFeedback(List<string> errors, string harnessDir, IReadOnlyDictionary<string, List<string>> api)
+    {
+        var sb = new StringBuilder("The code does not compile:\n");
+        var classesShown = new HashSet<string>(StringComparer.Ordinal);
+        int shown = 0;
+        foreach (var file in errors.GroupBy(e => ErrorHead.Match(e.Split('\n')[0]) is { Success: true } m ? m.Groups[1].Value : ""))
+        {
+            var list = file.ToList();
+            var syntax = list.FirstOrDefault(e => ErrorHead.Match(e.Split('\n')[0]) is { Success: true } m && SyntaxError.IsMatch(m.Groups[3].Value));
+            if (syntax is not null && file.Key.Length > 0)
+            {
+                var m = ErrorHead.Match(syntax.Split('\n')[0]);
+                int line = int.Parse(m.Groups[2].Value);
+                sb.Append($"{file.Key}:{line}: error: {m.Groups[3].Value}\n").Append(Excerpt(Path.Combine(harnessDir, file.Key), line, 4));
+                if (list.Count > 1) sb.Append($"({list.Count - 1} further error(s) in this file are not shown: they follow from this one. Check brackets, parentheses and semicolons around these lines.)\n");
+                shown++;
+                continue;
+            }
+            foreach (var e in list.Take(10))
+            {
+                sb.Append(e).Append('\n');
+                shown++;
+                foreach (Match c in Regex.Matches(e, @"(?:location: (?:class|variable \w+ of type|interface) |no suitable method found for \w+\(|method \w+ in class |cannot find symbol\s+symbol:\s+class )([\w.]+)"))
+                {
+                    var cls = c.Groups[1].Value[(c.Groups[1].Value.LastIndexOf('.') + 1)..];
+                    if (api.TryGetValue(cls, out var members) && classesShown.Add(cls))
+                        sb.Append($"  ({cls}'s public API: {string.Join("; ", members.Take(60))})\n");
+                }
+            }
+            if (list.Count > 10) sb.Append($"(… {list.Count - 10} more error(s) in {file.Key})\n");
+        }
+        return sb.ToString();
+    }
+
+    static string Excerpt(string path, int line, int around)
+    {
+        if (!File.Exists(path)) return "";
+        var lines = File.ReadAllLines(path);
+        var sb = new StringBuilder();
+        for (int i = Math.Max(1, line - around); i <= Math.Min(lines.Length, line + around); i++)
+            sb.Append(i == line ? ">" : " ").Append($"{i,5}: ").Append(lines[i - 1]).Append('\n');
+        return sb.ToString();
+    }
+
+    static readonly Regex PublicMember = new(@"^\s*public\s+(?!final\s+class|class|interface|record|enum)(?:static\s+)?(?:final\s+)?([\w<>\[\],.? ]+?\s+)?(\w+)\s*(\([^)]*\))?\s*(?:throws [\w., ]+)?\s*(?:[{;=]|$)", RegexOptions.Multiline);
+
+    /// <summary>Public members (one line each) of the platform layer, the record kit and the entry interfaces, by simple class name.</summary>
+    static Dictionary<string, List<string>> PublicApi(string harnessDir, Capability cap)
+    {
+        var main = Path.Combine(harnessDir, "src", "main", "java");
+        var roots = new[] { Path.Combine(main, Path.Combine(cap.PlatformPackage.Split('.'))), Path.Combine(main, Path.Combine(KitPackage(cap).Split('.'))) };
+        var api = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        foreach (var f in roots.Where(Directory.Exists).SelectMany(r => Directory.EnumerateFiles(r, "*.java", SearchOption.AllDirectories))
+                     .Append(Path.Combine(main, "com", "mlcpu", "rt", "ModernStep.java")).Where(File.Exists))
+        {
+            var members = new List<string>();
+            foreach (Match m in PublicMember.Matches(File.ReadAllText(f)))
+            {
+                var text = Regex.Replace(m.Value.Trim().TrimEnd('{', ';', '=').Trim(), @"\s+", " ");
+                if (text.StartsWith("public ")) text = text[7..];
+                members.Add(text);
+            }
+            api[Path.GetFileNameWithoutExtension(f)] = members;
+        }
+        return api;
     }
 
     sealed record TestCase(string Name, string? Failure);
@@ -439,187 +568,107 @@ public static class ImplementStep
 
     static string Clip(string s, int n) => s.Length <= n ? s : s[..n] + " …";
 
-    const string ProbeClass = "MlcpuDiffProbe";
+    static readonly Regex Symptom = new(@"(data/[^:\s]+|sysout/[^:\s]+|return code)");
+    static readonly Regex FirstLegacy = new(@"legacy [«�]([^»�]{0,40})");
 
     /// <summary>
-    /// A JUnit class compiled into the harness next to the acceptance test. For the scenario named in
-    /// build/mlcpu-probe-request.txt it runs both implementations through the acceptance test's own scenarios(), step() and
-    /// @BeforeAll setup (by reflection) and writes every differing byte region of every output to build/mlcpu-probe.txt,
-    /// not only the first one the acceptance test reports.
+    /// Up to three failing parameterized scenarios with different symptoms (which outputs differ, and the legacy text at the first
+    /// difference, digits folded), oracle scenarios first.
     /// </summary>
-    static string ProbeSource(string package, string testClass) => $$"""
-        package {{package}};
-
-        import com.mlcpu.rt.JobEngine;
-        import com.mlcpu.rt.StepEquivalence;
-        import java.lang.reflect.Method;
-        import java.nio.charset.StandardCharsets;
-        import java.nio.file.Files;
-        import java.nio.file.Path;
-        import java.util.*;
-        import org.junit.jupiter.api.Test;
-        import org.junit.jupiter.params.provider.Arguments;
-
-        class {{ProbeClass}} {
-            @Test
-            @SuppressWarnings("unchecked")
-            void probe() throws Exception {
-                String scenario = Files.readString(Path.of("build", "mlcpu-probe-request.txt")).trim();
-                Class<?> t = Class.forName("{{testClass}}");
-                for (Method m : t.getDeclaredMethods())
-                    if (m.isAnnotationPresent(org.junit.jupiter.api.BeforeAll.class)) { m.setAccessible(true); m.invoke(null); }
-                Method scenarios = t.getDeclaredMethod("scenarios");
-                scenarios.setAccessible(true);
-                Object[] args = null;
-                for (Arguments a : ((java.util.stream.Stream<Arguments>) scenarios.invoke(null)).toList())
-                    if (scenario.equals(a.get()[0])) args = a.get();
-                StringBuilder out = new StringBuilder();
-                if (args == null) { Files.writeString(Path.of("build", "mlcpu-probe.txt"), ""); return; }
-                Method step = null;
-                for (Method m : t.getDeclaredMethods()) if (m.getName().equals("step") && m.getParameterCount() == args.length - 2) step = m;
-                step.setAccessible(true);
-                JobEngine.Step s = (JobEngine.Step) (args.length == 3 ? step.invoke(null, args[1]) : step.invoke(null));
-                Map<String, byte[]> inputs = (Map<String, byte[]>) args[args.length - 1];
-                Map<String, java.util.function.Supplier<com.mlcpu.rt.ModernProgram>> calls = Map.of();
-                for (Method m : t.getDeclaredMethods())
-                    if (m.getName().equals("subprograms") && m.getParameterCount() == 0) { m.setAccessible(true); calls = (Map<String, java.util.function.Supplier<com.mlcpu.rt.ModernProgram>>) m.invoke(null); }
-                var legacy = StepEquivalence.run(s, inputs, "legacy");
-                var normalized = StepEquivalence.run(s, inputs, "normalized", calls);
-                if (legacy.returnCode() != normalized.returnCode())
-                    out.append("return code: legacy ").append(legacy.returnCode()).append(" (").append(legacy.detail()).append("), yours ")
-                       .append(normalized.returnCode()).append(" (").append(normalized.detail()).append(")\n");
-                // Record formats the acceptance test declares (DSN -> fixed:N | variable | print:N): differences are then shown record by record.
-                Map<String, String> formats = Map.of();
-                try {
-                    java.lang.reflect.Field ff = t.getDeclaredField("RECORD_FORMATS");
-                    ff.setAccessible(true);
-                    formats = (Map<String, String>) ff.get(null);
-                } catch (NoSuchFieldException e) {
-                    // byte regions only
-                }
-                var names = new TreeSet<>(legacy.files().keySet());
-                names.addAll(normalized.files().keySet());
-                for (String n : names) {
-                    byte[] a = legacy.files().get(n), b = normalized.files().get(n);
-                    if (a == null || b == null) { out.append(n).append(": only ").append(a == null ? "yours" : "the legacy program").append(" wrote it\n"); continue; }
-                    if (Arrays.equals(a, b)) continue;
-                    String fmt = n.startsWith("data/") ? formats.get(n.substring(5)) : null;
-                    if (fmt != null) {
-                        out.append(n).append(" (legacy ").append(a.length).append(" bytes, yours ").append(b.length).append("; ").append(fmt).append(" records):\n");
-                        recordDiff(out, a, b, fmt);
-                        continue;
-                    }
-                    out.append(n).append(" (legacy ").append(a.length).append(" bytes, yours ").append(b.length).append("):\n");
-                    int shown = 0, i = 0, min = Math.min(a.length, b.length), regions = 0;
-                    while (i < min) {
-                        if (a[i] == b[i]) { i++; continue; }
-                        int s0 = i, e = i;
-                        while (e + 1 < min) {
-                            int k = e + 1;
-                            while (k < min && k <= e + 8 && a[k] == b[k]) k++;
-                            if (k < min && k <= e + 8) e = k; else break;
-                        }
-                        regions++;
-                        if (shown < 12) {
-                            shown++;
-                            out.append("  bytes ").append(s0).append('-').append(e).append(where(a, s0)).append(": legacy «").append(show(a, s0 - 12, e + 12))
-                               .append("» yours «").append(show(b, s0 - 12, e + 12)).append("»\n");
-                        }
-                        i = e + 1;
-                    }
-                    if (a.length != b.length) out.append("  lengths differ from byte ").append(min).append('\n');
-                    if (regions > shown) out.append("  ... ").append(regions - shown).append(" more differing region(s)\n");
-                }
-                Files.writeString(Path.of("build", "mlcpu-probe.txt"), out.toString());
-            }
-
-            /** A dataset as records: RDW-delimited (variable), fixed slices, or (print) fixed slices with the ADVANCING bytes taken out. */
-            static List<String> records(byte[] f, String fmt, List<String> controls) {
-                List<String> recs = new ArrayList<>();
-                if (fmt.equals("variable")) {
-                    int at = 0;
-                    while (at + 4 <= f.length) {
-                        int len = ((f[at] & 0xff) << 8) | (f[at + 1] & 0xff);
-                        recs.add("(" + len + " bytes) " + show(f, at + 4, Math.min(f.length, at + 4 + len) - 1));
-                        at += 4 + len;
-                    }
-                    return recs;
-                }
-                int lrecl = Integer.parseInt(fmt.substring(fmt.indexOf(':') + 1));
-                boolean print = fmt.startsWith("print");
-                StringBuilder ctl = new StringBuilder();
-                int i = 0;
-                while (i < f.length) {
-                    if (print && (f[i] == '\n' || f[i] == '\f')) { ctl.append(f[i] == '\n' ? "\\n" : "\\f"); i++; continue; }
-                    if (ctl.length() > 0) { controls.add(ctl + " before record " + (recs.size() + 1)); ctl.setLength(0); }
-                    int end = Math.min(f.length, i + lrecl);
-                    recs.add(show(f, i, end - 1));
-                    i = end;
-                }
-                if (ctl.length() > 0) controls.add(ctl + " after record " + recs.size());
-                return recs;
-            }
-
-            static void recordDiff(StringBuilder out, byte[] a, byte[] b, String fmt) {
-                List<String> ca = new ArrayList<>(), cb = new ArrayList<>();
-                List<String> ra = records(a, fmt, ca), rb = records(b, fmt, cb);
-                int diffs = 0, shown = 0;
-                for (int k = 0; k < Math.max(ra.size(), rb.size()); k++) {
-                    String x = k < ra.size() ? ra.get(k) : null, y = k < rb.size() ? rb.get(k) : null;
-                    if (x != null && x.equals(y)) continue;
-                    diffs++;
-                    if (shown++ < 10)
-                        out.append("  record ").append(k + 1).append(":\n    legacy «").append(x == null ? "(none)" : x).append("»\n    yours  «")
-                           .append(y == null ? "(none)" : y).append("»\n");
-                }
-                if (diffs > 10) out.append("  ... ").append(diffs - 10).append(" more differing record(s)\n");
-                out.append("  ").append(ra.size()).append(" legacy record(s), ").append(rb.size()).append(" of yours, ").append(diffs).append(" differ\n");
-                if (!ca.equals(cb))
-                    out.append("  ADVANCING control bytes differ:\n    legacy: ").append(String.join("; ", ca)).append("\n    yours:  ").append(String.join("; ", cb)).append('\n');
-            }
-
-            static String where(byte[] f, int at) {
-                int line = 1, col = 0;
-                boolean text = false;
-                for (int i = 0; i < at; i++) if (f[i] == '\n') { line++; col = 0; text = true; } else col++;
-                return text ? " (line " + line + ", column " + (col + 1) + ")" : "";
-            }
-
-            static String show(byte[] f, int from, int to) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = Math.max(0, from); i <= Math.min(f.length - 1, to); i++) {
-                    int c = f[i] & 0xff;
-                    sb.append(c == '\n' ? "\\n" : c >= 0x20 && c < 0x7f ? String.valueOf((char) c) : String.format("\\x%02x", c));
-                }
-                return sb.toString();
-            }
+    static List<string> ProbeScenarios(IEnumerable<(string Name, string Failure)> failing)
+    {
+        var chosen = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        // Plain test methods ("…Default()") are not scenarios() entries; scenario names may end in ")" ("unknown card (abend)").
+        foreach (var (name, failure) in failing.Where(f => !f.Name.EndsWith("()") && !f.Name.StartsWith("GnuCOBOL oracle", StringComparison.Ordinal))
+                     .OrderBy(f => f.Name.StartsWith("oracle scenario", StringComparison.Ordinal) ? 0 : 1))
+        {
+            var text = FirstLegacy.Match(failure) is { Success: true } m ? Regex.Replace(m.Groups[1].Value.Trim(), @"\d", "9") : "";
+            var symptom = string.Join(",", Symptom.Matches(failure).Select(x => x.Value).Distinct().Order(StringComparer.Ordinal))
+                          + "|" + (text.Length > 12 ? text[..12] : text);
+            if (!seen.Add(symptom)) continue;
+            chosen.Add(name);
+            if (chosen.Count == 3) break;
         }
-        """;
+        return chosen;
+    }
 
-    /// <summary>Runs the difference probe in an existing harness for one scenario (diagnostics).</summary>
+    /// <summary>
+    /// Replays a recorded run's replies 1..attempt (each applied as the run applied it) in a fresh harness of the given project,
+    /// compiles and tests the result, and returns the feedback this pipeline gives for it (diagnostics: the replay verb).
+    /// </summary>
+    public static string Replay(Capability cap, string packetPath, string projectDir, string harnessDir, IReadOnlyList<string> replies, TimeSpan testTimeout)
+    {
+        var stepSimple = cap.StepClass[(cap.StepClass.LastIndexOf('.') + 1)..];
+        var pkgPath = cap.Package.Replace('.', Path.DirectorySeparatorChar);
+        PrepareHarness(projectDir, harnessDir, cap);
+        var harnessPkg = Path.Combine(harnessDir, "src", "main", "java", pkgPath);
+        var reserved = Directory.EnumerateFiles(harnessPkg, "*.java").Select(Path.GetFileNameWithoutExtension).Select(n => n!).ToHashSet(StringComparer.Ordinal);
+        var testFile = Directory.EnumerateFiles(Path.Combine(harnessDir, "src", "test", "java", pkgPath), "*EquivalenceTest.java").Single();
+        var testClass = cap.Package + "." + Path.GetFileNameWithoutExtension(testFile);
+        var normDir = Path.GetDirectoryName(Path.GetFullPath(packetPath))!;
+        var layoutsPath = Path.Combine(normDir, "record-layouts.json");
+        var feedback = new FeedbackRenderer(File.Exists(layoutsPath) ? layoutsPath : null, packetPath, Path.Combine(harnessDir, "src", "main", "java"));
+        var files = new SortedDictionary<string, string>(StringComparer.Ordinal);
+        var problems = new List<string>();
+        foreach (var reply in replies)
+        {
+            var (edits, rest) = Edits.Extract(reply);
+            if (edits.Count > 0) Edits.Apply(files, edits, problems);
+            foreach (var (name, src) in Parse(rest, problems)) files[name] = src;
+        }
+        problems.AddRange(Check(files, cap, stepSimple, reserved));
+        if (problems.Count > 0) return "The files break the contract:\n- " + string.Join("\n- ", problems) + "\n";
+        Sync(harnessPkg, files, []);
+        var build = Gradle(harnessDir, "compileJava compileTestJava", TimeSpan.FromMinutes(10));
+        if (build.ExitCode != 0)
+        {
+            var errors = CompileErrors(build.Output);
+            return errors.Count == 0 ? Tail(build.Output, 40) : CompileFeedback(errors, harnessDir, PublicApi(harnessDir, cap));
+        }
+        var resultsDir = Path.Combine(harnessDir, "build", "test-results", "test");
+        if (Directory.Exists(resultsDir)) Directory.Delete(resultsDir, true);
+        var test = Gradle(harnessDir, $"test --tests {testClass}", testTimeout);
+        var cases = TestCases(resultsDir);
+        var failing = cases.Where(c => c.Failure is not null).ToList();
+        var sb = new StringBuilder($"acceptance {cases.Count - failing.Count}/{cases.Count}\n");
+        foreach (var f in failing.Take(12)) sb.Append($"- {f.Name}: {Clip(f.Failure!, 400)}\n");
+        var chosen = ProbeScenarios(failing.Select(f => (f.Name, f.Failure!)));
+        if (!test.TimedOut && chosen.Count > 0 && RunProbe(harnessDir, testFile, cap, chosen, TimeSpan.FromMinutes(10)) is { } probed)
+            sb.Append($"\nDetail for {chosen.Count} failing scenario(s) with different symptoms:\n").Append(feedback.Render(probed)).Append('\n');
+        return sb.ToString();
+    }
+
+    /// <summary>Runs the difference probe in an existing harness for the given scenarios (diagnostics: the probe verb).</summary>
     public static string? ProbeOnly(string harnessDir, string programId, string manifestPath, string scenario)
     {
         var cap = FromManifest(manifestPath, programId);
         var testDir = Path.Combine(harnessDir, "src", "test", "java", cap.Package.Replace('.', Path.DirectorySeparatorChar));
         var testFile = Directory.EnumerateFiles(testDir, "*EquivalenceTest.java").Single();
-        return Probe(harnessDir, testFile, cap.Package, [scenario], TimeSpan.FromMinutes(10));
+        var probed = RunProbe(harnessDir, testFile, cap, scenario.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList(), TimeSpan.FromMinutes(10));
+        if (probed is null) return null;
+        var norm = Path.Combine(harnessDir, "normalization", programId);
+        var layouts = Path.Combine(norm, "record-layouts.json");
+        return new FeedbackRenderer(File.Exists(layouts) ? layouts : null, Path.Combine(norm, "requirements.json"), Path.Combine(harnessDir, "src", "main", "java")).Render(probed);
     }
 
-    /// <summary>Every differing region for the first failing parameterized scenario, or null when the probe cannot run.</summary>
-    static string? Probe(string harnessDir, string testFile, string package, IEnumerable<string> failing, TimeSpan timeout)
+    /// <summary>Runs the probe class in the harness for the scenarios; null when it cannot run.</summary>
+    static IReadOnlyList<ProbeScenario>? RunProbe(string harnessDir, string testFile, Capability cap, List<string> scenarios, TimeSpan timeout)
     {
-        var scenario = failing.FirstOrDefault(n => !n.EndsWith(')'));
-        if (scenario is null) return null;
-        var testClass = package + "." + Path.GetFileNameWithoutExtension(testFile);
-        File.WriteAllText(Path.Combine(Path.GetDirectoryName(testFile)!, ProbeClass + ".java"), ProbeSource(package, testClass));
+        var testClass = cap.Package + "." + Path.GetFileNameWithoutExtension(testFile);
+        File.WriteAllText(Path.Combine(Path.GetDirectoryName(testFile)!, Probe.ProbeClass + ".java"), Probe.Source(cap.Package, testClass, cap.Kind, cap.ProgramId));
         Directory.CreateDirectory(Path.Combine(harnessDir, "build"));
-        File.WriteAllText(Path.Combine(harnessDir, "build", "mlcpu-probe-request.txt"), scenario);
-        var result = Path.Combine(harnessDir, "build", "mlcpu-probe.txt");
+        File.WriteAllText(Path.Combine(harnessDir, "build", "mlcpu-probe-request.txt"), string.Join("\n", scenarios) + "\n");
+        var result = Path.Combine(harnessDir, "build", "mlcpu-probe.json");
         if (File.Exists(result)) File.Delete(result);
-        Gradle(harnessDir, $"test --tests {package}.{ProbeClass}", timeout);
-        if (!File.Exists(result)) return null;
-        var text = File.ReadAllText(result).Trim();
-        return text.Length == 0 ? null : $"Every difference in scenario '{scenario}' (up to 12 regions per output; offsets count from 0; context of 12 bytes on each side):\n{Clip(text, 6000)}";
+        var run = Gradle(harnessDir, $"test --tests {cap.Package}.{Probe.ProbeClass}", timeout);
+        if (!File.Exists(result))
+        {
+            Program.Log("  probe did not run: " + Clip(Tail(run.Output, 6).Replace('\n', ' '), 300));
+            return null;
+        }
+        try { return Probe.Parse(File.ReadAllText(result)); }
+        catch (Exception e) { Program.Log("  probe output unreadable: " + e.Message); return null; }
     }
 
     static string Tail(string s, int lines) => string.Join("\n", s.Split('\n').TakeLast(lines));

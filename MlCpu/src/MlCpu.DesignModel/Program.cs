@@ -19,6 +19,7 @@ namespace MlCpu.DesignModel;
 ///   [--reasoning low|medium|high] [--impl-reasoning high] [--attempts 3] [--impl-attempts 10] [--temperature t] [--seed 42]
 ///   [--moe-cpu] [--backend llama|lmkit|exchange] [--exchange dir] [--server http://host:port] [--llama-dir C:\models\llama.cpp] [--port 8090]
 ///   [--server-args "..."] [--no-fallback] [--test-timeout-min 15]
+///   probe --harness dir --program PID --manifest capability-manifest.json --scenario "name[|name...]": the v2 difference probe's feedback
 /// The pre-llama form (no verb, --packet ... --out ...) still runs the design step.
 /// </summary>
 public static class Program
@@ -71,6 +72,34 @@ public static class Program
                     return DesignAll(chat, a, name, outArg, designAttempts, reasoning, ctx);
                 case "implement-all":
                     return ImplementAll(chat, a, name, outArg, implAttempts, implReasoning, ctx, maxTokens, testTimeout);
+                case "patterns":
+                {
+                    // patterns --dir library --program PID --packet requirements.json [--record java-dir --label model]:
+                    // records the verified code in java-dir as PID's pattern, or shows what a prompt for PID would get.
+                    var lib = new PatternLibrary(Need("dir"), a.GetValueOrDefault("embeddings"));
+                    if (a.GetValueOrDefault("record") is { } javaDir)
+                    {
+                        var code = Directory.EnumerateFiles(javaDir, "*.java", SearchOption.AllDirectories)
+                            .ToDictionary(f => Path.GetFileNameWithoutExtension(f), File.ReadAllText);
+                        lib.Record(Need("program"), a.GetValueOrDefault("label") ?? name, Need("packet"), code, []);
+                        Console.WriteLine($"recorded {Need("program")}: {code.Count} file(s); features: {PatternLibrary.Features(Need("packet"))}");
+                        return 0;
+                    }
+                    var text = lib.Retrieve(Need("program"), Need("packet"), out var from);
+                    Console.WriteLine(text is null ? "(no pattern of another program)" : $"from {from}:\n{text[..Math.Min(text.Length, 1500)]}");
+                    return 0;
+                }
+                case "replay":
+                {
+                    // replay --program PID --manifest m --project published-dir --packet requirements.json --run dir-of-a-recorded-run --attempt N
+                    //        [--harness dir]: the feedback this pipeline gives for that run's code after its attempt N.
+                    var cap = ImplementStep.FromManifest(Need("manifest"), Need("program"));
+                    int upTo = int.Parse(Need("attempt"));
+                    var replies = Enumerable.Range(1, upTo).Select(n => Path.Combine(Need("run"), $"implementation.attempt{n}.txt")).Where(File.Exists).Select(File.ReadAllText).ToList();
+                    Console.WriteLine(ImplementStep.Replay(cap, Need("packet"), Need("project"),
+                        a.GetValueOrDefault("harness") ?? Path.Combine(Path.GetTempPath(), "mlcpu-replay", cap.ProgramId), replies, testTimeout));
+                    return 0;
+                }
                 case "probe":
                 {
                     var detail = ImplementStep.ProbeOnly(Need("harness"), Need("program"), Need("manifest"), Need("scenario"));
@@ -165,8 +194,10 @@ public static class Program
 
     /// <summary>
     /// implement-all --programs PID[,PID] --normalization dir --manifest capability-manifest.json --project published-dir --out root
-    /// [--harness-root dir] [--with-examples] [--outline]: one model load; each program's design (root/PID/design.json) implemented,
-    /// compiled and judged by its equivalence test; summary.json in root.
+    /// [--harness-root dir] [--with-examples] [--outline] [--patterns dir [--embeddings http://host:port]]: one model load; each
+    /// program's design (root/PID/design.json) implemented, compiled and judged by its equivalence test; summary.json in root.
+    /// --patterns keeps a pattern library: a program that passes leaves its verified code, and a later program gets the most
+    /// similar pattern of another program in its prompt (BM25, or cosine over an OpenAI-compatible embeddings endpoint).
     /// </summary>
     static int ImplementAll(FallbackBackend chat, Dictionary<string, string?> a, string name, string outRoot, int attempts, string reasoning,
         int ctx, int maxTokens, TimeSpan testTimeout)
@@ -197,7 +228,7 @@ public static class Program
                 }
                 var outline = a.ContainsKey("outline") ? Path.Combine(normalization, pid, "ast-outline.txt") : null;
                 var r = ImplementStep.Run(chat, cap, Path.Combine(normalization, pid, "requirements.json"), design, project, dir, Path.Combine(harnessRoot, pid),
-                    attempts, name, reasoning, maxTokens, testTimeout, examples, notes, outline, ctx);
+                    attempts, name, reasoning, maxTokens, testTimeout, examples, notes, outline, ctx, a.GetValueOrDefault("patterns"), a.GetValueOrDefault("embeddings"));
                 entry["compiled"] = r.Compiled;
                 entry["testsPassed"] = r.TestsPassed;
                 entry["testsTotal"] = r.TestsTotal;

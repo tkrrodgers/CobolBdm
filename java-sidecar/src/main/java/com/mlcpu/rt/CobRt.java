@@ -364,10 +364,15 @@ public final class CobRt {
 
     // ------------------------------------------------------------------ DISPLAY
 
+    /** When set, every DISPLAY is reported here too, in order with CobFile.TRACE's I/O events (the difference probe). */
+    public static volatile java.util.function.Consumer<String> DISPLAY_TRACE;
+
     public static void display(boolean noAdvancing, Object... items) {
         StringBuilder sb = new StringBuilder();
         for (Object o : items) sb.append(displayText(o));
         DisplaySink.current().write(sb.toString(), !noAdvancing);
+        java.util.function.Consumer<String> t = DISPLAY_TRACE;
+        if (t != null) t.accept(sb.toString());
     }
 
     public static String displayText(Object o) {

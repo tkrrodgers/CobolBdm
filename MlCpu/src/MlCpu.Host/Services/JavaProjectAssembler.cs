@@ -83,11 +83,13 @@ public sealed partial class JavaProjectAssembler
 
         var packets = new Dictionary<string, System.Text.Json.Nodes.JsonObject>(StringComparer.OrdinalIgnoreCase);
         var compiledIds = compiled.Select(r => r.Program).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var plans = new List<(DdBindingPlan Plan, IReadOnlyDictionary<string, MlCpu.Cobol.Analysis.CobolProgram> Models)>();
         if (options.ProgramSources is { } sources)
             foreach (var j in jobs.Where(j => j.Jcl is not null))
             {
                 var suffix = jobs.Count > 1 ? "-" + j.Name : "";
                 var plan = DdBindingPlanner.Plan(j.Jcl!, sources, options.AsOf, out var models);
+                plans.Add((plan, models));
                 files.Set($"DdBindingPlan{suffix}.json", DdBindingPlanner.ToJson(plan));
                 var replay = ReplayPlanBuilder.Build(plan, models, slug);
                 files.Set($"replay/ReplayPlan{suffix}.json", ReplayPlanBuilder.BuildJson(plan, models, slug));
@@ -103,6 +105,7 @@ public sealed partial class JavaProjectAssembler
 
         var ledgers = ProjectionPipeline.Run(files, units, slug, new ProjectionOptions(options.DomainPartition, options.DomainEvidenceRoot, options.OrchestrationEvidenceRoot))
             .Prepend(capabilityLedger).ToList();
+        ledgers.Add(RecordKits(files, capabilities, plans, compiled));
 
         files.Set("MIGRATION.md", Migration(name, slug, results, jobs, ledgers, options.DomainPartition, capabilities));
         var frontiers = results.SelectMany(r => r.AbstainedSteps.Select(a => (r.Program, a))).ToList();
@@ -111,6 +114,51 @@ public sealed partial class JavaProjectAssembler
                 string.Join("\n", frontiers.Select(f => $"- `{f.Program}` {f.a}")) + "\n");
         return new JavaProject(slug, "com.mlcpu.core", files.All().Select(f => new JavaProjectFile(f.Path, f.Content, f.Language)).ToList(),
             results.Count, results.Count(r => r.Compiled), results.Count(r => r.Verdict == "PASS"), results.Sum(r => r.Lowered), results.Sum(r => r.Abstained), seeds, ledgers);
+    }
+
+    /// <summary>
+    /// Pipeline v2: each capability's record kit (RecordKitBuilder): typed record and report-line classes in
+    /// &lt;package&gt;.records with their conformance test, the prompt's summary (normalization/&lt;PID&gt;/record-kit.md) and the
+    /// layouts behind field-level feedback (normalization/&lt;PID&gt;/record-layouts.json). The requirements packet is untouched.
+    /// </summary>
+    static ProjectionLedger RecordKits(ProjectFiles files, IReadOnlyList<CapabilityImport> capabilities,
+        List<(DdBindingPlan Plan, IReadOnlyDictionary<string, MlCpu.Cobol.Analysis.CobolProgram> Models)> plans, IReadOnlyList<JavaTranspileResult> compiled)
+    {
+        var ledger = new ProjectionLedger("RecordKit");
+        var kits = new List<object>();
+        foreach (var cap in capabilities)
+        {
+            var pid = cap.ProgramId;
+            var found = plans.SelectMany(p => p.Plan.Steps.Select(s => (p.Models, Step: s)))
+                .Where(x => x.Step.Program is not null && (x.Step.Program.Equals(pid, StringComparison.OrdinalIgnoreCase)
+                            || x.Step.CallClosure.Contains(pid, StringComparer.OrdinalIgnoreCase)))
+                .OrderBy(x => x.Step.Program!.Equals(pid, StringComparison.OrdinalIgnoreCase) ? 0 : 1).FirstOrDefault();
+            if (found.Step is null || !found.Models.TryGetValue(pid, out var model) || !found.Models.TryGetValue(found.Step.Program!, out var host))
+            {
+                ledger.Skip(pid, "no job step runs or calls the program");
+                continue;
+            }
+            if (!compiled.Any(r => r.Program.Equals(pid, StringComparison.OrdinalIgnoreCase)))
+            {
+                ledger.Skip(pid, "the program did not transpile (no faithful class to test the kit against)");
+                continue;
+            }
+            try
+            {
+                var kit = RecordKitBuilder.Build(new RecordKitRequest(pid, cap.Package, cap.Kind, model, host, found.Step.Bindings, "com.mlcpu.core.Prog_" + pid));
+                foreach (var (path, content) in kit.Files) files.Set(path, content);
+                files.Set($"normalization/{pid}/record-kit.md", kit.Summary);
+                files.Set($"normalization/{pid}/record-layouts.json", kit.LayoutsJson);
+                ledger.Applied.Add(pid);
+                kits.Add(new { programId = pid, package = kit.Package, classes = kit.Classes, notes = kit.Notes });
+            }
+            catch (Exception e)
+            {
+                ledger.Skip(pid, "record kit failed: " + e.Message);
+            }
+        }
+        ledger.Facts["kits"] = kits;
+        return ledger;
     }
 
     static readonly JsonSerializerOptions Json = new() { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };

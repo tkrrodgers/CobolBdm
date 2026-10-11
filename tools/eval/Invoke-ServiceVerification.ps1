@@ -24,13 +24,18 @@ if (-not $env:JAVA_HOME) { $env:JAVA_HOME = [Environment]::GetEnvironmentVariabl
 $cfg = Get-Content $Config -Raw | ConvertFrom-Json
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $root = $cfg.evalRoot
-$hostUrl = 'http://localhost:5190'
+# Optional layout of the evaluation root (pipeline v2 runs keep their own workspace, runs and harness folders).
+$wsDir = if ($cfg.workspace) { $cfg.workspace } else { 'workspace' }
+$runsDir = if ($cfg.runs) { $cfg.runs } else { 'runs' }
+$harnessDir = if ($cfg.harness) { $cfg.harness } else { 'harness' }
+$verifyPort = if ($cfg.verifyPort) { $cfg.verifyPort } else { 5190 }
+$hostUrl = "http://localhost:$verifyPort"
 
 function Ensure-Host {
     try { if ((Invoke-WebRequest "$hostUrl/health" -UseBasicParsing -TimeoutSec 5).StatusCode -eq 200) { return } } catch { }
     $proj = Join-Path $repo 'MlCpu\src\MlCpu.Host'
-    $ws = Join-Path $root 'workspace\projects'
-    $settings = Join-Path $root 'workspace\settings.json'
+    $ws = Join-Path $root "$wsDir\projects"
+    $settings = Join-Path $root "$wsDir\settings.json"
     if (-not (Test-Path $settings)) { Set-Content $settings '{}' -Encoding UTF8 }
     Write-Host "starting the isolated host on $hostUrl (workspace $ws)"
     Start-Process dotnet -ArgumentList @('run', '--project', $proj, '--no-build', '--urls', $hostUrl, "--MlCpu:WorkspaceRoot=$ws", "--MlCpu:SettingsFile=$settings") `
@@ -46,8 +51,8 @@ function Ensure-Host {
 Ensure-Host
 foreach ($e in $cfg.estates) {
     if ($Projects -and $Projects -notcontains $e.project) { continue }
-    $publish = Get-ChildItem (Join-Path $root "workspace\projects\$($e.project)\publish") -Directory | Select-Object -First 1 -ExpandProperty FullName
-    $outDir = Join-Path $root "runs\$Arm\$Model\$($e.project)"
+    $publish = Get-ChildItem (Join-Path $root "$wsDir\projects\$($e.project)\publish") -Directory | Select-Object -First 1 -ExpandProperty FullName
+    $outDir = Join-Path $root "$runsDir\$Arm\$Model\$($e.project)"
     New-Item -ItemType Directory -Force $outDir | Out-Null
     $programs = @()
     if ($Service) { $svc = (Resolve-Path $Service).Path }

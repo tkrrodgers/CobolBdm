@@ -14,7 +14,8 @@ $ErrorActionPreference = 'Stop'
 if (-not $Config) { $Config = Join-Path $PSScriptRoot 'eval-config.json' }
 $cfg = Get-Content $Config -Raw | ConvertFrom-Json
 $root = $cfg.evalRoot
-$log = Join-Path $root 'queue.log'
+$runsDir = if ($cfg.runs) { $cfg.runs } else { 'runs' }
+$log = Join-Path $root "$runsDir-queue.log"
 # Appends a line for people to read; a reader holding the file open (Windows sharing) delays it, never stops the run.
 function Append([string]$path, [string]$text) {
     for ($i = 0; $i -lt 40; $i++) {
@@ -30,7 +31,7 @@ Log "queue started (pid $PID): $($Order -join ', ')"
 foreach ($entry in $Order) {
     $arm, $model = $entry -split ':', 2
     $m = $cfg.models | Where-Object { $_.name -eq $model }
-    $runDir = Join-Path $root "runs\$arm\$model"
+    $runDir = Join-Path $root "$runsDir\$arm\$model"
     if (Done $runDir) { Log "$entry already run; skipped" }
     else {
         if ($m.downloadLog) {
@@ -48,16 +49,16 @@ foreach ($entry in $Order) {
         if (Done $runDir) { Log "$entry finished outside the queue; not run again" }
         else {
             Log "$entry`: run"
-            & powershell -ExecutionPolicy Bypass -File (Script 'Invoke-ModelEval.ps1') -Model $model -Arm $arm *> (Join-Path $root "$arm-$model.console.log")
+            & powershell -ExecutionPolicy Bypass -File (Script 'Invoke-ModelEval.ps1') -Model $model -Arm $arm -Config $Config *> (Join-Path $root "$runsDir-$arm-$model.console.log")
             Log "$entry`: run finished (exit $LASTEXITCODE)"
         }
     }
     $verified = @($cfg.estates | Where-Object { Test-Path (Join-Path $runDir "$($_.project)\service-verification.json") }).Count -eq @($cfg.estates).Count
     if ((Done $runDir) -and -not $verified) {
         Log "$entry`: service verification"
-        & powershell -ExecutionPolicy Bypass -File (Script 'Invoke-ServiceVerification.ps1') -Model $model -Arm $arm *> (Join-Path $root "$arm-$model.verify.log")
+        & powershell -ExecutionPolicy Bypass -File (Script 'Invoke-ServiceVerification.ps1') -Model $model -Arm $arm -Config $Config *> (Join-Path $root "$runsDir-$arm-$model.verify.log")
         Log "$entry`: verification finished (exit $LASTEXITCODE)"
     }
-    & powershell -ExecutionPolicy Bypass -File (Script 'New-EvalReport.ps1') *> (Join-Path $root 'report.console.log')
+    & powershell -ExecutionPolicy Bypass -File (Script 'New-EvalReport.ps1') -Config $Config *> (Join-Path $root "$runsDir-report.console.log")
 }
 Log 'queue finished'

@@ -28,7 +28,11 @@ if (-not $m) { throw "unknown model '$Model' (eval-config.json)" }
 $armCfg = $cfg.arms.$Arm
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $root = $cfg.evalRoot
-$runDir = Join-Path $root "runs\$Arm\$Model"
+# Optional layout of the evaluation root (pipeline v2 runs keep their own workspace, runs and harness folders).
+$wsDir = if ($cfg.workspace) { $cfg.workspace } else { 'workspace' }
+$runsDir = if ($cfg.runs) { $cfg.runs } else { 'runs' }
+$harnessDir = if ($cfg.harness) { $cfg.harness } else { 'harness' }
+$runDir = Join-Path $root "$runsDir\$Arm\$Model"
 New-Item -ItemType Directory -Force $runDir | Out-Null
 
 # A split model is loaded from its first shard.
@@ -97,7 +101,7 @@ $completed = $false
 try {
     foreach ($e in $cfg.estates) {
         if ($Projects -and $Projects -notcontains $e.project) { continue }
-        $publish = Get-ChildItem (Join-Path $root "workspace\projects\$($e.project)\publish") -Directory | Select-Object -First 1 -ExpandProperty FullName
+        $publish = Get-ChildItem (Join-Path $root "$wsDir\projects\$($e.project)\publish") -Directory | Select-Object -First 1 -ExpandProperty FullName
         $out = Join-Path $runDir $e.project
         if (Test-Path $out) { Remove-Item -Recurse -Force $out }
         New-Item -ItemType Directory -Force $out | Out-Null
@@ -107,7 +111,7 @@ try {
         $design = @($dll, 'design-all') + $common + @('--attempts', "$($armCfg.designAttempts)")
         if ($armCfg.outline) { $design += '--outline' }
         $implement = @($dll, 'implement-all') + $common + @('--manifest', (Join-Path $publish 'capability-manifest.json'), '--project', $publish,
-            '--harness-root', (Join-Path $root "harness\$Arm\$Model\$($e.project)"), '--impl-attempts', "$($armCfg.implementationAttempts)")
+            '--harness-root', (Join-Path $root "$harnessDir\$Arm\$Model\$($e.project)"), '--impl-attempts', "$($armCfg.implementationAttempts)")
         if ($armCfg.outline) { $implement += '--outline' }
         if ($armCfg.examples) { $implement += '--with-examples' }
         foreach ($step in @(@{ name = 'design'; args = $design }, @{ name = 'implement'; args = $implement })) {

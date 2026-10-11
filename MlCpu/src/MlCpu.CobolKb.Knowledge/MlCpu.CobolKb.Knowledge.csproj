@@ -3,6 +3,10 @@
     <RootNamespace>MlCpu.CobolKb.Knowledge</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <!-- The record kit's support class, copied into every capability's records package (RecordKitBuilder). -->
+    <EmbeddedResource Include="RecordKit\Pic.java" LogicalName="MlCpu.CobolKb.Knowledge.RecordKit.Pic.java" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\MlCpu.Core\MlCpu.Core.csproj" />
     <ProjectReference Include="..\MlCpu.Cobol.Analysis\MlCpu.Cobol.Analysis.csproj" />
   </ItemGroup>

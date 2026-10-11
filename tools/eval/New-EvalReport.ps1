@@ -10,14 +10,23 @@ $ErrorActionPreference = 'Stop'
 if (-not $Config) { $Config = Join-Path $PSScriptRoot 'eval-config.json' }
 $cfg = Get-Content $Config -Raw | ConvertFrom-Json
 $root = $cfg.evalRoot
-$baseline = $cfg.models[0].name
+$runsDir = if ($cfg.runs) { $cfg.runs } else { 'runs' }
+$reportsDir = if ($cfg.reports) { $cfg.reports } else { 'reports' }
+$baseline = if ($cfg.baseline) { $cfg.baseline.label } else { $cfg.models[0].name }
 function J([string]$p) { if (Test-Path $p) { Get-Content $p -Raw | ConvertFrom-Json } else { $null } }
 function Sum($xs) { $s = ($xs | Measure-Object -Sum).Sum; if ($null -eq $s) { 0 } else { $s } }
 
 $cells = @(); $runs = @()
-foreach ($arm in @('A', 'B')) {
-    foreach ($m in $cfg.models) {
-        $dir = Join-Path $root "runs\$arm\$($m.name)"
+# Pipeline v2 runs are compared with a baseline run kept in another folder (cfg.baseline: label, runs folder, arm, model).
+$sources = @(foreach ($arm in @('A', 'B')) { foreach ($m in $cfg.models) { [pscustomobject]@{ arm = $arm; model = $m; label = $m.name; dir = Join-Path $root "$runsDir\$arm\$($m.name)" } } })
+if ($cfg.baseline) {
+    $bm = [pscustomobject]@{ name = $cfg.baseline.model; lab = $cfg.baseline.lab; precision = $cfg.baseline.precision }
+    $sources = @([pscustomobject]@{ arm = $cfg.baseline.arm; model = $bm; label = $cfg.baseline.label; dir = Join-Path $root "$($cfg.baseline.runs)\$($cfg.baseline.arm)\$($cfg.baseline.model)" }) + $sources
+}
+foreach ($src in $sources) {
+    $arm = $src.arm; $m = $src.model
+    if ($true) {
+        $dir = $src.dir
         if (-not (Test-Path $dir)) { continue }
         $server = J (Join-Path $dir 'server.json')
         $services = @()
@@ -39,7 +48,7 @@ foreach ($arm in @('A', 'B')) {
                 $implMin = if ($i) { [math]::Round((Sum ($atts | ForEach-Object { $_.seconds })) / 60, 1) } else { 0 }
                 $r = if ($i) { $i.result } else { $null }
                 $cells += [pscustomobject][ordered]@{
-                    arm = $arm; model = $m.name; project = $e.project; program = $prog
+                    arm = $arm; model = $src.label; project = $e.project; program = $prog
                     designValid = [bool]($d -and $d.valid); designAttempts = if ($d) { @($d.attempts).Count } else { 0 }
                     compiled = [bool]($r -and $r.compiled); passed = if ($r) { [int]$r.testsPassed } else { 0 }; total = if ($r) { [int]$r.testsTotal } else { 0 }
                     passedAll = [bool]($r -and $r.compiled -and $r.testsTotal -gt 0 -and $r.testsPassed -eq $r.testsTotal)
@@ -52,7 +61,7 @@ foreach ($arm in @('A', 'B')) {
             }
         }
         $runs += [pscustomobject][ordered]@{
-            arm = $arm; model = $m.name; lab = $m.lab; precision = $m.precision; loadSeconds = $server.loadSeconds
+            arm = $arm; model = $src.label; lab = $m.lab; precision = $m.precision; loadSeconds = $server.loadSeconds
             gpuMiB = if ($server) { ($server.snapshots | Measure-Object gpuMemoryUsedMiB -Maximum).Maximum } else { $null }
             serverRamGB = if ($server) { ($server.snapshots | Measure-Object serverWorkingSetGB -Maximum).Maximum } else { $null }
             wallMinutes = $server.minutes; harnessCommit = $server.harnessCommit; buildInfo = $server.buildInfo; services = $services
@@ -63,10 +72,10 @@ foreach ($arm in @('A', 'B')) {
 
 $md = New-Object System.Collections.Generic.List[string]
 $md.Add('# Model evaluation: results'); $md.Add('')
-$md.Add("Generated $(Get-Date -Format 'yyyy-MM-dd HH:mm') from ``$root\runs``. Protocol: ``tools/eval/PROTOCOL.md``. Runtime: $($cfg.llamaBuild).")
+$md.Add("Generated $(Get-Date -Format 'yyyy-MM-dd HH:mm') from ``$root\$runsDir``$(if ($cfg.baseline) { " (baseline: $($cfg.baseline.label), ``$root\$($cfg.baseline.runs)``)" }). Protocol: ``tools/eval/PROTOCOL.md``$(if ($cfg.pipeline) { "; pipeline $($cfg.pipeline)" }). Runtime: $($cfg.llamaBuild).")
 $md.Add('')
-$self = foreach ($p in $cfg.estates.project) { J (Join-Path $root "runs\selftest\published\$p\service-verification.json") }
-$selfG = foreach ($p in $cfg.estates.project) { J (Join-Path $root "runs\selftest\gemma-2026-10-09\$p\service-verification.json") }
+$self = foreach ($p in $cfg.estates.project) { J (Join-Path $root "$runsDir\selftest\published\$p\service-verification.json") }
+$selfG = foreach ($p in $cfg.estates.project) { J (Join-Path $root "$runsDir\selftest\gemma-2026-10-09\$p\service-verification.json") }
 if ($self -or $selfG) {
     $md.Add('## Harness self-tests'); $md.Add('')
     $md.Add('| Service | Estate | Tests | Job outputs vs GnuCOBOL |'); $md.Add('|---|---|---|---|')
@@ -99,8 +108,9 @@ $md.Add('| Challenger | 1. Arm A parity (all programs, 17/17 outputs) | 2a. Arm 
 $md.Add('|---|---|---|---|---|')
 $gA = @($cells | Where-Object { $_.arm -eq 'A' -and $_.model -eq $baseline })
 $gB = @($cells | Where-Object { $_.arm -eq 'B' -and $_.model -eq $baseline })
-foreach ($m in ($cfg.models | Select-Object -Skip 1)) {
+foreach ($m in ($cfg.models | Where-Object { $_.name -ne $baseline })) {
     $a = @($cells | Where-Object { $_.arm -eq 'A' -and $_.model -eq $m.name })
+    if (-not $a -and $cfg.baseline) { continue }
     $b = @($cells | Where-Object { $_.arm -eq 'B' -and $_.model -eq $m.name })
     $ra = $runs | Where-Object { $_.arm -eq 'A' -and $_.model -eq $m.name }
     $outs = Sum ($ra.services | ForEach-Object { $_.outputs }); $match = Sum ($ra.services | ForEach-Object { $_.match })
@@ -117,8 +127,8 @@ foreach ($m in ($cfg.models | Select-Object -Skip 1)) {
     $md.Add("| $($m.name) | $parity | $armB | $eff | $wall |")
 }
 $md.Add('')
-New-Item -ItemType Directory -Force (Join-Path $root 'reports') | Out-Null
+New-Item -ItemType Directory -Force (Join-Path $root $reportsDir) | Out-Null
 [ordered]@{ schema = 'mlcpu.model-eval-results.v1'; generated = (Get-Date).ToString('o'); runs = $runs; programs = $cells } |
-    ConvertTo-Json -Depth 8 | Set-Content (Join-Path $root 'reports\results.json') -Encoding UTF8
-$md | Set-Content (Join-Path $root 'reports\REPORT.md') -Encoding UTF8
-Write-Host "report: $(Join-Path $root 'reports\REPORT.md')"
+    ConvertTo-Json -Depth 8 | Set-Content (Join-Path $root "$reportsDir\results.json") -Encoding UTF8
+$md | Set-Content (Join-Path $root "$reportsDir\REPORT.md") -Encoding UTF8
+Write-Host "report: $(Join-Path $root "$reportsDir\REPORT.md")"
