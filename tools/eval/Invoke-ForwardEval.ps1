@@ -115,7 +115,7 @@ try {
         }
         'slices' {
             Run (@('fwd-slices') + $common + @('--seed', "$Seed", '--architecture', (Join-Path $out 'architecture.json'),
-                    '--normalization', ($cfg.normalization -join ';'), '--attempts', "$($cfg.design.attempts)", '--max-tokens', "$($cfg.design.maxTokens)",
+                    '--normalization', ($cfg.normalization -join ';'), '--attempts', "$($cfg.design.attempts)", '--max-tokens', "$($cfg.design.slicesMaxTokens)",
                     '--out', $out)) 'slices' | Out-Null
         }
         'implement' {

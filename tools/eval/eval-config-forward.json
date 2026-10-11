@@ -13,7 +13,7 @@
     "C:\\Users\\Tomrodgers\\Source\\modelEval\\workspace-v2\\projects\\carddemo\\publish\\carddemo-normalized-spring\\normalization",
     "C:\\Users\\Tomrodgers\\Source\\modelEval\\workspace-v2\\projects\\zopeneditor-sample\\publish\\zopeneditor-sample-normalized-spring\\normalization"
   ],
-  "design": { "seeds": [42, 7, 1234], "attempts": 3, "maxTokens": 32768 },
+  "design": { "seeds": [42, 7, 1234], "attempts": 3, "maxTokens": 32768, "slicesMaxTokens": 45000 },
   "review": { "attempts": 3, "maxTokens": 16384 },
   "implementation": { "seed": 42, "attempts": 15, "maxTokens": 49152, "plateau": 3, "testTimeoutMinutes": 15 },
   "models": [
