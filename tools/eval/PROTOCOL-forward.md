@@ -1,7 +1,7 @@
 # Forward-engineering evaluation protocol
 
-**Status:** revision 3, adopted 2026-10-10. Phase 0 (the SME package) is built before any model runs; phases 1 and 2 run
-on pipeline v2 (`PIPELINE-V2.md`). Phase 3 is deferred.
+**Status:** revision 3, adopted 2026-10-10. Phases 0, 1 and 2 were completed on 2026-10-10 and 11; the results are in
+section 14. Phase 3 is deferred.
 
 **Questions.**
 
@@ -320,3 +320,87 @@ workbench). The roles shown are filled from section 8: Gemma for everything unle
 1. Whether an external model (Gemini 3.8 Flash, already used through the file-exchange backend) joins the design round as a
    ceiling reference outside the decision rules. Not in this round.
 2. Phase 3 after a forward implementer is chosen.
+
+## 14. Results (2026-10-10 and 11)
+
+**Answers.**
+1. **Gemma 4 can build into a new architecture.** It passed forward engineering in every run of both arms. On its own design
+   (arm S) it was exact in all three seeds: 285/285 scenarios and architecture tests green.
+2. **gpt-oss-120b is not a better designer for this workbench.**
+   * Its architectures scored higher on the blind rubric, 3.18 against 2.83. They were more complete: every decision D-n
+     recorded and a finer rule trace.
+   * The margin is under the 0.5 the role needs.
+   * Its designs also stated rules wrongly or vaguely. Gemma, implementing them, inherited those mistakes: no exact result in
+     three seeds, and three times the attempts.
+   * Decision (section 8): **no role change. Gemma designs and implements.** The Forward Engineering tab is added
+     (section 9), because Gemma passes.
+
+**Phase 0.** `forward/cas`, gate passed (`gate.json`):
+* the reference implementation passes 285/285 scenarios (58 public, 227 hidden) and 7/7 architecture tests;
+* PIT mutation score 98.2% on the context modules;
+* all 68 rules traced;
+* the cross-check against the faithful programs: 200 scenarios agree and 44 differ only by the decisions D-1 to D-11.
+
+Building it found two errors in the SME's own reading, both caught by the faithful programs and fixed before any model ran:
+* SAM update amounts read 9 characters, so `+000000099` is 0.09;
+* `PERFORM ... WITH TEST AFTER` writes a 13th month into the occupation (D-11).
+
+**Design round** (blind rubric by a fresh scorer; consistency re-score of two random designs within one point on every
+criterion):
+
+| Model | Seed | Rubric | C1 | C2 | C3 | C4 | C5 | C6 | Valid (attempts) | Minutes |
+|---|---|---|---|---|---|---|---|---|---|---|
+| gpt-oss-120b | 42 | **3.35** (chosen) | 3 | 4 | 3 | 4 | 3 | 3 | yes (1) | 2.0 |
+| gpt-oss-120b | 7 | 3.30 | 3 | 3 | 4 | 4 | 3 | 3 | yes (1) | 1.4 |
+| gpt-oss-120b | 1234 | 2.90 | 3 | 3 | 3 | 3 | 3 | 2 | yes (1) | 1.7 |
+| Gemma 4 | 7 | **3.00** (chosen) | 3 | 3 | 3 | 4 | 2 | 3 | yes (1) | 2.1 |
+| Gemma 4 | 42 | 2.75 | 2 | 3 | 3 | 3 | 3 | 3 | yes (1) | 1.9 |
+| Gemma 4 | 1234 | 2.75 | 2 | 3 | 3 | 4 | 2 | 3 | yes (2) | 3.3 |
+
+* Means: gpt-oss 3.18, Gemma 2.83 (margin 0.35).
+* All six designs passed the automated checks.
+* Every design is middling on C1: aggregates are named, but the port records serve as the model.
+* None states the closing-balance formula or the interest-cycle selection of the statement.
+* **Peer review is uninformative.** Each model gave the other's designs 5/5 on almost every criterion (gpt-oss: 5.0 for all
+  three; Gemma: 4.85 to 5.0) against the SME's 2.75 to 3.35. Models do not discriminate as reviewers here.
+* The slice designs (1b) were valid for both models. gpt-oss needed one second attempt and Gemma two. gpt-oss's slice designs are two to three times longer.
+
+**Implementation** (Gemma, 15 attempts per slice; seed 42, then seeds 7 and 1234 because the first result was close):
+
+| Arm | Design by | Seed | Hidden | Exact | Slices fully passed | Attempts | Minutes |
+|---|---|---|---|---|---|---|---|
+| S | Gemma | 42 | 227/227 | yes | 4/4 | 7 | 11.6 |
+| S | Gemma | 7 | 227/227 | yes | 4/4 | 12 | 20.8 |
+| S | Gemma | 1234 | 227/227 | yes | 4/4 | 10 | 13.3 |
+| X | gpt-oss-120b | 42 | 226/227 | no | 3/4 | 25 | 35.5 |
+| X | gpt-oss-120b | 7 | 222/227 | no | 2/4 | 28 | 48.6 |
+| X | gpt-oss-120b | 1234 | 226/227 | no | 3/4 | 37 | 49.1 |
+
+* Means: S 100% hidden, 9.7 attempts, 15.2 minutes; X 99.0% hidden, 30 attempts, 44.4 minutes.
+* Every run: architecture 7/7, public 58/58, so every run passes (hidden at least 90%).
+* **Why arm X misses.** Each hidden failure traces to a rule that gpt-oss's design stated vaguely or wrongly; the digests
+  state them correctly, and arm S got them right in every seed:
+  * UPD-05 precedence (`INVALID_ACTION` wins): the design traced it to `validateAction` without the precedence, and the code
+    threw `NOT_NUMERIC` first (seeds 42, 7);
+  * POST-04: the design states the invariant "current balance never exceeds credit limit" and invents "category balances are
+    never negative ... OVERLIMIT". The code summed credit and debit (seed 7);
+  * INT-02 before INT-04: the code looked up the card before skipping an already closed account (seed 1234).
+* **Attempts and minutes are inflated in arm X by a harness artifact.** A hidden failure carried over from an earlier slice
+  counts against later slices, which cannot change that module, so they ran to the plateau (7 to 12 attempts) after their own
+  scenarios had passed. The robust measures are the hidden pass rate and the slices fully passed. A fix for the next round:
+  the plateau and the hidden feedback should use the slice's own scenarios, and earlier slices' regressions should still be
+  reported.
+* **Arm S's code is plain.** It is services over the port records, 11 classes in 959 lines (seed 42), with no shortcuts:
+  no file or classpath access, no reflection, no scenario ids. The scenarios judge behaviour, the rubric judges structure.
+
+**Runs:**
+* Harness: `MlCpu.DesignModel` and `forward/cas` were unchanged across every forward run (from 8664442). The recorded
+  commits differ only in the runner, the report and the workbench.
+* GPU time: design and reviews about 30 minutes; implementation about 3 hours.
+* Results: `<evalRoot>\forward\REPORT.md` and `results.json` (the Forward Engineering page).
+
+**Next, if the owner wants them:**
+* the harness fix above, and "the later copy of a file returned twice wins" (one first attempt was a contract problem);
+* phase 3 (integration) with Gemma as designer and implementer;
+* a second design round with the rubric's weak points (C1, C5) made explicit in the spec, to see whether either model
+  designs better when told.

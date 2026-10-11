@@ -111,6 +111,7 @@ foreach ($dir in Get-ChildItem (Join-Path $fwd 'implementation') -Directory -Err
                 architectureGreen = ($f.compiled -and $f.architecture.total -gt 0 -and $f.architecture.passed -eq $f.architecture.total) } } else { $null }
         attempts = (@($s.slices) | Measure-Object attempts -Sum).Sum
         attemptsToOwnPass = if (@($slices | Where-Object { $null -eq $_.ownScenariosPassedAt }).Count) { $null } else { (@($slices) | ForEach-Object { $_.ownScenariosPassedAt } | Measure-Object -Sum).Sum }
+        slicesOwnPassed = "$(@($slices | Where-Object { $null -ne $_.ownScenariosPassedAt }).Count)/$(@($slices).Count)"
         minutes = $s.minutes; passed = [bool]$s.passed; exact = [bool]$s.exact; complete = [bool]$f
     }
 }
@@ -124,6 +125,7 @@ foreach ($g in $arms | Where-Object complete | Group-Object arm) {
         meanMinutes = [math]::Round((@($g.Group) | Measure-Object minutes -Average).Average, 1)
         exact = "$(@($g.Group | Where-Object exact).Count)/$(@($g.Group).Count)"
         passed = "$(@($g.Group | Where-Object passed).Count)/$(@($g.Group).Count)"
+        slicesOwnPassed = "$((@($g.Group) | ForEach-Object { [int]($_.slicesOwnPassed -split '/')[0] } | Measure-Object -Sum).Sum)/$((@($g.Group) | ForEach-Object { [int]($_.slicesOwnPassed -split '/')[1] } | Measure-Object -Sum).Sum)"
     }
 }
 
@@ -137,7 +139,8 @@ $gScore = ($designers | Where-Object model -eq $gemma).meanRubric
 $cScore = ($designers | Where-Object model -eq $challenger).meanRubric
 $lines = @()
 $forwardPass = [bool](@($arms | Where-Object passed).Count)
-$lines += if ($forwardPass) { "Gemma passes forward engineering (arm(s) $((@($arms | Where-Object passed) | ForEach-Object arm) -join ', ')): the Forward Engineering tab is added." } else { 'Gemma does not pass forward engineering in any arm: no Forward Engineering tab.' }
+$passedRuns = ($arms | Where-Object complete | Group-Object arm | ForEach-Object { "arm $($_.Name) $(@($_.Group | Where-Object passed).Count)/$(@($_.Group).Count) run(s), exact $(@($_.Group | Where-Object exact).Count)" }) -join '; '
+$lines += if ($forwardPass) { "Gemma passes forward engineering ($passedRuns): the Forward Engineering tab is added." } else { 'Gemma does not pass forward engineering in any arm: no Forward Engineering tab.' }
 $designer = $gemma
 if ($null -ne $gScore -and $null -ne $cScore -and $S -and $X -and $S.final -and $X.final) {
     $margin = [math]::Round($cScore - $gScore, 2)
@@ -150,7 +153,7 @@ if ($null -ne $gScore -and $null -ne $cScore -and $S -and $X -and $S.final -and 
     $close = [math]::Abs($X.final.hiddenRate - $S.final.hiddenRate) -lt 10 -or ($X.final.hiddenRate -eq $S.final.hiddenRate -and [math]::Abs($X.attempts - $S.attempts) -lt 0.3 * [math]::Max($X.attempts, $S.attempts))
     if ($close -and $reruns -eq 0) { $lines += 'Close result (hidden pass rates within 10 points, or attempts within 30% at equal rates): reruns with seeds 7 and 1234 are required before a conclusion.' }
     if ($reruns -gt 0 -and $mS -and $mX) {
-        $lines += "Over seeds $($mS.seeds) (S) and $($mX.seeds) (X): mean hidden $($mS.meanHiddenRate)% (S) against $($mX.meanHiddenRate)% (X); exact $($mS.exact) against $($mX.exact); mean attempts $($mS.meanAttempts) against $($mX.meanAttempts) (to each slice's own pass: $($mS.meanAttemptsToOwnPass) against $($mX.meanAttemptsToOwnPass)); mean minutes $($mS.meanMinutes) against $($mX.meanMinutes)."
+        $lines += "Over seeds $($mS.seeds) (S) and $($mX.seeds) (X): mean hidden $($mS.meanHiddenRate)% (S) against $($mX.meanHiddenRate)% (X); exact $($mS.exact) against $($mX.exact); slices whose own scenarios all passed $($mS.slicesOwnPassed) against $($mX.slicesOwnPassed); mean attempts $($mS.meanAttempts) against $($mX.meanAttempts); mean minutes $($mS.meanMinutes) against $($mX.meanMinutes)."
         if ($designer -eq $challenger -and $mX.meanHiddenRate -lt $mS.meanHiddenRate) { $designer = $gemma; $lines += 'Over all seeds arm X stays below arm S: no role change.' }
     }
 } else { $lines += 'The design comparison is incomplete (scores or an arm are missing).' }
@@ -184,8 +187,8 @@ foreach ($a in $arms) {
     $md.Add("| $($a.arm) | $($a.seed) | $($a.designer) | $sl | $($a.final.architecture) | $($a.final.public) | $($a.final.hidden) ($($a.final.hiddenRate)%) | $($a.attempts) | $($a.attemptsToOwnPass) | $($a.minutes) | $(if ($a.exact) { 'exact' } elseif ($a.passed) { 'passed' } else { 'not passed' }) |")
 }
 if ($armMeans.Count) {
-    $md.Add(''); $md.Add('| Arm | Seeds | Mean hidden | Exact | Passed | Mean attempts | Mean attempts to own pass | Mean minutes |'); $md.Add('|---|---|---|---|---|---|---|---|')
-    foreach ($m in $armMeans) { $md.Add("| $($m.arm) | $($m.seeds) | $($m.meanHiddenRate)% | $($m.exact) | $($m.passed) | $($m.meanAttempts) | $($m.meanAttemptsToOwnPass) | $($m.meanMinutes) |") }
+    $md.Add(''); $md.Add('| Arm | Seeds | Mean hidden | Exact | Passed | Slices fully passed | Mean attempts | Mean minutes |'); $md.Add('|---|---|---|---|---|---|---|---|')
+    foreach ($m in $armMeans) { $md.Add("| $($m.arm) | $($m.seeds) | $($m.meanHiddenRate)% | $($m.exact) | $($m.passed) | $($m.slicesOwnPassed) | $($m.meanAttempts) | $($m.meanMinutes) |") }
 }
 Set-Content (Join-Path $fwd 'REPORT.md') $md -Encoding UTF8
 Write-Host "wrote $fwd\REPORT.md and results.json"
