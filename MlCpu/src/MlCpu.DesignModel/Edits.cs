@@ -22,25 +22,50 @@ public static class Edits
         RegexOptions.Singleline);
 
     public const string Instructions = """
-        Answer with edits where you change a few lines: one block per change, in this exact form (the file name, then lines copied
-        exactly from the current file, then the lines that replace them):
+        Return every file you change, complete, each in its own ```java block; files you do not return stay as they are.
+        For a change of a few lines you may send an edit instead of the whole file:
         <<<<<<< SEARCH Name.java
-        lines of the current file, exactly as they are
+        the lines to replace, copied exactly from the current file
         =======
-        the replacement lines
+        the lines that take their place
         >>>>>>> REPLACE
-        The SEARCH lines must occur once in that file; include a few surrounding lines when a line is not unique. Return a whole
-        file in a ```java block instead when you rewrite most of it or add a new class. Files you do not touch stay as they are.
+        The SEARCH lines are removed and the REPLACE lines are put in their place, so to add lines repeat a neighbouring line in
+        both parts. For example, to add an import:
+        <<<<<<< SEARCH Name.java
+        import java.util.List;
+        =======
+        import java.util.List;
+        import java.util.Map;
+        >>>>>>> REPLACE
+        The SEARCH lines must occur once in that file; include a few surrounding lines when a line is not unique. (Imports of the
+        record kit, the platform and common java.* classes are added for you when a file uses them.)
         """;
 
-    /// <summary>The edit blocks of a reply, and the reply without them (so fences that only held edits are dropped).</summary>
+    static readonly Regex FileRef = new(@"^[\w./\\-]*\.java$|^[A-Z]\w*$");
+    static readonly Regex JavaFileMention = new(@"([A-Za-z_]\w*)\.java");
+
+    /// <summary>
+    /// The edit blocks of a reply, and the reply without them (so fences that only held edits are dropped). The file is named
+    /// after SEARCH, or else by the last *.java mentioned before the block (a "File: …" heading); text after SEARCH that is not
+    /// a file name is the first SEARCH line.
+    /// </summary>
     public static (List<Edit> Edits, string Remainder) Extract(string reply)
     {
         var edits = new List<Edit>();
-        var rest = Block.Replace(reply.Replace("\r\n", "\n"), m =>
+        var text = reply.Replace("\r\n", "\n");
+        var rest = Block.Replace(text, m =>
         {
-            var file = m.Groups[1].Value.Trim().Trim('`', '*', ':').Trim();
-            edits.Add(new Edit(file, m.Groups[2].Value, m.Groups[3].Value));
+            var head = m.Groups[1].Value.Trim().Trim('`', '*', ':').Trim();
+            var search = m.Groups[2].Value;
+            string file;
+            if (head.Length == 0 || FileRef.IsMatch(head)) file = head;
+            else
+            {
+                search = search.Length == 0 ? m.Groups[1].Value.Trim() : m.Groups[1].Value.Trim() + "\n" + search;
+                file = "";
+            }
+            if (file.Length == 0 && JavaFileMention.Matches(text[..m.Index]).LastOrDefault() is { } mention) file = mention.Groups[1].Value + ".java";
+            edits.Add(new Edit(file, search, m.Groups[3].Value));
             return "";
         });
         return (edits, rest);

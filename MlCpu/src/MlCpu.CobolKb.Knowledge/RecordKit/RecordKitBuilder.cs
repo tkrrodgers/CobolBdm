@@ -234,11 +234,13 @@ public static class RecordKitBuilder
     /// <summary>
     /// One class per distinct layout. Areas declared from the same copybook under different prefixes (COPY … REPLACING: CUST-REC,
     /// CSTOUT-REC, WS-CUST-REC) share a class whose accessors drop the prefix; any other layout keeps the COBOL names as declared.
+    /// Two copybooks that merely have the same shape (CVTRA05Y's TRAN-RECORD, CVTRA06Y's DALYTRAN-RECORD) stay two classes: each
+    /// is the record the program names.
     /// </summary>
     static List<Shape> Shapes(List<Root> roots, List<string> notes)
     {
         var shapes = new List<Shape>();
-        foreach (var group in roots.GroupBy(r => Signature(r.Item, Prefix(r.Item))))
+        foreach (var group in roots.GroupBy(r => Signature(r.Item, Prefix(r.Item)) + "|" + r.Item.Origin))
         {
             var members = group.ToList();
             var primary = members[0].Item;

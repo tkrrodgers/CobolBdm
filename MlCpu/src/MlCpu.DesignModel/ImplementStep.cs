@@ -85,6 +85,7 @@ public static class ImplementStep
         var layoutsPath = Path.Combine(normDir, "record-layouts.json");
         var feedback = new FeedbackRenderer(File.Exists(layoutsPath) ? layoutsPath : null, packetPath, Path.Combine(harnessDir, "src", "main", "java"));
         var api = PublicApi(harnessDir, cap);
+        var known = Imports.Known(Path.Combine(harnessDir, "src", "main", "java"), cap.PlatformPackage, KitPackage(cap));
 
         var patterns = patternsDir is null ? null : new PatternLibrary(patternsDir, embeddingsUrl);
         string? patternFrom = null;
@@ -148,11 +149,18 @@ public static class ImplementStep
             {
                 if (files.Count == 0 && problems.Count == 0) problems.Add("no ```java code blocks were found in the reply");
                 message = "The files break the contract:\n- " + string.Join("\n- ", problems) + "\n";
+                Program.Log($"  contract: {problems.Count} problem(s); first: {Clip(problems[0], 200)}");
                 compiled = false;
                 total = passed = 0;
             }
             else
             {
+                var importsAdded = Imports.Complete(files, known);
+                if (importsAdded.Count > 0)
+                {
+                    attemptJson["importsAdded"] = Program.Strings(importsAdded);
+                    Program.Log($"  {importsAdded.Count} missing import(s) added");
+                }
                 Sync(harnessPkg, files, written);
                 WriteDeliverable(outDir, pkgPath, files);
                 var build = Gradle(harnessDir, "compileJava compileTestJava", TimeSpan.FromMinutes(10));
@@ -464,8 +472,10 @@ public static class ImplementStep
     {
         var lines = output.Split('\n').Select(l => l.TrimEnd('\r')).ToList();
         var errors = new List<string>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
         for (int i = 0; i < lines.Count; i++)
-            if (Regex.IsMatch(lines[i], @"\.java:\d+: error:"))
+            // Gradle repeats javac's errors in its failure summary: keep each file:line:message once.
+            if (Regex.IsMatch(lines[i], @"\.java:\d+: error:") && seen.Add(Regex.Replace(lines[i].Trim(), @"^.*[\\/](src[\\/])", "$1")))
             {
                 var e = new StringBuilder(Regex.Replace(lines[i], @"^.*[\\/](src[\\/])", "$1"));
                 for (int k = i + 1; k < lines.Count && k <= i + 5 && !Regex.IsMatch(lines[k], @"\.java:\d+: (error|warning):") && !lines[k].StartsWith("> Task", StringComparison.Ordinal)
@@ -505,7 +515,7 @@ public static class ImplementStep
             {
                 sb.Append(e).Append('\n');
                 shown++;
-                foreach (Match c in Regex.Matches(e, @"(?:location: (?:class|variable \w+ of type|interface) |no suitable method found for \w+\(|method \w+ in class |cannot find symbol\s+symbol:\s+class )([\w.]+)"))
+                foreach (Match c in Regex.Matches(e, @"(?:location: (?:class|variable \w+ of type|interface) |no suitable method found for \w+\(|method \w+ in class |cannot find symbol\s+symbol:\s+class |is not public in |has private access in )([\w.]+)"))
                 {
                     var cls = c.Groups[1].Value[(c.Groups[1].Value.LastIndexOf('.') + 1)..];
                     if (api.TryGetValue(cls, out var members) && classesShown.Add(cls))
@@ -619,19 +629,20 @@ public static class ImplementStep
         }
         problems.AddRange(Check(files, cap, stepSimple, reserved));
         if (problems.Count > 0) return "The files break the contract:\n- " + string.Join("\n- ", problems) + "\n";
+        var added = Imports.Complete(files, Imports.Known(Path.Combine(harnessDir, "src", "main", "java"), cap.PlatformPackage, KitPackage(cap)));
         Sync(harnessPkg, files, []);
         var build = Gradle(harnessDir, "compileJava compileTestJava", TimeSpan.FromMinutes(10));
         if (build.ExitCode != 0)
         {
             var errors = CompileErrors(build.Output);
-            return errors.Count == 0 ? Tail(build.Output, 40) : CompileFeedback(errors, harnessDir, PublicApi(harnessDir, cap));
+            return (added.Count > 0 ? $"imports added: {string.Join("; ", added)}\n" : "") + (errors.Count == 0 ? Tail(build.Output, 40) : CompileFeedback(errors, harnessDir, PublicApi(harnessDir, cap)));
         }
         var resultsDir = Path.Combine(harnessDir, "build", "test-results", "test");
         if (Directory.Exists(resultsDir)) Directory.Delete(resultsDir, true);
         var test = Gradle(harnessDir, $"test --tests {testClass}", testTimeout);
         var cases = TestCases(resultsDir);
         var failing = cases.Where(c => c.Failure is not null).ToList();
-        var sb = new StringBuilder($"acceptance {cases.Count - failing.Count}/{cases.Count}\n");
+        var sb = new StringBuilder($"{(added.Count > 0 ? $"imports added: {string.Join("; ", added)}\n" : "")}acceptance {cases.Count - failing.Count}/{cases.Count}\n");
         foreach (var f in failing.Take(12)) sb.Append($"- {f.Name}: {Clip(f.Failure!, 400)}\n");
         var chosen = ProbeScenarios(failing.Select(f => (f.Name, f.Failure!)));
         if (!test.TimedOut && chosen.Count > 0 && RunProbe(harnessDir, testFile, cap, chosen, TimeSpan.FromMinutes(10)) is { } probed)
