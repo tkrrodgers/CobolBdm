@@ -57,3 +57,33 @@ Expected effect (owner's estimate): a third to half fewer attempts on these five
 
 * **Edits**: a SEARCH/REPLACE block (inside a ```java fence) is applied; one whose SEARCH text is not in the file is reported as
   a contract problem.
+
+## Result: gpt-oss-120b, arm A, pipeline v2 (2026-10-10, harness 29257f9)
+
+Three earlier v2 runs were stopped and voided for harness defects found on the live model (edit-block format, edits versus
+complete files, an unhandled server error); see `DEVIATIONS.md`. The run below is complete, on one commit.
+
+| Program | gpt-oss-120b, v2 | Attempts (C = compile errors, x/y = scenarios) | Gemma, v1 | gpt-oss-120b, 2026-10-06 (older harness) |
+|---|---|---|---|---|
+| CBTRN02C | 23/23, attempt 12 | 18/23 C2 C2 C1 19/23 22/23 17/23 22/23 17/23 17/23 22/23 **23/23** | 23/23, attempt 5 | 0/23 |
+| CBACT04C | 17/17, attempt 8 | C1 1/17 C7 C99 13/17 C1 15/17 **17/17** | 17/17, attempt 10 | 1/17 |
+| CBTRN03C | 23/23, attempt 8 | C1 C3 (contract) C3 3/23 4/23 18/23 **23/23** | 23/23, attempt 6 | 3/23 |
+| SAM1 | 9/13 after 15 | C36 C2 0/13 2/13 2/13 C1 2/13 (server) 2/13 C1 2/13 2/13 1/13 3/13 9/13 | 13/13, attempt 8 | not run |
+| SAM2 | 13/13, attempt 3 | 11/13 11/13 **13/13** | 13/13, attempt 2 | not run |
+
+* **4/5 programs; 46 attempts; 49 minutes** (design and implementation; 61 min wall clock with model load and verification).
+* **Services:** CardDemo with gpt-oss's code for all three programs, 122/122 tests and 11/11 job outputs; zopeneditor with
+  its SAM2 (SAM1 keeps the published classes), 65/65 and 6/6.
+* **Against Gemma v1 on the four programs both pass:** 31 vs 23 attempts (+35%), 31.9 vs 44.5 minutes (-28%).
+* **First attempts are much better:** CBTRN02C 18/23 and SAM2 11/13 on attempt 1 (Gemma v1: 2/23 and 2/13). Under the
+  older harness gpt-oss passed nothing; under v2 it passes every CardDemo program.
+* **Where attempts still go:** 14 compile failures (mostly the model's own API misuse; 10 missing imports were added by
+  the harness), 26 runs with differences, 1 contract problem, 1 reply the server could not parse.
+* **Run-to-run variance:** the voided third run reproduced the first four CBTRN02C replies token for token, then diverged
+  at attempt 5 on an identical prompt (GPU nondeterminism in llama.cpp); it passed CBTRN02C at attempt 7, this run at 12.
+  The protocol's seed rule (re-run close cells with seeds 7 and 1234) applies before conclusions.
+* **Not yet measured:** v2 against v1 for the same model. That needs Gemma on v2 (about an hour of GPU).
+
+v2.1 candidates seen in this run (not applied, to keep the measured harness fixed): cite the packet's legacy quirk (Q-01
+test-after overrun) when the divergence falls in its paragraph; give the "one unit apart: truncation, not rounding" hint
+only for items with decimals.

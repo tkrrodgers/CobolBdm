@@ -118,9 +118,10 @@ foreach ($m in ($cfg.models | Where-Object { $_.name -ne $baseline })) {
     $armB = if ($b -and $gB) { "$(@($b | Where-Object passedAll).Count) vs $(@($gB | Where-Object passedAll).Count)" } else { 'not run' }
     $both = @($a | Where-Object passedAll | Where-Object { $p = $_.program; $gA | Where-Object { $_.program -eq $p -and $_.passedAll } })
     $eff = if ($both) {
-        $ga = Sum ($gA | Where-Object { $both.program -contains $_.program } | ForEach-Object { $_.attemptsUsed }); $ca = Sum ($both | ForEach-Object { $_.attemptsUsed })
-        $gm = Sum ($gA | Where-Object { $both.program -contains $_.program } | ForEach-Object { $_.minutes }); $cm = Sum ($both | ForEach-Object { $_.minutes })
-        "$ca vs $ga attempts ($([math]::Round(100 * ($ca - $ga) / [math]::Max($ga, 1)))%); $cm vs $gm min ($([math]::Round(100 * ($cm - $gm) / [math]::Max($gm, 1)))%) over $($both.Count) program(s)"
+        # PowerShell names ignore case: these scalars must not be called $ga/$gb ($gA and $gB hold the baseline's cells).
+        $baseAttempts = Sum ($gA | Where-Object { $both.program -contains $_.program } | ForEach-Object { $_.attemptsUsed }); $candAttempts = Sum ($both | ForEach-Object { $_.attemptsUsed })
+        $baseMinutes = Sum ($gA | Where-Object { $both.program -contains $_.program } | ForEach-Object { $_.minutes }); $candMinutes = Sum ($both | ForEach-Object { $_.minutes })
+        "$candAttempts vs $baseAttempts attempts ($([math]::Round(100 * ($candAttempts - $baseAttempts) / [math]::Max($baseAttempts, 1)))%); $candMinutes vs $baseMinutes min ($([math]::Round(100 * ($candMinutes - $baseMinutes) / [math]::Max($baseMinutes, 1)))%) over $($both.Count) program(s)"
     } else { '-' }
     $gw = ($runs | Where-Object { $_.arm -eq 'A' -and $_.model -eq $baseline }).wallMinutes
     $wall = if ($ra.wallMinutes -and $gw) { "$($ra.wallMinutes) vs $gw min ($([math]::Round($ra.wallMinutes / $gw, 1))x)" } else { '-' }
