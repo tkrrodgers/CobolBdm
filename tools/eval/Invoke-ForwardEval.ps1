@@ -44,7 +44,8 @@ $out = switch ($Phase) {
     'architecture' { Join-Path $fwd "designs\$Model" }
     'review' { Join-Path $fwd "reviews\$Model" }
     'slices' { Join-Path $fwd "designs\$Model\seed-$Seed" }
-    'implement' { Join-Path $fwd "implementation\$Arm-$Model" }
+    # Seed 42 is the protocol's run; reruns of a close result (seeds 7 and 1234) get their own folders.
+    'implement' { Join-Path $fwd ("implementation\$Arm-$Model" + $(if ($Seed -ne $cfg.implementation.seed) { "-seed-$Seed" } else { '' })) }
 }
 New-Item -ItemType Directory -Force $out | Out-Null
 
@@ -63,7 +64,7 @@ $port = [int]$cfg.port
 if (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) { throw "port $port is already in use" }
 $s = $m.sampling
 $inv = [System.Globalization.CultureInfo]::InvariantCulture
-$serverSeed = if ($Phase -eq 'implement') { $cfg.implementation.seed } else { $Seed }
+$serverSeed = $Seed
 $serverArgs = @('-m', $m.gguf, '-c', "$($cfg.context)", '-np', '1', '--host', '127.0.0.1', '--port', "$port", '--jinja', '-fa', 'on', '--no-webui',
     '-to', '14400', '--reasoning-format', 'auto', '--seed', "$serverSeed",
     '--temp', ([double]$s.temp).ToString($inv), '--top-p', ([double]$s.top_p).ToString($inv), '--top-k', "$($s.top_k)", '--min-p', ([double]$s.min_p).ToString($inv))
@@ -120,10 +121,10 @@ try {
         }
         'implement' {
             if (-not $Design) { throw '-Design <dir with architecture.json and slice-*.json> is required' }
-            Run (@('fwd-implement') + $common + @('--seed', "$($cfg.implementation.seed)", '--design', $Design, '--arm', $Arm,
+            Run (@('fwd-implement') + $common + @('--seed', "$Seed", '--design', $Design, '--arm', $Arm,
                     '--designer', $(if ($Designer) { $Designer } else { $Model }), '--impl-attempts', "$($cfg.implementation.attempts)",
                     '--max-tokens', "$($cfg.implementation.maxTokens)", '--plateau', "$($cfg.implementation.plateau)",
-                    '--test-timeout-min', "$($cfg.implementation.testTimeoutMinutes)", '--harness', (Join-Path $fwd "harness\$Arm-$Model"), '--out', $out)) "implement-$Arm" | Out-Null
+                    '--test-timeout-min', "$($cfg.implementation.testTimeoutMinutes)", '--harness', (Join-Path $fwd "harness\$Arm-$Model-seed-$Seed"), '--out', $out)) "implement-$Arm" | Out-Null
         }
     }
     $completed = $true
