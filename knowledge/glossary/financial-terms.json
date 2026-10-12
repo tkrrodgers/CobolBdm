@@ -1,0 +1,3336 @@
+{
+  "schema": "mlcpu.kb-glossary.v1",
+  "reviewed": false,
+  "note": "Financial terminology for the knowledge base and for Gemma 4's grounding. Written in the SME role for carddemo (credit cards), zopeneditor-sample (customer master maintenance) and fineract-legacy (Apache Fineract progressive loan schedules); awaiting the owner's confirmation. aliases are natural-language phrases; codeTerms are identifier fragments as they appear in COBOL or Java (matched by sub-words, so LT-ANNUAL-RATE and annualRate both match ANNUAL-RATE). functions are taxonomy.json classes; weight (default 1) lowers generic terms.",
+  "terms": [
+    {
+      "id": "loan",
+      "term": "Loan",
+      "aliases": [
+        "loan",
+        "loans",
+        "credit facility"
+      ],
+      "codeTerms": [
+        "LOAN"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms"
+      ],
+      "definition": "A sum of money lent to a borrower and repaid, with interest, through a schedule of installments."
+    },
+    {
+      "id": "principal",
+      "term": "Principal",
+      "aliases": [
+        "principal",
+        "principal amount",
+        "loan amount",
+        "amount financed"
+      ],
+      "codeTerms": [
+        "PRINCIPAL",
+        "PRIN"
+      ],
+      "domains": [
+        "lending",
+        "accounting"
+      ],
+      "functions": [
+        "loan-terms",
+        "outstanding-balance"
+      ],
+      "definition": "The amount lent, or the part of it still owed excluding interest, fees and penalties. Interest is calculated on principal."
+    },
+    {
+      "id": "loan-terms",
+      "term": "Loan terms",
+      "aliases": [
+        "loan terms",
+        "loan product parameters",
+        "product terms"
+      ],
+      "codeTerms": [
+        "LOAN-TERMS",
+        "LoanTerms",
+        "LoanProductRelatedDetail"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms"
+      ],
+      "definition": "The parameters that drive a loan's schedule: principal, number of repayments, repayment frequency, nominal interest rate, interest method, amortization type, day-count conventions, currency and rounding."
+    },
+    {
+      "id": "loan-term-length",
+      "term": "Loan term (tenor)",
+      "aliases": [
+        "loan term",
+        "tenor",
+        "term of the loan",
+        "loan duration"
+      ],
+      "codeTerms": [
+        "TERM-DAYS",
+        "TERM-FREQUENCY"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms"
+      ],
+      "definition": "How long the loan runs: the number of repayments times the repayment frequency, or a fixed number of days."
+    },
+    {
+      "id": "number-of-repayments",
+      "term": "Number of repayments",
+      "aliases": [
+        "number of repayments",
+        "number of installments",
+        "repayment count"
+      ],
+      "codeTerms": [
+        "NUM-REPAYMENTS",
+        "numberOfRepayments",
+        "PERIOD-COUNT"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms",
+        "repayment-schedule"
+      ],
+      "definition": "How many installments the schedule has; with the frequency it fixes the due dates."
+    },
+    {
+      "id": "repayment-frequency",
+      "term": "Repayment frequency",
+      "aliases": [
+        "repayment frequency",
+        "repay every",
+        "frequency type",
+        "payment frequency"
+      ],
+      "codeTerms": [
+        "REPAY-EVERY",
+        "FREQ-TYPE",
+        "FREQ-DAYS",
+        "FREQ-WEEKS",
+        "FREQ-MONTHS",
+        "FREQ-YEARS",
+        "repaymentEvery",
+        "repaymentFrequency",
+        "FREQUENCY"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms",
+        "repayment-schedule"
+      ],
+      "definition": "How often installments fall due: a unit (days, weeks, months, years) and a count ('repay every 2 weeks')."
+    },
+    {
+      "id": "nominal-interest-rate",
+      "term": "Nominal annual interest rate",
+      "aliases": [
+        "nominal interest rate",
+        "annual interest rate",
+        "annual nominal rate",
+        "interest rate per year"
+      ],
+      "codeTerms": [
+        "ANNUAL-RATE",
+        "NOMINAL-RATE",
+        "annualNominalInterestRate",
+        "nominalInterestRate",
+        "NominalInterestRatePercent"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms",
+        "interest-calculation"
+      ],
+      "definition": "The yearly rate quoted for the loan, in percent, before it is converted into a rate for a period or a day. It excludes compounding and fees."
+    },
+    {
+      "id": "interest",
+      "term": "Interest",
+      "aliases": [
+        "interest",
+        "interest calculator",
+        "interest calculation",
+        "interest charge"
+      ],
+      "codeTerms": [
+        "INTEREST"
+      ],
+      "weight": 0.8,
+      "domains": [
+        "lending",
+        "cards"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "The charge for borrowing money, computed from a balance, a rate and a period; in these estates it is simple interest per period (CardDemo monthly, Fineract per interest period)."
+    },
+    {
+      "id": "interest-rate",
+      "term": "Interest rate",
+      "aliases": [
+        "interest rate",
+        "rate of interest"
+      ],
+      "codeTerms": [
+        "INT-RATE",
+        "INTEREST-RATE",
+        "interestRate"
+      ],
+      "domains": [
+        "lending",
+        "cards"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "The price of borrowing, as a percentage of the balance per period (per year unless stated)."
+    },
+    {
+      "id": "periodic-rate",
+      "term": "Periodic interest rate",
+      "aliases": [
+        "periodic interest rate",
+        "rate per period",
+        "period rate",
+        "monthly rate"
+      ],
+      "codeTerms": [
+        "RATE-PER-PERIOD",
+        "PERIOD-RATE",
+        "periodicRate",
+        "periodicInterestRate"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "The annual rate converted to one repayment period, for example the annual rate divided by 12 for monthly installments."
+    },
+    {
+      "id": "daily-rate",
+      "term": "Daily interest rate",
+      "aliases": [
+        "daily interest rate",
+        "daily rate",
+        "per diem rate"
+      ],
+      "codeTerms": [
+        "DAILY-RATE",
+        "dailyRate"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "The annual rate divided by the days in the year (the day-count basis). Daily interest is balance × daily rate × days."
+    },
+    {
+      "id": "rate-factor",
+      "term": "Rate factor",
+      "aliases": [
+        "rate factor",
+        "rate factors",
+        "interest rate factor"
+      ],
+      "codeTerms": [
+        "RATE-FACTOR",
+        "rateFactor",
+        "RF-TILL-DUE",
+        "RateFactorPerPeriod"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "emi-installment"
+      ],
+      "source": "Fineract ProgressiveEMICalculator (PEC)",
+      "definition": "In Fineract's progressive EMI calculator, the share of the nominal annual rate that applies to one interest period: rate × (days in the period ÷ days in the year) for day-based frequencies, or rate × period fraction ÷ periods per year for week- and month-based ones. Interest = balance × rate factor, and the EMI is computed from the rate factors."
+    },
+    {
+      "id": "period-fraction",
+      "term": "Period fraction",
+      "aliases": [
+        "period fraction",
+        "fraction of a period",
+        "period ratio",
+        "partial period",
+        "broken period"
+      ],
+      "codeTerms": [
+        "PERIOD-FRACTION",
+        "FRACTION-DUE",
+        "PERIOD-RATIO",
+        "PARTIAL-PERIOD",
+        "periodFraction",
+        "PERIOD-FRACTIONS"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "date-calendar"
+      ],
+      "definition": "The part of a full repayment period that an interest period or a partial period covers (actual days ÷ days of the full period). It scales the periodic rate."
+    },
+    {
+      "id": "days-in-year",
+      "term": "Days in year (year basis)",
+      "aliases": [
+        "days in year",
+        "year basis",
+        "day count basis",
+        "actual/365",
+        "actual/360",
+        "30/360"
+      ],
+      "codeTerms": [
+        "DAYS-IN-YEAR",
+        "DIY",
+        "daysInYear",
+        "DaysInYearType",
+        "DIY-STRATEGY"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "date-calendar"
+      ],
+      "definition": "The day-count basis of the year used to turn an annual rate into a daily one: actual (365 or 366), 360, 364 or 365."
+    },
+    {
+      "id": "days-in-month",
+      "term": "Days in month",
+      "aliases": [
+        "days in month",
+        "month basis"
+      ],
+      "codeTerms": [
+        "DAYS-IN-MONTH",
+        "DIM",
+        "daysInMonth",
+        "DaysInMonthType"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "date-calendar",
+        "interest-calculation"
+      ],
+      "definition": "The day-count basis of a month: actual calendar days or 30."
+    },
+    {
+      "id": "day-count-convention",
+      "term": "Day-count convention",
+      "aliases": [
+        "day count convention",
+        "day count",
+        "number of days",
+        "actual days"
+      ],
+      "codeTerms": [
+        "ACTUAL-DAYS",
+        "CALC-DAYS",
+        "getNumberOfDays",
+        "NUMBER-OF-DAYS"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "date-calendar"
+      ],
+      "definition": "The rules for counting the days between two dates and in a year when interest is calculated (for example Actual/365, Actual/360, 30/360)."
+    },
+    {
+      "id": "emi",
+      "term": "EMI (equated monthly installment)",
+      "aliases": [
+        "EMI",
+        "equated monthly installment",
+        "equated installment",
+        "equal installment",
+        "equal installments"
+      ],
+      "codeTerms": [
+        "EMI",
+        "EmiValue"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "emi-installment"
+      ],
+      "definition": "The constant installment that repays the principal and interest of a declining-balance loan over its term. Each EMI covers the period's interest; the rest reduces principal. For a constant periodic rate r and n periods: EMI = P × r × (1+r)^n ÷ ((1+r)^n − 1)."
+    },
+    {
+      "id": "installment",
+      "term": "Installment",
+      "aliases": [
+        "installment",
+        "instalment",
+        "installments",
+        "scheduled payment",
+        "repayment amount"
+      ],
+      "codeTerms": [
+        "INSTALLMENT",
+        "INSTALMENT",
+        "INSTL",
+        "installment"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "emi-installment",
+        "repayment-schedule"
+      ],
+      "definition": "One scheduled payment due on a due date: principal plus interest, and any fees and penalties."
+    },
+    {
+      "id": "installment-multiples",
+      "term": "Installment in multiples of",
+      "aliases": [
+        "installment in multiples of",
+        "in multiples of",
+        "installment multiples"
+      ],
+      "codeTerms": [
+        "MULTIPLES",
+        "inMultiplesOf",
+        "installmentAmountInMultiplesOf",
+        "MULTIPLES-IND"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "emi-installment",
+        "money-rounding"
+      ],
+      "definition": "A product setting that rounds the installment amount to a multiple of a currency amount (for example to the nearest 10). It is separate from rounding to the currency's decimal places."
+    },
+    {
+      "id": "amortization",
+      "term": "Amortization",
+      "aliases": [
+        "amortization",
+        "amortisation",
+        "amortization type",
+        "equal principal payments"
+      ],
+      "codeTerms": [
+        "AMORTIZATION",
+        "amortizationType",
+        "EQUAL-PRINCIPAL"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms",
+        "emi-installment"
+      ],
+      "definition": "Paying off a loan through scheduled installments that pay interest and reduce principal: equal installments (EMI) or equal principal payments."
+    },
+    {
+      "id": "declining-balance",
+      "term": "Declining balance",
+      "aliases": [
+        "declining balance",
+        "reducing balance",
+        "diminishing balance"
+      ],
+      "codeTerms": [
+        "DECLINING-BALANCE",
+        "decliningBalance",
+        "DECLINING"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "emi-installment",
+        "loan-terms"
+      ],
+      "definition": "An interest method where each period's interest is computed on the outstanding principal, which falls as it is repaid."
+    },
+    {
+      "id": "flat-interest",
+      "term": "Flat interest",
+      "aliases": [
+        "flat interest",
+        "flat rate",
+        "flat interest method"
+      ],
+      "codeTerms": [
+        "FLAT",
+        "FlatInterestMethod"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "loan-terms"
+      ],
+      "definition": "An interest method where interest is computed on the original principal for the whole term, whatever has been repaid."
+    },
+    {
+      "id": "interest-method",
+      "term": "Interest method",
+      "aliases": [
+        "interest method",
+        "interest type",
+        "interest calculation method"
+      ],
+      "codeTerms": [
+        "INTEREST-METHOD",
+        "interestMethod",
+        "InterestMethod"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms",
+        "interest-calculation"
+      ],
+      "definition": "How interest is computed for the loan: declining balance or flat."
+    },
+    {
+      "id": "repayment-period",
+      "term": "Repayment period",
+      "aliases": [
+        "repayment period",
+        "repayment periods",
+        "installment period"
+      ],
+      "codeTerms": [
+        "REPAYMENT-PERIOD",
+        "repaymentPeriod",
+        "RepaymentPeriod",
+        "RP"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule"
+      ],
+      "source": "Fineract RepaymentPeriod (RP)",
+      "definition": "The interval between two due dates; each one produces one installment. In Fineract's model it holds its interest periods, EMI, principal and interest due and paid."
+    },
+    {
+      "id": "interest-period",
+      "term": "Interest period",
+      "aliases": [
+        "interest period",
+        "interest periods"
+      ],
+      "codeTerms": [
+        "INTEREST-PERIOD",
+        "interestPeriod",
+        "InterestPeriod",
+        "IP"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "repayment-schedule"
+      ],
+      "source": "Fineract InterestPeriod (IP)",
+      "definition": "A sub-interval of a repayment period with one balance and one rate. Interest is computed per interest period and summed; a disbursement or a rate change starts a new one."
+    },
+    {
+      "id": "due-date",
+      "term": "Due date",
+      "aliases": [
+        "due date",
+        "due day",
+        "payment due date"
+      ],
+      "codeTerms": [
+        "DUE-DATE",
+        "DUE-DAY",
+        "dueDate"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule",
+        "date-calendar"
+      ],
+      "definition": "The date by which an installment must be paid; it ends a repayment period."
+    },
+    {
+      "id": "from-date",
+      "term": "Period start date",
+      "aliases": [
+        "from date",
+        "period start date",
+        "start of period"
+      ],
+      "codeTerms": [
+        "FROM-DATE",
+        "FROM-DAY",
+        "fromDate"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule"
+      ],
+      "definition": "The first day of a repayment or interest period (the previous period's due date)."
+    },
+    {
+      "id": "maturity-date",
+      "term": "Maturity date",
+      "aliases": [
+        "maturity date",
+        "final due date",
+        "loan maturity"
+      ],
+      "codeTerms": [
+        "MATURITY",
+        "maturityDate"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule",
+        "date-calendar"
+      ],
+      "definition": "The due date of the last installment, when the loan should be fully repaid."
+    },
+    {
+      "id": "repayment-schedule",
+      "term": "Repayment schedule",
+      "aliases": [
+        "repayment schedule",
+        "loan schedule",
+        "amortization schedule",
+        "payment schedule"
+      ],
+      "codeTerms": [
+        "SCHEDULE",
+        "SCHED",
+        "loanSchedule",
+        "SCHEDOUT"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule"
+      ],
+      "definition": "The table of installments of a loan: for each period its dates, principal, interest, fees, penalties, total due and outstanding balance."
+    },
+    {
+      "id": "schedule-generator",
+      "term": "Loan schedule generator",
+      "aliases": [
+        "schedule generator",
+        "loan schedule generator",
+        "PLSG",
+        "ProgressiveLoanScheduleGenerator"
+      ],
+      "codeTerms": [
+        "ScheduleGenerator",
+        "PLSG",
+        "FNSCHGEN"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule"
+      ],
+      "source": "Fineract (Embeddable)ProgressiveLoanScheduleGenerator",
+      "definition": "Fineract's component that turns loan terms into a repayment schedule; in the COBOL estate it is FNLS0100 (job FNSCHGEN)."
+    },
+    {
+      "id": "loan-schedule-model",
+      "term": "Loan schedule model",
+      "aliases": [
+        "loan schedule model",
+        "LoanScheduleModel",
+        "LSM",
+        "loan schedule plan",
+        "LSP"
+      ],
+      "codeTerms": [
+        "LoanScheduleModel",
+        "LoanSchedulePlan",
+        "LSM",
+        "LSP"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule"
+      ],
+      "source": "Fineract LoanScheduleModel / LoanSchedulePlan",
+      "definition": "The generated schedule as Fineract returns it: periods with amounts and totals, then mapped to a plan for output."
+    },
+    {
+      "id": "progressive-loan",
+      "term": "Progressive loan",
+      "aliases": [
+        "progressive loan",
+        "progressive schedule",
+        "progressive loan schedule"
+      ],
+      "codeTerms": [
+        "PROGRESSIVE",
+        "Progressive"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule",
+        "emi-installment"
+      ],
+      "definition": "Fineract's loan schedule type in which installments are computed period by period by an EMI calculator over an interest schedule model, so the schedule can be recalculated as events happen."
+    },
+    {
+      "id": "interest-schedule-model",
+      "term": "Interest schedule model",
+      "aliases": [
+        "interest schedule model",
+        "schedule model",
+        "PLISM",
+        "ProgressiveLoanInterestScheduleModel"
+      ],
+      "codeTerms": [
+        "SCHEDULE-MODEL",
+        "scheduleModel",
+        "InterestScheduleModel",
+        "PLISM",
+        "FNMODEL"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule",
+        "outstanding-balance"
+      ],
+      "source": "Fineract ProgressiveLoanInterestScheduleModel (PLISM)",
+      "definition": "The in-memory model of repayment periods and their interest periods that the EMI calculator reads and updates (FNMODEL in the COBOL estate)."
+    },
+    {
+      "id": "emi-calculator",
+      "term": "EMI calculator",
+      "aliases": [
+        "EMI calculator",
+        "ProgressiveEMICalculator",
+        "PEC"
+      ],
+      "codeTerms": [
+        "EMICalculator",
+        "PEC"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "emi-installment",
+        "interest-calculation"
+      ],
+      "source": "Fineract ProgressiveEMICalculator (PEC)",
+      "definition": "Fineract's calculator for progressive loans: rate factors, EMI, balances, disbursements and recalculation over the interest schedule model (FNEM0100–FNEM0900 in the COBOL estate)."
+    },
+    {
+      "id": "outstanding-balance",
+      "term": "Outstanding balance",
+      "aliases": [
+        "outstanding balance",
+        "outstanding principal",
+        "balance outstanding",
+        "loan balance",
+        "remaining balance"
+      ],
+      "codeTerms": [
+        "OUTSTANDING",
+        "OUTST",
+        "OUTST-BALANCE",
+        "outstandingBalance",
+        "OutstandingLoanBalance",
+        "TOT-OUTSTANDING"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "outstanding-balance"
+      ],
+      "definition": "What the borrower still owes at a point in time: principal not yet repaid (and, depending on context, unpaid interest, fees and penalties)."
+    },
+    {
+      "id": "principal-portion",
+      "term": "Principal portion",
+      "aliases": [
+        "principal portion",
+        "principal due",
+        "principal component",
+        "principal paid"
+      ],
+      "codeTerms": [
+        "PRINCIPAL-DUE",
+        "principalDue",
+        "PRINCIPAL-PAID",
+        "SP-PRINCIPAL"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "outstanding-balance"
+      ],
+      "definition": "The part of an installment that repays principal: installment minus the period's interest (and fees)."
+    },
+    {
+      "id": "interest-portion",
+      "term": "Interest portion",
+      "aliases": [
+        "interest portion",
+        "interest due",
+        "interest component",
+        "interest paid"
+      ],
+      "codeTerms": [
+        "INTEREST-DUE",
+        "interestDue",
+        "INTEREST-PAID",
+        "SP-INTEREST"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "outstanding-balance"
+      ],
+      "definition": "The part of an installment that pays the interest accrued in its period."
+    },
+    {
+      "id": "total-due",
+      "term": "Total due",
+      "aliases": [
+        "total due",
+        "amount due",
+        "total installment"
+      ],
+      "codeTerms": [
+        "TOTAL-DUE",
+        "TOT-DUE",
+        "totalDue"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule"
+      ],
+      "definition": "Everything due on a due date: principal + interest + fees + penalties."
+    },
+    {
+      "id": "derived-amounts",
+      "term": "Derived period amounts",
+      "aliases": [
+        "derived amounts",
+        "derived repayment period amounts",
+        "computed amounts"
+      ],
+      "codeTerms": [
+        "DERIVED",
+        "Derived"
+      ],
+      "weight": 0.7,
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "outstanding-balance"
+      ],
+      "definition": "Amounts of a repayment period computed from others rather than stored, such as principal due = EMI − interest due, or the balance after the period."
+    },
+    {
+      "id": "disbursement",
+      "term": "Disbursement",
+      "aliases": [
+        "disbursement",
+        "disburse",
+        "disbursed amount",
+        "loan disbursement",
+        "payout"
+      ],
+      "codeTerms": [
+        "DISBURSEMENT",
+        "DISB",
+        "DISBURSED",
+        "disbursement",
+        "disburse",
+        "TOT-DISBURSED"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "disbursement"
+      ],
+      "definition": "Paying the loan funds out to the borrower. It creates or increases the outstanding principal from its date, and can split a repayment period into interest periods."
+    },
+    {
+      "id": "tranche",
+      "term": "Tranche",
+      "aliases": [
+        "tranche",
+        "multi-tranche",
+        "partial disbursement"
+      ],
+      "codeTerms": [
+        "TRANCHE"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "disbursement"
+      ],
+      "definition": "One of several partial disbursements of the same loan."
+    },
+    {
+      "id": "full-term-tranche",
+      "term": "Full-term tranche",
+      "aliases": [
+        "full term tranche",
+        "full-term tranche"
+      ],
+      "codeTerms": [
+        "FULL-TERM-TRANCHE",
+        "FULL-TERM"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "disbursement",
+        "loan-terms"
+      ],
+      "definition": "A Fineract option where each tranche is repaid over the full loan term instead of the remaining periods."
+    },
+    {
+      "id": "down-payment",
+      "term": "Down payment",
+      "aliases": [
+        "down payment",
+        "downpayment",
+        "down-payment percentage"
+      ],
+      "codeTerms": [
+        "DOWNPAY",
+        "DOWN-PAYMENT",
+        "downPayment",
+        "DOWNPAY-PCT"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "disbursement",
+        "loan-terms"
+      ],
+      "definition": "A portion of the disbursed principal (a percentage of the disbursement) that is due on the disbursement date as a separate schedule line, reducing the principal the installments repay."
+    },
+    {
+      "id": "disbursement-date",
+      "term": "Disbursement date",
+      "aliases": [
+        "disbursement date",
+        "expected disbursement date"
+      ],
+      "codeTerms": [
+        "EXP-DISB-DAY",
+        "DISB-DATE",
+        "expectedDisbursementDate"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "disbursement",
+        "date-calendar"
+      ],
+      "definition": "The date funds are (expected to be) paid out; interest on them starts from it."
+    },
+    {
+      "id": "seed-date",
+      "term": "Seed date (repayments start)",
+      "aliases": [
+        "seed date",
+        "repayments start date",
+        "schedule start date",
+        "first repayment date"
+      ],
+      "codeTerms": [
+        "SEED-DAY",
+        "SEED-DATE",
+        "SCHED-START-DATE",
+        "seedDate",
+        "SUBMITTED-DAY"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule",
+        "date-calendar"
+      ],
+      "definition": "The date from which due dates are generated, usually the disbursement or submission date; each due date is the seed plus k × the repayment frequency."
+    },
+    {
+      "id": "principal-moratorium",
+      "term": "Principal moratorium (grace)",
+      "aliases": [
+        "principal moratorium",
+        "grace period",
+        "moratorium",
+        "grace on principal"
+      ],
+      "codeTerms": [
+        "MORATORIUM",
+        "GRACE",
+        "principalMoratorium"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "emi-installment",
+        "loan-terms"
+      ],
+      "definition": "Periods during which principal (or interest) is not repaid; the deferred amount is spread over the later installments."
+    },
+    {
+      "id": "interest-recalculation",
+      "term": "Interest recalculation",
+      "aliases": [
+        "interest recalculation",
+        "recalculate interest",
+        "recalculation",
+        "recalculate the schedule"
+      ],
+      "codeTerms": [
+        "RECALC",
+        "RECALCULATE",
+        "recalculate",
+        "TillDate"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "outstanding-balance"
+      ],
+      "definition": "Recomputing interest and installments from the actual balances and dates (for example till a given date) instead of the original plan."
+    },
+    {
+      "id": "emi-adjustment",
+      "term": "EMI adjustment of the last period",
+      "aliases": [
+        "EMI adjustment",
+        "last installment adjustment",
+        "EMI fix-up",
+        "residual adjustment"
+      ],
+      "codeTerms": [
+        "FIX-UP",
+        "FIXUP",
+        "ADJUST",
+        "adjustLastUnpaidPeriod"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "emi-installment"
+      ],
+      "definition": "Changing the EMI of the last unpaid period so the schedule repays the principal exactly, absorbing the rounding residue of earlier installments."
+    },
+    {
+      "id": "emi-evening-out",
+      "term": "EMI evening-out",
+      "aliases": [
+        "EMI evening out",
+        "evening out",
+        "even out installments",
+        "balance the EMI"
+      ],
+      "codeTerms": [
+        "EVEN-OUT",
+        "EVENING",
+        "evenOut",
+        "EveningOut"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "emi-installment"
+      ],
+      "definition": "Fineract's iteration that adjusts the EMI so the installments of the related periods come out equal after rounding, with only the last one absorbing the difference."
+    },
+    {
+      "id": "fixed-length",
+      "term": "Fixed length",
+      "aliases": [
+        "fixed length",
+        "fixed loan length"
+      ],
+      "codeTerms": [
+        "FIXED-LENGTH",
+        "fixedLength"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms",
+        "repayment-schedule"
+      ],
+      "definition": "A Fineract option that fixes the loan's length in days, so the last period ends on the fixed day even if it is shorter than a full period."
+    },
+    {
+      "id": "interest-recognition-on-disbursement",
+      "term": "Interest recognition from disbursement date",
+      "aliases": [
+        "interest recognition on disbursement",
+        "interest recognition from disbursement date"
+      ],
+      "codeTerms": [
+        "INT-RECOG",
+        "interestRecognition",
+        "INT-RECOG-DISB"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "disbursement"
+      ],
+      "definition": "A Fineract option to start interest on the disbursement date itself rather than the following day."
+    },
+    {
+      "id": "partial-period-interest",
+      "term": "Partial period interest",
+      "aliases": [
+        "allow partial period interest",
+        "partial period interest"
+      ],
+      "codeTerms": [
+        "ALLOW-PARTIAL",
+        "PARTIAL-SW",
+        "allowPartialPeriodInterestCalculation"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation",
+        "loan-terms"
+      ],
+      "definition": "Whether interest of a partial (broken) period is computed on its actual days rather than as a full period."
+    },
+    {
+      "id": "fee",
+      "term": "Fee (charge)",
+      "aliases": [
+        "fee",
+        "fees",
+        "charge",
+        "charges",
+        "loan charge"
+      ],
+      "codeTerms": [
+        "FEE",
+        "CHARGE",
+        "TOT-FEE"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "lending",
+        "cards"
+      ],
+      "functions": [
+        "repayment-schedule"
+      ],
+      "definition": "An amount charged in addition to interest (for example a processing fee). The Tier 1 schedules carry zero fees; the charge passes still run."
+    },
+    {
+      "id": "penalty",
+      "term": "Penalty",
+      "aliases": [
+        "penalty",
+        "penalties",
+        "late fee",
+        "late payment penalty"
+      ],
+      "codeTerms": [
+        "PENALTY",
+        "TOT-PENALTY"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "repayment-schedule"
+      ],
+      "definition": "A charge for late or missed payment."
+    },
+    {
+      "id": "loan-request",
+      "term": "Loan request",
+      "aliases": [
+        "loan request",
+        "loan application",
+        "request record"
+      ],
+      "codeTerms": [
+        "LOAN-REQUEST",
+        "LNREQ",
+        "LOANREQ"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "loan-terms"
+      ],
+      "definition": "The input record asking for a schedule: loan id, disbursement amount and date, number of repayments, frequency, rate and options."
+    },
+    {
+      "id": "currency",
+      "term": "Currency",
+      "aliases": [
+        "currency",
+        "currency code",
+        "decimal places",
+        "digits after decimal",
+        "currency digits"
+      ],
+      "codeTerms": [
+        "CURRENCY",
+        "CURRENCY-CODE",
+        "DECIMAL-PLACES",
+        "CURRFILE",
+        "currencyCode",
+        "digitsAfterDecimal"
+      ],
+      "domains": [
+        "lending",
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding",
+        "loan-terms"
+      ],
+      "definition": "The money unit of the amounts, with its ISO code and its number of decimal places, to which money amounts are rounded."
+    },
+    {
+      "id": "money",
+      "term": "Money",
+      "aliases": [
+        "money",
+        "money amount",
+        "Money class"
+      ],
+      "codeTerms": [
+        "MONEY",
+        "Money"
+      ],
+      "domains": [
+        "lending",
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "source": "Fineract Money",
+      "definition": "Fineract's amount type: a BigDecimal amount with a currency and a math context. Its arithmetic (plus, minus, multipliedBy, dividedBy) rounds to the currency's decimal places."
+    },
+    {
+      "id": "math-util",
+      "term": "MathUtil",
+      "aliases": [
+        "MathUtil",
+        "MU",
+        "math utilities"
+      ],
+      "codeTerms": [
+        "MathUtil",
+        "MU"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "source": "Fineract MathUtil",
+      "definition": "Fineract's helper for null-safe BigDecimal arithmetic, percentages and comparisons."
+    },
+    {
+      "id": "math-context",
+      "term": "Math context (precision and rounding)",
+      "aliases": [
+        "MathContext",
+        "math context",
+        "precision"
+      ],
+      "codeTerms": [
+        "MATH-CONTEXT",
+        "MC-PRECISION",
+        "MathContext",
+        "PRECISION",
+        "FNMC"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "Java's MathContext: a precision (significant digits) and a rounding mode that BigDecimal operations apply to their results. The run control record sets it for the COBOL estate."
+    },
+    {
+      "id": "rounding-mode",
+      "term": "Rounding mode",
+      "aliases": [
+        "rounding mode",
+        "rounding",
+        "round"
+      ],
+      "codeTerms": [
+        "ROUNDING-MODE",
+        "ROUNDING",
+        "ROUND",
+        "RND",
+        "roundingMode",
+        "RoundingMode"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "The rule for discarding digits: HALF_EVEN, HALF_UP, HALF_DOWN, UP, DOWN, CEILING or FLOOR."
+    },
+    {
+      "id": "half-even",
+      "term": "Banker's rounding (HALF_EVEN)",
+      "aliases": [
+        "banker's rounding",
+        "bankers rounding",
+        "half even",
+        "HALF_EVEN",
+        "round half to even"
+      ],
+      "codeTerms": [
+        "HALF-EVEN",
+        "HALF_EVEN"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "Round to the nearest value; an exact half goes to the even neighbour (2.5 → 2, 3.5 → 4). It avoids the upward bias of HALF_UP over many amounts and is Fineract's usual money rounding."
+    },
+    {
+      "id": "half-up",
+      "term": "HALF_UP rounding",
+      "aliases": [
+        "half up",
+        "HALF_UP",
+        "round half up",
+        "commercial rounding"
+      ],
+      "codeTerms": [
+        "HALF-UP",
+        "HALF_UP"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "Round to the nearest value; an exact half goes away from zero (2.5 → 3, −2.5 → −3). COBOL's ROUNDED phrase rounds this way by default."
+    },
+    {
+      "id": "half-down",
+      "term": "HALF_DOWN rounding",
+      "aliases": [
+        "half down",
+        "HALF_DOWN"
+      ],
+      "codeTerms": [
+        "HALF-DOWN",
+        "HALF_DOWN"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "Round to the nearest value; an exact half goes toward zero (2.5 → 2)."
+    },
+    {
+      "id": "round-up-down",
+      "term": "UP, DOWN, CEILING and FLOOR rounding",
+      "aliases": [
+        "round up",
+        "round down",
+        "ceiling",
+        "floor",
+        "round toward zero",
+        "round away from zero"
+      ],
+      "codeTerms": [
+        "CEILING",
+        "FLOOR",
+        "ROUND-UP",
+        "ROUND-DOWN"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "UP rounds away from zero, DOWN toward zero (truncation), CEILING toward +∞ and FLOOR toward −∞, whatever the discarded digits."
+    },
+    {
+      "id": "scale",
+      "term": "Scale",
+      "aliases": [
+        "scale",
+        "decimal scale",
+        "set scale"
+      ],
+      "codeTerms": [
+        "SCALE",
+        "setScale"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "The number of digits after the decimal point (BigDecimal scale; the digits after V in a COBOL PICTURE)."
+    },
+    {
+      "id": "significant-digits",
+      "term": "Significant digits",
+      "aliases": [
+        "significant digits",
+        "precision digits"
+      ],
+      "codeTerms": [
+        "SIGNIFICANT",
+        "DIGITS-OF"
+      ],
+      "weight": 0.7,
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "The digits of a number from the first non-zero one; a math context's precision limits how many are kept."
+    },
+    {
+      "id": "percentage-of",
+      "term": "Percentage of",
+      "aliases": [
+        "percentage of",
+        "percent",
+        "percentage"
+      ],
+      "codeTerms": [
+        "PCT",
+        "PERCENT",
+        "percentageOf"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "value × percentage ÷ 100, computed with the math context (MathUtil.percentageOf); for example the down payment from its percentage."
+    },
+    {
+      "id": "decimal-kernel",
+      "term": "Decimal kernel",
+      "aliases": [
+        "decimal kernel",
+        "decimal floating arithmetic",
+        "BigDecimal emulation"
+      ],
+      "codeTerms": [
+        "DK",
+        "DF",
+        "BigDecimal",
+        "FNDKRND",
+        "FNDKDFO",
+        "FNDTKRN"
+      ],
+      "domains": [
+        "numerics",
+        "mainframe"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "The COBOL estate's arithmetic subprograms that reproduce Java BigDecimal exactly: FNDKRND rounds an unscaled integer to a scale or to significant digits, FNDKDFO multiplies, divides and adds decimal floating values (coefficient and exponent), FNDTKRN does date arithmetic."
+    },
+    {
+      "id": "unscaled-value",
+      "term": "Unscaled value (coefficient and exponent)",
+      "aliases": [
+        "unscaled value",
+        "coefficient",
+        "exponent",
+        "decimal floating"
+      ],
+      "codeTerms": [
+        "COEF",
+        "EXP",
+        "UNSCALED",
+        "unscaledValue"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "A decimal number held as an integer coefficient and a power of ten: value = coefficient × 10^exponent (BigDecimal: unscaled value × 10^−scale)."
+    },
+    {
+      "id": "truncation",
+      "term": "Truncation",
+      "aliases": [
+        "truncation",
+        "truncate",
+        "truncated"
+      ],
+      "codeTerms": [
+        "TRUNC",
+        "TRUNCATE",
+        "ROUNDED"
+      ],
+      "domains": [
+        "numerics",
+        "mainframe"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "Dropping digits without rounding. COBOL stores a result truncated to the receiving PICTURE unless ROUNDED is coded."
+    },
+    {
+      "id": "packed-decimal",
+      "term": "Packed decimal (COMP-3)",
+      "aliases": [
+        "packed decimal",
+        "COMP-3",
+        "zoned decimal",
+        "overpunch"
+      ],
+      "codeTerms": [
+        "COMP-3",
+        "PACKED"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "numerics",
+        "mainframe"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "Mainframe formats for exact decimal amounts: packed (two digits per byte and a sign nibble) and zoned (one digit per byte, the sign overpunched in the last byte)."
+    },
+    {
+      "id": "implied-decimal",
+      "term": "Implied decimal point",
+      "aliases": [
+        "implied decimal point",
+        "implied decimal",
+        "assumed decimal point"
+      ],
+      "codeTerms": [],
+      "weight": 0.5,
+      "domains": [
+        "numerics",
+        "mainframe"
+      ],
+      "functions": [
+        "money-rounding"
+      ],
+      "definition": "In PIC 9(9)V99 the V marks where the decimal point is assumed; no point is stored, so 12345 in V99 means 123.45."
+    },
+    {
+      "id": "size-error",
+      "term": "Size error (overflow)",
+      "aliases": [
+        "on size error",
+        "overflow",
+        "size error"
+      ],
+      "codeTerms": [
+        "SIZE-ERROR",
+        "OVERFLOW"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "numerics",
+        "mainframe"
+      ],
+      "functions": [
+        "money-rounding",
+        "validation-rejects"
+      ],
+      "definition": "A result too large for its receiving field. Without ON SIZE ERROR, COBOL silently drops the high-order digits."
+    },
+    {
+      "id": "day-number",
+      "term": "Day number (integer date)",
+      "aliases": [
+        "day number",
+        "integer of date",
+        "epoch day",
+        "julian day"
+      ],
+      "codeTerms": [
+        "INTEGER-OF-DATE",
+        "DATE-OF-INTEGER",
+        "toEpochDay",
+        "DAY-TO-DATE",
+        "DATE-TO-DAY"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "date-calendar"
+      ],
+      "definition": "A date held as a count of days from an epoch (COBOL FUNCTION INTEGER-OF-DATE, Java LocalDate.toEpochDay), so the difference of two dates is a day count."
+    },
+    {
+      "id": "days-between",
+      "term": "Days between dates",
+      "aliases": [
+        "days between",
+        "number of days between",
+        "day difference"
+      ],
+      "codeTerms": [
+        "DAYS-BETWEEN",
+        "DIFF-DAYS",
+        "daysBetween",
+        "FULL-DAYS"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "date-calendar"
+      ],
+      "definition": "The number of days from one date to another (ChronoUnit.DAYS.between); the basis of actual-day interest."
+    },
+    {
+      "id": "end-of-month",
+      "term": "End of month",
+      "aliases": [
+        "end of month",
+        "last day of month",
+        "month end",
+        "end of year"
+      ],
+      "codeTerms": [
+        "END-OF-MONTH",
+        "LAST-DAY",
+        "TARGET-LAST",
+        "lengthOfMonth",
+        "EndOfYear"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "date-calendar"
+      ],
+      "definition": "The last calendar day of a month (28 to 31); due dates that fall past it are clamped to it."
+    },
+    {
+      "id": "leap-year",
+      "term": "Leap year",
+      "aliases": [
+        "leap year",
+        "february 29"
+      ],
+      "codeTerms": [
+        "LEAP",
+        "isLeapYear"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "date-calendar"
+      ],
+      "definition": "A year of 366 days (divisible by 4, except centuries not divisible by 400); actual/actual day counts change in it."
+    },
+    {
+      "id": "plus-months",
+      "term": "Adding months to a date",
+      "aliases": [
+        "add months",
+        "plus months",
+        "add weeks",
+        "add days"
+      ],
+      "codeTerms": [
+        "PLUS-MONTHS",
+        "ADD-MONTHS",
+        "plusMonths",
+        "plusWeeks",
+        "plusDays",
+        "plusYears"
+      ],
+      "domains": [
+        "numerics"
+      ],
+      "functions": [
+        "date-calendar"
+      ],
+      "definition": "Moving a date by whole months clamps to the last valid day (31 January + 1 month = 28 or 29 February); next due dates are computed this way."
+    },
+    {
+      "id": "date-validation",
+      "term": "Date validation",
+      "aliases": [
+        "date validation",
+        "valid date",
+        "validate date"
+      ],
+      "codeTerms": [
+        "CEEDAYS",
+        "DATE-VALID",
+        "CSUTLDTC"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "date-calendar",
+        "validation-rejects"
+      ],
+      "definition": "Checking that a date has a valid format and value; CardDemo's CSUTLDTC calls the Language Environment service CEEDAYS."
+    },
+    {
+      "id": "timestamp",
+      "term": "Timestamp",
+      "aliases": [
+        "timestamp",
+        "processing timestamp",
+        "origination timestamp"
+      ],
+      "codeTerms": [
+        "ORIG-TS",
+        "PROC-TS",
+        "TIMESTAMP"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "date-calendar"
+      ],
+      "definition": "Date and time of an event; CardDemo transactions carry when they originated (TRAN-ORIG-TS) and when they were processed (TRAN-PROC-TS)."
+    },
+    {
+      "id": "current-date",
+      "term": "Current date (batch clock)",
+      "aliases": [
+        "current date",
+        "system date",
+        "batch clock",
+        "run date"
+      ],
+      "codeTerms": [
+        "CURRENT-DATE"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "date-calendar"
+      ],
+      "definition": "The date and time the program reads from the system (FUNCTION CURRENT-DATE, ACCEPT FROM DATE); tests pin it so outputs are repeatable."
+    },
+    {
+      "id": "card-account",
+      "term": "Credit card account",
+      "aliases": [
+        "credit card account",
+        "card account",
+        "account record",
+        "account master"
+      ],
+      "codeTerms": [
+        "ACCOUNT-RECORD",
+        "ACCT",
+        "ACCT-ID",
+        "ACCTDATA",
+        "ACCTFILE",
+        "ACCOUNT-FILE"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "account-card-maintenance"
+      ],
+      "definition": "The account a card draws on (ACCOUNT-RECORD): current balance, credit limit, cash credit limit, cycle credit and debit, status, open, expiry and reissue dates, and the account group."
+    },
+    {
+      "id": "card",
+      "term": "Card",
+      "aliases": [
+        "credit card",
+        "card",
+        "card number",
+        "payment card"
+      ],
+      "codeTerms": [
+        "CARD-NUM",
+        "CARD-RECORD",
+        "CARDDATA",
+        "CARDFILE",
+        "CARD"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "account-card-maintenance"
+      ],
+      "definition": "A payment card: number, CVV, embossed name, expiry date and status, linked to an account."
+    },
+    {
+      "id": "card-xref",
+      "term": "Card cross-reference",
+      "aliases": [
+        "card cross-reference",
+        "card cross reference",
+        "xref",
+        "cross reference"
+      ],
+      "codeTerms": [
+        "XREF",
+        "CARD-XREF",
+        "XREF-CARD-NUM",
+        "CARDXREF",
+        "XREFFILE"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "account-card-maintenance",
+        "transaction-posting"
+      ],
+      "definition": "The record linking a card number to its customer id and account id (CARD-XREF-RECORD); posting uses it to find the account of a transaction's card."
+    },
+    {
+      "id": "credit-limit",
+      "term": "Credit limit",
+      "aliases": [
+        "credit limit",
+        "credit line",
+        "spending limit"
+      ],
+      "codeTerms": [
+        "CREDIT-LIMIT",
+        "creditLimit"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "account-card-maintenance",
+        "validation-rejects"
+      ],
+      "definition": "The maximum balance allowed on the account. CardDemo rejects a transaction whose amount would take cycle credits − cycle debits + amount past it (reason 102, overlimit)."
+    },
+    {
+      "id": "cash-credit-limit",
+      "term": "Cash credit limit",
+      "aliases": [
+        "cash credit limit",
+        "cash advance limit"
+      ],
+      "codeTerms": [
+        "CASH-CREDIT-LIMIT",
+        "cashCreditLimit"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "account-card-maintenance"
+      ],
+      "definition": "The part of the credit limit that may be drawn as cash advances."
+    },
+    {
+      "id": "current-balance",
+      "term": "Current balance",
+      "aliases": [
+        "current balance",
+        "account balance",
+        "balance"
+      ],
+      "codeTerms": [
+        "CURR-BAL",
+        "currentBalance"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting",
+        "account-card-maintenance"
+      ],
+      "definition": "The account's balance now (ACCT-CURR-BAL): posting adds each transaction amount (purchases positive, payments and credits negative)."
+    },
+    {
+      "id": "cycle-credit",
+      "term": "Current cycle credit",
+      "aliases": [
+        "cycle credit",
+        "current cycle credit",
+        "credits this cycle"
+      ],
+      "codeTerms": [
+        "CYC-CREDIT",
+        "CURR-CYC-CREDIT",
+        "currentCycleCredit"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "The total of positive transaction amounts posted in the current billing cycle (ACCT-CURR-CYC-CREDIT); CardDemo adds an amount here when it is ≥ 0."
+    },
+    {
+      "id": "cycle-debit",
+      "term": "Current cycle debit",
+      "aliases": [
+        "cycle debit",
+        "current cycle debit",
+        "debits this cycle"
+      ],
+      "codeTerms": [
+        "CYC-DEBIT",
+        "CURR-CYC-DEBIT",
+        "currentCycleDebit"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "The total of negative transaction amounts posted in the current billing cycle (ACCT-CURR-CYC-DEBIT)."
+    },
+    {
+      "id": "billing-cycle",
+      "term": "Billing cycle",
+      "aliases": [
+        "billing cycle",
+        "statement cycle",
+        "cycle"
+      ],
+      "codeTerms": [
+        "CYCLE",
+        "CYC"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "statement-reporting",
+        "transaction-posting"
+      ],
+      "definition": "The period between two statements; cycle credits and debits accumulate over it."
+    },
+    {
+      "id": "account-status",
+      "term": "Account status",
+      "aliases": [
+        "account status",
+        "active status",
+        "active account"
+      ],
+      "codeTerms": [
+        "ACTIVE-STATUS",
+        "ACCT-STATUS"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "account-card-maintenance"
+      ],
+      "definition": "Whether the account is active (Y) or not."
+    },
+    {
+      "id": "account-expiration",
+      "term": "Account expiration date",
+      "aliases": [
+        "expiration date",
+        "expiry date",
+        "expired account",
+        "account expiry"
+      ],
+      "codeTerms": [
+        "EXPIRAION-DATE",
+        "EXPIRATION",
+        "EXPIRY",
+        "EXPIRY-DATE",
+        "expirationDate"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "account-card-maintenance",
+        "validation-rejects"
+      ],
+      "definition": "The date after which the account may not be used; CardDemo rejects a transaction whose origination date is after it (reason 103). The copybook spells the field ACCT-EXPIRAION-DATE."
+    },
+    {
+      "id": "reissue-date",
+      "term": "Reissue date",
+      "aliases": [
+        "reissue date",
+        "card reissue"
+      ],
+      "codeTerms": [
+        "REISSUE-DATE"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "account-card-maintenance"
+      ],
+      "definition": "When the account's cards were last reissued."
+    },
+    {
+      "id": "disclosure-group",
+      "term": "Disclosure group (account group)",
+      "aliases": [
+        "disclosure group",
+        "account group",
+        "rate group",
+        "interest rate group"
+      ],
+      "codeTerms": [
+        "DIS-GROUP",
+        "DISCGRP",
+        "ACCT-GROUP-ID",
+        "GROUP-ID",
+        "DIS-ACCT-GROUP-ID",
+        "DIS-INT-RATE"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "The group id on the account that selects its interest rates in the disclosure group file (DISCGRP), keyed by group, transaction type and category. CardDemo falls back to the DEFAULT group when the account's group has no rate."
+    },
+    {
+      "id": "transaction",
+      "term": "Transaction",
+      "aliases": [
+        "transaction",
+        "card transaction",
+        "financial transaction"
+      ],
+      "codeTerms": [
+        "TRAN",
+        "TRAN-RECORD",
+        "TRANSACT",
+        "TRAN-ID",
+        "TRAN-AMT"
+      ],
+      "weight": 0.7,
+      "domains": [
+        "cards",
+        "payments"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "A financial event on a card or account: purchase, payment, credit, fee or interest, with an amount, a type and category, a merchant and timestamps (TRAN-RECORD)."
+    },
+    {
+      "id": "daily-transaction",
+      "term": "Daily transaction file",
+      "aliases": [
+        "daily transaction",
+        "daily transactions",
+        "daily transaction file"
+      ],
+      "codeTerms": [
+        "DALYTRAN"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "The day's incoming transactions (DALYTRAN), read and posted by CBTRN02C."
+    },
+    {
+      "id": "transaction-type",
+      "term": "Transaction type",
+      "aliases": [
+        "transaction type",
+        "type code",
+        "transaction type code"
+      ],
+      "codeTerms": [
+        "TRAN-TYPE-CD",
+        "TYPE-CD",
+        "TRAN-TYPE",
+        "typeCode",
+        "TRANTYPE"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting",
+        "account-card-maintenance"
+      ],
+      "definition": "A code classifying the transaction (for example purchase or payment). With the category code it keys category balances and interest rates."
+    },
+    {
+      "id": "transaction-category",
+      "term": "Transaction category",
+      "aliases": [
+        "transaction category",
+        "category code"
+      ],
+      "codeTerms": [
+        "TRAN-CAT-CD",
+        "CAT-CD",
+        "TRANCAT",
+        "categoryCode"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "A finer classification under the transaction type (TRAN-CAT-CD)."
+    },
+    {
+      "id": "category-balance",
+      "term": "Transaction category balance",
+      "aliases": [
+        "transaction category balance",
+        "category balance",
+        "TCATBAL"
+      ],
+      "codeTerms": [
+        "TRAN-CAT-BAL",
+        "TCATBAL",
+        "TCATBALF",
+        "categoryBalance"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting",
+        "interest-calculation"
+      ],
+      "definition": "The balance of one account per transaction type and category (TRAN-CAT-BAL-RECORD). Posting adds each transaction to it (creating the record if missing); interest is computed on it."
+    },
+    {
+      "id": "posting",
+      "term": "Posting",
+      "aliases": [
+        "posting",
+        "post a transaction",
+        "post transactions",
+        "transaction posting"
+      ],
+      "codeTerms": [
+        "POST",
+        "POSTTRAN",
+        "POST-TRANSACTION"
+      ],
+      "domains": [
+        "cards",
+        "accounting"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "Recording a validated transaction: writing it to the transaction master and updating the account balance, cycle totals and category balance."
+    },
+    {
+      "id": "monthly-interest",
+      "term": "Monthly interest (cards)",
+      "aliases": [
+        "monthly interest",
+        "interest charge",
+        "interest calculation run"
+      ],
+      "codeTerms": [
+        "MONTHLY-INT",
+        "monthlyInterest",
+        "INTCALC",
+        "TOTAL-INT",
+        "COMPUTE-INTEREST"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "CardDemo's interest for one category balance: balance × annual rate (percent) ÷ 1200, that is ÷ 100 for percent and ÷ 12 for a month. The account's total interest is added to its current balance and written as an interest transaction."
+    },
+    {
+      "id": "interest-transaction",
+      "term": "Interest transaction",
+      "aliases": [
+        "interest transaction",
+        "system transaction"
+      ],
+      "codeTerms": [
+        "SYSTRAN"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "interest-calculation",
+        "transaction-posting"
+      ],
+      "definition": "A system-generated transaction (SYSTRAN) that charges computed interest to the account."
+    },
+    {
+      "id": "reject-reason",
+      "term": "Reject reason",
+      "aliases": [
+        "reject reason",
+        "rejection reason",
+        "validation failure",
+        "reject code",
+        "rejected transaction"
+      ],
+      "codeTerms": [
+        "FAIL-REASON",
+        "REJECT",
+        "REJECTS",
+        "DALYREJS",
+        "RJ-CODE",
+        "REJ",
+        "REJECT-REC"
+      ],
+      "domains": [
+        "cards",
+        "lending"
+      ],
+      "functions": [
+        "validation-rejects"
+      ],
+      "definition": "A code and text explaining why an input was not processed. CardDemo: 100 invalid card number, 101 account not found, 102 overlimit, 103 transaction after account expiration. Fineract COBOL: a reject record per loan request with code, source and text."
+    },
+    {
+      "id": "overlimit",
+      "term": "Over limit",
+      "aliases": [
+        "over limit",
+        "overlimit",
+        "over the credit limit"
+      ],
+      "codeTerms": [
+        "OVERLIMIT",
+        "OVER-LIMIT"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "validation-rejects"
+      ],
+      "definition": "A transaction that would take the account past its credit limit; CardDemo rejects it with reason 102."
+    },
+    {
+      "id": "merchant",
+      "term": "Merchant",
+      "aliases": [
+        "merchant",
+        "merchant name",
+        "merchant city"
+      ],
+      "codeTerms": [
+        "MERCHANT"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "The business where a card transaction took place (id, name, city, zip)."
+    },
+    {
+      "id": "statement",
+      "term": "Account statement",
+      "aliases": [
+        "account statement",
+        "monthly statement",
+        "statement",
+        "statement printing"
+      ],
+      "codeTerms": [
+        "STATEMENT",
+        "STMT"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "statement-reporting"
+      ],
+      "definition": "A periodic document listing an account's transactions and balances; CardDemo prints it in CBSTM03A (text and HTML)."
+    },
+    {
+      "id": "transaction-report",
+      "term": "Transaction report",
+      "aliases": [
+        "transaction report",
+        "transaction detail report",
+        "detail report",
+        "report"
+      ],
+      "codeTerms": [
+        "TRANREPT",
+        "REPORT",
+        "RPT"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "statement-reporting"
+      ],
+      "definition": "A printed list of transactions in a date range with page, account and grand totals (CardDemo CBTRN03C, job TRANREPT)."
+    },
+    {
+      "id": "report-totals",
+      "term": "Report totals",
+      "aliases": [
+        "page total",
+        "account total",
+        "grand total",
+        "report totals",
+        "control break"
+      ],
+      "codeTerms": [
+        "PAGE-TOTAL",
+        "ACCOUNT-TOTAL",
+        "GRAND-TOTAL",
+        "TOTALS",
+        "TOT"
+      ],
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "statement-reporting"
+      ],
+      "definition": "Sums printed at the end of a page, at a change of account (control break) and at the end of the report."
+    },
+    {
+      "id": "bill-payment",
+      "term": "Bill payment",
+      "aliases": [
+        "bill payment",
+        "pay the balance",
+        "online payment",
+        "payment"
+      ],
+      "codeTerms": [
+        "BILL",
+        "PAYMENT",
+        "BILPAY"
+      ],
+      "domains": [
+        "cards",
+        "payments"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "Paying the account balance in full online (COBIL00C): a payment transaction is written and the account balance is reduced by the amount."
+    },
+    {
+      "id": "authorization",
+      "term": "Card authorization",
+      "aliases": [
+        "authorization",
+        "pending authorization",
+        "authorization decision"
+      ],
+      "codeTerms": [
+        "AUTH",
+        "PAUT"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "The decision to approve or decline a card transaction at the point of sale, before it is posted."
+    },
+    {
+      "id": "customer",
+      "term": "Customer",
+      "aliases": [
+        "customer",
+        "customer record",
+        "customer master",
+        "cardholder"
+      ],
+      "codeTerms": [
+        "CUST",
+        "CUSTOMER",
+        "CUSTDATA",
+        "CUSTFILE",
+        "CUST-REC",
+        "CUSTOMER-RECORD"
+      ],
+      "domains": [
+        "customer"
+      ],
+      "functions": [
+        "customer-maintenance"
+      ],
+      "definition": "A person who holds accounts and cards (CardDemo CUSTOMER-RECORD), or a record of the SAM customer master file."
+    },
+    {
+      "id": "fico-score",
+      "term": "FICO credit score",
+      "aliases": [
+        "FICO score",
+        "credit score"
+      ],
+      "codeTerms": [
+        "FICO",
+        "CREDIT-SCORE"
+      ],
+      "domains": [
+        "customer"
+      ],
+      "functions": [
+        "customer-maintenance"
+      ],
+      "definition": "A credit-worthiness score (300–850) kept on the CardDemo customer record."
+    },
+    {
+      "id": "ssn",
+      "term": "Social security number",
+      "aliases": [
+        "social security number",
+        "SSN",
+        "government issued id"
+      ],
+      "codeTerms": [
+        "SSN",
+        "GOVT-ISSUED-ID"
+      ],
+      "domains": [
+        "customer"
+      ],
+      "functions": [
+        "customer-maintenance"
+      ],
+      "definition": "A personal identifier on the customer record; sensitive data."
+    },
+    {
+      "id": "customer-master-update",
+      "term": "Customer master update",
+      "aliases": [
+        "master file update",
+        "customer master update",
+        "sequential master update",
+        "old master new master"
+      ],
+      "codeTerms": [
+        "CUSTOUT",
+        "CUSTOMER-FILE-OUT",
+        "TRANFILE",
+        "TRAN-FILE"
+      ],
+      "domains": [
+        "customer",
+        "mainframe"
+      ],
+      "functions": [
+        "customer-maintenance",
+        "batch-control-io"
+      ],
+      "definition": "Applying a sorted transaction file to a sorted customer master file by key and writing a new master with the changes (SAM1); unmatched and bad transactions are reported."
+    },
+    {
+      "id": "add-transaction",
+      "term": "Add transaction",
+      "aliases": [
+        "add transaction",
+        "add a customer",
+        "add a record",
+        "new customer"
+      ],
+      "codeTerms": [
+        "ADD-TRAN",
+        "PROCESS-ADD"
+      ],
+      "domains": [
+        "customer"
+      ],
+      "functions": [
+        "customer-maintenance"
+      ],
+      "definition": "A SAM transaction that inserts a new, blank customer record with the given key."
+    },
+    {
+      "id": "update-transaction",
+      "term": "Update transaction",
+      "aliases": [
+        "update transaction",
+        "replace a field",
+        "update a customer",
+        "add to a field",
+        "subtract from a field"
+      ],
+      "codeTerms": [
+        "UPDATE-TRAN",
+        "PROCESS-UPDATE",
+        "REPLACE"
+      ],
+      "domains": [
+        "customer"
+      ],
+      "functions": [
+        "customer-maintenance"
+      ],
+      "definition": "A SAM transaction that changes one field of a customer record: REPLACE sets it, ADD and SUBTRACT change a numeric amount (SAM2 applies it)."
+    },
+    {
+      "id": "delete-transaction",
+      "term": "Delete transaction",
+      "aliases": [
+        "delete transaction",
+        "delete a customer",
+        "remove a record"
+      ],
+      "codeTerms": [
+        "DELETE-TRAN",
+        "PROCESS-DELETE"
+      ],
+      "domains": [
+        "customer"
+      ],
+      "functions": [
+        "customer-maintenance"
+      ],
+      "definition": "A SAM transaction that removes the customer record with the given key from the new master."
+    },
+    {
+      "id": "customer-contact",
+      "term": "Customer contact record",
+      "aliases": [
+        "customer contact",
+        "contact record",
+        "contact details",
+        "address"
+      ],
+      "codeTerms": [
+        "CONTACT",
+        "ADDR"
+      ],
+      "weight": 0.7,
+      "domains": [
+        "customer"
+      ],
+      "functions": [
+        "customer-maintenance"
+      ],
+      "definition": "Contact data of a customer (name, address, phone); in SAM a second record type of the customer file."
+    },
+    {
+      "id": "customer-report",
+      "term": "Customer update report",
+      "aliases": [
+        "customer report",
+        "update report",
+        "transaction totals report"
+      ],
+      "codeTerms": [
+        "CUSTRPT",
+        "RPT-LINE",
+        "REPORT-FILE"
+      ],
+      "domains": [
+        "customer"
+      ],
+      "functions": [
+        "statement-reporting",
+        "customer-maintenance"
+      ],
+      "definition": "SAM1's 132-column print report: a line per transaction with its result, then totals of records read, added, updated and deleted and of transactions in error."
+    },
+    {
+      "id": "debit",
+      "term": "Debit",
+      "aliases": [
+        "debit",
+        "debits",
+        "debit entry"
+      ],
+      "codeTerms": [
+        "DEBIT"
+      ],
+      "domains": [
+        "accounting",
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "An entry on the left side of an account; on a card account, a charge that increases what the customer owes."
+    },
+    {
+      "id": "credit-entry",
+      "term": "Credit",
+      "aliases": [
+        "credit entry",
+        "credits",
+        "refund",
+        "credit"
+      ],
+      "codeTerms": [
+        "CREDIT"
+      ],
+      "weight": 0.7,
+      "domains": [
+        "accounting",
+        "cards"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "An entry on the right side of an account; on a card account, a payment or refund that decreases what the customer owes."
+    },
+    {
+      "id": "ledger",
+      "term": "Ledger",
+      "aliases": [
+        "ledger",
+        "general ledger",
+        "GL account"
+      ],
+      "codeTerms": [
+        "LEDGER"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "accounting"
+      ],
+      "functions": [
+        "transaction-posting"
+      ],
+      "definition": "The book of accounts in which postings are recorded."
+    },
+    {
+      "id": "accrual",
+      "term": "Accrual",
+      "aliases": [
+        "accrual",
+        "accrued interest",
+        "interest accrual"
+      ],
+      "codeTerms": [
+        "ACCRU",
+        "ACCRUAL",
+        "accrued"
+      ],
+      "domains": [
+        "accounting",
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "Recognizing interest as it is earned day by day, before it is due or paid."
+    },
+    {
+      "id": "balance",
+      "term": "Balance",
+      "aliases": [
+        "balance",
+        "balances"
+      ],
+      "codeTerms": [
+        "BAL",
+        "BALANCE"
+      ],
+      "weight": 0.3,
+      "domains": [
+        "accounting"
+      ],
+      "functions": [
+        "outstanding-balance",
+        "transaction-posting"
+      ],
+      "definition": "The net amount of an account at a point in time."
+    },
+    {
+      "id": "apr",
+      "term": "Annual percentage rate (APR)",
+      "aliases": [
+        "APR",
+        "annual percentage rate",
+        "effective annual rate"
+      ],
+      "codeTerms": [
+        "APR"
+      ],
+      "domains": [
+        "lending",
+        "cards"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "The yearly cost of credit as a percentage, including interest and some fees; distinct from the nominal rate."
+    },
+    {
+      "id": "simple-interest",
+      "term": "Simple interest",
+      "aliases": [
+        "simple interest"
+      ],
+      "codeTerms": [],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "Interest on the principal only: principal × rate × time. CardDemo's monthly interest and Fineract's per-period interest are simple interest on the period's balance."
+    },
+    {
+      "id": "compound-interest",
+      "term": "Compound interest",
+      "aliases": [
+        "compound interest",
+        "compounding"
+      ],
+      "codeTerms": [
+        "COMPOUND",
+        "compounding"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "interest-calculation"
+      ],
+      "definition": "Interest on principal plus previously added interest; the EMI formula assumes per-period compounding of the periodic rate."
+    },
+    {
+      "id": "arrears",
+      "term": "Arrears (delinquency)",
+      "aliases": [
+        "arrears",
+        "delinquency",
+        "overdue",
+        "past due"
+      ],
+      "codeTerms": [
+        "ARREAR",
+        "OVERDUE",
+        "DELINQ"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "outstanding-balance"
+      ],
+      "definition": "Installments due and not paid; the overdue amount and days past due drive penalties and provisioning."
+    },
+    {
+      "id": "prepayment",
+      "term": "Prepayment",
+      "aliases": [
+        "prepayment",
+        "early repayment",
+        "pay off early"
+      ],
+      "codeTerms": [
+        "PREPAY",
+        "prepayment"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "outstanding-balance"
+      ],
+      "definition": "Repaying principal ahead of the schedule, which reduces later interest or installments."
+    },
+    {
+      "id": "payment-allocation",
+      "term": "Payment allocation",
+      "aliases": [
+        "payment allocation",
+        "allocation rule",
+        "allocation order"
+      ],
+      "codeTerms": [
+        "ALLOCATION"
+      ],
+      "domains": [
+        "lending"
+      ],
+      "functions": [
+        "outstanding-balance"
+      ],
+      "definition": "The order in which a payment is applied to penalties, fees, interest and principal."
+    },
+    {
+      "id": "status-block",
+      "term": "Status block and rejects (Fineract COBOL)",
+      "aliases": [
+        "status block",
+        "tenant throw",
+        "status code"
+      ],
+      "codeTerms": [
+        "ST-OK",
+        "FNSTAT",
+        "ST-RC",
+        "STAT"
+      ],
+      "weight": 0.7,
+      "domains": [
+        "lending",
+        "mainframe"
+      ],
+      "functions": [
+        "validation-rejects"
+      ],
+      "definition": "The FNSTAT block every Fineract subprogram returns: ST-OK, or a reject code and text. A Java exception (for example the FLAT interest method's throw) becomes a reject of the loan request."
+    },
+    {
+      "id": "validation",
+      "term": "Validation",
+      "aliases": [
+        "validation",
+        "validate",
+        "check",
+        "verify",
+        "edit check"
+      ],
+      "codeTerms": [
+        "VALIDATE",
+        "VALIDATION",
+        "VALID",
+        "INVALID"
+      ],
+      "domains": [
+        "cross-cutting"
+      ],
+      "functions": [
+        "validation-rejects"
+      ],
+      "definition": "Checking input against rules before processing it, and rejecting or reporting what fails."
+    },
+    {
+      "id": "error-message",
+      "term": "Error message",
+      "aliases": [
+        "error message",
+        "message"
+      ],
+      "codeTerms": [
+        "ERR-MSG",
+        "ERROR-MSG",
+        "MESSAGE",
+        "MSG",
+        "ERRMSG"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "cross-cutting"
+      ],
+      "functions": [
+        "validation-rejects"
+      ],
+      "definition": "Text returned to the caller or shown on screen when an input or operation fails."
+    },
+    {
+      "id": "file-status",
+      "term": "File status",
+      "aliases": [
+        "file status",
+        "file status code",
+        "I/O status"
+      ],
+      "codeTerms": [
+        "FILE-STATUS",
+        "IO-STATUS",
+        "FS"
+      ],
+      "weight": 0.7,
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "The two-character code each file operation returns: '00' success, '10' end of file, '23' record not found, '35' file missing."
+    },
+    {
+      "id": "end-of-file",
+      "term": "End of file",
+      "aliases": [
+        "end of file",
+        "EOF",
+        "at end"
+      ],
+      "codeTerms": [
+        "END-OF-FILE",
+        "EOF",
+        "AT-END"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "The condition when a sequential read finds no more records; batch loops stop on it."
+    },
+    {
+      "id": "abend",
+      "term": "Abend",
+      "aliases": [
+        "abend",
+        "abnormal end",
+        "abort the program"
+      ],
+      "codeTerms": [
+        "ABEND",
+        "CEE3ABD",
+        "ABEND-PROGRAM",
+        "ABEND-CODE"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "An abnormal end: the program stops with an abend code (through CEE3ABD) after a severe error, such as a file that cannot be opened."
+    },
+    {
+      "id": "return-code",
+      "term": "Return code",
+      "aliases": [
+        "return code",
+        "condition code",
+        "MAXCC",
+        "exit code"
+      ],
+      "codeTerms": [
+        "RETURN-CODE",
+        "MAXCC"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "The value a program returns to its job step; the job's MAXCC is the highest. CardDemo POSTTRAN returns 4 when transactions were rejected; SAM1 sets 16 on file errors."
+    },
+    {
+      "id": "jcl-job",
+      "term": "JCL job and step",
+      "aliases": [
+        "JCL",
+        "batch job",
+        "job step"
+      ],
+      "codeTerms": [
+        "JCL",
+        "JOB",
+        "STEP"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "Job Control Language describes a batch job's steps, the program each runs and the datasets (DD statements) it reads and writes."
+    },
+    {
+      "id": "dataset",
+      "term": "Dataset",
+      "aliases": [
+        "dataset",
+        "data set",
+        "DD name",
+        "DSN"
+      ],
+      "codeTerms": [
+        "DSN",
+        "DDNAME"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "A mainframe file, named by its DSN and bound to a program's file by a DD statement."
+    },
+    {
+      "id": "vsam-ksds",
+      "term": "VSAM KSDS (indexed file)",
+      "aliases": [
+        "VSAM",
+        "KSDS",
+        "indexed file",
+        "keyed file",
+        "key-sequenced"
+      ],
+      "codeTerms": [
+        "KSDS",
+        "VSAM",
+        "INDEXED",
+        "RECORD-KEY",
+        "INVALID-KEY"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "A keyed file whose records are read, written and rewritten by key (and optionally alternate keys)."
+    },
+    {
+      "id": "run-control",
+      "term": "Run control",
+      "aliases": [
+        "run control",
+        "control record",
+        "control card",
+        "PARM"
+      ],
+      "codeTerms": [
+        "RUN-CONTROL",
+        "RUNCTL",
+        "PARM",
+        "RUNCT"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "Parameters of a batch run: a control record (Fineract: math context precision and rounding mode) or the JCL PARM (CardDemo INTCALC: the run date)."
+    },
+    {
+      "id": "record-counter",
+      "term": "Record counters",
+      "aliases": [
+        "record count",
+        "counters",
+        "run statistics",
+        "records processed"
+      ],
+      "codeTerms": [
+        "COUNT",
+        "CNT",
+        "COUNTER",
+        "RECORD-COUNT"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "Counts of records read, written, posted and rejected, displayed or printed at the end of the run."
+    },
+    {
+      "id": "sign-on",
+      "term": "Sign-on",
+      "aliases": [
+        "sign on",
+        "signon",
+        "log in",
+        "login",
+        "password"
+      ],
+      "codeTerms": [
+        "SIGNON",
+        "SGN",
+        "PASSWORD",
+        "PASSWD",
+        "USER-ID",
+        "PWD"
+      ],
+      "domains": [
+        "security"
+      ],
+      "functions": [
+        "user-security"
+      ],
+      "definition": "Authenticating a user id and password against the user security file before showing the menu (CardDemo COSGN00C)."
+    },
+    {
+      "id": "user-security",
+      "term": "User security record",
+      "aliases": [
+        "user",
+        "admin user",
+        "regular user",
+        "user type",
+        "user security"
+      ],
+      "codeTerms": [
+        "USRSEC",
+        "SEC-USR",
+        "USER-TYPE",
+        "ADMIN",
+        "USR"
+      ],
+      "domains": [
+        "security"
+      ],
+      "functions": [
+        "user-security"
+      ],
+      "definition": "A user's id, name, password and type (admin or regular) in the USRSEC file; admins can add, update, delete and list users."
+    },
+    {
+      "id": "menu",
+      "term": "Menu",
+      "aliases": [
+        "menu",
+        "main menu",
+        "admin menu",
+        "navigation"
+      ],
+      "codeTerms": [
+        "MENU",
+        "MEN01",
+        "ADM01"
+      ],
+      "domains": [
+        "security"
+      ],
+      "functions": [
+        "user-security"
+      ],
+      "definition": "The online screen that lists the functions a user may run and transfers control to the chosen program."
+    },
+    {
+      "id": "cics",
+      "term": "CICS online transaction",
+      "aliases": [
+        "CICS",
+        "online program",
+        "screen",
+        "BMS map",
+        "pseudo-conversational"
+      ],
+      "codeTerms": [
+        "CICS",
+        "COMMAREA",
+        "DFHCOMMAREA",
+        "EIBAID"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [],
+      "definition": "IBM's transaction monitor for online screens; CardDemo's CO* programs are CICS programs that send and receive BMS maps and pass state in the COMMAREA."
+    },
+    {
+      "id": "export-import",
+      "term": "Export and import",
+      "aliases": [
+        "export",
+        "import",
+        "branch migration",
+        "unload",
+        "reload",
+        "data migration"
+      ],
+      "codeTerms": [
+        "EXPORT",
+        "IMPORT",
+        "UNLOAD",
+        "MIGRATION",
+        "EXPFILE"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "data-exchange"
+      ],
+      "definition": "Writing records to an interchange file and reading them back elsewhere (CardDemo CBEXPORT and CBIMPORT for branch migration)."
+    },
+    {
+      "id": "idcams-repro",
+      "term": "IDCAMS REPRO",
+      "aliases": [
+        "IDCAMS",
+        "REPRO",
+        "copy file"
+      ],
+      "codeTerms": [
+        "IDCAMS",
+        "REPRO"
+      ],
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "data-exchange",
+        "batch-control-io"
+      ],
+      "definition": "The utility that defines, deletes and copies VSAM and sequential files; jobs use REPRO to load and unload files."
+    },
+    {
+      "id": "sort",
+      "term": "Sort",
+      "aliases": [
+        "sort",
+        "DFSORT",
+        "sorted file"
+      ],
+      "codeTerms": [
+        "SORT"
+      ],
+      "weight": 0.5,
+      "domains": [
+        "mainframe"
+      ],
+      "functions": [
+        "batch-control-io"
+      ],
+      "definition": "Ordering records by key (DFSORT or the COBOL SORT verb), for example transactions before a report or a master update."
+    }
+  ]
+}

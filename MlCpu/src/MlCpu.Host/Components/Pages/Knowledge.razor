@@ -1,0 +1,332 @@
+@page "/knowledge"
+@using System.Text.Json.Nodes
+@using MlCpu.Host.Services.Knowledge
+@using MlCpu.SemanticKb
+@using MlCpu.SemanticKb.Grounding
+@using MlCpu.SemanticKb.Labels
+@using MlCpu.SemanticKb.Search
+@implements IDisposable
+@inject KnowledgeService Kb
+@inject OperationService Ops
+
+<PageTitle>Knowledge Base</PageTitle>
+<h2>Knowledge Base</h2>
+
+<p class="muted">Semantic search over the functionality and business rules of the published estates. The chunks come from the
+pipeline outputs Gemma 4 works from (requirements packets, COBOL-85 AST, call graph, designs, published Java); they are embedded with
+EmbeddingGemma 300M (ONNX, through ML.NET) and classified by ML.NET models trained on the pipeline's labels
+(<code>knowledgeBaseGroundGemma4.md</code>). Indexes: <code>@Kb.Workspace\&lt;project&gt;\knowledge</code>.</p>
+
+@if (Kb.Problem is { } problem)
+{
+    <div class="panel"><span class="chip bad">unavailable</span> @problem</div>
+}
+
+<div class="row">
+    @foreach (var t in Tabs)
+    {
+        <button class="@(tab == t ? "" : "secondary")" @onclick="() => tab = t">@t</button>
+    }
+</div>
+
+@if (tab == "Search")
+{
+    <div class="panel">
+        <div class="row">
+            <input type="text" class="wide" placeholder="Ask about a topic, e.g. how is monthly interest calculated · rounding program:FNMY0100 kind:rule"
+                   @bind="query" @bind:event="oninput" @onkeydown="OnKey" />
+            <button disabled="@(indexed.Count == 0 || string.IsNullOrWhiteSpace(query))" @onclick="Search">Search</button>
+        </div>
+        <div class="row">
+            @foreach (var p in indexed)
+            {
+                <label style="min-width:auto"><input type="checkbox" checked="@selected.Contains(p)" @onchange="e => Toggle(p, (bool)e.Value!)" /> @p</label>
+            }
+            <select @bind="mode"><option value="hybrid">hybrid</option><option value="dense">dense (EmbeddingGemma)</option><option value="lexical">lexical (BM25)</option></select>
+            <select @bind="kind">
+                <option value="">all kinds</option>
+                @foreach (var k in new[] { "program", "paragraph", "java", "rule", "quirk", "data", "io", "design", "example" }) { <option value="@k">@k</option> }
+            </select>
+            <select @bind="function">
+                <option value="">all functions</option>
+                @foreach (var f in Kb.Kb?.Taxonomy.Functions ?? []) { <option value="@f.Id">@f.Name</option> }
+            </select>
+            <input type="number" min="1" max="50" @bind="k" style="width:4rem" title="results" />
+        </div>
+        @if (indexed.Count == 0)
+        {
+            <p>No project has a knowledge index yet. Build one on the <b>Build</b> tab.</p>
+        }
+    </div>
+    @if (error is not null) { <p class="bad">@error</p> }
+    @if (result is { } r)
+    {
+        <p class="muted">@r.Hits.Count result(s) in @r.Milliseconds ms@(r.Filters.Count > 0 ? " · filters " + string.Join(" ", r.Filters.Select(f => $"{f.Key}:{f.Value}")) : "")@(r.Expansion.Count > 0 ? " · glossary expansion: " + string.Join(" ", r.Expansion.Take(12)) : "")</p>
+        @foreach (var h in r.Hits)
+        {
+            var c = h.Chunk;
+            <div class="panel">
+                <div class="row">
+                    <b>@c.Title</b>
+                    <span class="chip">@c.Project</span>
+                    <span class="chip info">@c.Kind</span>
+                    @foreach (var (family, l) in c.Labels.OrderBy(x => x.Key))
+                    {
+                        <span class="chip @(l.Source == "model" ? "warn" : l.Source == "pipeline" ? "ok" : "")" title="@family from @l.Source, confidence @l.Confidence">@family: @l.Value</span>
+                    }
+                </div>
+                <div class="muted"><code>@c.Path@(c.StartLine > 0 ? $":{c.StartLine}-{c.EndLine}" : "")</code> · score @h.Score.ToString("F4") (dense rank @(h.DenseRank?.ToString() ?? "–"), BM25 rank @(h.LexicalRank?.ToString() ?? "–"))</div>
+                <details><summary>text (@c.Tokens tokens)</summary><pre class="code">@c.Text</pre></details>
+            </div>
+        }
+    }
+}
+else if (tab == "Catalog")
+{
+    <div class="row">
+        <label>Project</label>
+        <select @bind="catalogProject">
+            @foreach (var p in indexed) { <option value="@p">@p</option> }
+        </select>
+    </div>
+    @if (catalogProject is { Length: > 0 } && Kb.Catalog(catalogProject) is { } cat)
+    {
+        <p class="muted">Functionality and business rules of @catalogProject, generated @cat["builtAt"]. Label sources: <span class="chip ok">pipeline</span>
+        requirements packet · <span class="chip">rule / glossary</span> derived from statements or the glossary · <span class="chip warn">model</span> ML.NET prediction.
+        Also in <code>@Path.Combine(Kb.Workspace, catalogProject, "knowledge", "catalog.md")</code>.</p>
+        <table class="grid">
+            <tr><th>Program</th><th>Kind</th><th>Header function</th><th>Business function</th><th>Functions (share)</th><th>Roles</th><th>Rules</th><th>Quirks</th></tr>
+            @foreach (var p in cat["programs"]?.AsArray() ?? [])
+            {
+                var id = p?["id"]?.ToString() ?? "";
+                <tr class="@(catalogProgram == id ? "selected" : "")" style="cursor:pointer" @onclick="() => catalogProgram = id">
+                    <td>@id</td><td>@p?["kind"]</td><td>@p?["headerFunction"]</td>
+                    <td>@FunctionName(p?["function"]?.ToString()) <span class="muted">@p?["functionSource"]</span></td>
+                    <td>@string.Join(", ", (p?["functions"]?.AsArray() ?? []).Take(3).Select(f => $"{f?["id"]} {f?["share"]?.GetValue<double>():P0}"))</td>
+                    <td>@string.Join(", ", (p?["roles"]?.AsObject() ?? []).Select(kv => $"{kv.Key} {kv.Value}"))</td>
+                    <td>@((p?["rules"]?.AsArray().Count ?? 0))@(p?["rulesFromPacket"]?.GetValue<bool>() == true ? "" : "*")</td>
+                    <td>@((p?["quirks"]?.AsArray().Count ?? 0))</td>
+                </tr>
+            }
+        </table>
+        <p class="muted">* no requirements packet: business-rule paragraphs from the AST outline. Click a program for its rules.</p>
+        @if ((cat["programs"]?.AsArray() ?? []).FirstOrDefault(p => p?["id"]?.ToString() == catalogProgram) is { } prog)
+        {
+            <h3>@catalogProgram: business rules</h3>
+            <table class="grid">
+                <tr><th>Rule</th><th>Paragraph</th><th>Function</th><th>Kind</th><th>Role</th><th>Where</th><th>Gemma 4 design</th></tr>
+                @foreach (var rule in prog["rules"]?.AsArray() ?? [])
+                {
+                    <tr>
+                        <td>@rule?["id"]</td><td>@rule?["paragraph"]</td>
+                        <td>@rule?["function"] <span class="muted">@rule?["functionSource"]</span></td>
+                        <td>@rule?["ruleKind"]</td><td>@rule?["role"]</td>
+                        <td><code>@rule?["path"]:@rule?["startLine"]-@rule?["endLine"]</code></td>
+                        <td>@rule?["design"]</td>
+                    </tr>
+                }
+            </table>
+            @foreach (var q in prog["quirks"]?.AsArray() ?? [])
+            {
+                <p><span class="chip warn">quirk @q?["id"]</span> @q?["text"]</p>
+            }
+        }
+    }
+    else if (indexed.Count == 0)
+    {
+        <p>Build the knowledge base first.</p>
+    }
+}
+else if (tab == "Glossary")
+{
+    <div class="row">
+        <input type="text" placeholder="filter terms" @bind="termFilter" @bind:event="oninput" />
+        <span class="muted">Financial terminology for the knowledge base and for Gemma 4's grounding (@(Kb.Kb?.Glossary.Terms.Count ?? 0) terms;
+        @(Kb.Kb?.Glossary.File.Reviewed == true ? "reviewed" : "unreviewed SME draft"), <code>knowledge\glossary\financial-terms.json</code>).</span>
+    </div>
+    var use = indexed.Count > 0 ? Kb.TermUse() : new Dictionary<string, int>();
+    <table class="grid">
+        <tr><th>Term</th><th>Definition</th><th>Functions</th><th>Code terms</th><th>Chunks</th></tr>
+        @foreach (var t in (Kb.Kb?.Glossary.Terms ?? []).Where(t => string.IsNullOrWhiteSpace(termFilter) || t.Term.Contains(termFilter, StringComparison.OrdinalIgnoreCase) || t.Aliases.Any(a => a.Contains(termFilter, StringComparison.OrdinalIgnoreCase))))
+        {
+            <tr>
+                <td><b>@t.Term</b><br /><span class="muted">@string.Join(", ", t.Aliases.Take(4))</span></td>
+                <td>@t.Definition@(t.Source is null ? "" : $" ({t.Source})")</td>
+                <td>@string.Join(", ", t.Functions)</td>
+                <td><code>@string.Join(" ", t.CodeTerms.Take(6))</code></td>
+                <td>@use.GetValueOrDefault(t.Id)</td>
+            </tr>
+        }
+    </table>
+}
+else if (tab == "Classifiers")
+{
+    @if (Kb.Classification() is JsonArray reports)
+    {
+        <p class="muted">ML.NET classifiers over EmbeddingGemma vectors, from <code>@Kb.SetDir</code>. Cross-validation folds are grouped by program;
+        micro and macro accuracy are pooled over the held-out rows. The <b>function</b> labels are weak (glossary), so its scores are agreement with the glossary.</p>
+        <table class="grid">
+            <tr><th>Family</th><th>Labels from</th><th>Examples</th><th>Deployed trainer</th><th>Micro</th><th>Macro</th><th>Candidates</th><th>Zero-shot micro / macro</th></tr>
+            @foreach (var r in reports)
+            {
+                <tr>
+                    <td>@r?["family"]</td><td>@r?["labelSource"]</td><td>@r?["examples"] (@r?["groups"] programs)</td><td>@r?["trainer"]</td>
+                    <td><b>@(r?["microAccuracy"]?.GetValue<double>().ToString("P1"))</b></td><td>@(r?["macroAccuracy"]?.GetValue<double>().ToString("P1"))</td>
+                    <td>@string.Join("; ", (r?["candidates"]?.AsArray() ?? []).Select(c => $"{c?["trainer"]} {c?["microAccuracy"]?.GetValue<double>():P1}/{c?["macroAccuracy"]?.GetValue<double>():P1}"))</td>
+                    <td>@(r?["prototypeMicroAccuracy"]?.GetValue<double>().ToString("P1")) / @(r?["prototypeMacroAccuracy"]?.GetValue<double>().ToString("P1"))</td>
+                </tr>
+            }
+        </table>
+        @foreach (var r in reports)
+        {
+            <details>
+                <summary>@r?["family"]: per class</summary>
+                <table class="grid">
+                    <tr><th>Class</th><th>Support</th><th>Precision</th><th>Recall</th><th>F1</th></tr>
+                    @foreach (var c in r?["perClass"]?.AsArray() ?? [])
+                    {
+                        <tr><td>@c?["label"]</td><td>@c?["support"]</td><td>@c?["precision"]</td><td>@c?["recall"]</td><td>@c?["f1"]</td></tr>
+                    }
+                </table>
+            </details>
+        }
+    }
+    else
+    {
+        <p>No classifiers yet: build the knowledge base.</p>
+    }
+}
+else if (tab == "Build")
+{
+    <div class="panel">
+        <h3>Build the knowledge base</h3>
+        <p class="muted">Harvest → EmbeddingGemma (CPU, @Kb.Workers workers, content-hash cache so a rebuild embeds only what changed) → ML.NET classifiers →
+        catalogs. A full build of the three projects takes about 4 minutes of embedding plus the classifiers' cross-validation.
+        Model: <code>@Kb.Paths?.ModelDir</code> (fp32 @(Kb.ModelPresent("fp32") ? "present" : "missing — downloaded on build"), q8 @(Kb.ModelPresent("q8") ? "present" : "missing")).</p>
+        <div class="row">
+            @foreach (var p in KnowledgeService.DefaultProjects)
+            {
+                <label style="min-width:auto"><input type="checkbox" checked="@buildSet.Contains(p)" @onchange="e => { if ((bool)e.Value!) buildSet.Add(p); else buildSet.Remove(p); }" /> @p</label>
+            }
+            <select @bind="variant"><option value="fp32">fp32 (default; faster on this CPU)</option><option value="q8">q8</option></select>
+            <label style="min-width:auto"><input type="checkbox" @bind="rebuild" /> ignore the cache</label>
+            <button disabled="@(buildSet.Count == 0 || Ops.IsRunning(KnowledgeService.OpProject, KnowledgeService.BuildKind))" @onclick="Build">Build</button>
+        </div>
+        <OperationPanel ProjectId="@KnowledgeService.OpProject" Kind="@KnowledgeService.BuildKind" Completed="_ => Reload()" Lines="30" />
+        <table class="grid">
+            <tr><th>Project</th><th>Built</th><th>Variant</th><th>Chunks</th><th>Tokens</th><th>Kinds</th><th>Embedded / cached</th></tr>
+            @foreach (var p in indexed)
+            {
+                var m = Kb.Manifest(p);
+                <tr><td>@p</td><td>@m?.BuiltAt</td><td>@m?.Variant</td><td>@m?.Chunks</td><td>@m?.Tokens.ToString("N0")</td>
+                    <td>@string.Join(", ", m?.Kinds.Select(kv => $"{kv.Key} {kv.Value}") ?? [])</td><td>@m?.Embedded / @m?.CacheHits</td></tr>
+            }
+        </table>
+    </div>
+}
+else if (tab == "Ask Gemma")
+{
+    <div class="panel">
+        <h3>Ask Gemma 4 (Phase 2)</h3>
+        <p class="muted">Your question goes to the CobolBdm Ask extension in VS Code (<code>@Kb.AskBridgeUrl</code>), which queues it; Gemma 4 answers from the
+        knowledge base's grounding with citations (<code>knowledgeBaseGroundGemma4.md</code> §11). Phase 2 is built after the current Gemma 4 test finishes.</p>
+        <div class="row">
+            <span class="chip @(bridge is null ? "warn" : "ok")">VSIX listener: @(bridge is null ? "not running" : "running")</span>
+            <button class="secondary" @onclick="CheckBridge">Check</button>
+        </div>
+        <h3>Preview the grounding</h3>
+        <p class="muted">What Gemma 4 would receive: the numbered contexts, the glossary definitions and the prompt. No model is called.</p>
+        <div class="row">
+            <input type="text" class="wide" placeholder="Question, or a program id with document mode" @bind="groundQuestion" />
+            <select @bind="groundMode"><option value="answer">answer</option><option value="document">document a program</option></select>
+            <input type="text" placeholder="program (document mode)" @bind="groundProgram" style="width:9rem" />
+            <button disabled="@(indexed.Count == 0)" @onclick="Ground">Build grounding</button>
+        </div>
+        @if (packet is { } g)
+        {
+            <p class="muted">@g.Contexts.Count contexts, @g.ContextTokens.ToString("N0") of @g.Limit.ToString("N0") tokens, @g.Glossary.Count glossary terms.</p>
+            <table class="grid">
+                <tr><th>Cite</th><th>Context</th><th>Where</th><th>Tokens</th></tr>
+                @foreach (var c in g.Contexts)
+                {
+                    <tr><td>@c.Cite</td><td>@c.Title</td><td><code>@c.Path@(c.StartLine > 0 ? $":{c.StartLine}-{c.EndLine}" : "")</code></td><td>@c.Tokens</td></tr>
+                }
+            </table>
+            <details><summary>chat messages</summary>
+                @foreach (var m in g.Messages) { <h4>@m.Role</h4><pre class="code">@m.Content</pre> }
+            </details>
+        }
+    </div>
+}
+
+@code {
+    static readonly string[] Tabs = ["Search", "Catalog", "Glossary", "Classifiers", "Build", "Ask Gemma"];
+    string tab = "Search";
+    List<string> indexed = [];
+    HashSet<string> selected = [];
+    HashSet<string> buildSet = [.. KnowledgeService.DefaultProjects];
+    string query = "", mode = "hybrid", kind = "", function = "", variant = "fp32";
+    int k = 10;
+    bool rebuild;
+    SearchResponse? result;
+    string? error;
+    string? catalogProject, catalogProgram;
+    string termFilter = "";
+    JsonNode? bridge;
+    string groundQuestion = "", groundMode = "answer", groundProgram = "";
+    GroundingPacket? packet;
+
+    protected override void OnInitialized()
+    {
+        Reload();
+        Ops.Changed += OnOp;
+    }
+
+    void Reload()
+    {
+        indexed = Kb.Indexed().ToList();
+        selected = [.. indexed];
+        catalogProject ??= indexed.FirstOrDefault();
+        StateHasChanged();
+    }
+
+    void OnOp(Operation o)
+    {
+        if (o.ProjectId == KnowledgeService.OpProject) InvokeAsync(StateHasChanged);
+    }
+
+    void Toggle(string p, bool on) { if (on) selected.Add(p); else selected.Remove(p); }
+
+    async Task OnKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await Search();
+    }
+
+    async Task Search()
+    {
+        error = null;
+        if (Kb.Kb is null || string.IsNullOrWhiteSpace(query)) return;
+        try
+        {
+            var labels = function.Length > 0 ? new Dictionary<string, string> { [Families.Function] = function } : null;
+            var req = new SearchRequest(query, selected.ToList(), k, mode, kind.Length > 0 ? kind : null, null, labels);
+            result = await Task.Run(() => Kb.Kb.Search.Search(req));
+        }
+        catch (Exception e) { error = e.Message; }
+    }
+
+    void Build() => Kb.StartBuild(KnowledgeService.DefaultProjects.Where(buildSet.Contains).ToList(), variant, rebuild);
+
+    async Task CheckBridge() => bridge = await Kb.AskBridgeHealthAsync();
+
+    async Task Ground()
+    {
+        if (Kb.Kb is null) return;
+        var req = new GroundRequest(groundQuestion, selected.ToList(), groundMode, groundProgram.Length > 0 ? groundProgram : null);
+        packet = await Task.Run(() => Kb.Kb.Grounding().Build(req));
+    }
+
+    string FunctionName(string? id) => id is null ? "—" : Kb.Kb?.Taxonomy.Name(id) ?? id;
+
+    public void Dispose() => Ops.Changed -= OnOp;
+}

@@ -1,0 +1,45 @@
+# SME sample for the `function` labels (knowledgeBaseGroundGemma4.md §8, §12): 40 paragraph, rule and Java chunks drawn with
+# seed 20261011 (16 carddemo, 6 zopeneditor-sample, 18 fineract-legacy), labeled by reading the chunk in its program.
+# Policy: the business capability the chunk's own code serves. File open/close, CICS browse and other plumbing is
+# batch-control-io even inside a business program; several classes are accepted where the code genuinely serves both.
+# Columns: chunk id <TAB> accepted classes (|-separated) <TAB> note. Unreviewed by the owner.
+carddemo:COBIL00C:paragraph:ENDBR-TRANSACT-FILE	batch-control-io	CICS end browse of TRANSACT
+carddemo:COACTUPC:java:1100-RECEIVE-MAP#5	account-card-maintenance	screen input of the account's expiry date
+carddemo:COBIL00C:paragraph:READPREV-TRANSACT-FILE	batch-control-io	CICS read-previous to find the last transaction id
+carddemo:CBTRN03C:rule:R-CBTRN03C-018	statement-reporting	report line counter in the headers
+carddemo:CBTRN03C:java:9100-REPTFILE-CLOSE	batch-control-io	closes the report file
+carddemo:CBACT04C:java:gemma:InterestRateRepository.findDefaultRaw	interest-calculation	DEFAULT group rate lookup
+carddemo:CBACT04C:java:9200-DISCGRP-CLOSE	batch-control-io	closes the disclosure group file
+carddemo:COACTUPC:java:1230-EDIT-ALPHANUM-REQD#2	validation-rejects	required alphanumeric field edit
+carddemo:COBIL00C:java:ENDBR-TRANSACT-FILE	batch-control-io	CICS end browse (frontier)
+carddemo:CBACT04C:java:1300-B-WRITE-TX#1	interest-calculation|transaction-posting	builds and writes the interest transaction
+carddemo:COTRN02C:paragraph:COPY-LAST-TRAN-DATA	transaction-posting	add-transaction screen: copy the last transaction's data
+carddemo:CBACT01C:paragraph:1500-POPUL-VBRC-RECORD	data-exchange|account-card-maintenance	account record copied into variable-length extract records
+carddemo:COUSR00C:java:MAIN-PARA#1	user-security	user list screen
+carddemo:COUSR03C:paragraph:RETURN-TO-PREV-SCREEN	user-security	user admin navigation
+carddemo:COTRN02C:java:ADD-TRANSACTION#1	transaction-posting	adds a transaction
+carddemo:COACTUPC:java:1100-RECEIVE-MAP#3	account-card-maintenance	screen input of the current balance
+zopeneditor-sample:SAM1:java:gemma:Sam1Step.formatTime	statement-reporting	time in the report heading
+zopeneditor-sample:SAM2:paragraph:200-PROCESS-TRAN	customer-maintenance	applies an update transaction to a customer field
+zopeneditor-sample:SAM1:rule:R-SAM1-035	statement-reporting|customer-maintenance	delete totals line of the update report
+zopeneditor-sample:SAM1:java:gemma:CustomerRepository.fields	customer-maintenance|batch-control-io	customer file reader state
+zopeneditor-sample:SAM1:rule:R-SAM1-020	validation-rejects|statement-reporting	bad transaction image on the report
+zopeneditor-sample:SAM1:java:220-PROCESS-DELETE-TRAN	customer-maintenance	delete transaction
+fineract-legacy:FNDG0100:paragraph:2000-NEXT-REPAYMENT-DATE	repayment-schedule|date-calendar	next due date from the frequency
+fineract-legacy:FNEM0300:rule:R-FNEM0300-044	interest-calculation|date-calendar	seed date of the period ratio
+fineract-legacy:FNEM0300:rule:R-FNEM0300-068	interest-calculation	operands of rate × fraction
+fineract-legacy:FNEM0300:java:2000-RATE-FACTOR#4	interest-calculation	rate factor by days-in-month and frequency
+fineract-legacy:FNEM0300:paragraph:8500-CALL-DATE	date-calendar|batch-control-io	calls the date kernel, abends on error
+fineract-legacy:FNEM0600:java:1200-OLD#2	outstanding-balance|repayment-schedule	truncates the model's interest periods at the date
+fineract-legacy:FNRP0100:paragraph:8000-WRITE-LINE	statement-reporting	writes a report line
+fineract-legacy:FNEM0700:rule:R-FNEM0700-044	money-rounding	decimal divide setup
+fineract-legacy:FNLS0100:rule:R-FNLS0100-041	repayment-schedule	writes a schedule period record
+fineract-legacy:FNEM0400:rule:R-FNEM0400-001	validation-rejects|emi-installment	FLAT interest method is rejected
+fineract-legacy:FNDKDFO:java:0000-GO-4	money-rounding	decimal kernel dispatch
+fineract-legacy:FNEM0200:rule:R-FNEM0200-001	disbursement	full-term tranche decision on a disbursement
+fineract-legacy:FNEM0300:rule:R-FNEM0300-100	date-calendar	days and weeks between two dates
+fineract-legacy:FNEM0700:java:normalized:ProgramFNEM0700Workflow.fields	outstanding-balance	workflow boilerplate of FNEM0700
+fineract-legacy:FNMY0100:rule:R-FNMY0100-029	money-rounding	rounding below a tenth
+fineract-legacy:FNEM0500:rule:R-FNEM0500-006	outstanding-balance|emi-installment	outstanding principal = due − paid
+fineract-legacy:FNEM0300:paragraph:DTK-2000-PLUS-GO-4	date-calendar	add years as months
+fineract-legacy:FNEM0400:rule:R-FNEM0400-025	emi-installment|money-rounding	decimal operands in the EMI loop

@@ -1,0 +1,103 @@
+{
+  "schema": "mlcpu.kb-taxonomy.v1",
+  "reviewed": false,
+  "note": "Business-function classes for the knowledge base's `function` label family. Written in the SME role from the program headers, the requirements packets and the Gemma 4 designs of carddemo, zopeneditor-sample and fineract-legacy; awaiting the owner's confirmation. The description is what EmbeddingGemma embeds as the class prototype and what the UI shows.",
+  "functions": [
+    {
+      "id": "loan-terms",
+      "name": "Loan terms and product parameters",
+      "domain": "lending",
+      "description": "Reading and validating a loan request: principal, number of repayments, repayment frequency and its unit, nominal annual interest rate, amortization type, interest method, days-in-year and days-in-month conventions, currency, rounding mode, and the derived loan terms used by the schedule generator."
+    },
+    {
+      "id": "repayment-schedule",
+      "name": "Repayment schedule generation",
+      "domain": "lending",
+      "description": "Building the loan repayment schedule: repayment periods and their from and due dates, interest periods inside each repayment period, schedule lines with principal, interest and total due, schedule output records and the generator that drives the whole loan schedule."
+    },
+    {
+      "id": "emi-installment",
+      "name": "EMI and installment amounts",
+      "domain": "lending",
+      "description": "Equated monthly installment (EMI) calculation for declining-balance loans: the EMI value from rate factors, adjusting the EMI of the last unpaid period, evening out installments across the related repayment periods, installment multiples and principal moratorium."
+    },
+    {
+      "id": "interest-calculation",
+      "name": "Interest calculation",
+      "domain": "lending, cards",
+      "description": "Computing interest: periodic and daily interest rates, rate factors of interest periods, day-count and period fractions, interest due on an outstanding balance, monthly interest on credit card transaction category balances, and interest rates looked up by account group."
+    },
+    {
+      "id": "outstanding-balance",
+      "name": "Outstanding balance and principal allocation",
+      "domain": "lending",
+      "description": "Tracking what the borrower still owes: outstanding loan balance at a date, principal and interest portions of each installment, balance carried between periods, derived repayment-period amounts and recalculating the schedule model till a date."
+    },
+    {
+      "id": "disbursement",
+      "name": "Disbursement",
+      "domain": "lending",
+      "description": "Applying a loan disbursement to the schedule model: the disbursed amount, splitting a repayment period at the disbursement date, down payments and the effect of a disbursement on balances and installments."
+    },
+    {
+      "id": "money-rounding",
+      "name": "Money arithmetic and rounding",
+      "domain": "numerics",
+      "description": "Decimal money arithmetic with explicit precision and scale: multiplication and division of amounts, percentage of a value, rounding modes such as HALF_EVEN (banker's rounding), HALF_UP, UP, DOWN, CEILING and FLOOR, significant digits, currency decimal places and the decimal arithmetic kernels."
+    },
+    {
+      "id": "date-calendar",
+      "name": "Date and calendar arithmetic",
+      "domain": "numerics",
+      "description": "Date logic: days between two dates, adding days, weeks, months or years, end-of-month handling, leap years, day numbers converted to calendar dates and back, period boundaries and validating dates."
+    },
+    {
+      "id": "transaction-posting",
+      "name": "Transaction posting",
+      "domain": "cards, payments",
+      "description": "Posting financial transactions: reading the daily transaction file, validating each transaction against the card cross-reference and the account, updating the account's current balance and cycle credit and debit, updating transaction category balances, writing posted transactions, and paying an account balance (bill payment)."
+    },
+    {
+      "id": "account-card-maintenance",
+      "name": "Account and card maintenance",
+      "domain": "cards",
+      "description": "Viewing and updating credit card accounts and cards: account details, credit limit, cash credit limit, account status and dates, card details and expiry, the card-to-account cross-reference, transaction types and listing or browsing these records."
+    },
+    {
+      "id": "statement-reporting",
+      "name": "Statements and reports",
+      "domain": "cards, lending",
+      "description": "Producing printed output: transaction detail reports, account statements, printed repayment schedules, report headers, detail lines, page totals, account totals and grand totals, column layouts and report submission."
+    },
+    {
+      "id": "customer-maintenance",
+      "name": "Customer master maintenance",
+      "domain": "customer",
+      "description": "Maintaining customer records: reading the customer master file, applying add, update, replace, delete and subtract transactions to customer records, customer contact and address data, and the customer update report with its totals."
+    },
+    {
+      "id": "user-security",
+      "name": "Users, sign-on and menus",
+      "domain": "security",
+      "description": "User administration and access: signing on with user id and password, user security records, adding, updating, deleting and listing users, admin and regular user menus and navigation between screens."
+    },
+    {
+      "id": "validation-rejects",
+      "name": "Validation and rejects",
+      "domain": "cross-cutting",
+      "description": "Checking input before it is processed and rejecting what fails: reject records and reject reason codes, invalid card or account, over-limit and expired account checks, bad input reject codes, error messages returned to the caller and status flags."
+    },
+    {
+      "id": "batch-control-io",
+      "name": "Batch control and file access",
+      "domain": "cross-cutting",
+      "description": "Running the batch job: opening, reading, writing and closing files, file status checks, end-of-file handling, run control records, record counters and run statistics, abnormal end (abend) of the program and return codes."
+    },
+    {
+      "id": "data-exchange",
+      "name": "Data export, import and conversion",
+      "domain": "cross-cutting",
+      "description": "Moving data between systems or formats: exporting and importing customer, account and card data for branch migration, unloading and reloading files, record format conversion and copying files into other layouts."
+    }
+  ]
+}
