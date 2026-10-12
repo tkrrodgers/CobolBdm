@@ -15,7 +15,6 @@ namespace MlCpu.Cobol.Antlr;
 public static class AstExport
 {
     public const string Schema = "mlcpu.cobol85-ast.v1";
-    static readonly JsonSerializerOptions Compact = new() { WriteIndented = false };
 
     public static JsonObject ToJson(AntlrParse p)
     {
@@ -30,14 +29,90 @@ public static class AstExport
             ["parseMs"] = (long)p.Elapsed.TotalMilliseconds,
             ["ok"] = p.Ok,
             ["errors"] = new JsonArray(p.Errors.Select(e => (JsonNode?)e).ToArray()),
-            ["legend"] = "r = grammar rule (outer>inner when a single-child chain collapsed), t = token text, l = program line, o = copybook, c = children",
+            ["legend"] = Legend,
         };
         if (p.Tree is not null) root["tree"] = Node(p.Tree, p, ref nodes);
         root["nodes"] = nodes;
         return root;
     }
 
-    public static string ToJsonText(AntlrParse p) => ToJson(p).ToJsonString(Compact);
+    /// <summary>
+    /// <see cref="ToJson"/> as compact text, written by a streaming writer: the same bytes without building the JSON DOM,
+    /// which for a 130K-line program (1.2M tokens, 36 MB of JSON) was most of the stage's peak memory.
+    /// </summary>
+    public static string ToJsonText(AntlrParse p)
+    {
+        using var ms = new MemoryStream();
+        using (var w = new Utf8JsonWriter(ms, new JsonWriterOptions { MaxDepth = 100_000 }))
+        {
+            int nodes = 0;
+            w.WriteStartObject();
+            w.WriteString("schema", Schema);
+            w.WriteString("programId", p.ProgramId);
+            w.WriteString("source", System.IO.Path.GetFileName(p.Source.Path));
+            w.WriteString("grammar", CobolAntlr.Grammar);
+            w.WriteString("mode", p.Mode);
+            w.WriteNumber("parseMs", (long)p.Elapsed.TotalMilliseconds);
+            w.WriteBoolean("ok", p.Ok);
+            w.WriteStartArray("errors");
+            foreach (var e in p.Errors) w.WriteStringValue(e);
+            w.WriteEndArray();
+            w.WriteString("legend", Legend);
+            if (p.Tree is not null)
+            {
+                w.WritePropertyName("tree");
+                WriteNode(w, p.Tree, p, ref nodes);
+            }
+            w.WriteNumber("nodes", nodes);
+            w.WriteEndObject();
+        }
+        return Encoding.UTF8.GetString(ms.GetBuffer(), 0, (int)ms.Length);
+    }
+
+    const string Legend = "r = grammar rule (outer>inner when a single-child chain collapsed), t = token text, l = program line, o = copybook, c = children";
+
+    /// <summary>The streaming form of <see cref="Node"/>: same properties, same order.</summary>
+    static void WriteNode(Utf8JsonWriter w, IParseTree t, AntlrParse p, ref int nodes)
+    {
+        nodes++;
+        w.WriteStartObject();
+        if (t is ITerminalNode term)
+        {
+            w.WriteString("t", term.Symbol.Text);
+            w.WriteNumber("l", p.LineOf(term.Symbol));
+            var o = p.OriginOf(term.Symbol);
+            if (o.Length > 0) w.WriteString("o", o);
+            w.WriteEndObject();
+            return;
+        }
+        var ctx = (ParserRuleContext)t;
+        var rule = Cobol85Parser.ruleNames[ctx.RuleIndex];
+        IParseTree inner = ctx;
+        while (inner is ParserRuleContext r && r.ChildCount == 1) inner = r.GetChild(0);
+        w.WriteString("r", inner is ParserRuleContext b && !ReferenceEquals(b, ctx) ? rule + ">" + Cobol85Parser.ruleNames[b.RuleIndex] : rule);
+        if (ctx.Start is { } start)
+        {
+            w.WriteNumber("l", p.LineOf(start));
+            var o = p.OriginOf(start);
+            if (o.Length > 0) w.WriteString("o", o);
+        }
+        if (inner is ITerminalNode leafToken)
+        {
+            w.WriteString("t", leafToken.Symbol.Text);
+            w.WriteEndObject();
+            return;
+        }
+        var branch = (ParserRuleContext)inner;
+        w.WriteStartArray("c");
+        for (int i = 0; i < branch.ChildCount; i++)
+        {
+            var c = branch.GetChild(i);
+            if (c is ITerminalNode tn && tn.Symbol.Type == TokenConstants.EOF) continue;
+            WriteNode(w, c, p, ref nodes);
+        }
+        w.WriteEndArray();
+        w.WriteEndObject();
+    }
 
     static JsonNode Node(IParseTree t, AntlrParse p, ref int nodes)
     {
@@ -99,6 +174,13 @@ public static class AstExport
         if (p.Tree is null) return $"* {p.ProgramId}: no parse tree ({string.Join("; ", p.Errors.Take(3))})\n";
         var sb = new StringBuilder();
         sb.Append($"* {p.ProgramId}: COBOL-85 AST outline ({CobolAntlr.Grammar}); L<n> = program line, [CPY] = record from copybook CPY\n");
+        // A tree from the SLL error-recovery fallback (CobolAntlr.Parse) says so: the outline may be wrong where the errors are.
+        if (p.TimedOut)
+        {
+            var stop = p.Errors.FirstOrDefault(e => e.StartsWith("full LL parse stopped", StringComparison.Ordinal)) ?? "parse stopped";
+            var first = p.Errors.FirstOrDefault(e => !ReferenceEquals(e, stop)) ?? "none";
+            sb.Append($"* incomplete parse ({stop}): {p.Errors.Count - 1} error(s), first {(first.Length > 160 ? first[..160] + "…" : first)}\n");
+        }
         foreach (var unit in Descendants(p.Tree).OfType<Cobol85Parser.ProgramUnitContext>())
         {
             if (unit.dataDivision() is { } data) DataOutline(data, p, sb);
@@ -241,12 +323,18 @@ public static class AstExport
         if (t is ITerminalNode term) return term.Symbol.Type == TokenConstants.EOF ? "" : term.Symbol.Text.Trim();
         var ctx = (ParserRuleContext)t;
         if (ctx.Start is null || ctx.Stop is null || ctx.Stop.TokenIndex < ctx.Start.TokenIndex) return "";
+        // A PICTURE character-string is several tokens in the grammar (-, Z, ',', ZZZ, .9999) but has no spaces in COBOL: it is
+        // printed as written. Joined with spaces, FNRP0100's -Z,ZZZ,ZZZ,ZZZ,ZZ9.9999 read "- Z, ZZZ, ZZZ, ZZZ, ZZ9 .9999", which a
+        // model copied into its edit masks (every edited field came out wider than the COBOL program's).
+        var pictures = Descendants(ctx).OfType<Cobol85Parser.PictureStringContext>()
+            .Where(x => x.Start is not null && x.Stop is not null).Select(x => (From: x.Start.TokenIndex, To: x.Stop.TokenIndex)).ToList();
         var sb = new StringBuilder();
         for (int i = ctx.Start.TokenIndex; i <= ctx.Stop.TokenIndex; i++)
         {
             var tok = p.Tokens.Get(i);
             if (tok.Channel != TokenConstants.DefaultChannel || tok.Type == TokenConstants.EOF) continue;
-            AppendToken(sb, tok.Text);
+            if (pictures.Any(r => i > r.From && i <= r.To)) sb.Append(tok.Text.Trim());
+            else AppendToken(sb, tok.Text);
         }
         return sb.ToString();
     }

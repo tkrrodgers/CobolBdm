@@ -49,6 +49,17 @@ public static class RecordKitBuilder
 
     sealed record Root(DataItem Item, string Role, CobolProgram Program);
 
+    /// <summary>Largest record (items, its own included) that gets a typed class.</summary>
+    public const int MaxRecordItems = 2000;
+
+    /// <summary>Accessor checks per RecordKitTest method (each check is a loop and a call with two lambdas, about 80 bytes of bytecode).</summary>
+    public const int AccessorChecksPerMethod = 150;
+
+    /// <summary>Accessor test methods per class: each check adds about 16 constant-pool entries (its name, lambdas, method
+    /// references), so one class holds about 4,000 checks under the JVM's 65,535 constants; a larger kit (FSJJHM02: 28
+    /// methods) is split into @Nested classes of this many methods (900 checks, about 15,000 constants).</summary>
+    public const int AccessorMethodsPerClass = 6;
+
     sealed class Field
     {
         public required DataItem Item;
@@ -81,7 +92,15 @@ public static class RecordKitBuilder
     {
         var notes = new List<string>();
         var pkg = r.Package + "." + SubPackage;
-        var shapes = Shapes(Roots(r.Program, r.Kind == "subprogram"), notes);
+        var roots = Roots(r.Program, r.Kind == "subprogram");
+        // A record with thousands of items (the J3S heap: 477 MB, about 4,600 items, passed to every program) gets no typed
+        // class: its class and test would be megabytes of Java per capability, which neither a model nor javac can use.
+        foreach (var big in roots.Where(x => Tree(x.Item).Count() > MaxRecordItems).ToList())
+        {
+            roots.Remove(big);
+            notes.Add($"{big.Item.Name} ({big.Role}, {big.Item.Length:N0} bytes, {Tree(big.Item).Count():N0} items) has no record class: more than {MaxRecordItems:N0} items");
+        }
+        var shapes = Shapes(roots, notes);
         var files = r.Program.Files.Where(f => !f.IsSort && f.Records.Count > 0).ToList();
         var used = new HashSet<string>(StringComparer.Ordinal) { "Pic", "RecordKitTest" };
         var fileClasses = new List<FileClass>();
@@ -114,7 +133,7 @@ public static class RecordKitBuilder
         void Add(DataItem? it, string role)
         {
             if (it is null || it.Level == 88 || it.Category is Category.Condition) return;
-            if (it.Level is not (1 or 77) && it.IsElementary) return;
+            if (it.Level is not (1 or 77) && it.IsLeaf) return;
             int own = it.Occurs > 0 ? 1 : 0;
             if (it.Dims.Count > own || it.Occurs > 0) return;
             if (roots.Any(x => x.Item == it)) return;
@@ -279,7 +298,7 @@ public static class RecordKitBuilder
     static bool IsLine(CobolProgram m, Shape s, List<FileClass> files)
     {
         if (s.Primary.Item.Section is not (DataSection.WorkingStorage or DataSection.LocalStorage)) return false;
-        var lineFiles = files.Where(f => f.Print || f.Fd.Records.All(r => r.IsElementary && r.Category == Category.Alphanumeric)).Select(f => f.Fd.Name).ToHashSet();
+        var lineFiles = files.Where(f => f.Print || f.Fd.Records.All(r => r.IsLeaf && r.Category == Category.Alphanumeric)).Select(f => f.Fd.Name).ToHashSet();
         var ids = s.Roots.Select(r => r.Item.Id).ToHashSet();
         foreach (var st in DdBindingPlanner.Walk(m))
         {
@@ -477,7 +496,7 @@ public static class RecordKitBuilder
     static void AppendConditions(StringBuilder sb, string cls, Field f)
     {
         var it = f.Item;
-        if (!it.IsElementary) return;
+        if (!it.IsLeaf) return;
         foreach (var c in it.Children.Where(c => c.Level == 88 && c.Values.Count > 0))
         {
             var tests = new List<string>();
@@ -806,13 +825,13 @@ public static class RecordKitBuilder
         sb.Append("        }\n    }\n\n");
 
         // Accessors: per class, every field (first and last occurrence), through the primary root's faithful fields.
-        sb.Append("    @Test\n    void accessorsStoreAndReadLikeTheProgram() throws Exception {\n        Map<String, List<CobField>> m = fields((byte) 0);\n        List<String> failures = new ArrayList<>();\n");
+        var blocks = new List<(string Root, List<string> Checks)>();
         foreach (var s in shapes)
         {
             var root = s.Roots.FirstOrDefault(x => x.Program == r.Program);
             if (root is null) continue;
             var rootPrefix = Prefix(root.Item);
-            sb.Append($"        {{\n            CobField rec = field(m, {Lit(root.Item.Name)});\n");
+            var checks = new List<string>();
             foreach (var f in s.Fields.Where(f => f.Kind != "unsupported"))
             {
                 var cobol = s.Prefix.Length > 0 ? rootPrefix + f.Name : f.Cobol;
@@ -827,14 +846,47 @@ public static class RecordKitBuilder
                     var cast = Numeric(f.Kind) ? "(BigDecimal) x" : "(String) x";
                     var moveValue = Numeric(f.Kind) ? "new BigDecimal(v)" : "v";
                     var getter = f.Kind == "edited" ? $"k -> k.{f.Java}({argsOnly})" : $"k -> (Object) k.{f.Java}({argsOnly})";
-                    sb.Append($"            for (String v : {samples})\n");
-                    sb.Append($"                check(failures, {Lit(cobol + (subs.Length == 0 ? "" : "(" + string.Join(",", subs) + ")"))}, rec, field(m, {Lit(cobol)}, rec){at}, {s.Class}::wrap,\n");
-                    sb.Append($"                    (k, x) -> k.{f.Java}({args}{cast}), {moveValue}, {getter});\n");
+                    checks.Add($"            for (String v : {samples})\n" +
+                               $"                check(failures, {Lit(cobol + (subs.Length == 0 ? "" : "(" + string.Join(",", subs) + ")"))}, rec, field(m, {Lit(cobol)}, rec){at}, {s.Class}::wrap,\n" +
+                               $"                    (k, x) -> k.{f.Java}({args}{cast}), {moveValue}, {getter});\n");
                 }
             }
-            sb.Append("        }\n");
+            blocks.Add((root.Item.Name, checks));
         }
-        sb.Append("        report(failures);\n    }\n}\n");
+        // One test method for a kit of up to AccessorChecksPerMethod checks (as before); a larger kit (a record of hundreds of
+        // items) gets several, so no method passes the JVM's 64 KB of bytecode.
+        var chunks = new List<List<(string Root, List<string> Checks)>> { new() };
+        int inChunk = 0;
+        foreach (var (rootName, checks) in blocks)
+            for (int i = 0; i < Math.Max(1, checks.Count); i += AccessorChecksPerMethod)
+            {
+                var part = checks.Skip(i).Take(AccessorChecksPerMethod).ToList();
+                if (inChunk > 0 && inChunk + part.Count > AccessorChecksPerMethod) { chunks.Add([]); inChunk = 0; }
+                chunks[^1].Add((rootName, part));
+                inChunk += part.Count;
+            }
+        // More methods than one class's constant pool holds: groups of AccessorMethodsPerClass in @Nested inner classes (one
+        // class file and constant pool each; the outer class's helpers and @AfterEach apply to them).
+        bool nested = chunks.Count > AccessorMethodsPerClass;
+        var ind = nested ? "    " : "";
+        for (int c = 0; c < chunks.Count; c++)
+        {
+            if (nested && c % AccessorMethodsPerClass == 0)
+                sb.Append($"    @Nested\n    class Accessors{c / AccessorMethodsPerClass + 1} {{\n");
+            sb.Append($"{ind}    @Test\n{ind}    void accessorsStoreAndReadLikeTheProgram{(chunks.Count == 1 ? "" : (c + 1).ToString())}() throws Exception {{\n{ind}        Map<String, List<CobField>> m = fields((byte) 0);\n{ind}        List<String> failures = new ArrayList<>();\n");
+            foreach (var (rootName, checks) in chunks[c])
+            {
+                sb.Append($"{ind}        {{\n{ind}            CobField rec = field(m, {Lit(rootName)});\n");
+                foreach (var check in checks)
+                    sb.Append(nested ? string.Concat(check.TrimEnd('\n').Split('\n').Select(l => ind + l + "\n")) : check);
+                sb.Append($"{ind}        }}\n");
+            }
+            sb.Append($"{ind}        report(failures);\n{ind}    }}\n");
+            if (nested && (c % AccessorMethodsPerClass == AccessorMethodsPerClass - 1 || c == chunks.Count - 1)) sb.Append("    }\n");
+            if (c < chunks.Count - 1) sb.Append('\n');
+        }
+        sb.Append("}\n");
+        if (nested) sb.Replace("import org.junit.jupiter.api.AfterEach;", "import org.junit.jupiter.api.AfterEach;\nimport org.junit.jupiter.api.Nested;");
         return sb.ToString();
     }
 
@@ -879,7 +931,7 @@ public static class RecordKitBuilder
             foreach (var f in s.Fields.Where(f => f.Kind != "unsupported"))
                 sb.Append(Signature(f).PadRight(w)).Append("  ").Append(f.Cobol).Append(' ').Append(PicText(f.Item)).Append(Occurs(f))
                   .Append("  @").Append(f.Offset).Append('+').Append(f.Item.Length).Append('\n');
-            foreach (var f in s.Fields.Where(f => f.Dims.Count == 0 && f.Item.IsElementary))
+            foreach (var f in s.Fields.Where(f => f.Dims.Count == 0 && f.Item.IsLeaf))
                 foreach (var c in f.Item.Children.Where(c => c.Level == 88 && c.Values.Count > 0))
                     sb.Append($"is{Pascal(c.Name)}() / set{Pascal(c.Name)}()".PadRight(w)).Append("  88 ").Append(c.Name).Append(" VALUE ")
                       .Append(string.Join(", ", c.Values.Select(v => (v.Low.Quoted ? "'" + v.Low.Text + "'" : v.Low.Text) + (v.High is null ? "" : " THRU " + v.High.Text)))).Append('\n');
@@ -926,7 +978,7 @@ public static class RecordKitBuilder
         var root = s.Primary.Item;
         var img = new char[s.Length];
         Array.Fill(img, ' ');
-        foreach (var f in s.Fields.Where(f => f.Item.IsElementary))
+        foreach (var f in s.Fields.Where(f => f.Item.IsLeaf))
             for (int k = 0; k < f.Item.Length * Math.Max(1, f.Dims.Count == 0 ? 1 : f.Dims[0].Count) && f.Offset + k < img.Length; k++) img[f.Offset + k] = '_';
         foreach (var it in Tree(root).Where(i => i.Values.Count > 0 && i.Dims.Count == root.Dims.Count && !UnderRedefines(i, root)))
             if (ConstantText(it) is { } text)

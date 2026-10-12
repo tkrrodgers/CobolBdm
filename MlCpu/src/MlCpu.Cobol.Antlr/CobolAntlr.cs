@@ -144,7 +144,14 @@ public static partial class CobolAntlr
         return q != '\0';
     }
 
-    /// <summary>Parses one program. <paramref name="timeout"/> bounds the whole parse (the grammar can be slow on large programs).</summary>
+    /// <summary>
+    /// Parses one program. SLL first: the grammar is kept SLL-friendly (docs/AST-GRAMMAR.md), so a program without syntax
+    /// errors parses in SLL alone, and an SLL success is the tree full LL would build. Only when SLL reports an error, full LL
+    /// with error recovery collects every error. <paramref name="timeout"/> bounds the parse; when full LL does not finish in
+    /// time (a very large program with a syntax error: LL can take minutes there), the tree and the errors come from SLL with
+    /// error recovery instead (mode <c>SLL-recovery</c>, linear, with a bound of its own), so the outline still renders. That
+    /// result is never Ok: its first error says LL was stopped, and SLL can only add errors, never hide one.
+    /// </summary>
     public static AntlrParse Parse(string path, TimeSpan? timeout = null)
     {
         var sw = Stopwatch.StartNew();
@@ -188,8 +195,28 @@ public static partial class CobolAntlr
             }
             catch (TimeoutException)
             {
+                // LL ran out of time: SLL with error recovery gives a tree and the errors, within a bound of its own.
                 timedOut = true;
-                errors.Add($"parse stopped after {deadline.TotalSeconds:N0}s");
+                mode = "SLL-recovery";
+                errors.Add($"full LL parse stopped after {deadline.TotalSeconds:N0}s; tree and errors from SLL with error recovery");
+                parser.RemoveErrorListeners();
+                parser.RemoveParseListener(watchdog);
+                parser.AddParseListener(new Watchdog(Stopwatch.StartNew(), deadline));
+                parser.Reset();
+                parser.Interpreter.PredictionMode = PredictionMode.SLL;
+                parser.ErrorHandler = new DefaultErrorStrategy();
+                var sll = new ErrorCollector(src);
+                parser.AddErrorListener(sll);
+                try
+                {
+                    tree = parser.startRule();
+                    errors.AddRange(sll.Errors);
+                }
+                catch (TimeoutException)
+                {
+                    tree = null;
+                    errors.Add($"SLL with error recovery stopped after {deadline.TotalSeconds:N0}s");
+                }
             }
         }
         catch (TimeoutException)
@@ -199,7 +226,7 @@ public static partial class CobolAntlr
         }
         errors.InsertRange(0, lexErrors.Errors);
         foreach (var m in src.MissingCopybooks) errors.Add($"missing copybook {m}");
-        return new AntlrParse(programId, src, timedOut ? null : tree, tokens, errors, mode, sw.Elapsed, timedOut);
+        return new AntlrParse(programId, src, tree, tokens, errors, mode, sw.Elapsed, timedOut);
     }
 
     sealed class Watchdog(Stopwatch sw, TimeSpan limit) : IParseTreeListener

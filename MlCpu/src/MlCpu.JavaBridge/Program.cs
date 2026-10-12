@@ -19,7 +19,7 @@ if (opts.ContainsKey("help") || args.Length == 0)
           --graph <dir> --estate <code root>                     program graphs + estate call graph
           --dd-binding-plan <job> --estate <app root> --out <dir> [--as-of yyyy-MM-dd]
           --replay-plan <job> --estate <app root> --out <dir> [--as-of yyyy-MM-dd] [--encoding CP037]
-          --ast <file|dir> [--out <dir>]                         COBOL-85 parse (ANTLR): AST JSON + outline per program
+          --ast <file|dir|project.json> [--out <dir>] [--timeout <s>] [--errors <n>]   COBOL-85 parse (ANTLR): AST JSON + outline per program
         """);
     return 0;
 }
@@ -29,22 +29,43 @@ using var http = new HttpClient { BaseAddress = new Uri(sidecar), Timeout = Time
 
 if (opts.TryGetValue("ast", out var astPath))
 {
-    // --ast <file|dir> [--out <dir>]: grammars-v4 COBOL-85 parse; <PID>.ast.json and <PID>.outline.txt when --out is given.
+    // --ast <file|dir|project.json> [--out <dir>] [--timeout <s>] [--errors <n>]: grammars-v4 COBOL-85 parse;
+    // <PID>.ast.json and <PID>.outline.txt when --out is given. A project.json parses that project's programs with its
+    // configured copybook roots (layout.copybookRoots), as the host's graph stage does.
     var outDir = opts.GetValueOrDefault("out");
     if (outDir is not null) Directory.CreateDirectory(outDir);
-    var files = Directory.Exists(astPath) ? CobolFiles.Programs(astPath!) : [astPath!];
+    TimeSpan? timeout = opts.TryGetValue("timeout", out var ts) && double.TryParse(ts, out var sec) ? TimeSpan.FromSeconds(sec) : null;
+    int showErrors = opts.TryGetValue("errors", out var se) && int.TryParse(se, out var n) ? n : 1;
+    IReadOnlyList<string> files;
+    if (astPath!.EndsWith("project.json", StringComparison.OrdinalIgnoreCase))
+    {
+        var proj = JsonNode.Parse(File.ReadAllText(astPath))!;
+        var srcDir = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(Path.GetFullPath(astPath))!, proj["layout"]?["sourceDir"]?.GetValue<string>() ?? "source"));
+        var roots = (proj["layout"]?["copybookRoots"]?.AsArray() ?? []).Select(r => Path.GetFullPath(Path.Combine(srcDir, r!.GetValue<string>()))).Where(Directory.Exists);
+        CobolModelBuilder.ConfigureCopybookRoots(srcDir, roots);
+        files = proj["programs"]!.AsArray().Select(x => Path.GetFullPath(Path.Combine(srcDir, x!["path"]!.GetValue<string>()))).ToList();
+    }
+    else files = Directory.Exists(astPath) ? CobolFiles.Programs(astPath!) : [astPath!];
     int ok = 0;
     foreach (var f in files)
     {
-        var p = MlCpu.Cobol.Antlr.CobolAntlr.Parse(f);
+        // heap = managed memory the parse result holds (tree, tokens, preprocessed text) plus the grammar's shared DFA growth
+        long baseHeap = GC.GetTotalMemory(true);
+        var p = MlCpu.Cobol.Antlr.CobolAntlr.Parse(f, timeout);
+        long retained = GC.GetTotalMemory(true) - baseHeap;
         if (p.Ok) ok++;
         var json = MlCpu.Cobol.Antlr.AstExport.ToJsonText(p);
-        Console.WriteLine($"{p.ProgramId,-10} {(p.Ok ? "OK " : p.TimedOut ? "TIMEOUT" : "ERR")} {p.Mode,-3} {p.Elapsed.TotalMilliseconds,7:N0} ms  ast={json.Length / 1024,5:N0} KB  errors={p.Errors.Count}{(p.Errors.Count > 0 ? "  " + p.Errors[0] : "")}");
-        if (outDir is null) continue;
-        File.WriteAllText(Path.Combine(outDir, p.ProgramId + ".ast.json"), json);
-        File.WriteAllText(Path.Combine(outDir, p.ProgramId + ".outline.txt"), MlCpu.Cobol.Antlr.AstExport.Outline(p));
+        var outline = MlCpu.Cobol.Antlr.AstExport.Outline(p);
+        Console.WriteLine($"{p.ProgramId,-10} {(p.Ok ? "OK " : p.TimedOut ? "TIMEOUT" : "ERR")} {p.Mode,-3} {p.Elapsed.TotalMilliseconds,9:N0} ms  " +
+            $"lines={p.Source.ProgramLines.Count,7:N0} tokens={p.Tokens.Size,9:N0} heap={retained / (1 << 20),5:N0} MB ast={json.Length / 1024,7:N0} KB outline={outline.Length / 1024,6:N0} KB  errors={p.Errors.Count}" +
+            string.Concat(p.Errors.Take(showErrors).Select(e => "\n    " + (e.Length > 240 ? e[..240] + "…" : e))));
+        if (outDir is not null)
+        {
+            File.WriteAllText(Path.Combine(outDir, p.ProgramId + ".ast.json"), json);
+            File.WriteAllText(Path.Combine(outDir, p.ProgramId + ".outline.txt"), outline);
+        }
     }
-    Console.WriteLine($"{ok}/{files.Count} parsed without errors");
+    Console.WriteLine($"{ok}/{files.Count} parsed without errors (peak working set {System.Diagnostics.Process.GetCurrentProcess().PeakWorkingSet64 / (1 << 20):N0} MB)");
     return ok == files.Count ? 0 : 1;
 }
 
@@ -101,7 +122,7 @@ if (opts.TryGetValue("requirements", out var reqJobs))
         var replay = MlCpu.CobolKb.Knowledge.ReplayPlanBuilder.Build(plan, models, "normalization");
         foreach (var (pid, model) in models)
         {
-            var packet = MlCpu.CobolKb.Knowledge.RequirementsPacketBuilder.Build(model, ProgramGraphBuilder.Build(model), sources[pid], plan, replay);
+            var packet = MlCpu.CobolKb.Knowledge.RequirementsPacketBuilder.Build(model, ProgramGraphBuilder.Build(model, dataDeps: false), sources[pid], plan, replay);
             var dir = Path.Combine(outDir, pid);
             Directory.CreateDirectory(dir);
             File.WriteAllText(Path.Combine(dir, "requirements.json"), MlCpu.CobolKb.Knowledge.RequirementsPacketBuilder.ToJson(packet));
@@ -152,6 +173,9 @@ if (opts.TryGetValue("graph", out var graphDir))
 
 if (opts.TryGetValue("file", out var file))
 {
+    // the programs after the first one of a source (separate or nested) are transpiled and spilled too
+    foreach (var other in CobolModelBuilder.BuildAllGroundedFull(file!).Skip(1))
+        Console.WriteLine(Summary(await Transpile(http, IrExporter.Export(other), opts.GetValueOrDefault("spill-dir"), opts.ContainsKey("transpile-only"))));
     var ir = IrExporter.Export(CobolModelBuilder.BuildGroundedFull(file!));
     if (opts.TryGetValue("ir-out", out var irOut))
     {
@@ -204,7 +228,6 @@ static async Task<JsonNode?> Transpile(HttpClient http, IrRoot ir, string? spill
 {
     var request = new JsonObject
     {
-        ["ir"] = JsonNode.Parse(IrExporter.ToJson(ir)),
         ["battery"] = new JsonArray(new JsonObject { ["inputs"] = new JsonObject(), ["expect"] = new JsonObject() }),
         ["useLir"] = false,
         ["loopPolicy"] = "TERMINATE",
@@ -212,7 +235,7 @@ static async Task<JsonNode?> Transpile(HttpClient http, IrRoot ir, string? spill
         ["transpileOnly"] = transpileOnly || spillDir is not null,
     };
     if (spillDir is not null) request["javaSourceDir"] = Path.GetFullPath(spillDir);
-    var content = new StringContent(request.ToJsonString(), Encoding.UTF8, "application/json");
+    var content = new StringContent(IrExporter.TranspileRequest(ir, request), Encoding.UTF8, "application/json");
     var resp = await http.PostAsync("/transpile-verify", content);
     var body = await resp.Content.ReadAsStringAsync();
     return JsonNode.Parse(body);

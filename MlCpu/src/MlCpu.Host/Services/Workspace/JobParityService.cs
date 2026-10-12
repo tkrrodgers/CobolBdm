@@ -9,9 +9,13 @@ public sealed record ParityResult(string Job, string Scenario, string Output, st
 public sealed record TestSuiteResult(string Suite, int Tests, int Failed, int Skipped);
 
 public sealed record BuildTestReport(string Project, string Implementation, string At, bool Compiled, int Tests, int Failed,
-    IReadOnlyList<TestSuiteResult> Suites, IReadOnlyList<string> FailedTests, IReadOnlyList<ParityResult> Parity)
+    IReadOnlyList<TestSuiteResult> Suites, IReadOnlyList<string> FailedTests, IReadOnlyList<ParityResult> Parity,
+    IReadOnlyList<ParityResult>? Reference = null, string? ReferenceLabel = null)
 {
     public int Match => Parity.Count(p => p.Verdict == "MATCH");
+    /// <summary>Outputs compared with the project's reference oracle (empty without one).</summary>
+    public IReadOnlyList<ParityResult> ReferenceResults => Reference ?? [];
+    public int ReferenceMatch => ReferenceResults.Count(p => p.Verdict == "MATCH");
 }
 
 /// <summary>
@@ -41,7 +45,7 @@ public sealed class JobParityService(ProjectService projects)
             if (m.Groups[3].Value == "FAILED") { failed++; failedTests.Add($"{m.Groups[1].Value} > {m.Groups[2].Value}"); op.Info($"FAILED {m.Groups[1].Value} > {m.Groups[2].Value}"); }
             else passed++;
             op.Report(from + (to - from) * 0.6 * Math.Min(1, (passed + failed) / (double)expected), $"gradle test: {passed + failed} run, {failed} failed");
-        }, timeout: TimeSpan.FromMinutes(40), ct: ct);
+        }, timeout: TimeSpan.FromMinutes(int.TryParse(Environment.GetEnvironmentVariable("MLCPU_TEST_TIMEOUT_MIN"), out var tm) ? tm : 120), ct: ct);
         var suites = Suites(projectDir);
         bool compiled = Directory.Exists(Path.Combine(projectDir, "build", "install"));
         if (!compiled) op.Info("the project did not build: " + string.Join(" | ", gradle.Output.Split('\n').Where(l => l.Contains("error")).Take(8)));
@@ -50,21 +54,34 @@ public sealed class JobParityService(ProjectService projects)
 
         // 2. job checks against the GnuCOBOL oracle
         var parity = new List<ParityResult>();
+        var reference = new List<ParityResult>();
         if (compiled)
         {
             var lib = Directory.EnumerateDirectories(Path.Combine(projectDir, "build", "install")).Select(d => Path.Combine(d, "lib")).FirstOrDefault(Directory.Exists);
             var checks = p.Oracle.JobChecks;
             var root = Path.GetFullPath(Path.Combine(paths.Dir, p.Oracle.JobCheckRoot ?? "."));
-            for (int i = 0; i < checks.Count; i++)
+            // Each check stages its own inputs from the oracle's snapshots, so checks are independent and run in parallel;
+            // results keep the checks' order.
+            var perCheck = new (List<ParityResult> Oracle, List<ParityResult> Reference)[checks.Count];
+            int done = 0;
+            await Parallel.ForEachAsync(Enumerable.Range(0, checks.Count),
+                new ParallelOptions { MaxDegreeOfParallelism = Math.Max(1, Math.Min(16, Environment.ProcessorCount / 4)), CancellationToken = ct },
+                async (i, token) =>
+                {
+                    var c = checks[i];
+                    perCheck[i] = await RunCheckAsync(p, c, root, lib!, projectDir, Path.Combine(paths.Runs, label, c.Scenario, c.Job), implementation, op, token);
+                    op.Report(from + (to - from) * (0.6 + 0.4 * Interlocked.Increment(ref done) / Math.Max(1, checks.Count)), $"{done}/{checks.Count} job checks vs GnuCOBOL");
+                });
+            foreach (var (o, r) in perCheck)
             {
-                ct.ThrowIfCancellationRequested();
-                var c = checks[i];
-                op.Report(from + (to - from) * (0.6 + 0.4 * i / Math.Max(1, checks.Count)), $"job {c.Job} ({c.Scenario}) vs GnuCOBOL");
-                parity.AddRange(await RunCheckAsync(p, c, root, lib!, projectDir, Path.Combine(paths.Runs, label, c.Scenario, c.Job), implementation, op, ct));
+                parity.AddRange(o);
+                reference.AddRange(r);
             }
             op.Info($"job checks: {parity.Count(r => r.Verdict == "MATCH")}/{parity.Count} outputs MATCH the GnuCOBOL oracle ({implementation})");
+            if (p.Reference is not null) op.Info(ReferenceOracle.Summary(p, reference, "job"));
         }
-        var report = new BuildTestReport(p.Id, implementation, DateTime.Now.ToString("s"), compiled, total, totalFailed, suites, failedTests, parity);
+        var report = new BuildTestReport(p.Id, implementation, DateTime.Now.ToString("s"), compiled, total, totalFailed, suites, failedTests, parity,
+            p.Reference is null ? null : reference, p.Reference?.Label);
         Directory.CreateDirectory(Path.Combine(paths.Runs, label));
         await File.WriteAllTextAsync(Path.Combine(paths.Runs, label, "report.json"), JsonSerializer.Serialize(report, ProjectJson.Options) + "\n", ct);
         return report;
@@ -77,7 +94,7 @@ public sealed class JobParityService(ProjectService projects)
         catch (JsonException) { return null; }
     }
 
-    async Task<List<ParityResult>> RunCheckAsync(ProjectDefinition p, JobCheck c, string root, string lib, string projectDir, string runDir, string implementation, Operation op, CancellationToken ct)
+    async Task<(List<ParityResult> Oracle, List<ParityResult> Reference)> RunCheckAsync(ProjectDefinition p, JobCheck c, string root, string lib, string projectDir, string runDir, string implementation, Operation op, CancellationToken ct)
     {
         if (Directory.Exists(runDir)) Toolchain.DeleteTree(runDir);
         var data = Directory.CreateDirectory(Path.Combine(runDir, "data")).FullName;
@@ -102,10 +119,16 @@ public sealed class JobParityService(ProjectService projects)
             results.Add(Compare(c, name, actual, oracle, kind == "sysout"));
         }
         if (r.ExitCode < 0) results.Add(new ParityResult(c.Job, c.Scenario, "(job)", "TIMEOUT", "the job did not finish"));
-        return results;
+        var reference = ReferenceOracle.Compare(p, projects.Paths(p).Dir, c, key =>
+        {
+            var name = key.Split(':', 2)[1];
+            var f = Path.Combine(key.StartsWith("sysout:", StringComparison.Ordinal) ? sysout : data, name);
+            return File.Exists(f) ? f : null;
+        });
+        return (results, reference);
     }
 
-    static ParityResult Compare(JobCheck c, string name, string actual, string oracle, bool sysout)
+    internal static ParityResult Compare(JobCheck c, string name, string actual, string oracle, bool sysout)
     {
         if (!File.Exists(oracle)) return new ParityResult(c.Job, c.Scenario, name, "NO ORACLE", oracle);
         if (!File.Exists(actual)) return new ParityResult(c.Job, c.Scenario, name, "MISSING", "the job did not write it");

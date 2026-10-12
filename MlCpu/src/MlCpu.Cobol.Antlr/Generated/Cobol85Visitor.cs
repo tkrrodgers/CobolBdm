@@ -1359,6 +1359,12 @@ public interface ICobol85Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitDataDescriptionEntryFormat3([NotNull] Cobol85Parser.DataDescriptionEntryFormat3Context context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="Cobol85Parser.dataWhenSetToFalseClause"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDataWhenSetToFalseClause([NotNull] Cobol85Parser.DataWhenSetToFalseClauseContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="Cobol85Parser.dataDescriptionEntryExecSql"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -2139,11 +2145,29 @@ public interface ICobol85Visitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInitializeStatement([NotNull] Cobol85Parser.InitializeStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="Cobol85Parser.initializeFillerPhrase"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInitializeFillerPhrase([NotNull] Cobol85Parser.InitializeFillerPhraseContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="Cobol85Parser.initializeValuePhrase"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInitializeValuePhrase([NotNull] Cobol85Parser.InitializeValuePhraseContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="Cobol85Parser.initializeReplacingPhrase"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitInitializeReplacingPhrase([NotNull] Cobol85Parser.InitializeReplacingPhraseContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="Cobol85Parser.initializeDefaultPhrase"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitInitializeDefaultPhrase([NotNull] Cobol85Parser.InitializeDefaultPhraseContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="Cobol85Parser.initializeReplacingBy"/>.
 	/// </summary>

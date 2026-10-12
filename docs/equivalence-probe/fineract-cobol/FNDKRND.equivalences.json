@@ -1,0 +1,513 @@
+{
+  "schema": "mlcpu.equivalences.v1",
+  "program": "FNDKRND",
+  "tracedCalls": 21332,
+  "traceSources": 31,
+  "generatedPerGroup": 100000,
+  "learningCallsPerGroup": 2000,
+  "seed": 42,
+  "faithfulReplay": {
+    "tracedCallsReplayed": 200,
+    "identical": 200
+  },
+  "functionSelector": "DK-FUNCTION",
+  "verifiedGroups": 5,
+  "groups": [
+    {
+      "group": {
+        "DK-FUNCTION": "D"
+      },
+      "label": "DK-FUNCTION = 'D' (DK-FN-DECIMALS)",
+      "status": "verified",
+      "tracedCalls": 2931,
+      "generatedOnly": false,
+      "family": "setScale",
+      "java": "dkValue.setScale(-dkParm, mode)",
+      "bindings": [
+        "dkValue = DK-VALUE (a BigDecimal of scale 0)",
+        "dkParm = DK-PARM"
+      ],
+      "enum": {
+        "field": "DK-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "DK-VALUE = r",
+      "resultFields": "DK-VALUE",
+      "inputs": [
+        "DK-VALUE",
+        "DK-PARM",
+        "DK-MODE"
+      ],
+      "otherFields": [
+        "DK-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 2931,
+        "tracedMatched": 2931,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DK-PARM 0..12",
+          "dkValue digits 1..13 (both signs)",
+          "DK-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "alternativesWithEqualScore": 1
+    },
+    {
+      "group": {
+        "DK-FUNCTION": "P",
+        "DK-STICKY": "N"
+      },
+      "label": "DK-FUNCTION = 'P' (DK-FN-SHORTEN) and DK-STICKY = 'N'",
+      "status": "verified-with-condition",
+      "tracedCalls": 14427,
+      "generatedOnly": false,
+      "family": "round",
+      "java": "dkValue.round(new MathContext(dkParm, mode))",
+      "bindings": [
+        "dkValue = DK-VALUE (a BigDecimal of scale 0)",
+        "dkParm = DK-PARM"
+      ],
+      "enum": {
+        "field": "DK-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "DK-SHIFT = max(0, dkValue.precision() - dkParm) (the digits dropped), DK-VALUE = r.movePointLeft(DK-SHIFT) (the digits kept: r = DK-VALUE \u00d7 10^DK-SHIFT)",
+      "resultFields": "DK-VALUE, DK-SHIFT",
+      "inputs": [
+        "DK-VALUE",
+        "DK-PARM",
+        "DK-MODE"
+      ],
+      "otherFields": [
+        "DK-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "the result does not fit DK-VALUE, DK-SHIFT",
+          "learningCalls": 66,
+          "effects": [
+            "DK-VALUE = 0",
+            "DK-RC = 0",
+            "DK-SHIFT = 24"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 14427,
+        "tracedMatched": 14427,
+        "learning": 2000,
+        "learningMatched": 1938,
+        "generated": 100000,
+        "generatedMatched": 96360,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DK-PARM 0..12",
+          "dkValue digits 1..24 (both signs)",
+          "DK-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 3640,
+        "regions": [
+          {
+            "failsWhen": [
+              "DK-PARM = 0",
+              "magnitude(dkValue) >= 0"
+            ],
+            "failingGenerated": 2000,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "DK-VALUE, DK-SHIFT vary (no single relation)",
+                "nothing changes"
+              ],
+              "calls": 3000,
+              "traced": 0,
+              "generated": 3000,
+              "identical": 0,
+              "holds": false
+            },
+            "examples": [
+              "inputs DK-VALUE=955117508781, DK-PARM=0, DK-MODE='N', DK-SHIFT=2; faithful after: DK-VALUE=1, DK-SHIFT=12; the statement gives the result does not fit DK-VALUE, DK-SHIFT",
+              "inputs DK-VALUE=37, DK-PARM=0, DK-MODE='C', DK-SHIFT=11; faithful after: DK-VALUE=1, DK-SHIFT=2; the statement gives the result does not fit DK-VALUE, DK-SHIFT"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs DK-VALUE=955117508781, DK-PARM=0, DK-MODE='N', DK-SHIFT=2; faithful after: DK-VALUE=1, DK-SHIFT=12; the statement gives the result does not fit DK-VALUE, DK-SHIFT",
+        "inputs DK-VALUE=37, DK-PARM=0, DK-MODE='C', DK-SHIFT=11; faithful after: DK-VALUE=1, DK-SHIFT=2; the statement gives the result does not fit DK-VALUE, DK-SHIFT",
+        "inputs DK-VALUE=150093378153466563944, DK-PARM=0, DK-MODE='U', DK-SHIFT=11; faithful after: DK-VALUE=1, DK-SHIFT=21; the statement gives the result does not fit DK-VALUE, DK-SHIFT"
+      ],
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DK-FUNCTION": "P",
+        "DK-STICKY": "Y"
+      },
+      "label": "DK-FUNCTION = 'P' (DK-FN-SHORTEN) and DK-STICKY = 'Y'",
+      "status": "verified-with-condition",
+      "tracedCalls": 3974,
+      "generatedOnly": false,
+      "family": "roundSticky",
+      "java": "dkValue.add(BigDecimal.valueOf(dkValue.signum() < 0 ? -1 : 1, dkValue.scale() + 1)).round(new MathContext(dkParm, mode))",
+      "bindings": [
+        "dkValue = DK-VALUE (a BigDecimal of scale 0)",
+        "dkParm = DK-PARM",
+        "dkValue.add(BigDecimal.valueOf(dkValue.signum() < 0 ? -1 : 1, dkValue.scale() + 1)) is dkValue with one more nonzero digit after its last: the value dkValue stands for has further nonzero digits (a sticky digit; any digit 1-9 gives the same result)"
+      ],
+      "enum": {
+        "field": "DK-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "DK-SHIFT = max(0, dkValue.precision() - dkParm) (the digits dropped), DK-VALUE = r.movePointLeft(DK-SHIFT) (the digits kept: r = DK-VALUE \u00d7 10^DK-SHIFT)",
+      "resultFields": "DK-VALUE, DK-SHIFT",
+      "inputs": [
+        "DK-VALUE",
+        "DK-PARM",
+        "DK-MODE"
+      ],
+      "otherFields": [
+        "DK-STICKY = 'N'",
+        "DK-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "the result does not fit DK-VALUE, DK-SHIFT",
+          "learningCalls": 711,
+          "effects": [
+            "when DK-PARM = 0: DK-STICKY = 'N'; otherwise DK-STICKY unchanged",
+            "when DK-PARM = 0: DK-RC = 0; otherwise DK-RC = 8",
+            "DK-SHIFT = 0",
+            "DK-VALUE unchanged"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 3974,
+        "tracedMatched": 3974,
+        "learning": 2000,
+        "learningMatched": 1790,
+        "generated": 100000,
+        "generatedMatched": 90378,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DK-PARM 0..12",
+          "dkValue digits 1..14 (both signs)",
+          "DK-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 9622,
+        "regions": [
+          {
+            "failsWhen": [
+              "DK-PARM - digits(dkValue) = 0"
+            ],
+            "failingGenerated": 1224,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "DK-RC = 8",
+                "DK-SHIFT = 0",
+                "every other field unchanged"
+              ],
+              "calls": 2224,
+              "traced": 0,
+              "generated": 2224,
+              "identical": 2224,
+              "holds": true
+            },
+            "examples": [
+              "inputs DK-VALUE=434600000, DK-PARM=9, DK-MODE='N', DK-SHIFT=2; faithful after: DK-VALUE=434600000 (statement: 434600000), DK-RC=8, DK-SHIFT=0 (statement: 0)",
+              "inputs DK-VALUE=914578575, DK-PARM=9, DK-MODE='F', DK-SHIFT=2; faithful after: DK-VALUE=914578575 (statement: 914578575), DK-RC=8, DK-SHIFT=0 (statement: 0)"
+            ]
+          },
+          {
+            "failsWhen": [
+              "DK-PARM = 0"
+            ],
+            "failingGenerated": 776,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "DK-STICKY = 'N'",
+                "DK-VALUE, DK-SHIFT vary (no single relation)",
+                "every other field unchanged"
+              ],
+              "calls": 1776,
+              "traced": 0,
+              "generated": 1776,
+              "identical": 1,
+              "holds": false
+            },
+            "examples": [
+              "inputs DK-VALUE=433536, DK-PARM=0, DK-MODE='H', DK-SHIFT=0; faithful after: DK-VALUE=0, DK-STICKY='N', DK-SHIFT=6; the statement gives the result does not fit DK-VALUE, DK-SHIFT",
+              "inputs DK-VALUE=993479768725, DK-PARM=0, DK-MODE='E', DK-SHIFT=2; faithful after: DK-VALUE=1, DK-STICKY='N', DK-SHIFT=12; the statement gives the result does not fit DK-VALUE, DK-SHIFT"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs DK-VALUE=434600000, DK-PARM=9, DK-MODE='N', DK-SHIFT=2; faithful after: DK-VALUE=434600000 (statement: 434600000), DK-RC=8, DK-SHIFT=0 (statement: 0)",
+        "inputs DK-VALUE=914578575, DK-PARM=9, DK-MODE='F', DK-SHIFT=2; faithful after: DK-VALUE=914578575 (statement: 914578575), DK-RC=8, DK-SHIFT=0 (statement: 0)",
+        "inputs DK-VALUE=433536, DK-PARM=0, DK-MODE='H', DK-SHIFT=0; faithful after: DK-VALUE=0, DK-STICKY='N', DK-SHIFT=6; the statement gives the result does not fit DK-VALUE, DK-SHIFT"
+      ],
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DK-FUNCTION": "S",
+        "DK-STICKY": "N"
+      },
+      "label": "DK-FUNCTION = 'S' (DK-FN-SIGNIFICANT) and DK-STICKY = 'N'",
+      "status": "verified-with-condition",
+      "tracedCalls": 0,
+      "generatedOnly": true,
+      "family": "round",
+      "java": "dkValue.round(new MathContext(dkParm, mode))",
+      "bindings": [
+        "dkValue = DK-VALUE (a BigDecimal of scale 0)",
+        "dkParm = DK-PARM"
+      ],
+      "enum": {
+        "field": "DK-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "DK-VALUE = r",
+      "resultFields": "DK-VALUE",
+      "inputs": [
+        "DK-VALUE",
+        "DK-PARM",
+        "DK-MODE"
+      ],
+      "otherFields": [
+        "DK-RC = 0",
+        "DK-SHIFT = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 0,
+        "tracedMatched": 0,
+        "learning": 2000,
+        "learningMatched": 1932,
+        "generated": 100000,
+        "generatedMatched": 96350,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DK-PARM 0..12",
+          "dkValue digits 1..24 (both signs)",
+          "DK-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 3650,
+        "regions": [
+          {
+            "failsWhen": [
+              "DK-PARM = 0",
+              "magnitude(dkValue) >= 0"
+            ],
+            "failingGenerated": 2000,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "DK-SHIFT = 0",
+                "DK-VALUE varies (no single relation)",
+                "every other field unchanged"
+              ],
+              "calls": 3000,
+              "traced": 0,
+              "generated": 3000,
+              "identical": 0,
+              "holds": false
+            },
+            "examples": [
+              "inputs DK-VALUE=211, DK-PARM=0, DK-MODE='D'; faithful after: DK-VALUE=0 (statement: 211), DK-SHIFT=0",
+              "inputs DK-VALUE=25010000, DK-PARM=0, DK-MODE='C'; faithful after: DK-VALUE=100000000 (statement: 25010000), DK-SHIFT=0"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs DK-VALUE=211, DK-PARM=0, DK-MODE='D'; faithful after: DK-VALUE=0 (statement: 211), DK-SHIFT=0",
+        "inputs DK-VALUE=25010000, DK-PARM=0, DK-MODE='C'; faithful after: DK-VALUE=100000000 (statement: 25010000), DK-SHIFT=0",
+        "inputs DK-VALUE=3278405602778726577, DK-PARM=0, DK-MODE='F'; faithful after: DK-VALUE=0 (statement: 3278405602778726577), DK-SHIFT=0"
+      ],
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DK-FUNCTION": "S",
+        "DK-STICKY": "Y"
+      },
+      "label": "DK-FUNCTION = 'S' (DK-FN-SIGNIFICANT) and DK-STICKY = 'Y'",
+      "status": "verified-with-condition",
+      "tracedCalls": 0,
+      "generatedOnly": true,
+      "family": "roundSticky",
+      "java": "dkValue.add(BigDecimal.valueOf(dkValue.signum() < 0 ? -1 : 1, dkValue.scale() + 1)).round(new MathContext(dkParm, mode))",
+      "bindings": [
+        "dkValue = DK-VALUE (a BigDecimal of scale 0)",
+        "dkParm = DK-PARM",
+        "dkValue.add(BigDecimal.valueOf(dkValue.signum() < 0 ? -1 : 1, dkValue.scale() + 1)) is dkValue with one more nonzero digit after its last: the value dkValue stands for has further nonzero digits (a sticky digit; any digit 1-9 gives the same result)"
+      ],
+      "enum": {
+        "field": "DK-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "DK-VALUE = r",
+      "resultFields": "DK-VALUE",
+      "inputs": [
+        "DK-VALUE",
+        "DK-PARM",
+        "DK-MODE"
+      ],
+      "otherFields": [
+        "DK-STICKY = 'N'",
+        "DK-SHIFT = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "the result does not fit DK-VALUE",
+          "learningCalls": 682,
+          "effects": [
+            "when DK-PARM = 0: DK-STICKY = 'N'; otherwise DK-STICKY unchanged",
+            "when DK-PARM = 0: DK-RC = 0; otherwise DK-RC = 8",
+            "DK-SHIFT = 0",
+            "DK-VALUE unchanged"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 0,
+        "tracedMatched": 0,
+        "learning": 2000,
+        "learningMatched": 1814,
+        "generated": 100000,
+        "generatedMatched": 90278,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DK-PARM 0..12",
+          "dkValue digits 1..14 (both signs)",
+          "DK-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 9722,
+        "regions": [
+          {
+            "failsWhen": [
+              "DK-PARM - magnitude(dkValue) = 1"
+            ],
+            "failingGenerated": 1208,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "DK-RC = 8",
+                "DK-SHIFT = 0",
+                "every other field unchanged"
+              ],
+              "calls": 2208,
+              "traced": 0,
+              "generated": 2208,
+              "identical": 2208,
+              "holds": true
+            },
+            "examples": [
+              "inputs DK-VALUE=369299, DK-PARM=6, DK-MODE='F'; faithful after: DK-VALUE=369299 (statement: 369299), DK-RC=8, DK-SHIFT=0",
+              "inputs DK-VALUE=188868, DK-PARM=6, DK-MODE='F'; faithful after: DK-VALUE=188868 (statement: 188868), DK-RC=8, DK-SHIFT=0"
+            ]
+          },
+          {
+            "failsWhen": [
+              "DK-PARM = 0"
+            ],
+            "failingGenerated": 792,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "DK-STICKY = 'N'",
+                "DK-SHIFT = 0",
+                "DK-VALUE varies (no single relation)",
+                "every other field unchanged"
+              ],
+              "calls": 1792,
+              "traced": 0,
+              "generated": 1792,
+              "identical": 4,
+              "holds": false
+            },
+            "examples": [
+              "inputs DK-VALUE=5675, DK-PARM=0, DK-MODE='U'; faithful after: DK-VALUE=10000, DK-STICKY='N'; the statement gives the result does not fit DK-VALUE",
+              "inputs DK-VALUE=54275122, DK-PARM=0, DK-MODE='F'; faithful after: DK-VALUE=0, DK-STICKY='N'; the statement gives the result does not fit DK-VALUE"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs DK-VALUE=5675, DK-PARM=0, DK-MODE='U'; faithful after: DK-VALUE=10000, DK-STICKY='N'; the statement gives the result does not fit DK-VALUE",
+        "inputs DK-VALUE=369299, DK-PARM=6, DK-MODE='F'; faithful after: DK-VALUE=369299 (statement: 369299), DK-RC=8, DK-SHIFT=0",
+        "inputs DK-VALUE=188868, DK-PARM=6, DK-MODE='F'; faithful after: DK-VALUE=188868 (statement: 188868), DK-RC=8, DK-SHIFT=0"
+      ],
+      "alternativesWithEqualScore": 0
+    }
+  ]
+}
+

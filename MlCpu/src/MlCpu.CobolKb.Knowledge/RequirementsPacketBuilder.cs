@@ -157,13 +157,56 @@ public static class RequirementsPacketBuilder
             yield return new
             {
                 record = rec.Name, copybook = rec.Origin.Length > 0 ? rec.Origin : null, file = rec.FileName, length = rec.Length,
-                fields = ReplayPlanBuilder.Leaves(rec).Select(l => new
-                {
-                    name = l.Name, offset = l.Offset, length = l.Length, pic = l.Pic, usage = l.Usage, scale = l.Scale, signed = l.Signed,
-                    type = l.Item.Category == Category.Numeric ? (l.Usage == "DISPLAY" ? "zoned" : l.Usage.ToLowerInvariant()) : l.Item.Category.ToString().ToLowerInvariant(),
-                    conditionNames = l.Roles
-                })
+                fields = Fields(rec)
             };
+    }
+
+    /// <summary>
+    /// Records whose expanded layout fits 400 fields are listed field by field, every occurrence of every table (the form
+    /// all existing packets have, so their hashes are unchanged). A larger record, such as a 262 KB model with tables of
+    /// 481 periods, is described once per table element: a "table" entry (offset of element 1, element length, OCCURS
+    /// count) followed by element 1's fields. Expanding it would exceed any model's context (and the expansion stops at
+    /// 2,000 fields, which silently dropped the rest of the record).
+    /// </summary>
+    static IEnumerable<object> Fields(DataItem rec)
+    {
+        var leaves = ReplayPlanBuilder.Leaves(rec);
+        if (leaves.Count <= 400)
+            return leaves.Select(l => (object)new
+            {
+                name = l.Name, offset = l.Offset, length = l.Length, pic = l.Pic, usage = l.Usage, scale = l.Scale, signed = l.Signed,
+                type = l.Item.Category == Category.Numeric ? (l.Usage == "DISPLAY" ? "zoned" : l.Usage.ToLowerInvariant()) : l.Item.Category.ToString().ToLowerInvariant(),
+                conditionNames = l.Roles
+            });
+        var fields = new List<object>();
+        void Visit(DataItem it, int off, string suffix)
+        {
+            if (it.Level == 88) return;
+            var sfx = it.Occurs > 0 ? suffix + "(1)" : suffix;
+            if (it.Occurs > 0)
+                fields.Add(new
+                {
+                    name = it.Name + suffix, offset = off, length = it.Length, occurs = it.Occurs, type = "table",
+                    note = $"OCCURS {it.Occurs}: the fields named {it.Name}{suffix}(1)... below describe element 1; element k starts {it.Length} x (k - 1) bytes later"
+                });
+            if (it.IsLeaf)
+            {
+                var usage = ReplayPlanBuilder.UsageOf(it);
+                var roles = it.Children.Where(c => c.Level == 88).ToDictionary(c => c.Name,
+                    c => (IReadOnlyList<string>)c.Values.Select(v => v.High is null ? v.Low.Text : $"{v.Low.Text} THRU {v.High.Text}").ToList());
+                fields.Add(new
+                {
+                    name = (it.Name == "FILLER" ? $"FILLER@{off}" : it.Name) + sfx, offset = off, length = it.Length, pic = it.Pic, usage, scale = it.Scale,
+                    signed = it.Signed,
+                    type = it.Category == Category.Numeric ? (usage == "DISPLAY" ? "zoned" : usage.ToLowerInvariant()) : it.Category.ToString().ToLowerInvariant(),
+                    conditionNames = roles.Count == 0 ? null : roles
+                });
+            }
+            else
+                foreach (var c in it.Children.Where(c => c.Level != 88)) Visit(c, off + (c.Offset - it.Offset), sfx);
+        }
+        foreach (var c in rec.Children.Where(c => c.Level != 88)) Visit(c, c.Offset - rec.Offset, "");
+        return fields;
     }
 
     static IEnumerable<object> Ports(CobolProgram m) => m.Files.Where(f => !f.IsSort).Select(f => new

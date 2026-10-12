@@ -1,6 +1,6 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. LOWER03.
-      * ALTER is a frontier; the plain GO TO around it is lowered.
+      * ALTER is lowered: the altered GO TO jumps to an ALTERable target.
        PROCEDURE DIVISION.
        MAIN-PARA.
            ALTER SW-PARA TO PROCEED TO END-PARA

@@ -1,0 +1,478 @@
+using System.Text;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using MlCpu.Kit;
+
+namespace MlCpu.CobolKb.Knowledge.Typed;
+
+/// <summary>
+/// A CALLed program's verified library operations as Java (typed-interface projection, step 3): from the equivalence probe's
+/// equivalences.json, for each verified CALL group, the JDK operation with its bindings, rounding-mode or unit code map,
+/// result representation, the other fields' rules, the regions where the statement does not hold with their verified
+/// contracts, and the exceptions. The CALL becomes <c>Callee.call(bytes...)</c> on the caller's arguments: the group is chosen by
+/// the function selector, as the called program chooses it. A group the probe did not verify, or a statement this generator
+/// cannot render, throws instead of guessing.
+/// </summary>
+sealed partial class VerifiedOperations
+{
+    readonly string callee;
+    readonly JsonNode eq;
+    readonly KitLayouts calleeLayouts;
+    readonly IReadOnlyList<(KitLayout Layout, string KitClass)> args;   // the caller's argument records at the CALL
+    readonly IReadOnlyDictionary<string, string> kitTypes;
+    readonly List<string> gaps;
+    /// <summary>The selector codes the caller can pass (null: any); groups for other codes are not generated.</summary>
+    readonly IReadOnlySet<string>? codes;
+    public string ClassName { get; }
+
+    public VerifiedOperations(string callee, string equivalencesJson, string calleeLayoutsJson, IReadOnlyList<(KitLayout Layout, string KitClass)> args,
+        IReadOnlyDictionary<string, string> kitTypes, List<string> gaps, IReadOnlySet<string>? codes = null)
+    {
+        this.callee = callee;
+        eq = JsonNode.Parse(equivalencesJson)!;
+        calleeLayouts = KitLayouts.Parse(calleeLayoutsJson);
+        this.args = args;
+        this.kitTypes = kitTypes;
+        this.gaps = gaps;
+        this.codes = codes;
+        ClassName = TypedRecords.Pascal(callee) + "Operations";
+    }
+
+    /// <summary>A callee field as the caller's kit sees it: argument index, kit accessor, Java type, the field's layout.</summary>
+    sealed record F(string Name, int Arg, string Accessor, string Type, KitField Kit)
+    {
+        public string Var => "a" + Arg;
+        public string Get => $"{Var}.{Accessor}()";
+        public string Set(string v) => $"{Var}.{Accessor}({v});";
+    }
+
+    readonly Dictionary<string, F?> fieldCache = new(StringComparer.Ordinal);
+
+    F Field(string name)
+    {
+        if (fieldCache.TryGetValue(name, out var f)) return f ?? throw new NotSupportedException($"{callee} field {name} is not in the caller's arguments");
+        F? found = null;
+        for (int i = 0; i < calleeLayouts.LinkageNames.Count && i < args.Count && found is null; i++)
+        {
+            var cl = calleeLayouts.Argument(i, args[i].Layout.Length);
+            var cf = cl?.Fields.FirstOrDefault(x => x.Name == name && x.Occurs.Count == 0);
+            if (cf is null) continue;
+            var mine = args[i].Layout.Fields.FirstOrDefault(x => x.Offset == cf.Offset && x.Length == cf.Length && x.Kind == cf.Kind && x.Occurs.Count == 0 && x.Accessor is not null);
+            if (mine is null) continue;
+            var type = kitTypes.GetValueOrDefault(args[i].KitClass + "." + mine.Accessor) ?? (mine.Kind == "text" ? "String" : "BigDecimal");
+            found = new F(name, i, mine.Accessor!, type, mine);
+        }
+        fieldCache[name] = found;
+        return found ?? throw new NotSupportedException($"{callee} field {name} is not in the caller's arguments");
+    }
+
+    static string Lit(string s) => "\"" + s.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+
+    /// <summary>A field's value as BigDecimal.</summary>
+    static string Dec(F f) => f.Type == "long" ? $"BigDecimal.valueOf({f.Get})" : f.Type == "BigDecimal" ? f.Get : throw new NotSupportedException($"{f.Name} is text");
+
+    public string Source(string package, string kitPackage)
+    {
+        var sb = new StringBuilder();
+        var selector = eq["functionSelector"]?.GetValue<string>();
+        var groups = eq["groups"]!.AsArray().OfType<JsonObject>().ToList();
+        sb.Append($"package {package};\n\nimport com.mlcpu.rt.ModernStep;\nimport java.math.BigDecimal;\nimport java.math.MathContext;\nimport java.math.RoundingMode;\n");
+        sb.Append("import java.time.DateTimeException;\nimport java.time.LocalDate;\nimport java.time.format.DateTimeFormatter;\nimport java.time.temporal.ChronoUnit;\n");
+        foreach (var k in args.Select(a => a.KitClass).Distinct()) sb.Append($"import {kitPackage}.{k};\n");
+        sb.Append($"\n/**\n * CALL '{callee}' as the JDK operations the equivalence probe verified: every traced CALL of each group reproduced byte for\n");
+        sb.Append($" * byte, then {eq["generatedPerGroup"]} generated CALLs of the faithful {callee} (the probe's equivalences.json). Generated by the\n");
+        sb.Append(" * typed-interface projection; a group that is not verified throws instead of guessing.\n");
+        if (codes is not null && selector is not null)
+            sb.Append($" * Only the groups of the {selector} codes this program passes ({string.Join(", ", codes.Order().Select(c => "'" + c + "'"))}) are here.\n");
+        sb.Append(" */\n");
+        sb.Append($"final class {ClassName} {{\n    private {ClassName}() {{}}\n\n");
+        if (codes is not null && selector is not null)
+            groups = groups.Where(g => g["group"]?[selector] is not JsonNode v || codes.Contains(v.GetValue<string>().TrimEnd(' '))).ToList();
+        sb.Append($"    /** CALL '{callee}' USING {string.Join(" ", args.Select(a => a.Layout.Name))} (BY REFERENCE). */\n");
+        sb.Append($"    static void call({string.Join(", ", args.Select((a, i) => $"byte[] p{i}"))}) {{\n");
+        for (int i = 0; i < args.Count; i++) sb.Append($"        {args[i].KitClass} a{i} = {args[i].KitClass}.wrap(p{i});\n");
+        var methods = new StringBuilder();
+        int n = 0;
+        foreach (var g in groups)
+        {
+            var label = g["label"]?.GetValue<string>() ?? "";
+            var status = g["status"]?.GetValue<string>() ?? "";
+            var keys = (g["group"] as JsonObject)?.Select(kv => (Field: kv.Key, Value: kv.Value!.GetValue<string>())).ToList() ?? [];
+            string test;
+            try
+            {
+                test = keys.Count == 0 ? "true" : string.Join(" && ", keys.Select(k =>
+                {
+                    var f = Field(k.Field);
+                    return f.Type == "String" ? $"{f.Get}.equals({Lit(k.Value.PadRight(f.Kit.Length))})" : $"{f.Get} == {k.Value}L";
+                }));
+            }
+            catch (NotSupportedException e) { gaps.Add($"{callee} {label}: {e.Message}"); continue; }
+            var method = "op" + ++n;
+            sb.Append($"        if ({test}) {{\n            {method}({string.Join(", ", args.Select((_, i) => "a" + i))});\n            return;\n        }}\n");
+            methods.Append($"\n    /** {label}: {status}{Checked(g)}. */\n");
+            methods.Append($"    private static void {method}({string.Join(", ", args.Select((a, i) => $"{a.KitClass} a{i}"))}) {{\n");
+            try
+            {
+                if (!status.StartsWith("verified", StringComparison.Ordinal)) throw new NotSupportedException($"not verified ({status})");
+                methods.Append(Group(g, "        "));
+            }
+            catch (NotSupportedException e)
+            {
+                gaps.Add($"{callee} {label}: {e.Message}");
+                methods.Append($"        throw new UnsupportedOperationException({Lit($"{callee} {label}: {e.Message}")});\n");
+            }
+            methods.Append("    }\n");
+        }
+        sb.Append($"        throw new UnsupportedOperationException(\"{callee}: no verified operation for {selector ?? "these arguments"} \" + {(selector is not null ? Field(selector).Get : "\"\"")});\n    }}\n");
+        sb.Append(methods);
+        sb.Append($"\n    private static ModernStep.Abend abend(int code) {{\n        return new ModernStep.Abend(code, \"{callee} ABENDING, CODE \" + code);\n    }}\n}}\n");
+        return sb.ToString();
+    }
+
+    static string Checked(JsonObject g) => g["checked"] is JsonObject c
+        ? $" (traced CALLs {c["traced"]}, all identical; generated {c["generated"]}, {c["generatedMatched"]} identical{(g["condition"] is not null ? ", the rest inside the regions below" : "")})" : "";
+
+    // ------------------------------------------------------------------ one group
+
+    readonly HashSet<string> declared = new(StringComparer.Ordinal);
+
+    string Group(JsonObject g, string ind)
+    {
+        declared.Clear();
+        var sb = new StringBuilder();
+        var java = g["java"]?.GetValue<string>() ?? throw new NotSupportedException("no operation");
+        // Inputs as the caller passed them (the relations "(the value the caller passed)" and the conditions read these).
+        var before = new StringBuilder();
+        var bindings = new StringBuilder();
+        var tryBindings = new StringBuilder();
+        foreach (var b in g["bindings"]!.AsArray().Select(x => x!.GetValue<string>())) Binding(b, bindings, tryBindings, ind);
+        if (g["enum"] is JsonObject en)
+        {
+            var f = Field(en["field"]!.GetValue<string>());
+            var type = en["type"]!.GetValue<string>();
+            var v = type == "RoundingMode" ? "mode" : "unit";
+            bindings.Append($"{ind}{type} {v} = switch ({f.Get}) {{\n");
+            foreach (var kv in en["map"]!.AsObject()) bindings.Append($"{ind}    case {Lit(kv.Key.PadRight(f.Kit.Length))} -> {type}.{kv.Value!.GetValue<string>()};\n");
+            bindings.Append($"{ind}    default -> throw new UnsupportedOperationException(\"{callee}: {en["field"]} '\" + {f.Get} + \"' has no verified {type}\");\n{ind}}};\n");
+            declared.Add(v);
+        }
+        var regions = (g["condition"]?["regions"] as JsonArray)?.OfType<JsonObject>().ToList() ?? [];
+        var exceptions = (g["exceptions"] as JsonArray)?.OfType<JsonObject>().ToList() ?? [];
+        var others = g["otherFields"]?.AsArray().Select(x => x!.GetValue<string>()).ToList() ?? [];
+        var copies = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var t in others.Concat(regions.SelectMany(r => r["contract"]?["effects"]?.AsArray().Select(x => x!.GetValue<string>()) ?? []))
+                     .Concat(exceptions.SelectMany(e => e["effects"]!.AsArray().Select(x => x!.GetValue<string>()))))
+            foreach (Match mt in Regex.Matches(t, @"= ([A-Z][A-Z0-9-]+) \(the value the caller passed\)")) copies.Add(mt.Groups[1].Value);
+        snapshots.Clear();
+        foreach (var c in copies) snapshots.Add(c);
+        sb.Append(bindings);
+        // Regions where the statement does not hold: their verified contracts, in order.
+        foreach (var r in regions)
+        {
+            var terms = r["failsWhen"]!.AsArray().Select(x => x!.GetValue<string>()).ToList();
+            var cond = string.Join(" && ", terms.Select(Term));
+            var effects = r["contract"]?["effects"]?.AsArray().Select(x => x!.GetValue<string>()).ToList() ?? throw new NotSupportedException("a region without a contract");
+            sb.Append($"{ind}// where the statement does not hold: {string.Join(" and ", terms)}\n{ind}if ({cond}) {{\n");
+            try
+            {
+                var body = new StringBuilder();
+                bool needsStatement = effects.Any(e => e.EndsWith("as the statement gives them") || e.EndsWith("as the statement gives it"));
+                if (needsStatement)
+                {
+                    body.Append(tryBindings.ToString().Replace(ind, ind + "    "));
+                    body.Append($"{ind}    BigDecimal r = {java};\n");
+                }
+                body.Append(Effects(effects, ind + "    ", g));
+                sb.Append(body);
+            }
+            catch (NotSupportedException e)
+            {
+                // The probe found no single relation here: only this region throws; the rest of the group is the JDK operation.
+                gaps.Add($"{callee} {g["label"]}, where {string.Join(" and ", terms)}: {e.Message}");
+                sb.Append($"{ind}    throw new UnsupportedOperationException({Lit($"{callee} {g["label"]} where {string.Join(" and ", terms)}: no single verified relation")});\n");
+            }
+            sb.Append($"{ind}}}\n");
+        }
+        // The statement, with the exceptions the JDK operation throws.
+        var resultType = ResultType(g, java);
+        var fits = exceptions.FirstOrDefault(e => e["when"]!.GetValue<string>().StartsWith("the result does not fit", StringComparison.Ordinal));
+        bool catches = exceptions.Any(e => e != fits);
+        if (!catches) sb.Append(tryBindings).Append($"{ind}{resultType} r = {java};\n");
+        else sb.Append($"{ind}{resultType} r;\n{ind}try {{\n").Append(tryBindings.ToString().Replace(ind, ind + "    ")).Append($"{ind}    r = {java};\n");
+        // One catch per exception type; an ArithmeticException is told apart by its message, as the probe recorded it.
+        var byType = exceptions.Where(e => e != fits).GroupBy(e =>
+        {
+            var when = e["when"]!.GetValue<string>();
+            return when.StartsWith("ArithmeticException: ", StringComparison.Ordinal) ? "ArithmeticException"
+                : when.StartsWith("invalid ", StringComparison.Ordinal) || when == "DateTimeException" ? "DateTimeException"
+                : throw new NotSupportedException("exception " + when);
+        }).ToList();
+        foreach (var t in byType)
+        {
+            sb.Append($"{ind}}} catch ({t.Key} e) {{\n");
+            var cases = t.ToList();
+            for (int i = 0; i < cases.Count; i++)
+            {
+                var when = cases[i]["when"]!.GetValue<string>();
+                var effects = cases[i]["effects"]!.AsArray().Select(x => x!.GetValue<string>()).ToList();
+                if (t.Key == "ArithmeticException")
+                {
+                    var msg = when["ArithmeticException: ".Length..];
+                    var test = msg.StartsWith("Division by zero", StringComparison.Ordinal)
+                        ? "\"Division by zero\".equals(e.getMessage()) || \"Division undefined\".equals(e.getMessage())" : $"{Lit(msg)}.equals(e.getMessage())";
+                    sb.Append($"{ind}    if ({test}) {{\n").Append(Effects(effects, ind + "        ", g)).Append($"{ind}    }}\n");
+                    if (i == cases.Count - 1) sb.Append($"{ind}    throw e;\n");
+                }
+                else sb.Append(Effects(effects, ind + "    ", g));
+            }
+        }
+        if (catches) sb.Append($"{ind}}}\n");
+        // Where the result goes (and the further results), then the other fields.
+        var target = g["result"]!.GetValue<string>();
+        if (fits is not null)
+        {
+            sb.Append($"{ind}if (!({Fits(target, "r")})) {{\n");
+            sb.Append(Effects(fits["effects"]!.AsArray().Select(x => x!.GetValue<string>()).ToList(), ind + "    ", g)).Append($"{ind}}}\n");
+        }
+        sb.Append(Result(target, "r", ind));
+        int k = 0;
+        foreach (var more in (g["moreResults"] as JsonArray)?.OfType<JsonObject>() ?? [])
+        {
+            foreach (var b in more["bindings"]!.AsArray().Select(x => x!.GetValue<string>())) Binding(b, sb, sb, ind);
+            var v = $"r{++k}";
+            sb.Append($"{ind}BigDecimal {v} = {more["java"]!.GetValue<string>()};\n").Append(Result(more["result"]!.GetValue<string>(), v, ind));
+        }
+        foreach (var o in others) sb.Append(Other(o, ind));
+        foreach (var c in snapshots)
+        {
+            var f = Field(c);
+            before.Append($"{ind}final {f.Type} {Was(c)} = {f.Get};\n");
+        }
+        return before.ToString() + sb;
+    }
+
+    /// <summary>A contract's effects, then a return (unless they end the program).</summary>
+    string Effects(List<string> effects, string ind, JsonObject g)
+    {
+        var text = string.Concat(effects.Select(e => Effect(e, ind, g)));
+        var last = text.TrimEnd().Split('\n')[^1].TrimStart();
+        return last.StartsWith("throw ", StringComparison.Ordinal) ? text : text + $"{ind}return;\n";
+    }
+
+    static string Was(string field) => "was" + TypedRecords.Pascal(field);
+
+    static string ResultType(JsonObject g, string java) => (g["family"]?.GetValue<string>() ?? "") switch
+    {
+        "dateConversion" when java.EndsWith("Date") => "LocalDate",
+        "datePlus" or "dateWith" or "dateOf" => "LocalDate",
+        "dateBetween" or "dateProperty" => "long",
+        _ => "BigDecimal"
+    };
+
+    [GeneratedRegex(@"^(\w+) = (.+?)(?: \((?:a BigDecimal of scale \d+|the value .*|[A-Z0-9-]+ is a COBOL INTEGER-OF-DATE.*)\))?$")]
+    private static partial Regex BindingRx();
+
+    void Binding(string text, StringBuilder plain, StringBuilder risky, string ind)
+    {
+        if (BindingRx().Match(text) is not { Success: true } mt) return;   // an explanation, not a binding
+        var name = mt.Groups[1].Value;
+        if (!declared.Add(name)) return;
+        var expr = mt.Groups[2].Value;
+        if (Regex.Match(expr, @"^new BigDecimal\(([A-Z0-9-]+), -([A-Z0-9-]+)\)$") is { Success: true } pair)
+        {
+            var c = Field(pair.Groups[1].Value);
+            var e = Field(pair.Groups[2].Value);
+            plain.Append($"{ind}BigDecimal {name} = new BigDecimal({Dec(c)}.toBigInteger(), -(int) {e.Get});\n");
+            return;
+        }
+        if (Regex.Match(expr, @"^LocalDate\.of\(1600, 12, 31\)\.plusDays\(([A-Z0-9-]+)\)$") is { Success: true } day)
+        {
+            plain.Append($"{ind}LocalDate {name} = LocalDate.of(1600, 12, 31).plusDays({Field(day.Groups[1].Value).Get});\n");
+            return;
+        }
+        if (Regex.Match(expr, @"^LocalDate\.parse\(([A-Z0-9-]+) as 8 digits, DateTimeFormatter\.BASIC_ISO_DATE\)$") is { Success: true } ymd)
+        {
+            var f = Field(ymd.Groups[1].Value);
+            risky.Append($"{ind}LocalDate {name} = LocalDate.parse(String.format(\"%08d\", {f.Get}), DateTimeFormatter.BASIC_ISO_DATE);\n");
+            return;
+        }
+        if (Regex.IsMatch(expr, @"^[A-Z0-9-]+$"))
+        {
+            var f = Field(expr);
+            if (text.Contains("(a BigDecimal of scale")) plain.Append($"{ind}BigDecimal {name} = {Dec(f)};\n");
+            else if (f.Type == "long") plain.Append($"{ind}int {name} = (int) {f.Get};\n");
+            else if (f.Type == "BigDecimal") plain.Append($"{ind}int {name} = {f.Get}.intValueExact();\n");
+            else throw new NotSupportedException($"binding {text}");
+            return;
+        }
+        throw new NotSupportedException($"binding {text}");
+    }
+
+    /// <summary>A region term: FIELD op constant, signum/digits/magnitude(binding) op constant, or a difference.</summary>
+    string Term(string t)
+    {
+        var mt = Regex.Match(t, @"^(.+?) (<=|>=|<|>|=|!=) (-?\d+|'[^']*'|[A-Z][A-Z0-9-]*)$");
+        if (!mt.Success) throw new NotSupportedException("region term " + t);
+        var (lhs, op, rhs) = (mt.Groups[1].Value, mt.Groups[2].Value == "=" ? "==" : mt.Groups[2].Value, mt.Groups[3].Value);
+        if (rhs.StartsWith('\''))
+        {
+            var f = Field(lhs);
+            var lit = Lit(rhs[1..^1].PadRight(f.Kit.Length));
+            return op == "==" ? $"{Snap(f)}.equals({lit})" : op == "!=" ? $"!{Snap(f)}.equals({lit})" : throw new NotSupportedException("region term " + t);
+        }
+        // A term on a feature that does not apply (the magnitude of zero) does not hold, as in the probe.
+        var guards = new List<string>();
+        var cmp = Regex.IsMatch(rhs, "^[A-Z]") ? $"{Feature(lhs, guards)} {op} {Feature(rhs, guards)}" : $"{Feature(lhs, guards)} {op} {rhs}L";
+        return guards.Count == 0 ? cmp : $"({string.Join(" && ", guards.Distinct())} && {cmp})";
+    }
+
+    string Feature(string s, List<string> guards)
+    {
+        var diff = Regex.Match(s, @"^(.+?) - (.+)$");
+        if (diff.Success) return $"({Feature(diff.Groups[1].Value, guards)} - {Feature(diff.Groups[2].Value, guards)})";
+        if (Regex.Match(s, @"^(signum|digits|magnitude)\((\w+)\)$") is { Success: true } fx)
+        {
+            var b = fx.Groups[2].Value;
+            if (!declared.Contains(b)) throw new NotSupportedException("feature of an unknown value " + s);
+            if (fx.Groups[1].Value == "magnitude") guards.Add($"{b}.signum() != 0");
+            return fx.Groups[1].Value switch
+            {
+                "signum" => $"{b}.signum()",
+                "digits" => $"{b}.precision()",
+                _ => $"({b}.precision() - {b}.scale() - 1)"
+            };
+        }
+        if (Regex.IsMatch(s, @"^[A-Z0-9-]+$"))
+        {
+            var f = Field(s);
+            return f.Type == "long" ? Snap(f) : f.Type == "BigDecimal" ? $"{Snap(f)}.longValue()" : throw new NotSupportedException("a text feature " + s);
+        }
+        throw new NotSupportedException("feature " + s);
+    }
+
+    /// <summary>Fields the conditions and copies read, as the caller passed them (declared at the start of the group).</summary>
+    readonly SortedSet<string> snapshots = new(StringComparer.Ordinal);
+
+    string Snap(F f)
+    {
+        snapshots.Add(f.Name);
+        return Was(f.Name);
+    }
+
+    /// <summary>One effect of a contract: an abend, F = constant, F = G (the value the caller passed), F unchanged, conditional forms.</summary>
+    string Effect(string e, string ind, JsonObject g)
+    {
+        if (Regex.Match(e, @"^the program ends abnormally \(ABEND (\d+)\)$") is { Success: true } ab) return $"{ind}throw abend({ab.Groups[1].Value});\n";
+        if (e is "every other field unchanged" or "nothing changes") return "";
+        if (Regex.IsMatch(e, @"^[A-Z0-9-]+(, [A-Z0-9-]+)* unchanged$")) return "";
+        if (Regex.Match(e, @"^([A-Z0-9-]+(?:, [A-Z0-9-]+)*) as the statement gives (?:them|it)$") is { Success: true } st)
+        {
+            var target = g["result"]!.GetValue<string>();
+            var fieldsInResult = st.Groups[1].Value.Split(", ");
+            var all = new[] { (Target: target, Var: "r", Java: (string?)null) }
+                .Concat(((g["moreResults"] as JsonArray)?.OfType<JsonObject>() ?? []).Select(x => (Target: x["result"]!.GetValue<string>(), Var: "r", Java: (string?)x["java"]!.GetValue<string>())));
+            var sb = new StringBuilder();
+            foreach (var (t, _, java) in all)
+                if (fieldsInResult.All(f => t.Contains(f)))
+                {
+                    if (java is not null) sb.Append($"{ind}r = {java};\n");
+                    sb.Append(Result(t, "r", ind));
+                    return sb.ToString();
+                }
+            throw new NotSupportedException("effect " + e);
+        }
+        if (Regex.Match(e, @"^when (.+?): ([A-Z0-9-]+) = (.+?); otherwise \2 (unchanged|= (.+))$") is { Success: true } wc)
+        {
+            var cond = Term(wc.Groups[1].Value);
+            var f = wc.Groups[2].Value;
+            var then = Assign(f, wc.Groups[3].Value);
+            var otherwise = wc.Groups[4].Value == "unchanged" ? null : Assign(f, wc.Groups[5].Value);
+            return otherwise is null ? $"{ind}if ({cond}) {then}\n" : $"{ind}if ({cond}) {then}\n{ind}else {otherwise}\n";
+        }
+        if (Regex.Match(e, @"^([A-Z0-9-]+) = (.+)$") is { Success: true } a) return ind + Assign(a.Groups[1].Value, a.Groups[2].Value) + "\n";
+        throw new NotSupportedException("effect " + e);
+    }
+
+    string Assign(string field, string value)
+    {
+        var f = Field(field);
+        var copy = Regex.Match(value, @"^([A-Z0-9-]+) \(the value the caller passed\)$");
+        if (copy.Success) return f.Set(Was(copy.Groups[1].Value));
+        if (value.StartsWith('\'') && value.EndsWith('\'')) return f.Set(Lit(value[1..^1]));
+        if (Regex.IsMatch(value, @"^-?\d+$")) return f.Set(f.Type == "long" ? value + "L" : $"BigDecimal.valueOf({value}L)");
+        throw new NotSupportedException($"{field} = {value}");
+    }
+
+    string Other(string o, string ind)
+    {
+        if (Regex.Match(o, @"^when (.+?): ([A-Z0-9-]+) = (.+?); otherwise \2 (unchanged|= (.+))$") is { Success: true })
+            return Effect(o, ind, new JsonObject());
+        if (Regex.Match(o, @"^([A-Z0-9-]+) = (.+)$") is { Success: true } a) return ind + Assign(a.Groups[1].Value, a.Groups[2].Value) + "\n";
+        throw new NotSupportedException("other field " + o);
+    }
+
+    /// <summary>The stores of a result representation (EquivalenceCatalog targets).</summary>
+    string Result(string t, string r, string ind)
+    {
+        Match mt;
+        if ((mt = Regex.Match(t, @"^r = \(the result\)\.stripTrailingZeros\(\); ([A-Z0-9-]+) = r\.unscaledValue\(\), ([A-Z0-9-]+) = (-?)r\.scale\(\)")).Success)
+        {
+            var (c, e) = (Field(mt.Groups[1].Value), Field(mt.Groups[2].Value));
+            var s = $"s{r}";
+            return $"{ind}BigDecimal {s} = {r}.signum() == 0 ? BigDecimal.ZERO : {r}.stripTrailingZeros();\n" +
+                   $"{ind}{c.Set($"new BigDecimal({s}.unscaledValue())")}\n{ind}{e.Set(mt.Groups[3].Value == "-" ? $"-{s}.scale()" : $"{s}.scale()")}\n";
+        }
+        if ((mt = Regex.Match(t, @"^([A-Z0-9-]+) = r\.unscaledValue\(\), ([A-Z0-9-]+) = (-?)r\.scale\(\) \(r exactly")).Success)
+        {
+            var (c, e) = (Field(mt.Groups[1].Value), Field(mt.Groups[2].Value));
+            return $"{ind}{c.Set($"new BigDecimal({r}.unscaledValue())")}\n{ind}{e.Set(mt.Groups[3].Value == "-" ? $"-{r}.scale()" : $"{r}.scale()")}\n";
+        }
+        if ((mt = Regex.Match(t, @"^([A-Z0-9-]+) = ChronoUnit\.DAYS\.between\(LocalDate\.of\(1600, 12, 31\), r\)")).Success)
+            return $"{ind}{Field(mt.Groups[1].Value).Set($"ChronoUnit.DAYS.between(LocalDate.of(1600, 12, 31), {r})")}\n";
+        if ((mt = Regex.Match(t, @"^([A-Z0-9-]+) = r as yyyyMMdd")).Success)
+            return $"{ind}{Field(mt.Groups[1].Value).Set($"Long.parseLong({r}.format(DateTimeFormatter.BASIC_ISO_DATE))")}\n";
+        if ((mt = Regex.Match(t, @"^([A-Z0-9-]+) = r(?: \(scale \d+; r fits it exactly\))?$")).Success)
+        {
+            var f = Field(mt.Groups[1].Value);
+            return $"{ind}{f.Set(f.Type == "long" && r != "r" ? r : r)}\n";
+        }
+        if (Dropped(t) is { } d)
+        {
+            var (shift, value) = (Field(d.Shift), Field(d.Value));
+            return $"{ind}int shift = Math.max(0, {d.Base}.precision() - {d.P});\n{ind}{shift.Set(shift.Type == "long" ? "(long) shift" : "BigDecimal.valueOf(shift)")}\n" +
+                   $"{ind}{value.Set($"{r}.movePointLeft(shift)")}\n";
+        }
+        throw new NotSupportedException("result " + t);
+    }
+
+    /// <summary>The kept-digits-and-shift representation: SHIFT = max(0, base.precision() - p), VALUE = r.movePointLeft(SHIFT).</summary>
+    static (string Shift, string Base, string P, string Value)? Dropped(string t) =>
+        Regex.Match(t, @"^([A-Z0-9-]+) = max\(0, (\w+)\.precision\(\) - (\w+)\) \(the digits dropped\), ([A-Z0-9-]+) = r\.movePointLeft\(\1\)") is { Success: true } m
+            ? (m.Groups[1].Value, m.Groups[2].Value, m.Groups[3].Value, m.Groups[4].Value) : null;
+
+    /// <summary>Whether the result fits its target without loss (the exception "the result does not fit ...").</summary>
+    string Fits(string t, string r)
+    {
+        Match mt;
+        if ((mt = Regex.Match(t, @"^([A-Z0-9-]+) = r(?: \(scale (\d+); r fits it exactly\))?$")).Success)
+        {
+            var f = Field(mt.Groups[1].Value);
+            int scale = mt.Groups[2].Success ? int.Parse(mt.Groups[2].Value) : f.Kit.Scale;
+            return $"{r}.stripTrailingZeros().scale() <= {scale} && {r}.setScale({scale}, RoundingMode.UNNECESSARY).unscaledValue().abs().compareTo(java.math.BigInteger.TEN.pow({f.Kit.Digits})) < 0";
+        }
+        if ((mt = Regex.Match(t, @"^([A-Z0-9-]+) = ChronoUnit\.DAYS\.between")).Success)
+        {
+            var f = Field(mt.Groups[1].Value);
+            return $"Math.abs(ChronoUnit.DAYS.between(LocalDate.of(1600, 12, 31), {r})) < (1L << {f.Kit.Length * 8 - 1})";
+        }
+        if (Dropped(t) is { } d)
+        {
+            // The kept digits are an integer that fits VALUE's PICTURE.
+            var value = Field(d.Value);
+            var kept = $"{r}.movePointLeft(Math.max(0, {d.Base}.precision() - {d.P}))";
+            return $"{kept}.stripTrailingZeros().scale() <= 0 && {kept}.setScale(0, RoundingMode.UNNECESSARY).unscaledValue().abs().compareTo(java.math.BigInteger.TEN.pow({value.Kit.Digits})) < 0";
+        }
+        throw new NotSupportedException("the result does not fit: " + t);
+    }
+}

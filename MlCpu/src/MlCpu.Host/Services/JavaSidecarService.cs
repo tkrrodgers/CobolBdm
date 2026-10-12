@@ -66,22 +66,21 @@ public sealed class JavaSidecarService(ConfigService config, ILogger<JavaSidecar
         try
         {
             var model = CobolModelBuilder.BuildGroundedFull(programPath);
-            var graph = ProgramGraphBuilder.Build(model);
+            var graph = ProgramGraphBuilder.Build(model, dataDeps: false); // the sidecar and the assembler never read data dependences
             var ir = IrExporter.Export(model, graph);
             result.Model = model;
             result.Graph = graph;
             result.Program = ir.Program.Id;
             result.Frontiers = ir.Frontiers;
-            var request = new JsonObject
+            var request = IrExporter.TranspileRequest(ir, new JsonObject
             {
-                ["ir"] = JsonNode.Parse(IrExporter.ToJson(ir)),
                 ["battery"] = new JsonArray(new JsonObject { ["inputs"] = new JsonObject(), ["expect"] = new JsonObject() }),
                 ["useLir"] = false,
                 ["loopPolicy"] = "TERMINATE",
                 ["includeJavaSource"] = true,
                 ["transpileOnly"] = transpileOnly
-            };
-            using var content = new StringContent(request.ToJsonString(), Encoding.UTF8, "application/json");
+            });
+            using var content = new StringContent(request, Encoding.UTF8, "application/json");
             using var resp = await _http.PostAsync(Url("/transpile-verify"), content, ct);
             var r = JsonNode.Parse(await resp.Content.ReadAsStringAsync(ct))!;
             result.Compiled = r["compiled"]?.GetValue<bool>() ?? false;

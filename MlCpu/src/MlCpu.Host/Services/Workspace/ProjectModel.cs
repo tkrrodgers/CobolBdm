@@ -22,7 +22,27 @@ public sealed class ProjectDefinition
     public OracleDefinition Oracle { get; set; } = new();
     public PublishDefinition Publish { get; set; } = new();
     public GemmaState Gemma { get; set; } = new();
+    /// <summary>Expected outputs from outside the pipeline (the original application, a mainframe capture); null = none.</summary>
+    public ReferenceDefinition? Reference { get; set; }
     public List<string> Notes { get; set; } = [];
+}
+
+/// <summary>
+/// A reference oracle: per scenario, the outputs the estate must produce according to a source outside the pipeline, such as
+/// the application the COBOL was derived from, or outputs captured on the mainframe. The GnuCOBOL oracle, the published
+/// estate and a model's service are each compared with it, beside the comparison with GnuCOBOL. A reference file that is
+/// missing is reported as NOT COVERED, never as a match.
+/// </summary>
+public sealed class ReferenceDefinition
+{
+    /// <summary>What the reference is, for reports ("Fineract jar 4a61d7c (FnHarness)").</summary>
+    public string Label { get; set; } = "";
+    /// <summary>Directory with one folder per scenario (rooted, or relative to the project directory).</summary>
+    public string Root { get; set; } = "";
+    /// <summary>Scenario name → its folder under <see cref="Root"/>, where they differ (e.g. "base" → "fineract-unit-p12-half_even").</summary>
+    public Dictionary<string, string> ScenarioMap { get; set; } = [];
+    /// <summary>Output DSN (or "sysout:NAME") → file name in the scenario folder.</summary>
+    public Dictionary<string, string> Outputs { get; set; } = [];
 }
 
 public sealed class ProjectLayout
@@ -66,11 +86,28 @@ public sealed class OracleDefinition
     public List<DatasetDefinition> Datasets { get; set; } = [];
     /// <summary>Scenarios beyond "base": projects/&lt;id&gt;/scenarios/&lt;name&gt;/ files override datasets by source file name.</summary>
     public List<string> Scenarios { get; set; } = [];
+    /// <summary>
+    /// Scenario name pattern (* and ?) → the jobs such a scenario runs, in <see cref="Jobs"/> order; the first matching
+    /// pattern wins, and a scenario no pattern matches runs every job ("base" included). An estate with independent jobs
+    /// (a schedule job and an event job) gives each scenario set its own job instead of running every job on every
+    /// scenario's data. A skipped job writes nothing, so the jobs after it must not need its outputs.
+    /// </summary>
+    public Dictionary<string, List<string>> ScenarioJobs { get; set; } = [];
     /// <summary>Explicit job checks (carddemo-script); the generic provider derives them from its runs.</summary>
     public List<JobCheck> JobChecks { get; set; } = [];
     /// <summary>Root the job check paths are relative to (carddemo-script: the script's work directory).</summary>
     public string? JobCheckRoot { get; set; }
     public OracleStatus? Status { get; set; }
+
+    /// <summary>Whether <paramref name="scenario"/> runs <paramref name="job"/> (<see cref="ScenarioJobs"/>).</summary>
+    public static bool RunsJob(OracleDefinition o, string scenario, string job)
+    {
+        foreach (var (pattern, jobs) in o.ScenarioJobs)
+            if (System.Text.RegularExpressions.Regex.IsMatch(scenario, "^" + System.Text.RegularExpressions.Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".") + "$",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                return jobs.Contains(job, StringComparer.OrdinalIgnoreCase);
+        return true;
+    }
 }
 
 /// <summary>A dataset image prepared from a source file. Formats: fixed, variable (4-byte RDW), line, ksds (fixed records in key order).</summary>
@@ -106,6 +143,9 @@ public sealed class OracleStatus
     public string RunAt { get; set; } = "";
     public List<string> Scenarios { get; set; } = [];
     public List<string> Problems { get; set; } = [];
+    /// <summary>GnuCOBOL outputs compared with the reference oracle, and how many matched (0/0 without a reference).</summary>
+    public int ReferenceOutputs { get; set; }
+    public int ReferenceMatch { get; set; }
 }
 
 public sealed class PublishDefinition
@@ -116,6 +156,12 @@ public sealed class PublishDefinition
     public List<string> Capabilities { get; set; } = [];
     /// <summary>Authored capabilities root (capability-manifest.json, …); empty = generated into projects/&lt;id&gt;/capabilities at publish.</summary>
     public string? CapabilitiesRoot { get; set; }
+    /// <summary>
+    /// Oracle scenarios the capability tests use (besides "base"); empty = every oracle scenario. Each implementation
+    /// attempt of a model reruns them, so a large matrix belongs in the oracle (job checks, reference sweep) and a cheap,
+    /// representative subset here.
+    /// </summary>
+    public List<string> AcceptanceScenarios { get; set; } = [];
     public PublishRecord? Last { get; set; }
 }
 
@@ -135,6 +181,9 @@ public sealed class TestRecord
     public int Failed { get; set; }
     public int Outputs { get; set; }
     public int Match { get; set; }
+    /// <summary>Outputs compared with the reference oracle (0 when the project has none), and how many matched.</summary>
+    public int ReferenceOutputs { get; set; }
+    public int ReferenceMatch { get; set; }
     public string Implementation { get; set; } = "legacy";
 }
 

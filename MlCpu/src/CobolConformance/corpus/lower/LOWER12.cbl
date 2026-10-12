@@ -1,0 +1,28 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. LOWER12.
+      * SORT with a COLLATING SEQUENCE is abstained; the plain SORT
+      * beside it, with its RELEASE and RETURN, is lowered.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.
+           ALPHABET EBC IS EBCDIC.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT SD1 ASSIGN TO 'sortwk'.
+       DATA DIVISION.
+       FILE SECTION.
+       SD SD1.
+       01 SR                 PIC X(4).
+       WORKING-STORAGE SECTION.
+       01 WS-EOF             PIC X.
+       PROCEDURE DIVISION.
+       MAIN-PARA.
+           SORT SD1 ON ASCENDING KEY SR COLLATING SEQUENCE IS EBC
+               INPUT PROCEDURE IN-P OUTPUT PROCEDURE OUT-P
+           SORT SD1 ON ASCENDING KEY SR
+               INPUT PROCEDURE IN-P OUTPUT PROCEDURE OUT-P
+           GOBACK.
+       IN-P.
+           RELEASE SR FROM 'ABCD'.
+       OUT-P.
+           RETURN SD1 AT END MOVE 'Y' TO WS-EOF END-RETURN.

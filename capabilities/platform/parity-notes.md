@@ -39,8 +39,9 @@ tell you which statements a program runs.
     what happens next. A file status other than '00' after OPEN is how the program detects a missing dataset.
 11. **Console lines.** DISPLAY concatenates its operands with no separators; literals keep their exact spacing; numeric
     operands display per `ctx.displayNumeric()` (digits, sign as COBOL shows it). Each DISPLAY is one line.
-12. **Implicit CLOSE.** Files still open when the program ends normally (GOBACK / STOP RUN) are closed implicitly, so
-    their records are written. An abend ends the program at once: statements after it never run.
+12. **Implicit CLOSE.** Files still open when the program ends (GOBACK, STOP RUN, or an abend through CEE3ABD) are
+    closed implicitly, so every record written before the end is in the output. An abend ends the program at once:
+    statements after it never run.
 13. **Return code.** The step returns what the program moves to RETURN-CODE (0 when it never does).
 14. **Order of effects.** Reproduce the program's order of reads, writes and console lines exactly; it is observable in
     the output files and SYSOUT.

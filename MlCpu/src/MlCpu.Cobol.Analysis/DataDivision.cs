@@ -33,12 +33,28 @@ public sealed class DataItem
     public int Occurs { get; set; }
     public int OccursMin { get; set; }
     public string? DependingOn { get; set; }
+    /// <summary>OF/IN qualifiers of the OCCURS DEPENDING ON object, innermost first.</summary>
+    public List<string> DependingOnQualifiers { get; } = [];
+    /// <summary>The resolved OCCURS DEPENDING ON object.</summary>
+    public DataItem? DependingOnItem { get; set; }
+    /// <summary>ASCENDING/DESCENDING KEY phrases of an OCCURS, in order (major key first).</summary>
+    public List<(bool Ascending, string Name)> Keys { get; } = [];
+    /// <summary>The resolved KEY items, parallel to <see cref="Keys"/> (null when unresolved).</summary>
+    public List<DataItem?> KeyItems { get; } = [];
+    /// <summary>True when the entry has its own USAGE clause (otherwise a group's USAGE is inherited).</summary>
+    public bool UsageExplicit { get; set; }
+    /// <summary>EXTERNAL: one storage area shared by every program of the run unit that declares the record.</summary>
+    public bool External { get; set; }
+    /// <summary>True when the entry has its own SIGN clause (otherwise a group's SIGN is inherited).</summary>
+    public bool SignExplicit { get; set; }
     public List<string> IndexedBy { get; } = [];
     public string? Redefines { get; set; }
     public DataItem? RedefinesItem { get; set; }
     /// <summary>VALUE literal(s). For 88 items: values, with THRU ranges as (low, high).</summary>
     public List<(RawWord Low, RawWord? High)> Values { get; } = [];
     public bool ValueAll { get; set; }
+    /// <summary>An 88's WHEN SET TO FALSE (or FALSE) literal: what SET condition-name TO FALSE moves.</summary>
+    public RawWord? FalseValue { get; set; }
     public DataItem? Parent { get; set; }
     public List<DataItem> Children { get; } = [];
     public string? FileName { get; set; }
@@ -52,6 +68,12 @@ public sealed class DataItem
     /// <summary>OCCURS dimensions from outermost to innermost, each with its stride in bytes.</summary>
     public List<(int Count, int Stride)> Dims { get; } = [];
     public bool IsElementary => Children.Count == 0 && Level != 88;
+    /// <summary>
+    /// A field with storage of its own: elementary, or carrying only level-88 condition names (which have no storage).
+    /// <see cref="IsElementary"/> is false for such an item (DK-MODE PIC X with its 88s); layouts, requirements packets,
+    /// worked examples and the record kit use this test so that the item is listed as the field it is.
+    /// </summary>
+    public bool IsLeaf => Level != 88 && Children.All(c => c.Level == 88);
 
     public override string ToString() => $"{Level:00} {Name} @{Offset}+{Length}";
 }
@@ -258,9 +280,83 @@ public static partial class DataDivisionParser
         foreach (var owner in items.Where(x => x.IndexedBy.Count > 0).ToList())
             foreach (var idx in owner.IndexedBy)
                 items.Add(new DataItem { Id = nextId++, Level = 77, Name = idx, Section = DataSection.WorkingStorage, Usage = Usage.Index, Line = owner.Line, Origin = owner.Origin });
+        InheritGroupUsageAndSign(items);
         foreach (var it in items) Classify(it);
         Layout(items, files, diagnostics);
+        ResolveOccursReferences(items, files, diagnostics);
         return items;
+    }
+
+    /// <summary>
+    /// A USAGE or SIGN clause on a group applies to every subordinate elementary item that does not state its own
+    /// (USAGE COMP-3 on a group makes its PIC 9 items packed; SIGN LEADING SEPARATE applies to its signed numerics).
+    /// </summary>
+    static void InheritGroupUsageAndSign(List<DataItem> items)
+    {
+        foreach (var it in items)
+        {
+            if (it.Level == 88) continue;
+            if (!it.UsageExplicit)
+                for (var a = it.Parent; a is not null; a = a.Parent)
+                    if (a.UsageExplicit) { it.Usage = a.Usage; break; }
+            if (!it.SignExplicit && it.Pic is { } pic && pic.TrimStart().StartsWith('S'))
+                for (var a = it.Parent; a is not null; a = a.Parent)
+                    if (a.SignExplicit) { it.SignLeading = a.SignLeading; it.SignSeparate = a.SignSeparate; break; }
+        }
+    }
+
+    /// <summary>Resolve OCCURS DEPENDING ON objects and ASCENDING/DESCENDING KEY items; derive an FD's minimum record from its ODO records.</summary>
+    static void ResolveOccursReferences(List<DataItem> items, List<FileDecl> files, List<string> diagnostics)
+    {
+        foreach (var t in items.Where(x => x.Occurs > 0))
+        {
+            if (t.DependingOn is { } dep)
+            {
+                var cands = items.Where(x => x.Level != 88 && !x.IsFiller && string.Equals(x.Name, dep, StringComparison.OrdinalIgnoreCase)
+                    && Qualifies(x, t.DependingOnQualifiers)).ToList();
+                if (cands.Count > 1) cands = cands.Where(c => c.Record == t.Record).ToList();
+                if (cands.Count == 1) t.DependingOnItem = cands[0];
+                else diagnostics.Add($"L{t.Line}: OCCURS DEPENDING ON object {dep} of {t.Name} is {(cands.Count == 0 ? "unresolved" : "ambiguous")}");
+            }
+            foreach (var (_, key) in t.Keys)
+            {
+                var k = Descendants(t).FirstOrDefault(d => d.Level != 88 && string.Equals(d.Name, key, StringComparison.OrdinalIgnoreCase));
+                t.KeyItems.Add(k);
+                if (k is null) diagnostics.Add($"L{t.Line}: KEY {key} of {t.Name} is not subordinate to the table");
+            }
+        }
+        // GnuCOBOL: a file's minimum record size counts an ODO record at its minimum occurrences, so the file is variable.
+        foreach (var f in files.Where(f => f.MinRecord == 0 && f.RecordDependingOn is null))
+        {
+            int min = int.MaxValue;
+            bool odo = false;
+            foreach (var rec in f.Records)
+            {
+                var t = Descendants(rec).FirstOrDefault(d => d.DependingOn is not null);
+                if (t is null) { min = Math.Min(min, rec.Length); continue; }
+                odo = true;
+                min = Math.Min(min, t.Offset + t.Length * t.OccursMin);
+            }
+            if (odo && min != int.MaxValue) f.MinRecord = min;
+        }
+    }
+
+    static IEnumerable<DataItem> Descendants(DataItem it)
+    {
+        yield return it;
+        foreach (var c in it.Children) foreach (var d in Descendants(c)) yield return d;
+    }
+
+    static bool Qualifies(DataItem c, IReadOnlyList<string> qualifiers)
+    {
+        var p = c.Parent;
+        foreach (var q in qualifiers)
+        {
+            while (p is not null && !string.Equals(p.Name, q, StringComparison.OrdinalIgnoreCase)) p = p.Parent;
+            if (p is null) return c.Record?.FileName is { } fn && string.Equals(fn, q, StringComparison.OrdinalIgnoreCase);
+            p = p.Parent;
+        }
+        return true;
     }
 
     static void ParseFdClauses(FileDecl fd, List<RawWord> w)
@@ -305,26 +401,28 @@ public static partial class DataDivisionParser
             if (W(t, "FILLER")) { i++; continue; }
             if (W(t, "PIC", "PICTURE")) { i++; if (W(w[i], "IS")) i++; item.Pic = w[i].Text.ToUpperInvariant(); i++; continue; }
             if (W(t, "USAGE")) { i++; if (i < w.Count && W(w[i], "IS")) i++; continue; }
-            if (W(t, "COMP-3", "COMPUTATIONAL-3", "PACKED-DECIMAL")) { item.Usage = Usage.Comp3; i++; continue; }
-            if (W(t, "COMP", "COMPUTATIONAL", "COMP-4", "COMPUTATIONAL-4", "BINARY")) { item.Usage = Usage.Binary; i++; continue; }
-            if (W(t, "COMP-5", "COMPUTATIONAL-5")) { item.Usage = Usage.Comp5; i++; continue; }
-            if (W(t, "COMP-1", "COMPUTATIONAL-1")) { item.Usage = Usage.Comp1; i++; continue; }
-            if (W(t, "COMP-2", "COMPUTATIONAL-2")) { item.Usage = Usage.Comp2; i++; continue; }
-            if (W(t, "POINTER")) { item.Usage = Usage.Pointer; i++; continue; }
-            if (W(t, "INDEX")) { item.Usage = Usage.Index; i++; continue; }
-            if (W(t, "DISPLAY")) { i++; continue; }
+            if (W(t, "COMP-3", "COMPUTATIONAL-3", "PACKED-DECIMAL")) { item.Usage = Usage.Comp3; item.UsageExplicit = true; i++; continue; }
+            if (W(t, "COMP", "COMPUTATIONAL", "COMP-4", "COMPUTATIONAL-4", "BINARY")) { item.Usage = Usage.Binary; item.UsageExplicit = true; i++; continue; }
+            if (W(t, "COMP-5", "COMPUTATIONAL-5")) { item.Usage = Usage.Comp5; item.UsageExplicit = true; i++; continue; }
+            if (W(t, "COMP-1", "COMPUTATIONAL-1")) { item.Usage = Usage.Comp1; item.UsageExplicit = true; i++; continue; }
+            if (W(t, "COMP-2", "COMPUTATIONAL-2")) { item.Usage = Usage.Comp2; item.UsageExplicit = true; i++; continue; }
+            if (W(t, "POINTER")) { item.Usage = Usage.Pointer; item.UsageExplicit = true; i++; continue; }
+            if (W(t, "INDEX")) { item.Usage = Usage.Index; item.UsageExplicit = true; i++; continue; }
+            if (W(t, "DISPLAY")) { item.Usage = Usage.Display; item.UsageExplicit = true; i++; continue; }
             if (W(t, "REDEFINES")) { item.Redefines = w[i + 1].Text.ToUpperInvariant(); i += 2; continue; }
             if (W(t, "JUST", "JUSTIFIED")) { item.Justified = true; i++; if (i < w.Count && W(w[i], "RIGHT")) i++; continue; }
             if (W(t, "BLANK")) { item.BlankWhenZero = true; i++; if (i < w.Count && W(w[i], "WHEN")) i++; if (i < w.Count && W(w[i], "ZERO", "ZEROS", "ZEROES")) i++; continue; }
             if (W(t, "SIGN"))
             {
                 i++; if (i < w.Count && W(w[i], "IS")) i++;
+                item.SignExplicit = true;
                 item.SignLeading = W(w[i], "LEADING"); i++;
                 if (i < w.Count && W(w[i], "SEPARATE")) { item.SignSeparate = true; i++; if (i < w.Count && W(w[i], "CHARACTER")) i++; }
                 continue;
             }
             if (W(t, "LEADING", "TRAILING"))
             {
+                item.SignExplicit = true;
                 item.SignLeading = W(t, "LEADING"); i++;
                 if (i < w.Count && W(w[i], "SEPARATE")) { item.SignSeparate = true; i++; if (i < w.Count && W(w[i], "CHARACTER")) i++; }
                 continue;
@@ -338,11 +436,22 @@ public static partial class DataDivisionParser
                 if (i < w.Count && W(w[i], "TIMES")) i++;
                 while (i < w.Count)
                 {
-                    if (W(w[i], "DEPENDING")) { i++; if (W(w[i], "ON")) i++; item.DependingOn = w[i].Text.ToUpperInvariant(); i++; continue; }
+                    if (W(w[i], "DEPENDING"))
+                    {
+                        i++; if (W(w[i], "ON")) i++; item.DependingOn = w[i].Text.ToUpperInvariant(); i++;
+                        // DEPENDING ON name OF record: the object may be qualified.
+                        while (i + 1 < w.Count && W(w[i], "OF", "IN")) { item.DependingOnQualifiers.Add(w[i + 1].Text.ToUpperInvariant()); i += 2; }
+                        continue;
+                    }
                     if (W(w[i], "ASCENDING", "DESCENDING"))
                     {
-                        i++; if (W(w[i], "KEY")) i++; if (W(w[i], "IS")) i++;
-                        while (i < w.Count && !IsClauseWord(w[i]) && !W(w[i], "INDEXED", "ASCENDING", "DESCENDING")) i++;
+                        bool asc = W(w[i], "ASCENDING");
+                        i++; if (i < w.Count && W(w[i], "KEY")) i++; if (i < w.Count && W(w[i], "IS")) i++;
+                        while (i < w.Count && !IsClauseWord(w[i]) && !W(w[i], "INDEXED", "ASCENDING", "DESCENDING", "DEPENDING"))
+                        {
+                            item.Keys.Add((asc, w[i].Text.ToUpperInvariant()));
+                            i++;
+                        }
                         continue;
                     }
                     if (W(w[i], "INDEXED"))
@@ -361,6 +470,15 @@ public static partial class DataDivisionParser
                 if (i < w.Count && W(w[i], "IS", "ARE")) i++;
                 while (i < w.Count && !IsClauseWord(w[i]))
                 {
+                    if (item.Level == 88 && W(w[i], "WHEN", "FALSE"))
+                    {
+                        // [WHEN SET TO] FALSE [IS] literal
+                        if (W(w[i], "WHEN")) { i++; if (i < w.Count && W(w[i], "SET")) i++; if (i < w.Count && W(w[i], "TO")) i++; }
+                        if (i < w.Count && W(w[i], "FALSE")) i++;
+                        if (i < w.Count && W(w[i], "IS")) i++;
+                        if (i < w.Count) item.FalseValue = w[i++];
+                        break;
+                    }
                     if (W(w[i], "ALL")) { item.ValueAll = true; i++; continue; }
                     var low = w[i]; i++;
                     RawWord? high = null;
@@ -370,7 +488,8 @@ public static partial class DataDivisionParser
                 }
                 continue;
             }
-            if (W(t, "SYNC", "SYNCHRONIZED", "EXTERNAL", "GLOBAL", "IS", "LEFT", "RIGHT")) { i++; continue; }
+            if (W(t, "EXTERNAL")) { item.External = true; i++; continue; }
+            if (W(t, "SYNC", "SYNCHRONIZED", "GLOBAL", "IS", "LEFT", "RIGHT")) { i++; continue; }
             diagnostics.Add($"L{item.Line}: unrecognised data clause '{t.Text}' on {item.Name}");
             i++;
         }
@@ -392,6 +511,8 @@ public static partial class DataDivisionParser
     static void Classify(DataItem it)
     {
         if (it.Level == 88) { it.Category = Category.Condition; return; }
+        // A group keeps the group category whatever USAGE it states for its members.
+        if (it.Pic is null && it.Children.Any(c => c.Level != 88)) { it.Category = Category.Group; return; }
         if (it.Usage == Usage.Pointer) { it.Category = Category.Pointer; return; }
         if (it.Usage == Usage.Index) { it.Category = Category.Index; return; }
         if (it.Usage is Usage.Comp1 or Usage.Comp2 && it.Pic is null) { it.Category = Category.Numeric; it.Signed = true; it.Digits = it.Usage == Usage.Comp1 ? 7 : 16; return; }

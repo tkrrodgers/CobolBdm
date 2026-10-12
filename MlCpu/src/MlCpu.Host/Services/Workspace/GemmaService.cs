@@ -209,7 +209,8 @@ public sealed class GemmaService(ProjectService projects, JobParityService parit
         var report = await parity.BuildAndTestAsync(p, service, "normalized", "gemma", op, 0, 1, ct);
         projects.Update(p.Id, x => x.Gemma.LastTest = new TestRecord
         {
-            At = report.At, Tests = report.Tests, Failed = report.Failed, Outputs = report.Parity.Count, Match = report.Match, Implementation = "normalized"
+            At = report.At, Tests = report.Tests, Failed = report.Failed, Outputs = report.Parity.Count, Match = report.Match,
+            ReferenceOutputs = report.ReferenceResults.Count, ReferenceMatch = report.ReferenceMatch, Implementation = "normalized"
         });
         return report;
     }
@@ -258,7 +259,7 @@ public sealed class GemmaService(ProjectService projects, JobParityService parit
             else if ((m = Regex.Match(text, @"acceptance (\d+)/(\d+)")).Success)
                 Progress($"{phase} {current}: acceptance {m.Groups[1].Value}/{m.Groups[2].Value}");
             else if (text.Contains("VALID design")) { inner = 1; Progress($"{phase} {current}: {text.Trim()}"); }
-        }, ct: ct);
+        }, new Dictionary<string, string> { ["MLCPU_REASONING_BUDGET"] = "24000" }, ct: ct);
         }
         finally
         {

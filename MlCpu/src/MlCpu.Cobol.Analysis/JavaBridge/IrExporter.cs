@@ -20,6 +20,35 @@ public static class IrExporter
 
     public static string ToJson(IrRoot ir) => JsonSerializer.Serialize(ir, Json);
 
+    /// <summary>
+    /// The IR as the sidecar's /transpile-verify needs it: everything but the graph's data dependences, which the sidecar
+    /// never reads and which grow with the square of a program's shared storage (a J3S program passing its heap and context
+    /// records BY REFERENCE in every CALL has 5.2 million of them: a 300 MB request).
+    /// </summary>
+    public static string ToTransportJson(IrRoot ir)
+    {
+        var g = ir.Graph;
+        if (g is null || g.DataDeps.Count == 0) return ToJson(ir);
+        var copy = new IrRoot
+        {
+            IrVersion = ir.IrVersion, Program = ir.Program, Dictionary = ir.Dictionary, Paragraphs = ir.Paragraphs, Frontiers = ir.Frontiers,
+            Naming = ir.Naming, Records = ir.Records, Semantics = ir.Semantics, SemanticSchema = ir.SemanticSchema,
+            Graph = new IrGraph
+            {
+                ParagraphEdges = g.ParagraphEdges, CtrlDeps = g.CtrlDeps, DataDeps = [], DeadParagraphs = g.DeadParagraphs, Calls = g.Calls, Cfg = g.Cfg,
+                DataflowIterations = g.DataflowIterations
+            }
+        };
+        return ToJson(copy);
+    }
+
+    /// <summary>A /transpile-verify request: {"ir": transport IR, options...}, written as text (no JSON DOM of the IR).</summary>
+    public static string TranspileRequest(IrRoot ir, System.Text.Json.Nodes.JsonObject options)
+    {
+        var rest = options.ToJsonString();
+        return "{\"ir\":" + ToTransportJson(ir) + (rest.Length > 2 ? "," + rest[1..] : "}");
+    }
+
     public static IrRoot Export(CobolProgram p) => Export(p, ProgramGraphBuilder.Build(p));
 
     public static IrRoot Export(CobolProgram p, ProgramGraph graph)
@@ -34,6 +63,7 @@ public static class IrExporter
             Path = Path.GetFileName(p.Path),
             ExecSql = p.ExecSql,
             ExecCics = p.ExecCics,
+            Initial = p.IsInitial, Recursive = p.IsRecursive,
             Using = p.Using.Count > 0 ? p.Using : null,
             FileStatus = p.Files.Where(f => f.FileStatus is not null).ToDictionary(f => f.Name, f => f.FileStatus!),
             FileRecord = p.Files.Where(f => f.Records.Count > 0).ToDictionary(f => f.Name, f => f.Records[0].Name),
@@ -67,7 +97,11 @@ public static class IrExporter
                 SignSeparate = it.SignSeparate, SignLeading = it.SignLeading, Justified = it.Justified, BlankWhenZero = it.BlankWhenZero,
                 Values = it.Values.Count > 0 ? it.Values.Select(v => new IrValue { V = v.Low.Text, Q = v.Low.Quoted, Hi = v.High?.Text, Hq = v.High?.Quoted }).ToList() : null,
                 ValueAll = it.ValueAll, File = it.FileName,
-                RedefinesId = it.RedefinesItem?.Id, DependingOn = it.DependingOn, Line = it.Line
+                FalseValue = it.FalseValue is { } fv ? new IrValue { V = fv.Text, Q = fv.Quoted } : null,
+                RedefinesId = it.RedefinesItem?.Id, DependingOn = it.DependingOn, Line = it.Line,
+                DependingOnId = it.DependingOnItem?.Id, External = it.External, OccursMin = it.DependingOn is not null ? it.OccursMin : null,
+                Keys = it.Keys.Count > 0 && it.KeyItems.All(k => k is not null) ? it.Keys.Select((k, i) => new IrKey(k.Ascending, it.KeyItems[i]!.Id)).ToList() : null,
+                IndexedBy = it.IndexedBy.Count > 0 ? it.IndexedBy.Select(n => p.Items.FirstOrDefault(x => x.Level == 77 && x.Usage == Usage.Index && x.Name == n)?.Id ?? 0).ToList() : null
             });
             ir.Naming.Add(new IrName(it.Name, IdentifierModernizer.Modernize(it.Name)));
         }
@@ -115,7 +149,11 @@ public static class IrExporter
 
         ir.Semantics = new IrSemantics
         {
-            Paragraphs = p.Paragraphs.Select(x => new IrSemParagraph { Name = x.Name, Section = x.Section, IsSection = x.IsSection, Line = x.Line, Statements = x.Statements }).ToList()
+            Paragraphs = p.Paragraphs.Select(x => new IrSemParagraph
+            {
+                Name = x.Name, Section = x.Section, IsSection = x.IsSection, Line = x.Line, Statements = x.Statements,
+                Declarative = x.Declarative, UseFiles = x.UseFiles, UseModes = x.UseModes
+            }).ToList()
         };
         ir.SemanticSchema = SemanticSchema;
         return ir;
@@ -199,7 +237,7 @@ public static class IrExporter
             Refs(n.L, into); Refs(n.R, into); Refs(n.Start, into); Refs(n.Len, into);
             if (n.Args is not null) foreach (var a in n.Args) Refs(a, into);
         }
-        string[] defKeys = ["dst", "giving", "into", "rem", "pointer", "tallying", "var"];
+        string[] defKeys = ["dst", "giving", "into", "rem", "pointer", "tallying", "var", "index", "varying"];
         if (s.N is not null)
             foreach (var (k, n) in s.N) Refs(n, defKeys.Contains(k) ? st.Defs : st.Uses);
         if (s.L is not null)

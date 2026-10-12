@@ -157,7 +157,7 @@ public static class ReplayPlanBuilder
             {
                 var at = off + k * it.Length;
                 var sfx = it.Occurs > 0 ? $"{suffix}({k + 1})" : suffix;
-                if (it.IsElementary)
+                if (it.IsLeaf)
                 {
                     var name = (it.Name == "FILLER" ? $"FILLER@{at}" : it.Name) + sfx;
                     var roles = it.Children.Where(c => c.Level == 88).ToDictionary(c => c.Name,
@@ -168,12 +168,12 @@ public static class ReplayPlanBuilder
                     foreach (var c in it.Children.Where(c => c.Level != 88)) Visit(c, at + (c.Offset - it.Offset), sfx);
             }
         }
-        if (shape.IsElementary) Visit(shape, 0, "");
+        if (shape.IsLeaf) Visit(shape, 0, "");
         else foreach (var c in shape.Children.Where(c => c.Level != 88)) Visit(c, c.Offset - shape.Offset, "");
         return leaves;
     }
 
-    static string UsageOf(DataItem it) => it.Category is Category.NumericEdited or Category.AlphanumericEdited ? "EDITED" : it.Usage switch
+    internal static string UsageOf(DataItem it) => it.Category is Category.NumericEdited or Category.AlphanumericEdited ? "EDITED" : it.Usage switch
     {
         Usage.Comp3 => "PACKED",
         Usage.Binary or Usage.Comp5 => "BINARY",

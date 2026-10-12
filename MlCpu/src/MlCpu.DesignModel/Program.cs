@@ -63,7 +63,8 @@ public static class Program
                     var cap = ImplementStep.FromManifest(Need("manifest"), Need("program"));
                     var r = ImplementStep.Run(chat, cap, Need("packet"), Need("design"), Need("project"), outArg,
                         a.GetValueOrDefault("harness") ?? Path.Combine(Path.GetTempPath(), "mlcpu-harness", Safe(name), cap.ProgramId),
-                        implAttempts, name, implReasoning, maxTokens, testTimeout, a.GetValueOrDefault("examples"), a.GetValueOrDefault("notes"));
+                        implAttempts, name, implReasoning, maxTokens, testTimeout, a.GetValueOrDefault("examples"), a.GetValueOrDefault("notes"),
+                        a.GetValueOrDefault("outline"), ctx);
                     return r.TestsTotal > 0 && r.TestsPassed == r.TestsTotal ? 0 : 1;
                 }
                 case "run":
@@ -100,6 +101,37 @@ public static class Program
                         a.GetValueOrDefault("harness") ?? Path.Combine(Path.GetTempPath(), "mlcpu-replay", cap.ProgramId), replies, testTimeout));
                     return 0;
                 }
+                case "shadow":
+                {
+                    // shadow --program PID --manifest m --project published-dir --packet requirements.json --java dir-of-a-model's-classes
+                    //        --out dir [--harness dir]: the feedback an implementation run gives for that code (shadow feedback first when
+                    //        the kit has the feature, or MLCPU_KIT_FEATURES says so); written to out/feedback.txt.
+                    var cap = ImplementStep.FromManifest(Need("manifest"), Need("program"));
+                    var code = new SortedDictionary<string, string>(Directory.EnumerateFiles(Need("java"), "*.java", SearchOption.AllDirectories)
+                        .ToDictionary(f => Path.GetFileNameWithoutExtension(f), f => File.ReadAllText(f).Replace("\r\n", "\n")), StringComparer.Ordinal);
+                    var text = ImplementStep.FeedbackFor(cap, Need("packet"), Need("project"),
+                        a.GetValueOrDefault("harness") ?? Path.Combine(Path.GetTempPath(), "mlcpu-shadow", cap.ProgramId), code, testTimeout);
+                    Directory.CreateDirectory(outArg);
+                    File.WriteAllText(Path.Combine(outArg, "feedback.txt"), text);
+                    Console.WriteLine(text);
+                    return 0;
+                }
+                case "prompt-tokens":
+                {
+                    // prompt-tokens --old published-project --new upgraded-project --designs dir-with-PID/design.json --out dir [--programs P,Q]
+                    //               [--tokenize llama-tokenize.exe] [--tokenizer-model gguf]: per-section token counts of the implementation prompts.
+                    var tok = new LlamaTokenizer(a.GetValueOrDefault("tokenize") ?? @"C:\models\llama.cpp-unsloth-b11539\llama-tokenize.exe",
+                        a.GetValueOrDefault("tokenizer-model") ?? @"C:\models\gemma-4-31B-it-GGUF\BF16\gemma-4-31B-it-BF16-00001-of-00002.gguf",
+                        Path.Combine(Path.GetFullPath(outArg), "tokenize-scratch"));
+                    return PromptTokens.Run(Need("old"), Need("new"), Need("designs"), outArg,
+                        a.GetValueOrDefault("programs")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList(), tok, ctx, maxTokens);
+                }
+                case "kit-upgrade":
+                    // kit-upgrade --from published-project --traces work/calltrace --out new-project [--budget 70000] [--programs P,Q] [--label v6]
+                    //             [--runtime java-sidecar/src/main/java/com/mlcpu/rt] [--outlines graphs/ast]
+                    return KitUpgrade.Run(Need("from"), Need("traces"), outArg, int.Parse(a.GetValueOrDefault("budget") ?? "70000"),
+                        a.GetValueOrDefault("programs")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet(StringComparer.Ordinal),
+                        a.GetValueOrDefault("label") ?? "v6", a.GetValueOrDefault("runtime"), a.GetValueOrDefault("outlines"));
                 case "probe":
                 {
                     var detail = ImplementStep.ProbeOnly(Need("harness"), Need("program"), Need("manifest"), Need("scenario"));
@@ -204,8 +236,16 @@ public static class Program
             var design = Path.Combine(dir, "design.json");
             if (File.Exists(design)) File.Delete(design);
             var outline = a.ContainsKey("outline") ? Path.Combine(normalization, pid, "ast-outline.txt") : null;
-            if (DesignStep.Run(chat, Path.Combine(normalization, pid, "requirements.json"), Path.Combine(normalization, "design.schema.json"), design,
-                    attempts, name, reasoning, ctx, outline)) ok++;
+            try
+            {
+                if (DesignStep.Run(chat, Path.Combine(normalization, pid, "requirements.json"), Path.Combine(normalization, "design.schema.json"), design,
+                        attempts, name, reasoning, ctx, outline)) ok++;
+            }
+            catch (PromptTooLargeException e)
+            {
+                // One program's packet does not fit: record it and design the others.
+                Log($"{pid}: design skipped, the prompt does not fit the context ({e.Message})");
+            }
         }
         Log($"designs: {ok}/{programs.Length} valid");
         return ok == programs.Length ? 0 : 1;
@@ -246,8 +286,29 @@ public static class Program
                     notes = Path.Combine(normalization, "parity-notes.md") is var n && File.Exists(n) ? n : null;
                 }
                 var outline = a.ContainsKey("outline") ? Path.Combine(normalization, pid, "ast-outline.txt") : null;
-                var r = ImplementStep.Run(chat, cap, Path.Combine(normalization, pid, "requirements.json"), design, project, dir, Path.Combine(harnessRoot, pid),
-                    attempts, name, reasoning, maxTokens, testTimeout, examples, notes, outline, ctx, a.GetValueOrDefault("patterns"), a.GetValueOrDefault("embeddings"));
+                ImplementStep.Result r;
+                try
+                {
+                    // --warm-start: begin from this program's previous deliverable (dir/java), the best attempt of the last run.
+                    var previous = Path.Combine(dir, "java");
+                    var warm = a.ContainsKey("warm-start") && Directory.Exists(previous)
+                        ? Directory.EnumerateFiles(previous, "*.java", SearchOption.AllDirectories)
+                            .ToDictionary(f => Path.GetFileNameWithoutExtension(f), f => File.ReadAllText(f).Replace("\r\n", "\n"), StringComparer.Ordinal)
+                        : null;
+                    r = ImplementStep.Run(chat, cap, Path.Combine(normalization, pid, "requirements.json"), design, project, dir, Path.Combine(harnessRoot, pid),
+                        attempts, name, reasoning, maxTokens, testTimeout, examples, notes, outline, ctx, a.GetValueOrDefault("patterns"), a.GetValueOrDefault("embeddings"),
+                        warm);
+                }
+                catch (PromptTooLargeException e)
+                {
+                    // The implementation prompt does not fit: this program stays faithful; the others go on.
+                    Log($"{pid}: implementation skipped, the prompt does not fit the context ({e.Message})");
+                    entry["skipped"] = "prompt larger than the context";
+                    entry["minutes"] = Math.Round((DateTime.Now - started).TotalMinutes, 1);
+                    summary.Add(entry);
+                    WriteSummary(outRoot, name, chat, summary);
+                    continue;
+                }
                 entry["compiled"] = r.Compiled;
                 entry["testsPassed"] = r.TestsPassed;
                 entry["testsTotal"] = r.TestsTotal;

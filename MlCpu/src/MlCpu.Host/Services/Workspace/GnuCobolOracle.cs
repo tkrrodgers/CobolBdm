@@ -116,25 +116,26 @@ public sealed class GnuCobolOracle(ProjectService projects, ConfigService config
         return _cobcVersion = r.Output.Split('\n').FirstOrDefault()?.Trim() ?? "cobc";
     }
 
-    /// <summary>Content hash of a unit: every source and copybook it compiles, the stubs, the flags and the compiler version.</summary>
-    string UnitHash(Context c, OracleUnit u, string[] flags, string version, IReadOnlyList<string> extraSources)
+    /// <summary>Content hash of a program as it compiles: its source and every copybook it expands.</summary>
+    string ProgramHash(Context c, string pid)
     {
-        var parts = new List<string> { version, string.Join(" ", flags.Select(f => Path.IsPathRooted(f) ? Path.GetFileName(f) : f)) };
-        foreach (var pid in u.Programs)
-        {
-            parts.Add(pid + "\n" + File.ReadAllText(c.Sources[pid], Latin1));
-            var resolve = CobolModelBuilder.CopybookResolver(c.Sources[pid]);
-            foreach (var cpy in Model(c, pid).Copybooks.OrderBy(x => x, StringComparer.Ordinal))
-                parts.Add(cpy + "\n" + string.Join("\n", resolve(cpy) ?? ["(missing)"]));
-        }
-        parts.AddRange(extraSources);
+        var parts = new List<string> { pid + "\n" + File.ReadAllText(c.Sources[pid], Latin1) };
+        var resolve = CobolModelBuilder.CopybookResolver(c.Sources[pid]);
+        foreach (var cpy in Model(c, pid).Copybooks.OrderBy(x => x, StringComparer.Ordinal))
+            parts.Add(cpy + "\n" + string.Join("\n", resolve(cpy) ?? ["(missing)"]));
         return Toolchain.Sha256([.. parts]);
     }
+
+    /// <summary>Programs cobc compiles at once (MLCPU_COBC_PARALLEL; default a quarter of the cores, at most 8).</summary>
+    static int CompileParallelism => int.TryParse(Environment.GetEnvironmentVariable("MLCPU_COBC_PARALLEL"), out var n) && n > 0 ? n
+        : Math.Clamp(Environment.ProcessorCount / 4, 1, 8);
 
     sealed class BuildManifest
     {
         public string Compiler { get; set; } = "";
         public Dictionary<string, BuildEntry> Units { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+        /// <summary>Program objects (obj/&lt;PID&gt;[.main].o) by file name: what the units link.</summary>
+        public Dictionary<string, BuildEntry> Objects { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     }
 
     sealed class BuildEntry
@@ -196,30 +197,99 @@ public sealed class GnuCobolOracle(ProjectService projects, ConfigService config
             done++;
         }
 
+        // Each program is compiled once to an object (cached by its own content hash, in parallel), and each unit links the
+        // objects it needs: two jobs over one CALL closure of 144 programs compiled every program twice, one after the other.
+        var objDir = Directory.CreateDirectory(Path.Combine(c.Paths.OracleBin, "obj")).FullName;
+        var objects = new Dictionary<string, (string Source, bool Main, string Hash)>(StringComparer.OrdinalIgnoreCase);
+        var unitObjects = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+        string ObjectFor(string name, string source, bool main, string hash)
+        {
+            var obj = name + (main ? ".main" : "") + ".o";
+            objects.TryAdd(obj, (source, main, Toolchain.Sha256(version, string.Join(" ", flags.Select(f => Path.IsPathRooted(f) ? Path.GetFileName(f) : f)), main ? "main" : "module", hash)));
+            return obj;
+        }
         foreach (var u in units)
         {
-            var files = new List<string>();
-            var extra = new List<string>();
+            var list = new List<string>();
             if (u.ParmDriver)
             {
                 var drv = Path.Combine(c.Paths.OracleBin, $"DRVPARM-{u.Main}.cbl");
                 File.WriteAllText(drv, ParmDriver(u.Main), Latin1);
-                files.Add(drv);
-                extra.Add(ParmDriver(u.Main));
+                list.Add(ObjectFor($"DRVPARM-{u.Main}", drv, true, Toolchain.Sha256(ParmDriver(u.Main))));
             }
-            files.AddRange(u.Programs.Select(x => c.Sources[x]));
-            var calls = u.Programs.SelectMany(x => ProgramGraphBuilder.Build(Model(c, x)).Calls).Select(x => x.Target.ToUpperInvariant()).ToHashSet();
+            foreach (var pid in u.Programs)
+                list.Add(ObjectFor(pid, c.Sources[pid], !u.ParmDriver && pid.Equals(u.Main, StringComparison.OrdinalIgnoreCase), ProgramHash(c, pid)));
+            var calls = u.Programs.SelectMany(x => ProgramGraphBuilder.Calls(Model(c, x))).Select(x => x.Target.ToUpperInvariant()).ToHashSet();
             if (calls.Contains("CEE3ABD") && !c.Sources.ContainsKey("CEE3ABD"))
+                list.Add(ObjectFor("CEE3ABD", Path.Combine(c.Paths.OracleBin, "CEE3ABD.cbl"), false, Toolchain.Sha256(Cee3abdStub)));
+            unitObjects[u.Id] = list;
+        }
+        var stale = objects.Where(o => force || !manifest.Objects.TryGetValue(o.Key, out var e) || e.Hash != o.Value.Hash || !File.Exists(Path.Combine(objDir, o.Key))).ToList();
+        int compiled = 0;
+        var objClock = System.Diagnostics.Stopwatch.StartNew();
+        await Parallel.ForEachAsync(stale, new ParallelOptions { MaxDegreeOfParallelism = CompileParallelism, CancellationToken = ct }, async (o, token) =>
+        {
+            var r = await Toolchain.RunAsync(Toolchain.Cobc, ["-c", .. (o.Value.Main ? new[] { "-x" } : []), .. flags, "-o", Path.Combine(objDir, o.Key), o.Value.Source],
+                objDir, ct: token);
+            lock (manifest)
             {
-                files.Add(Path.Combine(c.Paths.OracleBin, "CEE3ABD.cbl"));
-                extra.Add(Cee3abdStub);
+                if (r.ExitCode != 0)
+                {
+                    problems.Add($"{o.Key}: cobc failed: {Tail(r.Output, 6)}");
+                    op.Info($"FAILED  {o.Key}: {Tail(r.Output, 6)}");
+                    manifest.Objects.Remove(o.Key);
+                }
+                else manifest.Objects[o.Key] = new BuildEntry { Hash = o.Value.Hash, Exe = o.Key, BuiltAt = DateTime.Now.ToString("s"), Seconds = Math.Round(r.Elapsed.TotalSeconds, 1) };
+                op.Report(from + (to - from) * 0.8 * ++compiled / Math.Max(1, stale.Count), $"GnuCOBOL {compiled}/{stale.Count} programs");
             }
-            await Compile(u.Id, u.Exe, files, UnitHash(c, u, flags, version, extra), u.Programs);
+        });
+        op.Info($"GnuCOBOL objects: {stale.Count} compiled in {objClock.Elapsed.TotalSeconds:N1}s ({CompileParallelism} in parallel), {objects.Count - stale.Count} reused");
+        foreach (var u in units)
+        {
+            var list = unitObjects[u.Id];
+            if (list.Any(o => !manifest.Objects.ContainsKey(o)))
+            {
+                problems.Add($"{u.Id}: not linked (an object failed to compile)");
+                manifest.Units.Remove(u.Id);
+                done++;
+                continue;
+            }
+            // Linked inside obj/ with bare object names: the command line stays short whatever the number of programs.
+            var hash = Toolchain.Sha256([version, .. list.Select(o => o + "=" + manifest.Objects[o].Hash)]);
+            await Link(u.Id, u.Exe, list, hash, u.Programs);
+        }
+
+        async Task Link(string id, string exe, IReadOnlyList<string> objectFiles, string hash, IReadOnlyList<string> programs)
+        {
+            ct.ThrowIfCancellationRequested();
+            op.Report(from + (to - from) * (0.8 + 0.2 * done / Math.Max(1, total)), $"GnuCOBOL link {id}");
+            if (!force && manifest.Units.TryGetValue(id, out var e) && e.Hash == hash && File.Exists(exe))
+            {
+                cached++;
+                op.Info($"cached  {id} ({Path.GetFileName(exe)}, linked {e.BuiltAt})");
+            }
+            else
+            {
+                var r = await Toolchain.RunAsync(Toolchain.Cobc, ["-x", "-o", exe, .. objectFiles], objDir, ct: ct);
+                if (r.ExitCode != 0)
+                {
+                    problems.Add($"{id}: link failed: {Tail(r.Output, 6)}");
+                    op.Info($"FAILED  {id}: {Tail(r.Output, 6)}");
+                    manifest.Units.Remove(id);
+                }
+                else
+                {
+                    built++;
+                    manifest.Units[id] = new BuildEntry { Hash = hash, Exe = Path.GetFileName(exe), Programs = programs.ToList(), BuiltAt = DateTime.Now.ToString("s"), Seconds = Math.Round(r.Elapsed.TotalSeconds, 1) };
+                    op.Info($"linked  {id} from {objectFiles.Count} objects in {r.Elapsed.TotalSeconds:N1}s");
+                }
+            }
+            done++;
         }
         foreach (var d in ksds)
             foreach (var kind in new[] { "LOAD", "UNLOAD" })
             {
-                var id = $"{kind}-{Safe(d.Dsn)}";
+                var id = KsdsUtilityId(kind, d.Dsn);
                 var src = Path.Combine(c.Paths.OracleBin, id + ".cbl");
                 var text = KsdsUtility(d, kind);
                 File.WriteAllText(src, text, Latin1);
@@ -228,6 +298,17 @@ public sealed class GnuCobolOracle(ProjectService projects, ConfigService config
         File.WriteAllText(Path.Combine(c.Paths.OracleBin, "build-manifest.json"), JsonSerializer.Serialize(manifest, Json) + "\n");
         op.Info($"GnuCOBOL: {built} built, {cached} reused from the cache, {problems.Count} failed ({version})");
         return (built, cached, problems);
+    }
+
+    /// <summary>
+    /// The KSDS utility's file name. cobc derives a C identifier from the source's base name and refuses long ones, so a
+    /// DSN such as FINERACT.CURRENCY.VSAM.KSDS is kept only as far as it fits, with a hash of the whole DSN.
+    /// </summary>
+    static string KsdsUtilityId(string kind, string dsn)
+    {
+        var safe = Safe(dsn).Replace('.', '_');
+        var name = $"{kind}-{safe}";
+        return name.Length <= 24 ? name : $"{kind}-{safe[..Math.Min(safe.Length, 10)]}-{Toolchain.Sha256(dsn)[..8]}";
     }
 
     /// <summary>LOAD: fixed image → INDEXED; UNLOAD: INDEXED → fixed image, with the keys the programs declare.</summary>
@@ -352,7 +433,7 @@ public sealed class GnuCobolOracle(ProjectService projects, ConfigService config
         var run = Path.Combine(c.Paths.OracleRuns, scenario);
         if (Directory.Exists(run)) Toolchain.DeleteTree(run);
         var data = Directory.CreateDirectory(Path.Combine(run, "data")).FullName;
-        var sysout = Directory.CreateDirectory(Path.Combine(run, "sysout")).FullName;
+        var sysoutRoot = Directory.CreateDirectory(Path.Combine(run, "sysout")).FullName;
         var work = Directory.CreateDirectory(Path.Combine(run, "work")).FullName;
         foreach (var d in p.Oracle.Datasets)
         {
@@ -367,12 +448,17 @@ public sealed class GnuCobolOracle(ProjectService projects, ConfigService config
         var clock = DateTimeOffset.Parse(p.Oracle.Clock, CultureInfo.InvariantCulture);
         var cobDate = clock.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + "00";
         int jobIndex = 0;
-        foreach (var job in c.Jobs)
+        var jobs = c.Jobs.Where(j => OracleDefinition.RunsJob(p.Oracle, scenario, j.Name)).ToList();
+        if (jobs.Count < c.Jobs.Count) op.Info($"[{scenario}] runs {string.Join(", ", jobs.Select(j => j.Name))} (oracle.scenarioJobs)");
+        foreach (var job in jobs)
         {
             ct.ThrowIfCancellationRequested();
-            op.Report(from + (to - from) * jobIndex++ / Math.Max(1, c.Jobs.Count), $"[{scenario}] GnuCOBOL job {job.Name}");
+            op.Report(from + (to - from) * jobIndex++ / Math.Max(1, jobs.Count), $"[{scenario}] GnuCOBOL job {job.Name}");
             var jobDir = Path.Combine(run, "jobs", job.Name);
             var before = Snapshot(data);
+            // SYSOUT belongs to its job: two jobs with a step of the same name (STEP20) each write their own
+            // <STEP>.SYSOUT.txt, as the Java job engine does in a job check (one job per run).
+            var sysout = Directory.CreateDirectory(Path.Combine(sysoutRoot, job.Name)).FullName;
             var sysBefore = Snapshot(sysout);
             CopyDir(data, Path.Combine(jobDir, "in"));
             var plan = DdBindingPlanner.Plan(job, c.Sources, DateTime.Now.ToString("yyyy-MM-dd"), out var models);
@@ -459,7 +545,7 @@ public sealed class GnuCobolOracle(ProjectService projects, ConfigService config
                 var img = JobSteps.DataFile(data, dsn);
                 if (File.Exists(img))
                 {
-                    var loader = Path.Combine(c.Paths.OracleBin, $"LOAD-{Safe(dsn)}.exe");
+                    var loader = Path.Combine(c.Paths.OracleBin, KsdsUtilityId("LOAD", dsn) + ".exe");
                     if (!File.Exists(loader)) return new OracleStepRecord(job.Name, stepId, pgm, step.Parm, 12, $"no KSDS loader for {dsn} (add it to the oracle datasets)", dds, reads, writes, Rel(c, sysoutFile));
                     var lr = await Toolchain.RunAsync(loader, [], work, env: new Dictionary<string, string> { ["DD_SEQFILE"] = img, ["DD_KSDSFILE"] = bdb }, ct: ct);
                     if (lr.ExitCode != 0) return new OracleStepRecord(job.Name, stepId, pgm, step.Parm, 12, $"KSDS load of {dsn} failed: {Tail(lr.Output, 3)}", dds, reads, writes, Rel(c, sysoutFile));
@@ -472,7 +558,7 @@ public sealed class GnuCobolOracle(ProjectService projects, ConfigService config
             var r = await Toolchain.RunAsync(unit.Exe, [], work, line => { }, env, TimeSpan.FromMinutes(10), ct, stdoutFile: sysoutFile);
             foreach (var (dsn, bdb, w) in indexed.Where(x => x.Writes))
             {
-                var unloader = Path.Combine(c.Paths.OracleBin, $"UNLOAD-{Safe(dsn)}.exe");
+                var unloader = Path.Combine(c.Paths.OracleBin, KsdsUtilityId("UNLOAD", dsn) + ".exe");
                 if (!File.Exists(unloader)) continue;
                 var img = JobSteps.DataFile(data, dsn);
                 var ur = await Toolchain.RunAsync(unloader, [], work, env: new Dictionary<string, string> { ["DD_SEQFILE"] = img + ".unl", ["DD_KSDSFILE"] = bdb }, ct: ct);

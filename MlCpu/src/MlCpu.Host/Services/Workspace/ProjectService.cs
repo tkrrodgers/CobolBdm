@@ -100,6 +100,7 @@ public sealed class ProjectService
             catch (JsonException) { /* a broken project.json is skipped, not fatal */ }
         }
         lock (_gate) _projects = list;
+        foreach (var p in list) ConfigureCopybooks(p);
         if (Active is not null && Get(Active.Id) is { } fresh) Apply(fresh, notify: false);
         Changed?.Invoke();
     }
@@ -116,8 +117,16 @@ public sealed class ProjectService
             _projects.Sort((a, b) => string.Compare(a.Id, b.Id, StringComparison.OrdinalIgnoreCase));
             _stamps[p.Id] = System.IO.File.GetLastWriteTimeUtc(paths.File);
         }
+        ConfigureCopybooks(p);
         if (Active?.Id == p.Id) Apply(p, notify: false);
         Changed?.Invoke();
+    }
+
+    /// <summary>The analyser searches the project's configured copybook roots (layout.copybookRoots) for its programs.</summary>
+    void ConfigureCopybooks(ProjectDefinition p)
+    {
+        var src = SourceDir(p);
+        MlCpu.Cobol.Analysis.CobolModelBuilder.ConfigureCopybookRoots(src, OnboardingService.Roots(src, p.Layout.CopybookRoots));
     }
 
     /// <summary>Re-reads, changes and saves one project (the only safe way to update it from a background operation).</summary>

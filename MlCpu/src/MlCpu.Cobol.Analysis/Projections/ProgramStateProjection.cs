@@ -18,6 +18,7 @@ public static partial class ProgramStateProjection
     [GeneratedRegex(@"(\r?\n)[ \t]*(\r?\n)([ \t]*\r?\n)+")] private static partial Regex BlankRuns();
     [GeneratedRegex(@"^    private static final [^(\r\n]*=[^\r\n]*;[^\r\n]*\r?\n", RegexOptions.Multiline)] private static partial Regex ConstantRx();
     [GeneratedRegex(@"^import [^\r\n]+;\r?$", RegexOptions.Multiline)] private static partial Regex ImportRx();
+    [GeneratedRegex(@"^    private void _(?:init|fields)\d+\(", RegexOptions.Multiline)] private static partial Regex HelperRx();
 
     static readonly string[] MovedMembers = ["protected void _init() {", "protected Area[] _linkage() {", "protected java.util.Map<String, CobField> _fields() {"];
 
@@ -60,6 +61,15 @@ public static partial class ProgramStateProjection
             var m = JavaText.Member(text, sig);
             if (m is null) return (null, null, $"{program}: unterminated '{sig}'");
             if (m.Value.End < 0) return (null, null, $"{program}: unbalanced '{sig}'");
+            spans.Add((m.Value.Start, m.Value.End));
+        }
+        // A large program's _init and _fields call helpers (_init0, _fields0, ...: the emitter splits bodies past the JVM's
+        // 64 KB per method); they move with the member that calls them.
+        foreach (Match h in HelperRx().Matches(text))
+        {
+            var m = JavaText.Member(text, h.Value.TrimStart());
+            if (m is null || m.Value.End < 0) return (null, null, $"{program}: unbalanced '{h.Value.Trim()}'");
+            if (spans.Any(s => m.Value.Start >= s.Start && m.Value.Start < s.End)) continue; // already inside a moved span
             spans.Add((m.Value.Start, m.Value.End));
         }
         foreach (Match c in ConstantRx().Matches(text)) spans.Add((c.Index, c.Index + c.Length));

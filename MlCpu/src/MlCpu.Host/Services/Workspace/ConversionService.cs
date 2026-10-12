@@ -37,6 +37,12 @@ public sealed class ConversionService(ProjectService projects, JavaSidecarServic
 
     static string SimpleName(string className) => className[(className.LastIndexOf('.') + 1)..];
 
+    /// <summary>Largest DDG file copied into the published kit.</summary>
+    const long KitDdgMaxBytes = 16L << 20;
+
+    /// <summary>Programs transpiled at once (MLCPU_TRANSPILE_PARALLEL; default 4, the sidecar's request pool).</summary>
+    static int TranspileParallelism => int.TryParse(Environment.GetEnvironmentVariable("MLCPU_TRANSPILE_PARALLEL"), out var n) && n > 0 ? n : 4;
+
     public async Task TranspileAllAsync(string projectId, Operation op, CancellationToken ct, double from = 0, double to = 1)
     {
         var p = projects.Get(projectId) ?? throw new ArgumentException($"no project {projectId}");
@@ -48,23 +54,29 @@ public sealed class ConversionService(ProjectService projects, JavaSidecarServic
         var sources = OnboardingService.Sources(p, projects.SourceDir(p));
         var map = _results.GetOrAdd(p.Id, _ => new());
         map.Clear();
-        var rows = new List<TranspileRow>();
-        int i = 0;
-        foreach (var prog in p.Programs)
+        // Programs are independent: analysed here and emitted by the sidecar in parallel (its request pool has 4 threads),
+        // largest first so the long ones start early. The report keeps the project's order.
+        var order = p.Programs.Select((prog, index) => (prog, index)).OrderByDescending(x => x.prog.Lines).ToList();
+        var rows = new TranspileRow[p.Programs.Count];
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+        int done = 0;
+        await Parallel.ForEachAsync(order, new ParallelOptions { MaxDegreeOfParallelism = TranspileParallelism, CancellationToken = ct }, async (x, token) =>
         {
-            ct.ThrowIfCancellationRequested();
-            op.Report(from + (to - from) * 0.85 * i++ / Math.Max(1, p.Programs.Count), $"transpiling {prog.Id} ({i}/{p.Programs.Count})");
+            var prog = x.prog;
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            var r = await sidecar.TranspileAsync(sources[prog.Id], transpileOnly: true, ct);
+            var r = await sidecar.TranspileAsync(sources[prog.Id], transpileOnly: true, token);
             map[prog.Id] = r;
-            if (r.JavaSource is not null && r.ClassName is not null) await File.WriteAllTextAsync(Path.Combine(javaDir, SimpleName(r.ClassName) + ".java"), r.JavaSource, ct);
-            rows.Add(new TranspileRow(prog.Id, prog.Path, prog.Kind, r.Verdict, r.Compiled, r.Lowered, r.Abstained, r.ClassName, r.Error, r.AbstainedSteps, Math.Round(sw.Elapsed.TotalSeconds, 2)));
-            op.Info($"{prog.Id,-9} {r.Verdict,-11} lowered {r.Lowered}, abstained {r.Abstained}{(r.Error is null ? "" : " — " + r.Error)}");
-        }
+            if (r.JavaSource is not null && r.ClassName is not null) await File.WriteAllTextAsync(Path.Combine(javaDir, SimpleName(r.ClassName) + ".java"), r.JavaSource, token);
+            rows[x.index] = new TranspileRow(prog.Id, prog.Path, prog.Kind, r.Verdict, r.Compiled, r.Lowered, r.Abstained, r.ClassName, r.Error, r.AbstainedSteps, Math.Round(sw.Elapsed.TotalSeconds, 2));
+            int n = Interlocked.Increment(ref done);
+            op.Report(from + (to - from) * 0.85 * n / Math.Max(1, p.Programs.Count), $"transpiled {n}/{p.Programs.Count} ({prog.Id})");
+            op.Info($"{prog.Id,-9} {r.Verdict,-11} lowered {r.Lowered}, abstained {r.Abstained}, {sw.Elapsed.TotalSeconds:N1}s{(r.Error is null ? "" : " — " + r.Error)}");
+        });
+        op.Info($"transpile: {rows.Length} programs in {clock.Elapsed.TotalSeconds:N0}s, {TranspileParallelism} in parallel");
         await File.WriteAllTextAsync(Path.Combine(paths.Transpile, "report.json"), JsonSerializer.Serialize(rows, Json) + "\n", ct);
         op.Report(from + (to - from) * 0.9, "javac (translation + runtime)");
         await CompileAsync(p, op, ct);
-        op.Info($"transpiled {rows.Count(r => r.Compiled)}/{rows.Count} programs; {rows.Sum(r => r.Abstained)} statement(s) abstained (frontiers)");
+        op.Info($"transpiled {rows.Count(r => r.Compiled)}/{rows.Length} programs; {rows.Sum(r => r.Abstained)} statement(s) abstained (frontiers)");
     }
 
     /// <summary>javac over the translation (com.mlcpu.gen.Prog_*) against the runtime: the classes call traces and quick checks run.</summary>
@@ -158,6 +170,7 @@ public sealed class ConversionService(ProjectService projects, JavaSidecarServic
     List<JavaProjectFile> KitFiles(ProjectDefinition p, IReadOnlyList<string> programs, IReadOnlyList<JavaProjectFile> existing)
     {
         var files = new List<JavaProjectFile>();
+        var bigDdg = new List<string>();
         var have = existing.Select(f => f.RelPath).ToHashSet(StringComparer.Ordinal);
         var dir = graphs.Dir(p);
         void Add(string rel, string full)
@@ -169,7 +182,10 @@ public sealed class ConversionService(ProjectService projects, JavaSidecarServic
         foreach (var pid in programs)
         {
             Add($"graphs/ast/{pid}.ast.json", Path.Combine(dir, "ast", pid + ".ast.json"));
-            Add($"graphs/ddg/{pid}.ddg.json", Path.Combine(dir, "ddg", pid + ".ddg.json"));
+            // A DDG over KitDdgMaxBytes (millions of edges) stays in the project's graphs/ folder: no model reads that much.
+            var ddg = Path.Combine(dir, "ddg", pid + ".ddg.json");
+            if (File.Exists(ddg) && new FileInfo(ddg).Length > KitDdgMaxBytes) bigDdg.Add(pid);
+            else Add($"graphs/ddg/{pid}.ddg.json", ddg);
             if (existing.Any(f => f.RelPath == $"normalization/{pid}/requirements.json"))
                 Add($"normalization/{pid}/ast-outline.txt", Path.Combine(dir, "ast", pid + ".outline.txt"));
         }
@@ -188,19 +204,23 @@ public sealed class ConversionService(ProjectService projects, JavaSidecarServic
         sb.Append("| `src/test/java/**/*EquivalenceTest.java` | acceptance: normalized vs faithful in every scenario, and vs the GnuCOBOL oracle |\n");
         sb.Append("| `graphs/` | call graph, AST and data dependence graph per program (JSON) |\n\n");
         sb.Append($"Capabilities: {string.Join(", ", caps)}. Oracle clock: {p.Oracle.Clock}.\n");
+        if (bigDdg.Count > 0)
+            sb.Append($"\nData dependence graphs over {KitDdgMaxBytes >> 20} MB stay in the project's graphs/ddg and are not copied here: {string.Join(", ", bigDdg)}.\n");
         files.Add(new JavaProjectFile("MODERNIZATION.md", sb.ToString(), "text"));
         return files;
     }
 
-    public async Task<BuildTestReport> BuildAndTestAsync(string projectId, Operation op, CancellationToken ct)
+    /// <summary>gradle test (unless <paramref name="runTests"/> is false: a large estate's job checks after a build only), then every job check.</summary>
+    public async Task<BuildTestReport> BuildAndTestAsync(string projectId, Operation op, CancellationToken ct, bool runTests = true)
     {
         var p = projects.Get(projectId) ?? throw new ArgumentException($"no project {projectId}");
         var root = p.Publish.Last?.Path ?? throw new InvalidOperationException("nothing published yet");
-        var report = await parity.BuildAndTestAsync(p, root, "legacy", "publish", op, 0, 1, ct);
+        var report = await parity.BuildAndTestAsync(p, root, "legacy", runTests ? "publish" : "publish-jobs", op, 0, 1, ct, runTests);
         projects.Update(p.Id, x =>
         {
             if (x.Publish.Last is not null)
-                x.Publish.Last.LastTest = new TestRecord { At = report.At, Tests = report.Tests, Failed = report.Failed, Outputs = report.Parity.Count, Match = report.Match, Implementation = "legacy" };
+                x.Publish.Last.LastTest = new TestRecord { At = report.At, Tests = report.Tests, Failed = report.Failed, Outputs = report.Parity.Count, Match = report.Match,
+                ReferenceOutputs = report.ReferenceResults.Count, ReferenceMatch = report.ReferenceMatch, Implementation = "legacy" };
         });
         return report;
     }

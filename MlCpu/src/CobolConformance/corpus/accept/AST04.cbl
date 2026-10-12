@@ -1,0 +1,26 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. AST04.
+      * COBOL-85 grammar (AST) regression: INITIALIZE of COBOL 2002 /
+      * IBM Enterprise COBOL: WITH FILLER, ALL TO VALUE, category TO
+      * VALUE, THEN REPLACING, THEN TO DEFAULT.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  G.
+           05  GX                      PIC X(4) VALUE 'ABCD'.
+           05  FILLER                  PIC X(2) VALUE 'ZZ'.
+           05  GN                      PIC 9(3) VALUE 7.
+           05  GE                      PIC ZZ9.
+       PROCEDURE DIVISION.
+       0000-MAIN.
+           INITIALIZE G WITH FILLER
+           INITIALIZE G ALL TO VALUE
+           INITIALIZE G NUMERIC TO VALUE
+           INITIALIZE G REPLACING NUMERIC BY 5
+           INITIALIZE G THEN REPLACING ALPHANUMERIC DATA BY 'X'
+           INITIALIZE G REPLACING NUMERIC BY 5 THEN TO DEFAULT
+           INITIALIZE G WITH FILLER ALL TO VALUE THEN TO DEFAULT
+           INITIALIZE G FILLER ALPHANUMERIC TO VALUE
+                THEN REPLACING NUMERIC-EDITED BY 3
+                THEN TO DEFAULT
+           DISPLAY GX ' ' GN ' ' GE
+           GOBACK.

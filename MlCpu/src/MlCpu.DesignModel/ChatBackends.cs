@@ -15,11 +15,17 @@ public sealed record BackendOptions(string ModelPath, int Context, int MaxTokens
     bool MoeOnCpu, string LlamaDir, string? ServerUrl, int Port, string? ExtraServerArgs, string LogDir, bool AllowFallback,
     string? ExchangeDir = null);
 
+/// <summary>The prompt is larger than the model's context: the step fails for this program, and the run goes on.</summary>
+public sealed class PromptTooLargeException(string message) : Exception(message);
+
 /// <summary>A chat model: messages in, one assistant reply out. The history is passed whole on every call.</summary>
 public interface IChatBackend : IDisposable
 {
     string Name { get; }
     ChatResult Complete(IReadOnlyList<ChatMessage> messages, int? maxTokens = null, string? reasoning = null);
+
+    /// <summary>The number of tokens the model's tokenizer makes of <paramref name="text"/>; null when the backend cannot say.</summary>
+    int? CountTokens(string text) => null;
 }
 
 /// <summary>
@@ -33,10 +39,21 @@ public sealed class FallbackBackend(BackendOptions o, string preferred) : IChatB
 
     public string Name => current?.Name ?? "(not started)";
 
+    public int? CountTokens(string text)
+    {
+        current ??= Start();
+        return current.CountTokens(text);
+    }
+
     public ChatResult Complete(IReadOnlyList<ChatMessage> messages, int? maxTokens = null, string? reasoning = null)
     {
         current ??= Start();
         try { return current.Complete(messages, maxTokens, reasoning); }
+        catch (Exception e) when (e.Message.Contains("exceed_context_size_error") || e.Message.Contains("exceeds the available context size"))
+        {
+            // The prompt does not fit the context: another backend with the same model and context cannot help.
+            throw new PromptTooLargeException(e.Message);
+        }
         catch (Exception e) when (current is LlamaServerBackend && o.AllowFallback)
         {
             Note($"llama.cpp request failed ({e.GetType().Name}: {e.Message}); falling back to LM-Kit");
@@ -143,7 +160,45 @@ public sealed class LlamaServerBackend : IChatBackend
         catch { return "server"; }
     }
 
+    /// <summary>
+    /// Reasoning tokens a reply may spend before it has written any content (MLCPU_REASONING_BUDGET; 0 or unset = no
+    /// limit). Past it the stream is cut, which stops the server's generation, and the request is made once more with
+    /// thinking off and a short "answer now" turn: a model that deliberates without converging (24 minutes, 34,000 tokens
+    /// and no code in one Fineract attempt) then still answers, and the run records that it happened.
+    /// </summary>
+    /// <summary>llama-server's /tokenize: exact prompt sizes (packets and traced bytes run about 2 characters per token).</summary>
+    public int? CountTokens(string text)
+    {
+        try
+        {
+            var body = new JsonObject { ["content"] = text, ["add_special"] = false };
+            using var resp = http.PostAsync(baseUrl + "/tokenize", new StringContent(body.ToJsonString(), Encoding.UTF8, "application/json"))
+                .GetAwaiter().GetResult();
+            if (!resp.IsSuccessStatusCode) return null;
+            return JsonNode.Parse(resp.Content.ReadAsStringAsync().GetAwaiter().GetResult())?["tokens"]?.AsArray().Count;
+        }
+        catch (Exception) { return null; }
+    }
+
+    static readonly int ReasoningBudget = int.TryParse(Environment.GetEnvironmentVariable("MLCPU_REASONING_BUDGET"), out var b) ? b : 0;
+
+    const string AnswerNow = "You have reasoned at length without answering. Stop deliberating now: answer with your best complete " +
+                             "solution in the required format, using what you have already worked out.";
+
     public ChatResult Complete(IReadOnlyList<ChatMessage> messages, int? maxTokens = null, string? reasoning = null)
+    {
+        var r = Stream(messages, maxTokens, reasoning, ReasoningBudget);
+        if (r.Stop != "reasoning-budget") return r;
+        Program.Log($"  reasoning budget of {ReasoningBudget:N0} tokens spent with no answer; asking again with thinking off");
+        var again = Stream([.. messages, new ChatMessage("user", AnswerNow)], maxTokens, "none", 0);
+        return again with
+        {
+            Reasoning = r.Reasoning, PromptTokens = r.PromptTokens + again.PromptTokens, GeneratedTokens = r.GeneratedTokens + again.GeneratedTokens,
+            Seconds = r.Seconds + again.Seconds, Stop = again.Stop + " (after the reasoning budget)"
+        };
+    }
+
+    ChatResult Stream(IReadOnlyList<ChatMessage> messages, int? maxTokens, string? reasoning, int budget)
     {
         var body = new JsonObject
         {
@@ -173,7 +228,7 @@ public sealed class LlamaServerBackend : IChatBackend
         var content = new StringBuilder();
         var thinking = new StringBuilder();
         string stop = "unknown";
-        int promptTokens = 0, generated = 0, chunks = 0;
+        int promptTokens = 0, generated = 0, chunks = 0, thinkingChunks = 0;
         double genRate = 0, promptRate = 0;
         var lastLog = Stopwatch.StartNew();
         string? line;
@@ -186,7 +241,13 @@ public sealed class LlamaServerBackend : IChatBackend
             if (j?["error"] is { } err) throw new HttpRequestException($"llama-server error: {err.ToJsonString()}");
             var choice = j?["choices"]?[0];
             if (choice?["delta"]?["content"]?.GetValue<string>() is { } c) { content.Append(c); chunks++; }
-            if (choice?["delta"]?["reasoning_content"]?.GetValue<string>() is { } rc) { thinking.Append(rc); chunks++; }
+            if (choice?["delta"]?["reasoning_content"]?.GetValue<string>() is { } rc) { thinking.Append(rc); chunks++; thinkingChunks++; }
+            if (budget > 0 && thinkingChunks > budget && content.Length == 0)
+            {
+                stop = "reasoning-budget";
+                generated = Math.Max(generated, chunks);
+                break; // disposing the response closes the connection; llama-server cancels the slot's generation
+            }
             if (choice?["finish_reason"]?.GetValue<string>() is { } fr) stop = fr;
             if (j?["timings"] is JsonObject tm)
             {

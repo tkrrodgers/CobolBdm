@@ -30,13 +30,17 @@ public final class CobFile {
     /** Files open in the current run unit, closed implicitly when the run unit ends normally (GnuCOBOL's implicit CLOSE). */
     private static final java.util.Set<CobFile> OPEN = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
 
-    /** Implicit CLOSE of every file the run unit left open (normal end: GOBACK / STOP RUN of the main program). */
+    /**
+     * Implicit CLOSE of every file the run unit left open: at a normal end (GOBACK / STOP RUN of the main program) and at
+     * an abnormal one too. GnuCOBOL closes open files when the CEE3ABD stub ends the run with STOP RUN and when a runtime
+     * error ends it ("libcob: warning: implicit CLOSE"), so the records written before the abend are in the output.
+     */
     public static synchronized void closeAllOpen() {
         for (CobFile f : new ArrayList<>(OPEN)) f.close();
         OPEN.clear();
     }
 
-    /** Forgets files left open by an abended run unit (their buffered records are not written, as on the oracle). */
+    /** Forgets the open files without closing them (only for resetting a run unit whose files are gone). */
     public static synchronized void forgetOpen() {
         OPEN.clear();
     }
@@ -144,7 +148,29 @@ public final class CobFile {
 
     // ------------------------------------------------------------------ OPEN / CLOSE
 
+    /** The mode of the last OPEN attempted, successful or not (GnuCOBOL's last_open_mode, which picks a USE ON mode procedure). */
+    private String lastOpenMode;
+
+    /** The length of the record last read (variable-length files), else the record area's length. */
+    public int lastRecordLength() {
+        return variable && lastLen >= 0 ? lastLen : maxLen;
+    }
+
+    public String lastOpenMode() {
+        return lastOpenMode == null ? "" : lastOpenMode;
+    }
+
+    /**
+     * GnuCOBOL's default error handler after an I/O statement whose exception (status 10 or more) no phrase and no USE
+     * procedure took: without FILE STATUS the run stops.
+     */
+    public void unhandled(int st, boolean handled) {
+        if (st >= 10 && !handled && status == null)
+            throw new CobRt.RuntimeCheck("I/O error on " + name + " (" + assign + "): status " + String.format("%02d", st));
+    }
+
     public int open(String openMode) {
+        lastOpenMode = openMode;
         if (mode != null) return done(41);
         path = resolve(assign);
         try {

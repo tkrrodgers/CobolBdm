@@ -1,6 +1,6 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. LOWER01.
-      * SEARCH is abstained whole (D1): its bodies must never run unguarded.
+      * SEARCH is lowered whole (its WHEN bodies run only when chosen).
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01  WS-TABLE.

@@ -68,9 +68,23 @@ public final class CobRt {
     /** RETURN-CODE: one register per run unit, shared by every program (IBM semantics). */
     public static final CobField RETURN_CODE = CobField.num("RETURN-CODE", CobField.Use.BINARY, new Area(4), 0, 4, 9, 0, true, false, false, null, null);
     public static final CobField TALLY = CobField.num("TALLY", CobField.Use.BINARY, new Area(4), 0, 4, 5, 0, false, false, false, null, null);
+    /** SORT-RETURN: 0 after a SORT or MERGE that completed (S9(9), as GnuCOBOL's). */
+    public static final CobField SORT_RETURN = CobField.num("SORT-RETURN", CobField.Use.BINARY, new Area(4), 0, 4, 9, 0, true, false, false, null, null);
 
     private static long loopCount;
 
+    /**
+     * The runaway-loop guard: {@code n} is the loop's own iteration count since it was entered. Only one loop running
+     * past the limit is cut; the run unit as a whole may iterate any number of times (a 2,000-loan batch runs billions).
+     */
+    public static void loopTick(String stepId, long n) {
+        if (n > CobConfig.LOOP_LIMIT) {
+            FrontierHits.loopCut(stepId);
+            throw new LoopLimit("loop cut at " + stepId + " after " + CobConfig.LOOP_LIMIT + " iterations of one loop");
+        }
+    }
+
+    /** The run-unit-wide count, kept for code generated before per-loop counting. */
     public static void loopTick(String stepId) {
         if (++loopCount > CobConfig.LOOP_LIMIT) {
             FrontierHits.loopCut(stepId);
@@ -79,6 +93,7 @@ public final class CobRt {
     }
 
     public static void resetRunUnit() {
+        synchronized (CobRt.class) { EXTERNAL.clear(); }
         CobFile.forgetOpen();
         loopCount = 0;
         RETURN_CODE.setDec(BigDecimal.ZERO, false);
@@ -143,7 +158,11 @@ public final class CobRt {
 
     public static void move(Object src, CobField dst) {
         if (src instanceof CobField f) { moveField(f, dst); return; }
-        if (src instanceof NumLit n) { moveNumber(n.v, n.digits(), dst); return; }
+        if (src instanceof NumLit n) {
+            if (n.unscaled != CobField.NO_LONG && dst.storeLiteral(n.unscaled, n.scale)) return;
+            moveNumber(n.v, n.digits(), dst);
+            return;
+        }
         if (src instanceof BigDecimal d) { moveNumber(d, d.abs().toPlainString().replace(".", ""), dst); return; }
         if (src instanceof Fig fg) { moveFig(fg, dst); return; }
         if (src instanceof AllLit a) {
@@ -165,7 +184,7 @@ public final class CobRt {
             case ALNUM_EDITED -> alnumEdited(s.cat == CobField.Cat.NUMERIC ? numericAsAlnum(s) : s.bytes(), d);
             case NUMERIC, INDEX, NUM_EDITED, POINTER -> {
                 switch (s.cat) {
-                    case NUMERIC, INDEX -> d.setDec(s.dec(), false);
+                    case NUMERIC, INDEX -> { if (!d.moveNumericFast(s)) d.setDec(s.dec(), false); }
                     case NUM_EDITED -> d.setDec(Edit.deEdit(s.bytes(), s.scale), false);
                     default -> {
                         if (d.cat == CobField.Cat.NUM_EDITED) alnumMove(s.bytes(), d, false);
@@ -266,7 +285,10 @@ public final class CobRt {
 
     public static int compare(Object a, Object b) {
         boolean an = isNumericOperand(a), bn = isNumericOperand(b);
-        if (an && bn) return dec(a).compareTo(dec(b));
+        if (an && bn) {
+            int c = compareLong(a, b);
+            return c != NO_COMPARE ? c : dec(a).compareTo(dec(b));
+        }
         if (a instanceof Fig f && f == Fig.ZEROS && bn) return BigDecimal.ZERO.compareTo(dec(b));
         if (b instanceof Fig f && f == Fig.ZEROS && an) return dec(a).compareTo(BigDecimal.ZERO);
         int la = sizeOf(a), lb = sizeOf(b);
@@ -281,6 +303,37 @@ public final class CobRt {
             if (cx != cy) return Integer.compare(collate(cx), collate(cy));
         }
         return 0;
+    }
+
+    private static final int NO_COMPARE = Integer.MIN_VALUE;
+
+    /**
+     * A numeric comparison through longs when both values fit (items and literals up to 18 digits): the result of
+     * {@code dec(a).compareTo(dec(b))}, or {@link #NO_COMPARE} when it must be computed that way.
+     */
+    private static int compareLong(Object a, Object b) {
+        long ua, ub;
+        int sa, sb;
+        if (a instanceof CobField f) { ua = f.unscaledLong(); sa = f.scale; }
+        else if (a instanceof NumLit n) { ua = n.unscaled; sa = n.scale; }
+        else return NO_COMPARE;
+        if (b instanceof CobField f) { ub = f.unscaledLong(); sb = f.scale; }
+        else if (b instanceof NumLit n) { ub = n.unscaled; sb = n.scale; }
+        else return NO_COMPARE;
+        if (ua == CobField.NO_LONG || ub == CobField.NO_LONG) return NO_COMPARE;
+        if (sa != sb) {
+            int d = Math.abs(sa - sb);
+            if (d > 18) return NO_COMPARE;
+            long m = Pow10.LONG[d];
+            if (sa < sb) {
+                if (Math.abs(ua) > Long.MAX_VALUE / m) return NO_COMPARE;
+                ua *= m;
+            } else {
+                if (Math.abs(ub) > Long.MAX_VALUE / m) return NO_COMPARE;
+                ub *= m;
+            }
+        }
+        return Long.compare(ua, ub);
     }
 
     private static int collate(int c) {
@@ -325,6 +378,29 @@ public final class CobRt {
 
     // ------------------------------------------------------------------ arithmetic
 
+    /**
+     * An intermediate result GnuCOBOL truncates under arithmetic-osvs (cob_decimal_align to a smaller scale): truncated
+     * toward zero at {@code scale} decimals in the GnuCOBOL dialect, unchanged otherwise.
+     */
+    public static BigDecimal align(BigDecimal v, int scale) {
+        return CobConfig.ARITHMETIC_OSVS && v.scale() > scale ? v.setScale(scale, RoundingMode.DOWN) : v;
+    }
+
+    /**
+     * The GnuCOBOL 3.3 defect of arithmetic-osvs: an intermediate of {@code scale} decimals aligned to a larger
+     * {@code target} is divided by 10^(target - scale) instead of multiplied (cob_decimal_align shifts the wrong way), which
+     * leaves it truncated to 2 * scale - target decimals. Reproduced only where that changes nothing; otherwise the run
+     * stops at the statement (GnuCOBOL and COBOL disagree there: a frontier, never a silent result).
+     */
+    public static BigDecimal alignUp(BigDecimal v, int scale, int target, String step) {
+        if (!CobConfig.ARITHMETIC_OSVS) return v;
+        BigDecimal cut = v.setScale(2 * scale - target, RoundingMode.DOWN);
+        if (cut.compareTo(v) != 0)
+            frontier(step, "GnuCOBOL 3.3 arithmetic-osvs scales this intermediate result (" + v.toPlainString() + ") down to "
+                    + (2 * scale - target) + " decimals instead of up to " + target + " (cob_decimal_align defect): GnuCOBOL's result is not COBOL's");
+        return v;
+    }
+
     public static BigDecimal add(BigDecimal a, BigDecimal b) { return a.add(b); }
     public static BigDecimal sub(BigDecimal a, BigDecimal b) { return a.subtract(b); }
     public static BigDecimal mul(BigDecimal a, BigDecimal b) { return a.multiply(b); }
@@ -333,7 +409,29 @@ public final class CobRt {
     public static BigDecimal div(BigDecimal a, BigDecimal b) {
         if (b.signum() == 0) throw new SizeError();
         int sc = Math.max(a.scale(), 0) + 38;
+        // Dividing by a power of ten (DIVIDE ... BY 10) is exact: move the decimal point instead of a long division.
+        BigInteger ub = b.unscaledValue().abs();
+        if (ub.bitLength() <= 62 && isPowerOfTen(ub.longValue())) {
+            int k = Long.toString(ub.longValue()).length() - 1 - b.scale();
+            BigDecimal q = a.scaleByPowerOfTen(-k);
+            return (b.signum() < 0 ? q.negate() : q).setScale(sc, RoundingMode.DOWN);
+        }
         return a.divide(b, sc, RoundingMode.DOWN);
+    }
+
+    /**
+     * a / b truncated at {@code scale} decimals, for a quotient that is only stored into receivers of at most
+     * {@code scale - 1} decimals: truncating it again (or rounding half up) there gives what truncating or rounding
+     * {@link #div}'s 38-digit quotient gives, at a fraction of the cost.
+     */
+    public static BigDecimal divTo(BigDecimal a, BigDecimal b, int scale) {
+        if (b.signum() == 0) throw new SizeError();
+        return a.divide(b, scale, RoundingMode.DOWN);
+    }
+
+    private static boolean isPowerOfTen(long v) {
+        for (long t = 1; t > 0 && t <= v; t *= 10) if (t == v) return true;
+        return false;
     }
 
     public static BigDecimal pow(BigDecimal a, BigDecimal b) {
@@ -359,7 +457,7 @@ public final class CobRt {
         if ((f.use == CobField.Use.BINARY && !CobConfig.BINARY_TRUNCATE) || f.use == CobField.Use.COMP5 || f.use == CobField.Use.INDEX) {
             return u.compareTo(BigInteger.ONE.shiftLeft(f.len * 8 - (f.signed ? 1 : 0))) >= 0;
         }
-        return u.compareTo(BigInteger.TEN.pow(digits)) >= 0;
+        return u.compareTo(Pow10.big(digits)) >= 0;
     }
 
     // ------------------------------------------------------------------ DISPLAY
@@ -391,16 +489,33 @@ public final class CobRt {
     static String displayNumeric(CobField f) {
         boolean gnu = "gnucobol".equalsIgnoreCase(CobConfig.DISPLAY_NUMERIC);
         if (f.use == CobField.Use.DISPLAY) {
-            if (!gnu || !f.signed || f.signSep) return f.str();
-            BigDecimal v = f.dec();
-            String digits = pad(v.unscaledValue().abs().toString(), f.digits);
-            char sign = v.signum() < 0 ? '-' : '+';
-            return f.signLead ? sign + digits : digits + sign;
+            if (!gnu || f.signSep) return f.str();
+            // GnuCOBOL shows a zoned item's bytes as they are, except NUL and space, shown as '0' (storage that was
+            // never set reads "0000", not NULs); a signed item's sign position shows its digit and the sign follows.
+            byte[] b = f.bytes();
+            int sp = !f.signed ? -1 : f.signLead ? 0 : b.length - 1;
+            boolean neg = false;
+            StringBuilder sb = new StringBuilder(b.length + 1);
+            for (int i = 0; i < b.length; i++) {
+                int c = b[i] & 0xFF;
+                if (i == sp) {
+                    int[] d = Overpunch.decode(c);
+                    neg = d[1] < 0;
+                    sb.append((char) ('0' + d[0]));
+                } else sb.append(c == 0 || c == ' ' ? '0' : (char) c);
+            }
+            if (!f.signed) return sb.toString();
+            char sign = neg ? '-' : '+';
+            return f.signLead ? sign + sb.toString() : sb.append(sign).toString();
         }
         BigDecimal v = f.dec();
         int n = f.digits;
         if (f.use == CobField.Use.BINARY || f.use == CobField.Use.COMP5 || f.use == CobField.Use.INDEX) {
             if (gnu || f.use != CobField.Use.BINARY) n = switch (f.len) { case 1 -> 3; case 2 -> 5; case 4 -> 10; default -> f.signed ? 19 : 20; };
+            // GnuCOBOL describes a USAGE INDEX item as a signed 9-digit binary: DISPLAY shows +000000002; the special
+            // registers RETURN-CODE (S9(9)) and TALLY (9(5)) show their PICTURE's digits.
+            if (gnu && f.use == CobField.Use.INDEX) n = 9;
+            if (gnu && (f == RETURN_CODE || f == TALLY || f == SORT_RETURN)) n = f.digits;
         }
         String digits = pad(v.unscaledValue().abs().toString(), n);
         if (gnu) return f.signed ? (v.signum() < 0 ? "-" : "+") + digits : digits;
@@ -417,9 +532,42 @@ public final class CobRt {
         return "0".repeat(n - d.length()) + d;
     }
 
+    // ------------------------------------------------------------------ OCCURS DEPENDING ON
+
+    /**
+     * The current-length view of a group holding an OCCURS DEPENDING ON table at its end: its declared (maximum)
+     * length less the occurrences beyond the object's current value. A value outside 0..max would address storage
+     * outside the item (GnuCOBOL computes it unchecked), so the run stops instead of guessing.
+     */
+    public static CobField odo(CobField group, CobField count, int stride, int max) {
+        BigDecimal v = count.dec();
+        int n = v.intValue();
+        if (v.signum() < 0 || n > max) throw new RuntimeCheck(group.name + ": OCCURS DEPENDING ON " + count.name + " = " + v.toPlainString() + " outside 0.." + max);
+        return group.withLength(group.len - (max - n) * stride);
+    }
+
+    /** INITIALIZE of a table: occurrence 1 (already initialized) copied over occurrences 2..count, as GnuCOBOL does. */
+    public static void initTable(CobField first, int count, int max) {
+        if (count > max) throw new RuntimeCheck(first.name + ": INITIALIZE of " + count + " occurrences, the table has " + max);
+        byte[] b = first.buf();
+        int p = first.pos();
+        for (int k = 1; k < count; k++) System.arraycopy(b, p, b, p + k * first.len, first.len);
+    }
+
+    /** {@code n} bytes from the start of {@code first} set to {@code v} (INITIALIZE of a uniform table at its maximum). */
+    public static void fillBytes(CobField first, int n, byte v) {
+        Arrays.fill(first.buf(), first.pos(), first.pos() + n, v);
+    }
+
     // ------------------------------------------------------------------ INITIALIZE
 
     public static void initLeaf(CobField f) {
+        // GnuCOBOL initializes a signed zoned item (sign not separate) to plain '0' digits, without the sign overpunch
+        // a MOVE ZERO writes ("00", not "0{"); IBM moves zero.
+        if (CobConfig.GNU_INITIALIZE && f.cat == CobField.Cat.NUMERIC && f.use == CobField.Use.DISPLAY && f.signed && !f.signSep) {
+            f.fill((byte) '0');
+            return;
+        }
         switch (f.cat) {
             case NUMERIC, NUM_EDITED -> f.setDec(BigDecimal.ZERO, false);
             case INDEX, POINTER -> { }
@@ -608,13 +756,14 @@ public final class CobRt {
 
     /** CALL program USING args (BY REFERENCE fields share storage; BY CONTENT arguments are copies made by the caller). */
     public static void call(String name, CobField[] args) {
-        String n = name.trim().toUpperCase();
-        ModernProgram normalized = ProgramRegistry.modern(n);
+        ProgramRegistry.Target t = ProgramRegistry.target(name);
+        String n = t.id();
+        ModernProgram normalized = t.modern();
         if (normalized != null) {
             ProgramRegistry.callModern(normalized, args);
             return;
         }
-        CobolBase target = ProgramRegistry.resolve(n);
+        CobolBase target = t.program();
         if (target == null) {
             if (ABEND_PROGRAMS.contains(n)) {
                 int code = args.length > 0 ? args[0].dec().intValue() : 0;
@@ -623,6 +772,27 @@ public final class CobRt {
             throw new CallNotFound(n);
         }
         target.call(args, true);
+    }
+
+    /** CALL ... RETURNING: the callee's RETURN-CODE goes to {@code returning}; the caller's RETURN-CODE is restored. */
+    public static void callReturning(String name, CobField[] args, CobField returning) {
+        BigDecimal saved = RETURN_CODE.dec();
+        try {
+            call(name, args);
+            store(returning, RETURN_CODE.dec(), false, false);
+        } finally {
+            RETURN_CODE.setDec(saved, false);
+        }
+    }
+
+    private static final java.util.Map<String, Area> EXTERNAL = new java.util.HashMap<>();
+
+    /** An EXTERNAL record's storage: one zeroed area per name for the run unit, shared by every program declaring it. */
+    public static synchronized Area externalArea(String name, int size) {
+        Area a = EXTERNAL.get(name.toUpperCase());
+        if (a == null) EXTERNAL.put(name.toUpperCase(), a = new Area(size));
+        else if (a.size < size) throw new RuntimeCheck("EXTERNAL " + name + " declared with " + size + " bytes, allocated with " + a.size);
+        return a;
     }
 
     public static CobField byContent(Object o) {

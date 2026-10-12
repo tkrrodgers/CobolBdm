@@ -7,7 +7,7 @@ package com.mlcpu.rt;
 public final class CobConfig {
     private CobConfig() {}
 
-    static String setting(String prop, String env, String def) {
+    public static String setting(String prop, String env, String def) {
         String v = System.getProperty(prop);
         if (v == null) v = System.getenv(env);
         return v == null || v.isBlank() ? def : v.trim();
@@ -25,6 +25,26 @@ public final class CobConfig {
      */
     public static String DISPLAY_NUMERIC = setting("mlcpu.displayNumeric", "MLCPU_DISPLAY_NUMERIC", "zos");
 
+    /**
+     * INITIALIZE as GnuCOBOL does it ("gnucobol") or as IBM does ("zos"): GnuCOBOL leaves a signed zoned item's sign
+     * unpunched ("00"). Defaults to the GnuCOBOL dialect whenever DISPLAY_NUMERIC is "gnucobol" (the parity setting).
+     */
+    public static boolean GNU_INITIALIZE = "gnucobol".equalsIgnoreCase(setting("mlcpu.initialize", "MLCPU_INITIALIZE", DISPLAY_NUMERIC));
+
+    /**
+     * COMP-5 byte order: "native" stores it little-endian as GnuCOBOL does on x86-64, "big" as z/OS does. Defaults to
+     * native whenever DISPLAY_NUMERIC is "gnucobol" (the parity setting).
+     */
+    public static boolean COMP5_LITTLE_ENDIAN = "native".equalsIgnoreCase(setting("mlcpu.comp5", "MLCPU_COMP5",
+            "gnucobol".equalsIgnoreCase(DISPLAY_NUMERIC) ? "native" : "big"));
+
+    /**
+     * GnuCOBOL's arithmetic-osvs (-std=ibm): intermediate results of an arithmetic statement are truncated to the scale cobc
+     * chooses at compile time ({@link CobRt#align}). "gnucobol" applies it, "zos" keeps exact intermediates. Defaults to the
+     * GnuCOBOL dialect whenever DISPLAY_NUMERIC is "gnucobol" (the parity setting).
+     */
+    public static boolean ARITHMETIC_OSVS = "gnucobol".equalsIgnoreCase(setting("mlcpu.arithmetic", "MLCPU_ARITHMETIC", DISPLAY_NUMERIC));
+
     /** Initial byte for storage without VALUE (IBM STORAGE option / GnuCOBOL defaultbyte). */
     public static byte DEFAULT_BYTE = (byte) Integer.parseInt(setting("mlcpu.defaultByte", "MLCPU_DEFAULT_BYTE", "0"));
 
@@ -35,6 +55,10 @@ public final class CobConfig {
         BINARY_TRUNCATE = !"no".equalsIgnoreCase(setting("mlcpu.binaryTruncate", "MLCPU_BINARY_TRUNCATE", "yes"));
         ASCII_SIGN = "ascii".equalsIgnoreCase(setting("mlcpu.sign", "MLCPU_SIGN", "ebcdic"));
         DISPLAY_NUMERIC = setting("mlcpu.displayNumeric", "MLCPU_DISPLAY_NUMERIC", "zos");
+        GNU_INITIALIZE = "gnucobol".equalsIgnoreCase(setting("mlcpu.initialize", "MLCPU_INITIALIZE", DISPLAY_NUMERIC));
+        COMP5_LITTLE_ENDIAN = "native".equalsIgnoreCase(setting("mlcpu.comp5", "MLCPU_COMP5",
+                "gnucobol".equalsIgnoreCase(DISPLAY_NUMERIC) ? "native" : "big"));
+        ARITHMETIC_OSVS = "gnucobol".equalsIgnoreCase(setting("mlcpu.arithmetic", "MLCPU_ARITHMETIC", DISPLAY_NUMERIC));
         DEFAULT_BYTE = (byte) Integer.parseInt(setting("mlcpu.defaultByte", "MLCPU_DEFAULT_BYTE", "0"));
         LOOP_LIMIT = Long.parseLong(setting("mlcpu.loopLimit", "MLCPU_LOOP_LIMIT", "2000000000"));
     }
