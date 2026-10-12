@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Writes normalization/<PID>/callee-contracts.md for the given callers exactly as CapabilityKitBuilder does at publish
+       (CalleeContracts.Build), from the probe's equivalences.md files. Used by ../run-fineract.sh. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- run-fineract.sh copies this project to work/ and passes the absolute path -->
+    <KnowledgeProject Condition="'$(KnowledgeProject)' == ''">../../../MlCpu/src/MlCpu.CobolKb.Knowledge/MlCpu.CobolKb.Knowledge.csproj</KnowledgeProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(KnowledgeProject)" />
+  </ItemGroup>
+</Project>

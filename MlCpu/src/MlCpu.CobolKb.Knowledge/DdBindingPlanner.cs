@@ -122,8 +122,7 @@ public static partial class DdBindingPlanner
                 catch (Exception e) { diagnostics.Add($"{pid}: model build failed: {e.Message}"); continue; }
             }
             order.Add(pid);
-            var graph = ProgramGraphBuilder.Build(m);
-            foreach (var c in graph.Calls)
+            foreach (var c in ProgramGraphBuilder.Calls(m))
                 foreach (var t in c.ResolvedTargets.Count > 0 ? c.ResolvedTargets : [c.Target])
                 {
                     if (programSources.ContainsKey(t)) queue.Enqueue(t.ToUpperInvariant());

@@ -40,6 +40,69 @@ static class Suites
             catch (Exception e) { accepted = false; detail = e.Message; }
             r.Check(suite, path, expect == "accept" ? accepted : !accepted, $"expected {expect}: {detail}");
         }
+        // Configured copybook roots (project.json layout.copybookRoots) are searched before the directory-name heuristics.
+        var layout = Path.Combine(corpus, "accept", "layout");
+        var prog = Path.Combine(layout, "src", "LAYOUT01.cbl");
+        try
+        {
+            CobolModelBuilder.ConfigureCopybookRoots(layout, []);
+            var before = CobolModelBuilder.BuildGroundedFull(prog);
+            r.Check(suite, "copybook roots: without configuration the copybook is missing", before.MissingCopybooks.Count == 1,
+                $"{before.MissingCopybooks.Count} missing");
+            CobolModelBuilder.ConfigureCopybookRoots(layout, ["members"]);
+            var after = CobolModelBuilder.BuildGroundedFull(prog);
+            r.Check(suite, "copybook roots: a configured root finds it", after.MissingCopybooks.Count == 0 && after.Diagnostics.Count == 0
+                && after.Items.Any(i => i.Name == "LAY-FIELD"), string.Join("; ", after.Diagnostics));
+        }
+        catch (Exception e) { r.Fail(suite, "copybook roots", e); }
+        finally { CobolModelBuilder.ConfigureCopybookRoots(layout, []); }
+    }
+
+    // ------------------------------------------------------------------ COBOL-85 grammar over the parser lane (docs/AST-GRAMMAR.md)
+
+    /// <summary>
+    /// The AST stage's grammar (MlCpu.Cobol.Antlr) on the parser lane: every manifest.tsv program parses without errors and in
+    /// SLL mode alone, the mode a 130K-line program needs (full LL takes minutes there); a fourth manifest column overrides
+    /// ("ll": without errors in any mode, "-": not parsed). And CardDemo: no syntax errors, every program SLL, the only missing
+    /// copybooks the IBM CICS ones the repository does not ship (DFHAID, DFHBMSCA).
+    /// </summary>
+    public static void ParserAst(Report r, string corpus, string carddemo)
+    {
+        const string suite = "ParserAst";
+        if (!r.Wants(suite)) return;
+        foreach (var row in Rows(Path.Combine(corpus, "manifest.tsv")))
+        {
+            var path = row[0];
+            var expect = row.Length > 3 && row[3].Trim().Length > 0 ? row[3].Trim() : "sll";
+            if (expect == "-") continue;
+            Guard(r, suite, path, () =>
+            {
+                var p = MlCpu.Cobol.Antlr.CobolAntlr.Parse(Path.Combine(corpus, path));
+                r.Check(suite, path, p.Ok && (expect == "ll" || p.Mode == "SLL"),
+                    $"expected {expect}: {p.Mode}, {p.Errors.Count} error(s){(p.Errors.Count > 0 ? ": " + p.Errors[0] : "")}");
+            });
+        }
+        var cbl = Path.Combine(carddemo, "cbl");
+        if (!Directory.Exists(cbl)) { r.Blocked(suite, "carddemo", $"{cbl} not found"); return; }
+        Guard(r, suite, "carddemo", () =>
+        {
+            var programs = CobolFiles.Programs(cbl);
+            var syntax = new List<string>();
+            var missing = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+            var notSll = new List<string>();
+            foreach (var f in programs)
+            {
+                var p = MlCpu.Cobol.Antlr.CobolAntlr.Parse(f);
+                if (p.Mode != "SLL") notSll.Add(p.ProgramId);
+                foreach (var e in p.Errors)
+                    if (e.StartsWith("missing copybook ", StringComparison.Ordinal)) missing.Add(e["missing copybook ".Length..]);
+                    else syntax.Add($"{p.ProgramId} {e}");
+            }
+            r.Check(suite, "carddemo: every program without syntax errors, SLL; only DFHAID/DFHBMSCA missing",
+                programs.Count > 0 && syntax.Count == 0 && notSll.Count == 0 && missing.IsSubsetOf(["DFHAID", "DFHBMSCA"]),
+                $"{programs.Count} programs; {syntax.Count} syntax error(s){(syntax.Count > 0 ? " (" + syntax[0] + ")" : "")}; " +
+                $"not SLL [{string.Join(", ", notSll)}]; missing [{string.Join(", ", missing)}]");
+        });
     }
 
     // ------------------------------------------------------------------ JCL suites
@@ -270,20 +333,204 @@ static class Suites
             try
             {
                 var exe = Path.Combine(work, name + ".exe");
-                var cc = Toolchain.Run(env.Cobc, ["-x", "-std=ibm", "-fsign=EBCDIC", "-o", exe, src], work);
+                var cc = Toolchain.Run(env.Cobc, ["-x", "-std=ibm", "-fsign=EBCDIC", "-I", Path.GetDirectoryName(src)!, "-o", exe, src], work);
                 if (cc.Code != 0) { r.Fail(suite, name, new InvalidOperationException("cobc: " + cc.Output.Trim())); continue; }
-                var oracle = Toolchain.Run(exe, [], work);
-                var resp = await env.Transpile(src);
-                var classes = env.CompileGenerated(Path.Combine(work, name), [(ClassOf(resp), resp["javaSource"]!.GetValue<string>())]);
-                var java = env.RunJava(classes, "com.mlcpu.rt.StepRunner", ["--program", Pid(resp)],
+                // <name>.dd lists DD names the program writes: each run gets its own files, compared byte for byte below.
+                var ddFile = Path.ChangeExtension(src, ".dd");
+                var dds = File.Exists(ddFile) ? File.ReadAllLines(ddFile).Select(l => l.Trim()).Where(l => l.Length > 0).ToList() : [];
+                var oracleEnv = dds.ToDictionary(d => "DD_" + d, d => Path.Combine(work, $"{name}.oracle.{d}.dat"));
+                foreach (var f in oracleEnv.Values.Where(File.Exists)) File.Delete(f);
+                var oracle = Toolchain.Run(exe, [], work, oracleEnv);
+                // every program of the source (a CALLed one may follow the main one); the first one runs
+                var all = await env.TranspileAll(src);
+                var resp = all[0];
+                var classes = env.CompileGenerated(Path.Combine(work, name), all.Select(x => (ClassOf(x), x["javaSource"]!.GetValue<string>())));
+                var javaArgs = new List<string> { "--program", Pid(resp) };
+                foreach (var d in dds) { javaArgs.Add("--dd"); javaArgs.Add($"{d}={Path.Combine(work, $"{name}.java.{d}.dat")}"); }
+                var java = env.RunJava(classes, "com.mlcpu.rt.StepRunner", javaArgs,
                     new() { ["MLCPU_DISPLAY_NUMERIC"] = "gnucobol", ["MLCPU_BINARY_TRUNCATE"] = "no", ["MLCPU_DEFAULT_BYTE"] = "0" }, work);
+                foreach (var d in dds)
+                {
+                    string Bytes(string who) => Path.Combine(work, $"{name}.{who}.{d}.dat") is var f && File.Exists(f) ? Convert.ToHexString(File.ReadAllBytes(f)) : "<none>";
+                    var (ob, jb) = (Bytes("oracle"), Bytes("java"));
+                    r.Check(suite, $"{name} file {d}", ob == jb, ob == jb ? $"{ob.Length / 2} bytes" : $"oracle {ob[..Math.Min(80, ob.Length)]} java {jb[..Math.Min(80, jb.Length)]}");
+                }
                 string[] Lines(string s) => s.Replace("\r\n", "\n").TrimEnd('\n').Split('\n');
-                var (o, j) = (Lines(oracle.Output), Lines(java.Output));
+                // libcob's own diagnostics on stderr ("libcob: warning: implicit CLOSE ...") are not program output
+                var (o, j) = (Lines(oracle.Output).Where(l => !l.StartsWith("libcob: warning:", StringComparison.Ordinal)).ToArray(), Lines(java.Output));
                 var first = Enumerable.Range(0, Math.Max(o.Length, j.Length)).FirstOrDefault(i => i >= o.Length || i >= j.Length || o[i] != j[i], -1);
                 r.Check(suite, $"{name} DISPLAY output", first < 0 && oracle.Code == java.Code,
                     first < 0 ? $"rc {oracle.Code}/{java.Code}" : $"line {first + 1}: oracle '{(first < o.Length ? o[first] : "<none>")}' java '{(first < j.Length ? j[first] : "<none>")}'");
             }
             catch (Exception e) { r.Fail(suite, name, e); }
+        }
+    }
+
+    // ------------------------------------------------------------------ worked examples in values (MlCpu.Kit.KitValues) against GnuCOBOL
+
+    /// <summary>
+    /// The worked examples and the shadow feedback show numbers decoded from record bytes (packed, binary, zoned) with their
+    /// scale. Each corpus/kitvalues program DISPLAYs the items of a record, in order, and writes the record to DD KVOUT; every
+    /// item decoded from the written bytes with the record's layout must equal what GnuCOBOL DISPLAYs (as a number, or as text).
+    /// </summary>
+    /// <summary>
+    /// Phase 5: the record kit at scale. A LINKAGE record of more than RecordKitBuilder.MaxRecordItems items (the J3S heap)
+    /// gets no class, with a note; a record of hundreds of items gets its accessor checks over several test methods (one
+    /// method passed the JVM's 64 KB: FSEM0100's FS-CTX); a small kit keeps its single method, as before.
+    /// </summary>
+    public static void RecordKitScale(Report r, Toolchain env)
+    {
+        const string suite = "RecordKitScale";
+        if (!r.Wants(suite)) return;
+        Guard(r, suite, "kit of a large linkage", () =>
+        {
+            var dir = Directory.CreateTempSubdirectory("mlcpu-kitscale-").FullName;
+            var sb = new StringBuilder();
+            void L(string line) => sb.Append("       ").Append(line).Append('\n');
+            L("IDENTIFICATION DIVISION.");
+            L("PROGRAM-ID. KITSCALE.");
+            L("DATA DIVISION.");
+            L("LINKAGE SECTION.");
+            L("01 BIG-REC.");
+            for (int i = 1; i <= RecordKitBuilder.MaxRecordItems + 100; i++) L($"   05 BIG-I{i:D4} PIC 9(4).");
+            L("01 MID-REC.");
+            for (int i = 1; i <= 400; i++) L($"   05 MID-I{i:D4} PIC X(3).");
+            L("01 SMALL-REC.");
+            L("   05 SMALL-A PIC 9(4).");
+            L("PROCEDURE DIVISION USING BIG-REC MID-REC SMALL-REC.");
+            L("    MOVE 1 TO SMALL-A");
+            L("    GOBACK.");
+            var path = Path.Combine(dir, "KITSCALE.cbl");
+            File.WriteAllText(path, sb.ToString());
+            var model = CobolModelBuilder.BuildGroundedFull(path);
+            var kit = RecordKitBuilder.Build(new RecordKitRequest("KITSCALE", "com.mlcpu.capabilities.kitscale", "subprogram", model, model, [],
+                "com.mlcpu.core.Prog_KITSCALE"));
+            var test = kit.Files.First(f => f.Item1.EndsWith("RecordKitTest.java", StringComparison.Ordinal)).Item2;
+            r.Check(suite, "a record over the item limit gets no class, with a note", !kit.Files.Any(f => f.Item1.EndsWith("/BigRec.java", StringComparison.Ordinal))
+                && kit.Notes.Any(n => n.Contains("BIG-REC") && n.Contains("no record class")), string.Join("; ", kit.Notes));
+            r.Check(suite, "a large record's accessor checks span several test methods", test.Contains("void accessorsStoreAndReadLikeTheProgram1()")
+                && test.Contains("void accessorsStoreAndReadLikeTheProgram3()") && !test.Contains("void accessorsStoreAndReadLikeTheProgram()"));
+            var small = RecordKitBuilder.Build(new RecordKitRequest("KITSCALE", "com.mlcpu.capabilities.kitscale", "subprogram",
+                CobolModelBuilder.BuildGroundedFull(Path.Combine(dir, "KITSCALE.cbl")), model, [], "com.mlcpu.core.Prog_KITSCALE"));
+            r.Check(suite, "the small record keeps a class", small.Files.Any(f => f.Item1.EndsWith("/SmallRec.java", StringComparison.Ordinal)));
+        });
+
+        // Thousands of accessor checks (FSJJHM02: 28 methods) passed the 65,535 constants of one class ("too many constants"):
+        // the methods go into @Nested classes of AccessorMethodsPerClass each, and the kit compiles (JUnit stubbed).
+        Guard(r, suite, "kit of thousands of accessor checks", () =>
+        {
+            var dir = Directory.CreateTempSubdirectory("mlcpu-kitchecks-").FullName;
+            var sb = new StringBuilder();
+            void L(string line) => sb.Append("       ").Append(line).Append('\n');
+            L("IDENTIFICATION DIVISION.");
+            L("PROGRAM-ID. KITCHECK.");
+            L("DATA DIVISION.");
+            L("LINKAGE SECTION.");
+            foreach (var rec in new[] { "WIDE-A", "WIDE-B", "WIDE-C" })
+            {
+                L($"01 {rec}.");
+                L($"   05 {rec}-ROW OCCURS 2 TIMES.");
+                for (int i = 1; i <= 800; i++) L($"      10 {rec}-F{i:D4} PIC {(i % 2 == 0 ? "S9(5)V99 COMP-3" : "X(3)")}.");
+            }
+            L("PROCEDURE DIVISION USING WIDE-A WIDE-B WIDE-C.");
+            L("    MOVE SPACES TO WIDE-A");
+            L("    GOBACK.");
+            var path = Path.Combine(dir, "KITCHECK.cbl");
+            File.WriteAllText(path, sb.ToString());
+            var model = CobolModelBuilder.BuildGroundedFull(path);
+            var kit = RecordKitBuilder.Build(new RecordKitRequest("KITCHECK", "com.mlcpu.capabilities.kitcheck", "subprogram", model, model, [],
+                "com.mlcpu.core.Prog_KITCHECK"));
+            var test = kit.Files.First(f => f.Item1.EndsWith("RecordKitTest.java", StringComparison.Ordinal)).Item2;
+            var classes = System.Text.RegularExpressions.Regex.Split(test, @"\n    @Nested\n").Skip(1).ToList();
+            int methods = System.Text.RegularExpressions.Regex.Matches(test, @"void accessorsStoreAndReadLikeTheProgram\d+\(").Count;
+            r.Check(suite, "thousands of accessor checks go into @Nested classes", methods > RecordKitBuilder.AccessorMethodsPerClass
+                && classes.Count == (methods + RecordKitBuilder.AccessorMethodsPerClass - 1) / RecordKitBuilder.AccessorMethodsPerClass
+                && classes.All(c => System.Text.RegularExpressions.Regex.Matches(c, @"void accessorsStoreAndReadLikeTheProgram\d+\(").Count <= RecordKitBuilder.AccessorMethodsPerClass)
+                && test.Contains("import org.junit.jupiter.api.Nested;"), $"{methods} methods, {classes.Count} nested classes");
+            if (env.Java("javac") is not { } javac || !File.Exists(javac) || !Directory.Exists(env.RuntimeClasses))
+            { r.Blocked(suite, "the kit of thousands of checks compiles", "JDK (JAVA_HOME) or runtime classes not found"); return; }
+            var files = new List<string>();
+            foreach (var (rel, content) in kit.Files)
+            {
+                var f = Path.Combine(dir, "src", rel.Replace('/', Path.DirectorySeparatorChar));
+                Directory.CreateDirectory(Path.GetDirectoryName(f)!);
+                File.WriteAllText(f, content);
+                files.Add(f);
+            }
+            var junit = Path.Combine(dir, "src", "stub", "org", "junit", "jupiter", "api");
+            Directory.CreateDirectory(junit);
+            foreach (var a in new[] { "Test", "Nested", "AfterEach" })
+            {
+                File.WriteAllText(Path.Combine(junit, a + ".java"), $"package org.junit.jupiter.api;\npublic @interface {a} {{}}\n");
+                files.Add(Path.Combine(junit, a + ".java"));
+            }
+            File.WriteAllText(Path.Combine(junit, "Assertions.java"), "package org.junit.jupiter.api;\npublic final class Assertions {\n"
+                + "    public static void assertArrayEquals(byte[] a, byte[] b, String m) {}\n    public static void assertEquals(Object a, Object b, String m) {}\n"
+                + "    public static void assertEquals(Object a, Object b) {}\n}\n");
+            files.Add(Path.Combine(junit, "Assertions.java"));
+            var cc = Toolchain.Run(javac, ["-encoding", "UTF-8", "-nowarn", "-J-Xmx2g", "-cp", env.RuntimeClasses, "-d", Path.Combine(dir, "classes"), .. files], dir);
+            r.Check(suite, "the kit of thousands of checks compiles", cc.Code == 0,
+                string.Join(" | ", cc.Output.Split('\n').Where(l => l.Contains("error")).Take(3)));
+        });
+    }
+
+    public static void KitValuesDecoding(Report r, string corpus, Toolchain env)
+    {
+        const string suite = "KitValues";
+        if (!r.Wants(suite)) return;
+        if (env.Cobc is null) { r.Blocked(suite, "decode", "GnuCOBOL (cobc) not found"); return; }
+        var work = Directory.CreateTempSubdirectory("mlcpu-kitvalues-").FullName;
+        foreach (var src in Directory.EnumerateFiles(Path.Combine(corpus, "kitvalues"), "*.cbl").Order(StringComparer.Ordinal))
+        {
+            var name = Path.GetFileNameWithoutExtension(src);
+            Guard(r, suite, name, () =>
+            {
+                var exe = Path.Combine(work, name + ".exe");
+                var cc = Toolchain.Run(env.Cobc, ["-x", "-std=ibm", "-fsign=EBCDIC", "-o", exe, src], work);
+                if (cc.Code != 0) throw new InvalidOperationException("cobc: " + cc.Output.Trim());
+                var file = Path.Combine(work, name + ".dat");
+                var run = Toolchain.Run(exe, [], work, new() { ["DD_KVOUT"] = file });
+                var lines = run.Output.Replace("\r\n", "\n").Split('\n').Where(l => !l.StartsWith("libcob:", StringComparison.Ordinal)).ToList();
+                var record = File.ReadAllBytes(file);
+                var model = CobolModelBuilder.BuildGroundedFull(src);
+                var rec = model.Items.First(i => i.Level == 1 && i.FileName is null && i.Name.EndsWith("-REC", StringComparison.Ordinal));
+                var fields = ReplayPlanBuilder.Layout(rec);
+                r.Check(suite, $"{name} items", fields.Count > 0 && fields.Count <= lines.Count, $"{fields.Count} items, {lines.Count} DISPLAY lines");
+                for (int k = 0; k < fields.Count; k++)
+                {
+                    var f = fields[k];
+                    var kit = new MlCpu.Kit.KitField(f.Name, f.Offset, f.Length,
+                        f.Usage switch { "PACKED" => "packed", "BINARY" => "binary", _ => f.Numeric ? "zoned" : "text" }, f.Pic, 0, f.Scale, f.Signed,
+                        false, false, false, [], null);
+                    var shown = MlCpu.Kit.KitValues.Show(kit, record, f.Offset);
+                    var display = k < lines.Count ? lines[k] : "<none>";
+                    bool same = kit.Numeric ? Canon(shown) == Canon(Displayed(display, f.Scale)) : shown == "'" + display.TrimEnd(' ') + "'";
+                    r.Check(suite, $"{name} {f.Name} ({f.Usage} {f.Pic})", same, $"examples show {shown}, GnuCOBOL DISPLAYs {display}");
+                }
+            });
+        }
+
+        // GnuCOBOL (-std=ibm) DISPLAYs a numeric item as its digits with the decimal point implied and the sign as a separate
+        // leading or trailing character ("+00000000010005000", "0012345-"): the value, with the point placed by the scale.
+        static string Displayed(string d, int scale)
+        {
+            d = d.Trim();
+            bool neg = d.StartsWith('-') || d.EndsWith('-');
+            var digits = d.Trim('+', '-');
+            if (digits.Contains('.') || scale <= 0) return (neg ? "-" : "") + digits;
+            digits = digits.PadLeft(scale + 1, '0');
+            return (neg ? "-" : "") + digits[..^scale] + "." + digits[^scale..];
+        }
+
+        // A number as digits: sign, integer part without leading zeros, the fraction as given ("+0001.50" and "1.50" agree).
+        static string Canon(string s)
+        {
+            s = s.Trim();
+            bool neg = s.StartsWith('-');
+            s = s.TrimStart('+', '-');
+            var parts = s.Split('.');
+            var integer = parts[0].TrimStart('0');
+            return (neg ? "-" : "") + (integer.Length == 0 ? "0" : integer) + (parts.Length > 1 ? "." + parts[1] : "");
         }
     }
 
@@ -392,6 +639,26 @@ static class Suites
                 $"{Count("CALCDEMOCharacterizationTest", "tests")} tests");
         }
         catch (Exception e) { r.Fail(suite, "calcdemo", e); }
+
+        // Phase 5: a program past the JVM's per-method limit (PARITY23: field views, _init and _fields in helper methods)
+        // splits into State_ and Prog_ with its helpers on the state side, and both compile.
+        try
+        {
+            var big = Path.Combine(corpus, "parity", "PARITY23.cbl");
+            var resp = await env.Transpile(big);
+            var cls = ClassOf(resp);
+            var src = resp["javaSource"]!.GetValue<string>().Replace("package com.mlcpu.gen;", "package com.mlcpu.core;");
+            var (state, prog, reason) = ProgramStateProjection.SplitOne("PARITY23", src);
+            r.Check(suite, "P3 state split of a large program moves its _init/_fields helpers", reason is null && state!.Contains("void _fields0(")
+                && state.Contains("void _init0(") && !prog!.Contains("void _fields0(") && !prog.Contains("void _init0("), reason ?? "");
+            if (reason is null)
+            {
+                var work = Directory.CreateTempSubdirectory("mlcpu-bigsplit-").FullName;
+                env.CompileGenerated(work, [("State_PARITY23", state!), (cls, prog!)]);
+                r.Check(suite, "P3 state split of a large program compiles", true);
+            }
+        }
+        catch (Exception e) { r.Fail(suite, "large program state split", e); }
     }
 
     const string ProjectionBuild = """

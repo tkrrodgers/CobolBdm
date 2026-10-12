@@ -20,7 +20,8 @@ public sealed class ProcedureParser
         "TRUE","FALSE","ALSO","OTHER","ANY","UPON","ADVANCING","LINE","LINES","PAGE","RECORD","NEXT","PREVIOUS","INPUT","OUTPUT","I-O",
         "EXTEND","FUNCTION","LENGTH","ADDRESS","CORR","CORRESPONDING","REFERENCE","CONTENT","VALUE","TEST","DEPENDING","SENTENCE",
         "PROGRAM","PARAGRAPH","SECTION","PERFORM","CYCLE","RUN","SIZE","EOP","END-OF-PAGE","UP","DOWN","NO","LOCK","REWIND","OMITTED",
-        "DATE","DAY","TIME","DAY-OF-WEEK","YYYYMMDD","YYYYDDD","PROCEED"
+        "DATE","DAY","TIME","DAY-OF-WEEK","YYYYMMDD","YYYYDDD","PROCEED",
+        "ALPHANUMERIC","ALPHANUMERIC-EDITED","NUMERIC-EDITED","NATIONAL","NATIONAL-EDITED","DBCS","EGCS","DEFAULT","FILLER","DATA"
     };
 
     readonly List<Token> _t;
@@ -77,26 +78,45 @@ public sealed class ProcedureParser
                 if (At("BY")) { Next(); Next(); continue; }
                 usingNames.Add(Next().Text.ToUpperInvariant());
             }
+        bool returning = At("RETURNING");
+        int returningLine = Cur.Line;
         while (!AtEnd && Cur.Kind != TokKind.Period) Next();
         Next();
 
         var paragraphs = new List<Paragraph>();
         string? section = null;
         Paragraph? current = null;
+        bool inDeclaratives = false;
+        if (returning)
+        {
+            // GnuCOBOL 3.3 does not implement a program's RETURNING item ("program RETURNING is not implemented"):
+            // the program stops when entered instead of guessing.
+            current = new Paragraph { Name = "MAINLINE", Line = returningLine };
+            current.Statements.Add(new Stmt { Verb = "RAW", Line = returningLine, Frontier = "PROCEDURE DIVISION RETURNING is not lowered (GnuCOBOL 3.3 does not implement it)", Text = "PROCEDURE DIVISION RETURNING" });
+            paragraphs.Add(current);
+        }
+
         while (!AtEnd)
         {
-            if (At("DECLARATIVES")) { SkipDeclaratives(); continue; }
+            if (At("DECLARATIVES") && Peek().Kind == TokKind.Period) { Next(); Next(); inDeclaratives = true; continue; }
+            if (inDeclaratives && At("END") && Peek().Is("DECLARATIVES"))
+            {
+                Next(); Next(); if (Cur.Kind == TokKind.Period) Next();
+                inDeclaratives = false; section = null; current = null;
+                continue;
+            }
             if (IsLabelAt(_p))
             {
                 var name = Next();
                 bool isSection = Accept("SECTION");
                 Next(); // period
                 if (isSection) section = name.Text.ToUpperInvariant();
-                current = new Paragraph { Name = name.Text.ToUpperInvariant(), Section = section, Line = name.Line, IsSection = isSection };
+                current = new Paragraph { Name = name.Text.ToUpperInvariant(), Section = section, Line = name.Line, IsSection = isSection, Declarative = inDeclaratives };
                 paragraphs.Add(current);
                 _sentence = 0;
                 continue;
             }
+            if (inDeclaratives && At("USE") && current is not null) { ParseUse(current); continue; }
             if (current is null)
             {
                 current = new Paragraph { Name = "MAINLINE", Line = Cur.Line };
@@ -110,11 +130,39 @@ public sealed class ProcedureParser
         return paragraphs;
     }
 
-    void SkipDeclaratives()
+    /// <summary>
+    /// USE [GLOBAL] AFTER [STANDARD] {ERROR|EXCEPTION} PROCEDURE [ON] {file...|INPUT|OUTPUT|I-O|EXTEND}. Other USE
+    /// forms (FOR DEBUGGING, BEFORE REPORTING, LABEL) are reported: their sections never run.
+    /// </summary>
+    void ParseUse(Paragraph section)
     {
-        while (!AtEnd && !(At("END") && Peek().Is("DECLARATIVES"))) Next();
-        Next(); Next(); if (Cur.Kind == TokKind.Period) Next();
-        _diag.Add("DECLARATIVES skipped (frontier)");
+        int start = _p;
+        var words = new List<string>();
+        Next();
+        while (!AtEnd && Cur.Kind != TokKind.Period) words.Add(Next().Upper);
+        if (Cur.Kind == TokKind.Period) Next();
+        int i = 0;
+        if (i < words.Count && words[i] == "GLOBAL") i++;
+        if (i < words.Count && words[i] == "AFTER") i++;
+        if (i < words.Count && words[i] == "STANDARD") i++;
+        if (i >= words.Count || words[i] is not ("ERROR" or "EXCEPTION"))
+        {
+            _diag.Add($"L{_t[start].Line}: USE {string.Join(" ", words)} is not lowered (its section never runs)");
+            return;
+        }
+        i++;
+        if (i < words.Count && words[i] == "PROCEDURE") i++;
+        if (i < words.Count && words[i] == "ON") i++;
+        var files = new List<string>();
+        var modes = new List<string>();
+        for (; i < words.Count; i++)
+        {
+            if (words[i] is "INPUT" or "OUTPUT" or "I-O" or "EXTEND") modes.Add(words[i]);
+            else if (_idx.File(words[i]) is not null) files.Add(words[i]);
+            else _diag.Add($"L{_t[start].Line}: USE ... ON {words[i]}: not a file or open mode");
+        }
+        if (files.Count > 0) section.UseFiles = files;
+        if (modes.Count > 0) section.UseModes = modes;
     }
 
     void ParseSentence(List<Stmt> into)
@@ -194,6 +242,10 @@ public sealed class ProcedureParser
                 case "EVALUATE": ParseEvaluate(s); break;
                 case "PERFORM": ParsePerform(s); break;
                 case "GO": ParseGoTo(s); break;
+                case "ALTER": ParseAlter(s); break;
+                case "SORT": case "MERGE": ParseSort(s); break;
+                case "RELEASE": Next(); s.Set("record", ParseRef()); if (Accept("FROM")) s.Set("from", ParseOperand()); break;
+                case "RETURN": ParseReturn(s); break;
                 case "DISPLAY": ParseDisplay(s); break;
                 case "ACCEPT": ParseAccept(s); break;
                 case "OPEN": ParseOpen(s); break;
@@ -214,7 +266,7 @@ public sealed class ProcedureParser
                 case "CONTINUE": Next(); break;
                 case "NEXT": Next(); Expect("SENTENCE"); s.Verb = "NEXT SENTENCE"; break;
                 case "EXEC": ParseExec(s); break;
-                case "SEARCH": SkipScoped(s, "END-SEARCH", "SEARCH is not lowered"); break;
+                case "SEARCH": ParseSearch(s); break;
                 default:
                     SkipGeneric(s, $"{verbTok.Upper} is not lowered");
                     break;
@@ -770,7 +822,17 @@ public sealed class ProcedureParser
             Expect("FROM"); s.Set("from", ParseExpr());
             Expect("BY"); s.Set("by", ParseExpr());
             Expect("UNTIL"); s.Set("until", ParseCondition());
-            if (At("AFTER")) throw Fail("PERFORM VARYING … AFTER is not lowered");
+            // AFTER id FROM x BY y UNTIL cond ...: each an "after" node with Args [id, from, by, until].
+            var afters = new List<Node>();
+            while (Accept("AFTER"))
+            {
+                var v = ParseRef();
+                Expect("FROM"); var from = ParseExpr();
+                Expect("BY"); var by = ParseExpr();
+                Expect("UNTIL"); var until = ParseCondition();
+                afters.Add(new Node { K = "after", Args = [v, from, by, until] });
+            }
+            if (afters.Count > 0) s.Set("after", afters);
         }
         else if (IsOperandStart() && (Peek().Is("TIMES") || Cur.Kind == TokKind.Word && TimesAhead()))
         {
@@ -801,9 +863,33 @@ public sealed class ProcedureParser
         s.Verb = "GO TO";
         var targets = new List<Node>();
         while (Cur.Kind is TokKind.Word or TokKind.Number && _paragraphNames.Contains(Cur.Text)) targets.Add(new Node { K = "para", V = Next().Upper });
+        if (targets.Count == 0 && Cur.Kind == TokKind.Period)
+        {
+            // GO TO. : the target is set by ALTER.
+            s.Set("targets", targets);
+            s.Set("alterable", "true");
+            return;
+        }
         if (targets.Count == 0) throw Fail("GO TO without a resolvable target");
         s.Set("targets", targets);
         if (Accept("DEPENDING")) { Accept("ON"); s.Set("depending", ParseRef()); }
+    }
+
+    /// <summary>ALTER p1 TO [PROCEED TO] q1 [p2 TO [PROCEED TO] q2]...: "pairs" of alter nodes (V = altered, Op = new target).</summary>
+    void ParseAlter(Stmt s)
+    {
+        Next();
+        var pairs = new List<Node>();
+        while (Cur.Kind is TokKind.Word or TokKind.Number && _paragraphNames.Contains(Cur.Text) && Peek().Is("TO"))
+        {
+            var from = Next().Upper;
+            Expect("TO");
+            if (Accept("PROCEED")) Expect("TO");
+            if (!(Cur.Kind is TokKind.Word or TokKind.Number && _paragraphNames.Contains(Cur.Text))) throw Fail($"ALTER {from} TO an unknown procedure '{Cur.Text}'");
+            pairs.Add(new Node { K = "alter", V = from, Op = Next().Upper });
+        }
+        if (pairs.Count == 0) throw Fail("ALTER without a paragraph");
+        s.Set("pairs", pairs);
     }
 
     void ParseDisplay(Stmt s)
@@ -1077,11 +1163,42 @@ public sealed class ProcedureParser
         }
     }
 
+    static readonly HashSet<string> InitCategories = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ALPHABETIC", "ALPHANUMERIC", "ALPHANUMERIC-EDITED", "NUMERIC", "NUMERIC-EDITED", "NATIONAL", "NATIONAL-EDITED", "DBCS", "EGCS"
+    };
+
+    /// <summary>
+    /// INITIALIZE id... [WITH FILLER] [{ALL | category} TO VALUE] [THEN] [REPLACING {category [DATA] BY value}...]
+    /// [THEN TO DEFAULT]. The options become "filler", "toValue", "replacing" (category nodes) and "toDefault".
+    /// </summary>
     void ParseInitialize(Stmt s)
     {
         Next();
         s.Set("dst", ParseReceivers(false));
-        if (At("REPLACING") || At("WITH") || At("ALL") || At("TO")) throw Fail("INITIALIZE with REPLACING/VALUE is not lowered");
+        if (Accept("WITH")) { Expect("FILLER"); s.Set("filler", "true"); }
+        else if (Accept("FILLER")) s.Set("filler", "true");
+        if ((At("ALL") || InitCategories.Contains(Cur.Text)) && Peek().Is("TO"))
+        {
+            s.Set("toValue", Next().Upper);
+            Expect("TO"); Expect("VALUE");
+        }
+        Accept("THEN");
+        if (Accept("REPLACING"))
+        {
+            var reps = new List<Node>();
+            while (Cur.Kind == TokKind.Word && InitCategories.Contains(Cur.Text))
+            {
+                var cat = Next().Upper;
+                Accept("DATA");
+                Expect("BY");
+                reps.Add(new Node { K = "replace", V = cat, L = ParseOperand() });
+            }
+            if (reps.Count == 0) throw Fail("INITIALIZE REPLACING without a category");
+            s.Set("replacing", reps);
+            Accept("THEN");
+        }
+        if (Accept("TO")) { Expect("DEFAULT"); s.Set("toDefault", "true"); }
     }
 
     void ParseSet(Stmt s)
@@ -1104,6 +1221,108 @@ public sealed class ProcedureParser
         if (Accept("UP")) { Expect("BY"); s.Set("mode", "UP"); s.Set("value", ParseExpr()); return; }
         if (Accept("DOWN")) { Expect("BY"); s.Set("mode", "DOWN"); s.Set("value", ParseExpr()); return; }
         throw Fail("unsupported SET form");
+    }
+
+    /// <summary>
+    /// SEARCH [ALL] table [VARYING item] [AT END imperative] WHEN condition imperative ... [END-SEARCH]. The search
+    /// index is the VARYING item when it indexes the table, else the table's first INDEXED BY index.
+    /// </summary>
+    void ParseSearch(Stmt s)
+    {
+        Next();
+        if (Accept("ALL")) s.Verb = "SEARCH ALL";
+        var table = ParseRef();
+        var t = _idx.Items.FirstOrDefault(x => x.Id == table.Id);
+        if (t is null || t.Occurs == 0) throw Fail($"{s.Verb} of an item that is not a table");
+        if (t.IndexedBy.Count == 0) throw Fail($"{s.Verb} of a table without INDEXED BY");
+        s.Set("table", table);
+        Node? varying = null;
+        if (s.Verb == "SEARCH" && Accept("VARYING")) { varying = ParseRef(); s.Set("varying", varying); }
+        var own = varying is not null && t.IndexedBy.Any(n => string.Equals(n, varying.V, StringComparison.OrdinalIgnoreCase))
+            ? varying.V! : t.IndexedBy[0];
+        var index = _idx.Items.FirstOrDefault(x => x.Level == 77 && x.Usage == Usage.Index && string.Equals(x.Name, own, StringComparison.OrdinalIgnoreCase))
+            ?? throw Fail($"index {own} of {t.Name} not found");
+        s.Set("index", Node.Ref(index.Id, index.Name));
+        if (At("AT") && Peek().Is("END") || At("END"))
+        {
+            Accept("AT"); Expect("END");
+            s.Block("AT-END", At("NEXT") && Peek().Is("SENTENCE") ? [ParseStatement()] : ParseStatements());
+        }
+        var whens = new List<Stmt>();
+        while (At("WHEN"))
+        {
+            var w = new Stmt { Verb = "WHEN", Line = Cur.Line, Sentence = _sentence };
+            int start = _p;
+            Next();
+            w.Set("cond", ParseCondition());
+            w.Tokens = _t.GetRange(start, _p - start);
+            w.Text = TextOf(w.Tokens);
+            w.Block("TRUE", At("NEXT") && Peek().Is("SENTENCE") ? [ParseStatement()] : ParseStatements());
+            whens.Add(w);
+        }
+        if (whens.Count == 0) throw Fail($"{s.Verb} without WHEN");
+        if (s.Verb == "SEARCH ALL" && whens.Count > 1) throw Fail("SEARCH ALL with more than one WHEN");
+        s.Block("WHEN", whens);
+        Accept("END-SEARCH");
+    }
+
+    /// <summary>
+    /// SORT file|table ON {ASCENDING|DESCENDING} KEY k... [WITH DUPLICATES IN ORDER] {INPUT PROCEDURE p [THRU q] |
+    /// USING f...} {OUTPUT PROCEDURE p [THRU q] | GIVING f...}; MERGE file ... USING f f... {OUTPUT PROCEDURE | GIVING}.
+    /// </summary>
+    void ParseSort(Stmt s)
+    {
+        Next();
+        if (_idx.File(Cur.Text) is { } sd) { s.Set("file", Next().Upper); }
+        else s.Set("table", ParseRef());
+        var keys = new List<Node>();
+        while (true)
+        {
+            Accept("ON");
+            if (!(At("ASCENDING") || At("DESCENDING"))) break;
+            var dir = Next().Upper == "ASCENDING" ? "ASC" : "DESC";
+            Accept("KEY"); Accept("IS");
+            while (IsRefStart() && !At("ASCENDING") && !At("DESCENDING") && !At("WITH") && !At("DUPLICATES") && !At("COLLATING") && !At("INPUT") && !At("OUTPUT") && !At("USING") && !At("GIVING"))
+                keys.Add(new Node { K = "key", Op = dir, L = ParseRef() });
+        }
+        s.Set("keys", keys);
+        if (Accept("WITH") || At("DUPLICATES")) { Expect("DUPLICATES"); Accept("IN"); Accept("ORDER"); s.Set("duplicates", "true"); }
+        if (At("COLLATING") || At("SEQUENCE")) throw Fail($"{s.Verb} with a COLLATING SEQUENCE is not lowered");
+        if (Accept("INPUT"))
+        {
+            Expect("PROCEDURE"); Accept("IS");
+            s.Set("inputProc", Next().Upper);
+            if (Accept("THRU") || Accept("THROUGH")) s.Set("inputThru", Next().Upper);
+        }
+        else if (Accept("USING"))
+        {
+            var files = new List<Node>();
+            while (Cur.Kind == TokKind.Word && _idx.File(Cur.Text) is not null) files.Add(new Node { K = "file", V = Next().Upper });
+            s.Set("using", files);
+        }
+        if (Accept("OUTPUT"))
+        {
+            Expect("PROCEDURE"); Accept("IS");
+            s.Set("outputProc", Next().Upper);
+            if (Accept("THRU") || Accept("THROUGH")) s.Set("outputThru", Next().Upper);
+        }
+        else if (Accept("GIVING"))
+        {
+            var files = new List<Node>();
+            while (Cur.Kind == TokKind.Word && _idx.File(Cur.Text) is not null) files.Add(new Node { K = "file", V = Next().Upper });
+            s.Set("giving", files);
+        }
+    }
+
+    /// <summary>RETURN sort-file [RECORD] [INTO id] AT END ... NOT AT END ... [END-RETURN].</summary>
+    void ParseReturn(Stmt s)
+    {
+        Next();
+        s.Set("file", ExpectFile());
+        Accept("RECORD");
+        if (Accept("INTO")) s.Set("into", ParseRef());
+        ParseIoPhrases(s);
+        Accept("END-RETURN");
     }
 
     void ParseCall(Stmt s)

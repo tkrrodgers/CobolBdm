@@ -56,6 +56,12 @@ public sealed class Paragraph
     public int EndLine { get; set; }
     public bool IsSection { get; set; }
     public List<Stmt> Statements { get; set; } = [];
+    /// <summary>Inside DECLARATIVES: run only through its USE statement, never by fall-through from the program's start.</summary>
+    public bool Declarative { get; set; }
+    /// <summary>A declarative section's USE AFTER ERROR files, or null.</summary>
+    public List<string>? UseFiles { get; set; }
+    /// <summary>A declarative section's USE AFTER ERROR open modes (INPUT, OUTPUT, I-O, EXTEND), or null.</summary>
+    public List<string>? UseModes { get; set; }
 }
 
 /// <summary>The analysed program: data items with layouts, files, paragraphs with the statement tree.</summary>
@@ -72,4 +78,8 @@ public sealed class CobolProgram
     public List<string> Diagnostics { get; set; } = [];
     public bool ExecSql { get; set; }
     public bool ExecCics { get; set; }
+    /// <summary>PROGRAM-ID ... IS INITIAL: every CALL starts from the initial state.</summary>
+    public bool IsInitial { get; set; }
+    /// <summary>PROGRAM-ID ... IS RECURSIVE.</summary>
+    public bool IsRecursive { get; set; }
 }

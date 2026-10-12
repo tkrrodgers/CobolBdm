@@ -33,8 +33,9 @@ public sealed class WorkspaceActions(OperationService ops, ProjectService projec
     public Operation StartPublish(string projectId, string targetDir) =>
         ops.Start(projectId, Publish, "Publish the normalized Spring estate", async (op, ct) => op.Result = await conversion.PublishAsync(projectId, targetDir, op, ct));
 
-    public Operation StartTest(string projectId) =>
-        ops.Start(projectId, Test, "Build & test against GnuCOBOL", async (op, ct) => op.Result = await conversion.BuildAndTestAsync(projectId, op, ct));
+    public Operation StartTest(string projectId, bool runTests = true) =>
+        ops.Start(projectId, Test, runTests ? "Build & test against GnuCOBOL" : "Build & job checks against GnuCOBOL",
+            async (op, ct) => op.Result = await conversion.BuildAndTestAsync(projectId, op, ct, runTests));
 
     public Operation StartGemmaDesign(string projectId, IReadOnlyList<string> programs, GemmaOptions options) =>
         ops.Start(projectId, GemmaDesign, $"Gemma 4 designs {string.Join(", ", programs)}", (op, ct) => gemma.DesignAsync(projectId, programs, options, op, ct), "gpu");

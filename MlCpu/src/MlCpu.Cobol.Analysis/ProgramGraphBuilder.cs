@@ -53,7 +53,20 @@ public static class ProgramGraphBuilder
         public int LoopFollow = -1;
     }
 
-    public static ProgramGraph Build(CobolProgram p)
+    public static ProgramGraph Build(CobolProgram p) => Build(p, dataDeps: true);
+
+    static readonly System.Runtime.CompilerServices.ConditionalWeakTable<CobolProgram, IReadOnlyList<CallSite>> CallCache = new();
+
+    /// <summary>A program's CALL sites (dynamic ones resolved), computed once per model: CALL closures ask for every program again and again.</summary>
+    public static IReadOnlyList<CallSite> Calls(CobolProgram p) => CallCache.GetValue(p, m => Build(m, dataDeps: false).Calls);
+
+    /// <summary>
+    /// The graph without the def→use edges when <paramref name="dataDeps"/> is false: reaching definitions then run only
+    /// when a dynamic CALL needs them to resolve its targets. Paragraph edges, CALLs, control dependences, dead paragraphs
+    /// and the CFG are the same. The data dependences of a large program grow with its shared storage: a J3S program whose
+    /// every CALL passes the heap and context records BY REFERENCE has 5.2 million, which only the DDG needs.
+    /// </summary>
+    public static ProgramGraph Build(CobolProgram p, bool dataDeps)
     {
         var g = new ProgramGraph { ProgramId = p.ProgramId };
         var nodes = new List<CfgNode>();
@@ -70,7 +83,12 @@ public static class ProgramGraphBuilder
         var returnSites = new List<(int RangeEnd, int Site)>();
         var performs = new Dictionary<int, (int Lo, int Hi, int After)>();
         var alters = new List<(string From, string To)>();
-        nodes[progEntry].Succ.Add(p.Paragraphs.Count > 0 ? paraEntry[0] : progExit);
+        // The program starts after DECLARATIVES; a declarative section runs only on an I/O exception (modelled as
+        // reachable from the entry) and ends the program flow if fallen out of.
+        int startPara = p.Paragraphs.FindIndex(x => !x.Declarative);
+        nodes[progEntry].Succ.Add(startPara >= 0 ? paraEntry[startPara] : progExit);
+        for (int di = 0; di < p.Paragraphs.Count; di++)
+            if (p.Paragraphs[di].Declarative && p.Paragraphs[di].IsSection) nodes[progEntry].Succ.Add(paraEntry[di]);
 
         int RangeEnd(string name)
         {
@@ -114,6 +132,48 @@ public static class ProgramGraphBuilder
                         chain = wn;
                     }
                     succ.Add(chain);
+                    break;
+                }
+                case "SEARCH" or "SEARCH ALL":
+                {
+                    // A loop over the table: AT END leaves it; each WHEN either runs its statements and leaves, or
+                    // falls to the next WHEN; after the last one the index moves and the search repeats.
+                    succ.Add(BuildBlock(s.Blocks?.GetValueOrDefault("AT-END"), next, ctx, para));
+                    int chain = n;
+                    var whens = s.Blocks?.GetValueOrDefault("WHEN") ?? [];
+                    for (int i = whens.Count - 1; i >= 0; i--)
+                    {
+                        var w = whens[i];
+                        int wn = New(w.StepId, w);
+                        AccessesOf(w, nodes[wn], items, files);
+                        nodes[wn].Succ.Add(BuildBlock(w.Blocks?.GetValueOrDefault("TRUE"), next, ctx, para));
+                        nodes[wn].Succ.Add(chain);
+                        g.CtrlDeps.Add(new CtrlDepEdge(s.StepId, w.StepId, "EVAL"));
+                        chain = wn;
+                    }
+                    succ.Add(chain);
+                    break;
+                }
+                case "SORT" or "MERGE":
+                {
+                    // INPUT / OUTPUT PROCEDUREs are performed ranges.
+                    bool any = false;
+                    foreach (var (proc, thru) in new[] { (s.Str("inputProc"), s.Str("inputThru")), (s.Str("outputProc"), s.Str("outputThru")) })
+                    {
+                        if (proc is null) continue;
+                        if (!paraIndex.TryGetValue(proc, out var lo) || RangeEnd(thru ?? proc) < 0)
+                        {
+                            g.Frontiers.Add(new Frontier("perform", proc, $"unresolved SORT procedure at {s.StepId}"));
+                            continue;
+                        }
+                        int hi = RangeEnd(thru ?? proc);
+                        succ.Add(paraEntry[lo]);
+                        returnSites.Add((hi, next));
+                        g.ParagraphEdges.Add(new ParagraphEdge(para, p.Paragraphs[lo].Name, "perform"));
+                        any = true;
+                    }
+                    succ.Add(next);
+                    if (!any && s.Frontier is not null) g.Frontiers.Add(new Frontier("statement", s.StepId, s.Frontier));
                     break;
                 }
                 case "PERFORM":
@@ -185,7 +245,7 @@ public static class ProgramGraphBuilder
             for (int si = sentences.Count - 1; si >= 0; si--)
                 follow = BuildBlock(sentences[si], follow, new Ctx { SentenceFollow = follow, ParaExit = paraExit[pi] }, para.Name);
             nodes[paraEntry[pi]].Succ.Add(follow);
-            nodes[paraExit[pi]].Succ.Add(pi + 1 < p.Paragraphs.Count ? paraEntry[pi + 1] : progExit);
+            nodes[paraExit[pi]].Succ.Add(pi + 1 < p.Paragraphs.Count && p.Paragraphs[pi + 1].Declarative == para.Declarative ? paraEntry[pi + 1] : progExit);
         }
         // An ALTERed paragraph's GO TO may transfer to any ALTER target.
         foreach (var (from, to) in alters.Distinct())
@@ -233,8 +293,11 @@ public static class ProgramGraphBuilder
             if (fallthrough.Contains(pi)) g.ParagraphEdges.Add(new ParagraphEdge(p.Paragraphs[pi].Name, p.Paragraphs[pi + 1].Name, "fallthrough"));
         }
 
-        var (defs, inSets) = ReachingDefinitions(nodes, g, progEntry);
-        ResolveDynamicCalls(g, nodes, items, defs, inSets);
+        if (dataDeps || g.Calls.Any(c => c.Kind == "dynamic"))
+        {
+            var (defs, inSets) = ReachingDefinitions(nodes, g, progEntry, dataDeps);
+            ResolveDynamicCalls(g, nodes, items, defs, inSets);
+        }
 
         foreach (var n in nodes.Where(n => n.Stmt is not null))
             g.Cfg[n.Label] = Collapse(nodes, n.Id).Distinct().ToList();
@@ -311,10 +374,19 @@ public static class ProgramGraphBuilder
                 Def(s.Get("rem"));
                 break;
             case "IF": case "WHEN": Use(s.Get("cond")); break;
+            case "SEARCH" or "SEARCH ALL":
+                if (s.Get("index") is { } ix) { Use(ix); Def(ix); }
+                if (s.Get("varying") is { } vy) { Use(vy); Def(vy); }
+                break;
             case "EVALUATE": foreach (var x in L("subjects")) Use(x); break;
             case "PERFORM":
                 Use(s.Get("until")); Use(s.Get("times")); Use(s.Get("from")); Use(s.Get("by"));
                 if (s.Get("var") is { } v) { Use(v); Def(v); }
+                foreach (var a in L("after"))
+                {
+                    Use(a.Args![0]); Def(a.Args[0]);
+                    Use(a.Args[1]); Use(a.Args[2]); Use(a.Args[3]);
+                }
                 break;
             case "GO TO": Use(s.Get("depending")); break;
             case "DISPLAY": foreach (var x in L("items")) Use(x); break;
@@ -384,7 +456,7 @@ public static class ProgramGraphBuilder
 
     // ------------------------------------------------------------------ reaching definitions
 
-    static (List<(int Node, Access A)> Defs, BitArray[] In) ReachingDefinitions(List<CfgNode> nodes, ProgramGraph g, int entry)
+    static (List<(int Node, Access A)> Defs, BitArray[] In) ReachingDefinitions(List<CfgNode> nodes, ProgramGraph g, int entry, bool edges = true)
     {
         var defs = new List<(int Node, Access A)>();
         foreach (var n in nodes) foreach (var d in n.Defs) defs.Add((n.Id, d));
@@ -433,6 +505,7 @@ public static class ProgramGraphBuilder
         g.DataflowIterations = iter;
         if (changed) g.Frontiers.Add(new Frontier("dataflow", g.ProgramId, $"reaching definitions did not converge in {MaxIterations} iterations; data dependences are partial"));
 
+        if (!edges) return (defs, inSet);
         var seen = new HashSet<(string, string, string)>();
         foreach (var n in nodes.Where(n => n.Stmt is not null))
             foreach (var u in n.Uses)

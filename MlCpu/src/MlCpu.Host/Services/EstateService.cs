@@ -71,7 +71,7 @@ public sealed partial class EstateService(ConfigService config, ProjectService p
             var targets = CallRx().Matches(File.ReadAllText(src)).Select(c => c.Groups[1].Value.ToUpperInvariant()).ToList();
             try
             {
-                foreach (var c in MlCpu.Cobol.Analysis.ProgramGraphBuilder.Build(MlCpu.Cobol.Analysis.CobolModelBuilder.BuildGroundedFull(src)).Calls)
+                foreach (var c in MlCpu.Cobol.Analysis.ProgramGraphBuilder.Calls(MlCpu.Cobol.Analysis.CobolModelBuilder.BuildGroundedFull(src)))
                     targets.AddRange(c.ResolvedTargets.Select(t => t.ToUpperInvariant()));
             }
             catch (Exception) { /* the literal scan still applies */ }

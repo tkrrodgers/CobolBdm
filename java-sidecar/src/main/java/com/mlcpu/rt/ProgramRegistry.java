@@ -16,11 +16,13 @@ public final class ProgramRegistry {
     private static ClassLoader loader;
 
     public static synchronized void register(String programId, CobolBase program) {
+        targets.clear();
         instances.put(programId.toUpperCase(), program);
     }
 
     /** A normalized subprogram that answers CALLs to {@code programId} in this run unit. */
     public static synchronized void registerModern(String programId, ModernProgram program) {
+        targets.clear();
         modern.put(programId.toUpperCase(), program);
     }
 
@@ -29,10 +31,33 @@ public final class ProgramRegistry {
     }
 
     public static synchronized void useLoader(ClassLoader cl) {
+        targets.clear();
         loader = cl;
     }
 
+    /** A CALL target by the name as written: normalized and resolved once per registry state. */
+    record Target(String id, ModernProgram modern, CobolBase program) {}
+
+    private static final Map<String, Target> targets = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** The CALL target for a name as written; read without a lock once resolved. */
+    static Target target(String name) {
+        Target t = targets.get(name);
+        return t != null ? t : targetSlow(name);
+    }
+
+    private static synchronized Target targetSlow(String name) {
+        Target t = targets.get(name);
+        if (t != null) return t;
+        String id = name.trim().toUpperCase();
+        ModernProgram m = modern.get(id);
+        t = new Target(id, m, m != null ? null : resolve(id));
+        if (t.program() != null || t.modern() != null) targets.put(name, t);
+        return t;
+    }
+
     public static synchronized void reset() {
+        targets.clear();
         instances.clear();
         faithful.clear();
         modern.clear();
@@ -69,12 +94,20 @@ public final class ProgramRegistry {
     }
 
     /**
-     * Calls a normalized subprogram: each argument's bytes are copied into an array, the program runs, and the arrays are
-     * copied back into the caller's storage (BY REFERENCE).
+     * Calls a normalized subprogram BY REFERENCE. An argument that is a whole storage array (a level-01 record passed as
+     * such: offset 0, the array's length) is passed as that array, so the callee reads and writes the caller's bytes
+     * directly; any other argument is copied into an array and copied back after the call. The J3S estate passes its
+     * 477 MB heap record in every CALL: copying it twice per CALL would never finish.
      */
     public static void callModern(ModernProgram target, CobField[] args) {
         byte[][] params = new byte[args.length][];
-        for (int i = 0; i < args.length; i++) params[i] = args[i] == null ? new byte[0] : args[i].bytes();
+        boolean[] shared = new boolean[args.length];
+        for (int i = 0; i < args.length; i++) {
+            CobField a = args[i];
+            if (a == null) params[i] = new byte[0];
+            else if (a.pos() == 0 && a.len == a.buf().length) { params[i] = a.buf(); shared[i] = true; }
+            else params[i] = a.bytes();
+        }
         try {
             target.call(params);
         } catch (ModernStep.Abend a) {
@@ -85,7 +118,7 @@ public final class ProgramRegistry {
             throw new IllegalStateException("normalized subprogram failed: " + e, e);
         }
         for (int i = 0; i < args.length; i++) {
-            if (args[i] == null) continue;
+            if (args[i] == null || shared[i]) continue;
             System.arraycopy(params[i], 0, args[i].buf(), args[i].pos(), Math.min(params[i].length, args[i].len));
         }
     }

@@ -66,8 +66,16 @@ public static class Lexer
                 }
                 if (IsWordChar(c))
                 {
+                    // A word may hold hyphens anywhere but at its ends, consecutive ones included (M1-J3-S--EVENT--HEAD).
                     int j = i;
-                    while (j < s.Length && (IsWordChar(s[j]) || (s[j] == '-' && j + 1 < s.Length && IsWordChar(s[j + 1])))) j++;
+                    while (j < s.Length)
+                    {
+                        if (IsWordChar(s[j])) { j++; continue; }
+                        int k = j;
+                        while (k < s.Length && s[k] == '-') k++;
+                        if (k > j && k < s.Length && IsWordChar(s[k])) { j = k; continue; }
+                        break;
+                    }
                     var w = s.Substring(i, j - i);
                     // A numeric literal with a decimal point: 12.50 (the point is followed by a digit).
                     if (w.All(char.IsDigit) && j + 1 < s.Length && s[j] == '.' && char.IsDigit(s[j + 1]))

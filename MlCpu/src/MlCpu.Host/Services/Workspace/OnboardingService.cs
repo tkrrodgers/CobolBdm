@@ -147,7 +147,7 @@ public sealed partial class OnboardingService(ProjectService projects, ConfigSer
             {
                 var model = CobolModelBuilder.BuildGroundedFull(sources[prog.Id]);
                 if (model.ExecCics) prog.Kind = "online";
-                foreach (var c in ProgramGraphBuilder.Build(model).Calls)
+                foreach (var c in ProgramGraphBuilder.Calls(model))
                     foreach (var t in c.ResolvedTargets.Count > 0 ? c.ResolvedTargets : [c.Target])
                         if (sources.ContainsKey(t)) (called.TryGetValue(t, out var s) ? s : called[t] = new(StringComparer.OrdinalIgnoreCase)).Add(prog.Id);
             }
@@ -201,9 +201,24 @@ public sealed partial class OnboardingService(ProjectService projects, ConfigSer
         }
         if (p.Oracle.Jobs.Count == 0) p.Notes.Add("no JCL job runs an estate batch program: the oracle has nothing to run");
         p.Publish.Jobs = p.Oracle.Jobs.ToList();
-        p.Publish.Capabilities = p.Programs.Where(x => x.Kind is "batch" or "subprogram" && (x.Jobs.Any(j => p.Oracle.Jobs.Contains(j))
-                                     || x.CalledBy.Any(c => p.Programs.Any(y => y.Id == c && y.Jobs.Any(j => p.Oracle.Jobs.Contains(j))))))
-            .Select(x => x.Id).ToList();
+        p.Publish.Capabilities = ReachableCapabilities(p);
+    }
+
+    /// <summary>
+    /// Batch programs the oracle jobs run, and every subprogram in their CALL closure at any depth (a decimal kernel CALLed
+    /// by a subprogram of a subprogram is a capability too), in the order of <see cref="ProjectDefinition.Programs"/>.
+    /// </summary>
+    public static List<string> ReachableCapabilities(ProjectDefinition p)
+    {
+        var reached = new HashSet<string>(p.Programs.Where(x => x.Kind == "batch" && x.Jobs.Any(j => p.Oracle.Jobs.Contains(j))).Select(x => x.Id),
+            StringComparer.OrdinalIgnoreCase);
+        for (bool grew = true; grew;)
+        {
+            grew = false;
+            foreach (var x in p.Programs.Where(x => x.Kind == "subprogram" && !reached.Contains(x.Id) && x.CalledBy.Any(reached.Contains)))
+                grew |= reached.Add(x.Id);
+        }
+        return p.Programs.Where(x => reached.Contains(x.Id)).Select(x => x.Id).ToList();
     }
 
     /// <summary>The dataset's format from the FD that reads it: INDEXED → ksds (key from RECORD KEY), RECORDING V / VARYING → variable, LINE SEQUENTIAL → line, else fixed.</summary>

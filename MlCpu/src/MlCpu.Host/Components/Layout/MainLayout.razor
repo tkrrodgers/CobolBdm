@@ -53,7 +53,7 @@
                 <span class="chip @(a.Publish.Last is null ? "" : "ok")">@(a.Publish.Last is null ? "not published" : $"published {a.Publish.Last.At[..16].Replace('T', ' ')}")</span>
                 @if (a.Publish.Last?.LastTest is { } t)
                 {
-                    <span class="chip @(t.Failed == 0 && t.Match == t.Outputs ? "ok" : "bad")">tests @(t.Tests - t.Failed)/@t.Tests · GnuCOBOL @t.Match/@t.Outputs</span>
+                    <span class="chip @(t.Failed == 0 && t.Match == t.Outputs ? "ok" : "bad")">tests @(t.Tests - t.Failed)/@t.Tests · GnuCOBOL @t.Match/@t.Outputs@(t.ReferenceOutputs > 0 ? $" · reference {t.ReferenceMatch}/{t.ReferenceOutputs}" : "")</span>
                 }
                 @foreach (var o in running) { <span class="chip info">@o.Title…</span> }
             }

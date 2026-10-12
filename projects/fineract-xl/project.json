@@ -1,0 +1,3291 @@
+{
+  "schema": "mlcpu.project.v1",
+  "id": "fineract-xl",
+  "name": "fineract-xl",
+  "origin": "C:\\Users\\Tomrodgers\\JavaToCOBOLTest\\fineract-cobol-gen\\out\\j3s-m2-2026-10-11-xl\\source",
+  "onboardedAt": "2026-10-12T04:07:26",
+  "layout": {
+    "sourceDir": "source",
+    "codeRoots": [
+      "app/cbl"
+    ],
+    "copybookRoots": [
+      "app/cpy"
+    ],
+    "jclRoots": [
+      "app/jcl"
+    ],
+    "procRoots": [],
+    "controlCardRoots": [],
+    "dataRoots": [
+      "app/data"
+    ]
+  },
+  "programs": [
+    {
+      "id": "FNDKRND",
+      "path": "app/cbl/FNDKRND.cbl",
+      "kind": "subprogram",
+      "lines": 191,
+      "calledBy": [
+        "FSJBDEC"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNDTKRN",
+      "path": "app/cbl/FNDTKRN.cbl",
+      "kind": "subprogram",
+      "lines": 243,
+      "calledBy": [
+        "FSJRDT"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSADDD01",
+      "path": "app/cbl/FSADDD01.cbl",
+      "kind": "subprogram",
+      "lines": 76,
+      "calledBy": [
+        "FSDSG01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSAM01",
+      "path": "app/cbl/FSAM01.cbl",
+      "kind": "subprogram",
+      "lines": 264,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSAPDR01",
+      "path": "app/cbl/FSAPDR01.cbl",
+      "kind": "subprogram",
+      "lines": 88,
+      "calledBy": [
+        "FSLTPE01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSAPE01",
+      "path": "app/cbl/FSAPE01.cbl",
+      "kind": "subprogram",
+      "lines": 389,
+      "calledBy": [
+        "FSAPDR01",
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSCD01",
+      "path": "app/cbl/FSCD01.cbl",
+      "kind": "subprogram",
+      "lines": 1283,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSLAT01",
+        "FSLRSM01",
+        "FSM01",
+        "FSMC01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSDD01",
+      "path": "app/cbl/FSDD01.cbl",
+      "kind": "subprogram",
+      "lines": 209,
+      "calledBy": [
+        "FSJJAM04",
+        "FSJJC01",
+        "FSJJC201",
+        "FSJJTM01",
+        "FSJJTS01",
+        "FSPLSG01",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSDIMT01",
+      "path": "app/cbl/FSDIMT01.cbl",
+      "kind": "subprogram",
+      "lines": 280,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSPEC03",
+        "FSPEC07"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSDIYC01",
+      "path": "app/cbl/FSDIYC01.cbl",
+      "kind": "subprogram",
+      "lines": 212,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSDIYT01",
+      "path": "app/cbl/FSDIYT01.cbl",
+      "kind": "subprogram",
+      "lines": 359,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSPEC03",
+        "FSPEC07"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSDSG01",
+      "path": "app/cbl/FSDSG01.cbl",
+      "kind": "subprogram",
+      "lines": 1273,
+      "calledBy": [
+        "FSEM0100",
+        "FSEMB01",
+        "FSPEC09",
+        "FSPEC12",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSDU01",
+      "path": "app/cbl/FSDU01.cbl",
+      "kind": "subprogram",
+      "lines": 979,
+      "calledBy": [
+        "FSDD01",
+        "FSEM0100",
+        "FSGN0100",
+        "FSIP01",
+        "FSLRSP01",
+        "FSPEC03",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC13",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSEA01",
+      "path": "app/cbl/FSEA01.cbl",
+      "kind": "subprogram",
+      "lines": 650,
+      "calledBy": [
+        "FSPEC08",
+        "FSPEC09"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSEAV01",
+      "path": "app/cbl/FSEAV01.cbl",
+      "kind": "subprogram",
+      "lines": 846,
+      "calledBy": [
+        "FSEAV02",
+        "FSEM0100",
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSM01",
+        "FSPEC12"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSEAV02",
+      "path": "app/cbl/FSEAV02.cbl",
+      "kind": "subprogram",
+      "lines": 225,
+      "calledBy": [
+        "FSPEC12"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSECO01",
+      "path": "app/cbl/FSECO01.cbl",
+      "kind": "subprogram",
+      "lines": 526,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSPEC09",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSEM0100",
+      "path": "app/cbl/FSEM0100.cbl",
+      "kind": "subprogram",
+      "lines": 10346,
+      "calledBy": [
+        "FSLE0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSEMB01",
+      "path": "app/cbl/FSEMB01.cbl",
+      "kind": "subprogram",
+      "lines": 246,
+      "calledBy": [
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSGN0100",
+      "path": "app/cbl/FSGN0100.cbl",
+      "kind": "subprogram",
+      "lines": 2316,
+      "calledBy": [
+        "FSLS0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSICPM01",
+      "path": "app/cbl/FSICPM01.cbl",
+      "kind": "subprogram",
+      "lines": 325,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSPEC03",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSIM01",
+      "path": "app/cbl/FSIM01.cbl",
+      "kind": "subprogram",
+      "lines": 264,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSIP01",
+      "path": "app/cbl/FSIP01.cbl",
+      "kind": "subprogram",
+      "lines": 2590,
+      "calledBy": [
+        "FSEM0100",
+        "FSIP02",
+        "FSIP03",
+        "FSIP04",
+        "FSJJAM02",
+        "FSJJAM04",
+        "FSJJAM05",
+        "FSJJC01",
+        "FSJJC201",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSJJTM01",
+        "FSJJTS01",
+        "FSM01",
+        "FSPEC03",
+        "FSPEC04",
+        "FSPEC07",
+        "FSPEC09",
+        "FSPLIS04",
+        "FSRP02",
+        "FSRP03",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSIP02",
+      "path": "app/cbl/FSIP02.cbl",
+      "kind": "subprogram",
+      "lines": 685,
+      "calledBy": [
+        "FSRP03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSIP03",
+      "path": "app/cbl/FSIP03.cbl",
+      "kind": "subprogram",
+      "lines": 1396,
+      "calledBy": [
+        "FSIP04",
+        "FSPEC03",
+        "FSPEC04",
+        "FSPEC07",
+        "FSPEC12",
+        "FSPLIS04",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSIP04",
+      "path": "app/cbl/FSIP04.cbl",
+      "kind": "subprogram",
+      "lines": 1520,
+      "calledBy": [
+        "FSPEC04",
+        "FSPEC05",
+        "FSPEC06",
+        "FSPEC07",
+        "FSPEC09",
+        "FSPEC12",
+        "FSPLIS04",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSIR01",
+      "path": "app/cbl/FSIR01.cbl",
+      "kind": "subprogram",
+      "lines": 389,
+      "calledBy": [
+        "FSJJAM02",
+        "FSJJAM04",
+        "FSJJC01",
+        "FSJJC201",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSJJTM01",
+        "FSJJTS01",
+        "FSM01",
+        "FSPLIS03",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJBDEC",
+      "path": "app/cbl/FSJBDEC.cbl",
+      "kind": "subprogram",
+      "lines": 1054,
+      "calledBy": [
+        "FSJRBC"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAL01",
+      "path": "app/cbl/FSJJAL01.cbl",
+      "kind": "subprogram",
+      "lines": 196,
+      "calledBy": [
+        "FSJJAL03",
+        "FSJJAM01",
+        "FSJJAM02",
+        "FSJJAM03",
+        "FSJJHM02",
+        "FSJJIL02",
+        "FSJJRL02",
+        "FSJJSL02",
+        "FSPEC01",
+        "FSPEC02",
+        "FSPEC04",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSRP02",
+        "FSRP03",
+        "FSRP04",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAL02",
+      "path": "app/cbl/FSJJAL02.cbl",
+      "kind": "subprogram",
+      "lines": 171,
+      "calledBy": [
+        "FSJJAM08",
+        "FSPEC01",
+        "FSPEC02",
+        "FSPEC04",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSRP02",
+        "FSRP03",
+        "FSRP04",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAL03",
+      "path": "app/cbl/FSJJAL03.cbl",
+      "kind": "subprogram",
+      "lines": 2534,
+      "calledBy": [
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM01",
+      "path": "app/cbl/FSJJAM01.cbl",
+      "kind": "subprogram",
+      "lines": 520,
+      "calledBy": [
+        "FSAPE01",
+        "FSDSG01",
+        "FSEM0100",
+        "FSGN0100",
+        "FSIP04",
+        "FSJJAL03",
+        "FSJJAM02",
+        "FSJJAM03",
+        "FSJJAM08",
+        "FSJJAM10",
+        "FSJJHM02",
+        "FSJJIL02",
+        "FSJJLI02",
+        "FSJJRL02",
+        "FSLSP01",
+        "FSPEC02",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSPLSG01",
+        "FSPLSG03",
+        "FSRP02",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM02",
+      "path": "app/cbl/FSJJAM02.cbl",
+      "kind": "subprogram",
+      "lines": 10281,
+      "calledBy": [
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJIM02",
+        "FSM01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM03",
+      "path": "app/cbl/FSJJAM03.cbl",
+      "kind": "subprogram",
+      "lines": 443,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJAL02",
+        "FSLAT01",
+        "FSLSP02",
+        "FSLSPA01",
+        "FSPEC01",
+        "FSPEC02",
+        "FSPEC04",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS01",
+        "FSPLIS02",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSPLSG01",
+        "FSPLSG02",
+        "FSRP03",
+        "FSRP04",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM04",
+      "path": "app/cbl/FSJJAM04.cbl",
+      "kind": "subprogram",
+      "lines": 757,
+      "calledBy": [
+        "FSPEC03",
+        "FSPEC09",
+        "FSPLSG02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM05",
+      "path": "app/cbl/FSJJAM05.cbl",
+      "kind": "subprogram",
+      "lines": 416,
+      "calledBy": [
+        "FSIP04",
+        "FSPEC04",
+        "FSPEC07",
+        "FSPEC10",
+        "FSPLIS04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM06",
+      "path": "app/cbl/FSJJAM06.cbl",
+      "kind": "subprogram",
+      "lines": 234,
+      "calledBy": [
+        "FSPEC05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM07",
+      "path": "app/cbl/FSJJAM07.cbl",
+      "kind": "subprogram",
+      "lines": 234,
+      "calledBy": [
+        "FSPEC06"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM08",
+      "path": "app/cbl/FSJJAM08.cbl",
+      "kind": "subprogram",
+      "lines": 582,
+      "calledBy": [
+        "FSJJSL03",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPLIS04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM09",
+      "path": "app/cbl/FSJJAM09.cbl",
+      "kind": "subprogram",
+      "lines": 921,
+      "calledBy": [
+        "FSPEC08",
+        "FSPEC09"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM10",
+      "path": "app/cbl/FSJJAM10.cbl",
+      "kind": "subprogram",
+      "lines": 1355,
+      "calledBy": [
+        "FSLSP02",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAN01",
+      "path": "app/cbl/FSJJAN01.cbl",
+      "kind": "subprogram",
+      "lines": 224,
+      "calledBy": [
+        "FSJJAL03",
+        "FSJJAM01",
+        "FSJJHM02",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPLIS03",
+        "FSPLIS05",
+        "FSPLSG03",
+        "FSRP02",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAR01",
+      "path": "app/cbl/FSJJAR01.cbl",
+      "kind": "subprogram",
+      "lines": 105,
+      "calledBy": [
+        "FSLSP01",
+        "FSLSP02",
+        "FSPEC02",
+        "FSPEC06",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAS01",
+      "path": "app/cbl/FSJJAS01.cbl",
+      "kind": "subprogram",
+      "lines": 555,
+      "calledBy": [
+        "FSJJHS01",
+        "FSJJIE01",
+        "FSJJTS01",
+        "FSPLIS03",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJC01",
+      "path": "app/cbl/FSJJC01.cbl",
+      "kind": "subprogram",
+      "lines": 541,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSJJTS01",
+        "FSPLIS02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJC201",
+      "path": "app/cbl/FSJJC201.cbl",
+      "kind": "subprogram",
+      "lines": 1119,
+      "calledBy": [
+        "FSJJAM04",
+        "FSPLSG02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJHM01",
+      "path": "app/cbl/FSJJHM01.cbl",
+      "kind": "subprogram",
+      "lines": 713,
+      "calledBy": [
+        "FSJJHM02",
+        "FSJJHM03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJHM02",
+      "path": "app/cbl/FSJJHM02.cbl",
+      "kind": "subprogram",
+      "lines": 15064,
+      "calledBy": [
+        "FSEAV02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSPEC06",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJHM03",
+      "path": "app/cbl/FSJJHM03.cbl",
+      "kind": "subprogram",
+      "lines": 1457,
+      "calledBy": [
+        "FSLPCI01",
+        "FSLSPA01",
+        "FSPLIS02",
+        "FSPLIS03",
+        "FSPLIS05",
+        "FSRFT01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJHS01",
+      "path": "app/cbl/FSJJHS01.cbl",
+      "kind": "subprogram",
+      "lines": 75,
+      "calledBy": [
+        "FSLAT01",
+        "FSLSMR01",
+        "FSPLSG01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIE01",
+      "path": "app/cbl/FSJJIE01.cbl",
+      "kind": "subprogram",
+      "lines": 245,
+      "calledBy": [
+        "FSJJIH02",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIH01",
+      "path": "app/cbl/FSJJIH01.cbl",
+      "kind": "subprogram",
+      "lines": 1054,
+      "calledBy": [
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIH02",
+        "FSJJIM02",
+        "FSM01",
+        "FSPEC03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIH02",
+      "path": "app/cbl/FSJJIH02.cbl",
+      "kind": "subprogram",
+      "lines": 446,
+      "calledBy": [
+        "FSPEC03",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIL01",
+      "path": "app/cbl/FSJJIL01.cbl",
+      "kind": "subprogram",
+      "lines": 205,
+      "calledBy": [
+        "FSEA01",
+        "FSEM0100",
+        "FSGN0100",
+        "FSJJAL01",
+        "FSJJAL02",
+        "FSJJAM02",
+        "FSJJHM02",
+        "FSJJIL02",
+        "FSJJLI01",
+        "FSJJLI02",
+        "FSJJRL01",
+        "FSJJRL02",
+        "FSPEC08",
+        "FSPEC12"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIL02",
+      "path": "app/cbl/FSJJIL02.cbl",
+      "kind": "subprogram",
+      "lines": 438,
+      "calledBy": [
+        "FSJJAM03",
+        "FSJJAM10",
+        "FSPEC02",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS04",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIM01",
+      "path": "app/cbl/FSJJIM01.cbl",
+      "kind": "subprogram",
+      "lines": 70,
+      "calledBy": [
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIM02",
+      "path": "app/cbl/FSJJIM02.cbl",
+      "kind": "subprogram",
+      "lines": 1567,
+      "calledBy": [
+        "FSJJMS01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJLI01",
+      "path": "app/cbl/FSJJLI01.cbl",
+      "kind": "subprogram",
+      "lines": 142,
+      "calledBy": [
+        "FSJJAL01",
+        "FSJJAL03",
+        "FSJJHM02",
+        "FSPEC05",
+        "FSPEC08",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJLI02",
+      "path": "app/cbl/FSJJLI02.cbl",
+      "kind": "subprogram",
+      "lines": 157,
+      "calledBy": [
+        "FSJJAL03",
+        "FSJJHM02",
+        "FSPEC05",
+        "FSPEC08",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJME01",
+      "path": "app/cbl/FSJJME01.cbl",
+      "kind": "subprogram",
+      "lines": 64,
+      "calledBy": [
+        "FSJJIE01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJMS01",
+      "path": "app/cbl/FSJJMS01.cbl",
+      "kind": "subprogram",
+      "lines": 222,
+      "calledBy": [
+        "FSPLIS02",
+        "FSPLIS03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJO201",
+      "path": "app/cbl/FSJJO201.cbl",
+      "kind": "subprogram",
+      "lines": 248,
+      "calledBy": [
+        "FSIP04",
+        "FSJJO202",
+        "FSJJO203",
+        "FSPEC01",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSRP02",
+        "FSRP03",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJO202",
+      "path": "app/cbl/FSJJO202.cbl",
+      "kind": "subprogram",
+      "lines": 1067,
+      "calledBy": [
+        "FSJJO203",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJO203",
+      "path": "app/cbl/FSJJO203.cbl",
+      "kind": "subprogram",
+      "lines": 433,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSPEC09",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJRL01",
+      "path": "app/cbl/FSJJRL01.cbl",
+      "kind": "subprogram",
+      "lines": 323,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSJJAL01",
+        "FSJJAL03",
+        "FSJJAM02",
+        "FSJJHM02",
+        "FSJJLI01",
+        "FSJJRL02",
+        "FSJJRL03",
+        "FSPEC08",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJRL02",
+      "path": "app/cbl/FSJJRL02.cbl",
+      "kind": "subprogram",
+      "lines": 682,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSJJAL02",
+        "FSJJAL03",
+        "FSJJAM02",
+        "FSJJHM02",
+        "FSJJLI02",
+        "FSJJRL03",
+        "FSPEC08",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJRL03",
+      "path": "app/cbl/FSJJRL03.cbl",
+      "kind": "subprogram",
+      "lines": 148,
+      "calledBy": [
+        "FSPEC08"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJS01",
+      "path": "app/cbl/FSJJS01.cbl",
+      "kind": "subprogram",
+      "lines": 921,
+      "calledBy": [
+        "FSAM01",
+        "FSCD01",
+        "FSDIYC01",
+        "FSEM0100",
+        "FSGN0100",
+        "FSICPM01",
+        "FSIM01",
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSJJSB01",
+        "FSLIT01",
+        "FSLPCI01",
+        "FSLRAI01",
+        "FSLRSM01",
+        "FSLSPT01",
+        "FSM01",
+        "FSMONE01",
+        "FSPEC01",
+        "FSPFT01",
+        "FSRFT01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJSB01",
+      "path": "app/cbl/FSJJSB01.cbl",
+      "kind": "subprogram",
+      "lines": 631,
+      "calledBy": [
+        "FSCD01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJSL01",
+      "path": "app/cbl/FSJJSL01.cbl",
+      "kind": "subprogram",
+      "lines": 524,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSJJAL01",
+        "FSJJAL02",
+        "FSJJAL03",
+        "FSJJAM02",
+        "FSJJHM02",
+        "FSJJLI01",
+        "FSJJLI02",
+        "FSJJRL01",
+        "FSJJRL02",
+        "FSJJSL03",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJSL02",
+      "path": "app/cbl/FSJJSL02.cbl",
+      "kind": "subprogram",
+      "lines": 89,
+      "calledBy": [
+        "FSJJAM08"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJSL03",
+      "path": "app/cbl/FSJJSL03.cbl",
+      "kind": "subprogram",
+      "lines": 129,
+      "calledBy": [
+        "FSPEC07",
+        "FSPEC09"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJTM01",
+      "path": "app/cbl/FSJJTM01.cbl",
+      "kind": "subprogram",
+      "lines": 709,
+      "calledBy": [
+        "FSJJHM02",
+        "FSLSPA01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJTS01",
+      "path": "app/cbl/FSJJTS01.cbl",
+      "kind": "subprogram",
+      "lines": 803,
+      "calledBy": [
+        "FSPLIS02",
+        "FSPLIS03",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRAL",
+      "path": "app/cbl/FSJRAL.cbl",
+      "kind": "subprogram",
+      "lines": 7490,
+      "calledBy": [
+        "FSAM01",
+        "FSAPE01",
+        "FSCD01",
+        "FSDIMT01",
+        "FSDIYC01",
+        "FSDIYT01",
+        "FSDSG01",
+        "FSEAV02",
+        "FSECO01",
+        "FSEM0100",
+        "FSEMB01",
+        "FSGN0100",
+        "FSICPM01",
+        "FSIM01",
+        "FSIP02",
+        "FSIP03",
+        "FSIP04",
+        "FSJJAL01",
+        "FSJJAL03",
+        "FSJJAM01",
+        "FSJJAM02",
+        "FSJJAM03",
+        "FSJJAM04",
+        "FSJJAM05",
+        "FSJJAM06",
+        "FSJJAM07",
+        "FSJJAM08",
+        "FSJJAM09",
+        "FSJJAM10",
+        "FSJJAN01",
+        "FSJJAS01",
+        "FSJJC01",
+        "FSJJC201",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJHS01",
+        "FSJJIE01",
+        "FSJJIH01",
+        "FSJJIH02",
+        "FSJJIL01",
+        "FSJJIL02",
+        "FSJJIM01",
+        "FSJJIM02",
+        "FSJJMS01",
+        "FSJJO201",
+        "FSJJO203",
+        "FSJJRL01",
+        "FSJJRL02",
+        "FSJJS01",
+        "FSJJSB01",
+        "FSJJSL01",
+        "FSJJTM01",
+        "FSJJTS01",
+        "FSJRMS",
+        "FSLAT01",
+        "FSLDI01",
+        "FSLISM01",
+        "FSLIT01",
+        "FSLPCI01",
+        "FSLRAI01",
+        "FSLRAP01",
+        "FSLSM01",
+        "FSLSMD01",
+        "FSLSME01",
+        "FSLSMR01",
+        "FSLSP01",
+        "FSLSP02",
+        "FSLSPA01",
+        "FSLSPT01",
+        "FSLST01",
+        "FSM01",
+        "FSMC01",
+        "FSMONE01",
+        "FSMU02",
+        "FSPEC01",
+        "FSPEC02",
+        "FSPEC03",
+        "FSPEC04",
+        "FSPEC05",
+        "FSPEC06",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPFT01",
+        "FSPLIS02",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSPLSG01",
+        "FSPLSG02",
+        "FSPLSG03",
+        "FSRFT01",
+        "FSRP02",
+        "FSRP03",
+        "FSRP04",
+        "FSRSDT01",
+        "FSRSID01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRBC",
+      "path": "app/cbl/FSJRBC.cbl",
+      "kind": "subprogram",
+      "lines": 342,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSIP01",
+        "FSIP02",
+        "FSIR01",
+        "FSJJAM02",
+        "FSJJAM04",
+        "FSJJC01",
+        "FSJJC201",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJIM02",
+        "FSJJTM01",
+        "FSJJTS01",
+        "FSLRSM01",
+        "FSLSMD01",
+        "FSLSP01",
+        "FSLSPD01",
+        "FSM01",
+        "FSMONE01",
+        "FSMU01",
+        "FSMU02",
+        "FSPEC03",
+        "FSPEC08",
+        "FSPLSG03",
+        "FSRP02",
+        "FSRP03",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRDT",
+      "path": "app/cbl/FSJRDT.cbl",
+      "kind": "subprogram",
+      "lines": 467,
+      "calledBy": [
+        "FSDIYT01",
+        "FSDSG01",
+        "FSDU01",
+        "FSEM0100",
+        "FSGN0100",
+        "FSIP01",
+        "FSIR01",
+        "FSJJAM02",
+        "FSJJAM04",
+        "FSJJC01",
+        "FSJJC201",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJIM02",
+        "FSJJTM01",
+        "FSJJTS01",
+        "FSLAT01",
+        "FSLRSM01",
+        "FSLSPD01",
+        "FSM01",
+        "FSOBC01",
+        "FSPEC01",
+        "FSPEC03",
+        "FSPEC10",
+        "FSPLIS01",
+        "FSPLIS04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRGC",
+      "path": "app/cbl/FSJRGC.cbl",
+      "kind": "subprogram",
+      "lines": 9305,
+      "calledBy": [
+        "FSJRAL"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRIH",
+      "path": "app/cbl/FSJRIH.cbl",
+      "kind": "subprogram",
+      "lines": 1337,
+      "calledBy": [
+        "FSEAV01",
+        "FSIP01",
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJIH01",
+        "FSJJIM02",
+        "FSLRSM01",
+        "FSM01",
+        "FSOBC01",
+        "FSOD01",
+        "FSPDD01",
+        "FSPEC01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRMS",
+      "path": "app/cbl/FSJRMS.cbl",
+      "kind": "subprogram",
+      "lines": 110,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSLIT01",
+        "FSPEC01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRWB",
+      "path": "app/cbl/FSJRWB.cbl",
+      "kind": "subprogram",
+      "lines": 318,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJIH01",
+        "FSJJIM02",
+        "FSJRDT",
+        "FSM01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLAT01",
+      "path": "app/cbl/FSLAT01.cbl",
+      "kind": "subprogram",
+      "lines": 3324,
+      "calledBy": [
+        "FSDSG01",
+        "FSPEC07",
+        "FSPEC09",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLCD01",
+      "path": "app/cbl/FSLCD01.cbl",
+      "kind": "subprogram",
+      "lines": 420,
+      "calledBy": [
+        "FSEM0100",
+        "FSLAT01",
+        "FSPEC03",
+        "FSPEC07"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLDI01",
+      "path": "app/cbl/FSLDI01.cbl",
+      "kind": "subprogram",
+      "lines": 110,
+      "calledBy": [
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLE0100",
+      "path": "app/cbl/FSLE0100.cbl",
+      "kind": "batch",
+      "lines": 715,
+      "calledBy": [],
+      "jobs": [
+        "FJEMIEVT"
+      ]
+    },
+    {
+      "id": "FSLISM01",
+      "path": "app/cbl/FSLISM01.cbl",
+      "kind": "subprogram",
+      "lines": 171,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLIT01",
+      "path": "app/cbl/FSLIT01.cbl",
+      "kind": "subprogram",
+      "lines": 4456,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLPCI01",
+      "path": "app/cbl/FSLPCI01.cbl",
+      "kind": "subprogram",
+      "lines": 606,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100",
+        "FSPEC11"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLRAI01",
+      "path": "app/cbl/FSLRAI01.cbl",
+      "kind": "subprogram",
+      "lines": 302,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLRAP01",
+      "path": "app/cbl/FSLRAP01.cbl",
+      "kind": "subprogram",
+      "lines": 553,
+      "calledBy": [
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLRSM01",
+      "path": "app/cbl/FSLRSM01.cbl",
+      "kind": "subprogram",
+      "lines": 1761,
+      "calledBy": [
+        "FSGN0100",
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSLAT01",
+        "FSM01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLRSP01",
+      "path": "app/cbl/FSLRSP01.cbl",
+      "kind": "subprogram",
+      "lines": 133,
+      "calledBy": [
+        "FSPEC09",
+        "FSPLIS03",
+        "FSPLIS05",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLS0100",
+      "path": "app/cbl/FSLS0100.cbl",
+      "kind": "batch",
+      "lines": 598,
+      "calledBy": [],
+      "jobs": [
+        "FJSCHGEN"
+      ]
+    },
+    {
+      "id": "FSLSM01",
+      "path": "app/cbl/FSLSM01.cbl",
+      "kind": "subprogram",
+      "lines": 258,
+      "calledBy": [
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSMD01",
+      "path": "app/cbl/FSLSMD01.cbl",
+      "kind": "subprogram",
+      "lines": 390,
+      "calledBy": [
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSME01",
+      "path": "app/cbl/FSLSME01.cbl",
+      "kind": "subprogram",
+      "lines": 332,
+      "calledBy": [
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSMR01",
+      "path": "app/cbl/FSLSMR01.cbl",
+      "kind": "subprogram",
+      "lines": 783,
+      "calledBy": [
+        "FSDSG01",
+        "FSEM0100",
+        "FSPLSG02",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSP01",
+      "path": "app/cbl/FSLSP01.cbl",
+      "kind": "subprogram",
+      "lines": 769,
+      "calledBy": [
+        "FSJJAM10",
+        "FSJJHM02",
+        "FSLSP02",
+        "FSPEC09"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSP02",
+      "path": "app/cbl/FSLSP02.cbl",
+      "kind": "subprogram",
+      "lines": 217,
+      "calledBy": [
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSPA01",
+      "path": "app/cbl/FSLSPA01.cbl",
+      "kind": "subprogram",
+      "lines": 1273,
+      "calledBy": [
+        "FSPLSG02",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSPD01",
+      "path": "app/cbl/FSLSPD01.cbl",
+      "kind": "subprogram",
+      "lines": 612,
+      "calledBy": [
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSLSP01",
+        "FSM01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSPE01",
+      "path": "app/cbl/FSLSPE01.cbl",
+      "kind": "subprogram",
+      "lines": 111,
+      "calledBy": [
+        "FSLSP01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSPR01",
+      "path": "app/cbl/FSLSPR01.cbl",
+      "kind": "subprogram",
+      "lines": 137,
+      "calledBy": [
+        "FSLSP01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLSPT01",
+      "path": "app/cbl/FSLSPT01.cbl",
+      "kind": "subprogram",
+      "lines": 201,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLST01",
+      "path": "app/cbl/FSLST01.cbl",
+      "kind": "subprogram",
+      "lines": 121,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLTPE01",
+      "path": "app/cbl/FSLTPE01.cbl",
+      "kind": "subprogram",
+      "lines": 82,
+      "calledBy": [
+        "FSPEC01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSM01",
+      "path": "app/cbl/FSM01.cbl",
+      "kind": "subprogram",
+      "lines": 1194,
+      "calledBy": [
+        "FSRP03",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSMC01",
+      "path": "app/cbl/FSMC01.cbl",
+      "kind": "subprogram",
+      "lines": 187,
+      "calledBy": [
+        "FSEM0100",
+        "FSMONE01",
+        "FSRP01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSMONE01",
+      "path": "app/cbl/FSMONE01.cbl",
+      "kind": "subprogram",
+      "lines": 4356,
+      "calledBy": [
+        "FSDSG01",
+        "FSEA01",
+        "FSEAV01",
+        "FSEAV02",
+        "FSECO01",
+        "FSEM0100",
+        "FSIP03",
+        "FSIP04",
+        "FSJJAM04",
+        "FSJJC01",
+        "FSJJC201",
+        "FSJJTM01",
+        "FSJJTS01",
+        "FSLAT01",
+        "FSLSMR01",
+        "FSLSPA01",
+        "FSMU02",
+        "FSPEC02",
+        "FSPEC03",
+        "FSPEC04",
+        "FSPEC05",
+        "FSPEC06",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPLIS02",
+        "FSPLIS03",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSPLSG02",
+        "FSPLSG03",
+        "FSRP02",
+        "FSRP03",
+        "FSRP04",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSMU01",
+      "path": "app/cbl/FSMU01.cbl",
+      "kind": "subprogram",
+      "lines": 151,
+      "calledBy": [
+        "FSIP01",
+        "FSMONE01",
+        "FSMU02",
+        "FSPEC03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSMU02",
+      "path": "app/cbl/FSMU02.cbl",
+      "kind": "subprogram",
+      "lines": 1768,
+      "calledBy": [
+        "FSIP01",
+        "FSIP02",
+        "FSIP03",
+        "FSIP04",
+        "FSLAT01",
+        "FSPEC02",
+        "FSPEC03",
+        "FSPEC04",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSPLSG03",
+        "FSRP01",
+        "FSRP02",
+        "FSRP03",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSOBC01",
+      "path": "app/cbl/FSOBC01.cbl",
+      "kind": "subprogram",
+      "lines": 410,
+      "calledBy": [
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSM01",
+        "FSPEC09",
+        "FSPLIS04",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSOD01",
+      "path": "app/cbl/FSOD01.cbl",
+      "kind": "subprogram",
+      "lines": 446,
+      "calledBy": [
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSM01",
+        "FSPEC11",
+        "FSPEC12"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPDD01",
+      "path": "app/cbl/FSPDD01.cbl",
+      "kind": "subprogram",
+      "lines": 556,
+      "calledBy": [
+        "FSJJAM02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSM01",
+        "FSPEC11"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC01",
+      "path": "app/cbl/FSPEC01.cbl",
+      "kind": "subprogram",
+      "lines": 1860,
+      "calledBy": [
+        "FSEM0100",
+        "FSEMB01",
+        "FSJJAM02",
+        "FSJJC201",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHM03",
+        "FSJJIM02",
+        "FSJJO202",
+        "FSJJO203",
+        "FSM01",
+        "FSPEC02",
+        "FSPEC10",
+        "FSRP03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC02",
+      "path": "app/cbl/FSPEC02.cbl",
+      "kind": "subprogram",
+      "lines": 1941,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJC201",
+        "FSJJIH02",
+        "FSJJO202",
+        "FSPEC03",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPLIS03",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC03",
+      "path": "app/cbl/FSPEC03.cbl",
+      "kind": "subprogram",
+      "lines": 5402,
+      "calledBy": [
+        "FSJJAM05",
+        "FSJJAM06",
+        "FSJJAM10",
+        "FSPEC09"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC04",
+      "path": "app/cbl/FSPEC04.cbl",
+      "kind": "subprogram",
+      "lines": 2059,
+      "calledBy": [
+        "FSJJAL03",
+        "FSJJAM06",
+        "FSJJAM09",
+        "FSJJAM10",
+        "FSPEC09"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC05",
+      "path": "app/cbl/FSPEC05.cbl",
+      "kind": "subprogram",
+      "lines": 862,
+      "calledBy": [
+        "FSJJAL03",
+        "FSJJAM07",
+        "FSJJAM08",
+        "FSJJAM09",
+        "FSPEC09",
+        "FSPEC12"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC06",
+      "path": "app/cbl/FSPEC06.cbl",
+      "kind": "subprogram",
+      "lines": 828,
+      "calledBy": [
+        "FSJJAL03",
+        "FSJJAM08",
+        "FSJJAM09",
+        "FSPEC09"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC07",
+      "path": "app/cbl/FSPEC07.cbl",
+      "kind": "subprogram",
+      "lines": 4022,
+      "calledBy": [
+        "FSJJAL03",
+        "FSJJAM09",
+        "FSJJAM10",
+        "FSJJO203",
+        "FSJJRL03",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC08",
+      "path": "app/cbl/FSPEC08.cbl",
+      "kind": "subprogram",
+      "lines": 5859,
+      "calledBy": [
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC12",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC09",
+      "path": "app/cbl/FSPEC09.cbl",
+      "kind": "subprogram",
+      "lines": 13681,
+      "calledBy": [
+        "FSJJAM10",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC10",
+      "path": "app/cbl/FSPEC10.cbl",
+      "kind": "subprogram",
+      "lines": 6280,
+      "calledBy": [
+        "FSEM0100",
+        "FSPEC11",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC11",
+      "path": "app/cbl/FSPEC11.cbl",
+      "kind": "subprogram",
+      "lines": 6237,
+      "calledBy": [
+        "FSEM0100",
+        "FSPEC12",
+        "FSPEC13"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC12",
+      "path": "app/cbl/FSPEC12.cbl",
+      "kind": "subprogram",
+      "lines": 5666,
+      "calledBy": [
+        "FSEM0100",
+        "FSPEC13"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPEC13",
+      "path": "app/cbl/FSPEC13.cbl",
+      "kind": "subprogram",
+      "lines": 855,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPFT01",
+      "path": "app/cbl/FSPFT01.cbl",
+      "kind": "subprogram",
+      "lines": 497,
+      "calledBy": [
+        "FSDSG01",
+        "FSEM0100",
+        "FSGN0100",
+        "FSLAT01",
+        "FSPEC03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPI01",
+      "path": "app/cbl/FSPI01.cbl",
+      "kind": "subprogram",
+      "lines": 80,
+      "calledBy": [
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPLIS01",
+      "path": "app/cbl/FSPLIS01.cbl",
+      "kind": "subprogram",
+      "lines": 353,
+      "calledBy": [
+        "FSJJC201",
+        "FSJJHM02",
+        "FSJJO202",
+        "FSPEC01",
+        "FSPEC02",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS02",
+        "FSPLIS04",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPLIS02",
+      "path": "app/cbl/FSPLIS02.cbl",
+      "kind": "subprogram",
+      "lines": 621,
+      "calledBy": [
+        "FSEM0100",
+        "FSPEC02",
+        "FSPEC09",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPLIS03",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPLIS03",
+      "path": "app/cbl/FSPLIS03.cbl",
+      "kind": "subprogram",
+      "lines": 2379,
+      "calledBy": [
+        "FSEM0100",
+        "FSPEC03",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPLIS04",
+      "path": "app/cbl/FSPLIS04.cbl",
+      "kind": "subprogram",
+      "lines": 3884,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJAL03",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPLIS05",
+      "path": "app/cbl/FSPLIS05.cbl",
+      "kind": "subprogram",
+      "lines": 3306,
+      "calledBy": [
+        "FSEM0100",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPLSG01",
+      "path": "app/cbl/FSPLSG01.cbl",
+      "kind": "subprogram",
+      "lines": 428,
+      "calledBy": [
+        "FSEMB01",
+        "FSJJC201",
+        "FSJJO202",
+        "FSPEC02",
+        "FSPEC10",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPLSG02",
+      "path": "app/cbl/FSPLSG02.cbl",
+      "kind": "subprogram",
+      "lines": 453,
+      "calledBy": [
+        "FSPEC09",
+        "FSPLSG03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPLSG03",
+      "path": "app/cbl/FSPLSG03.cbl",
+      "kind": "subprogram",
+      "lines": 4121,
+      "calledBy": [
+        "FSEMB01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSPTD01",
+      "path": "app/cbl/FSPTD01.cbl",
+      "kind": "subprogram",
+      "lines": 89,
+      "calledBy": [
+        "FSPEC01",
+        "FSPEC10"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSRFT01",
+      "path": "app/cbl/FSRFT01.cbl",
+      "kind": "subprogram",
+      "lines": 616,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSRP01",
+      "path": "app/cbl/FSRP01.cbl",
+      "kind": "subprogram",
+      "lines": 877,
+      "calledBy": [
+        "FSEM0100",
+        "FSIP01",
+        "FSIP04",
+        "FSJJAM02",
+        "FSJJHM02",
+        "FSPEC02",
+        "FSPEC03",
+        "FSPEC04",
+        "FSPEC05",
+        "FSPEC06",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSRP02",
+        "FSRP03",
+        "FSRP04",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSRP02",
+      "path": "app/cbl/FSRP02.cbl",
+      "kind": "subprogram",
+      "lines": 2496,
+      "calledBy": [
+        "FSEM0100",
+        "FSIP02",
+        "FSIP03",
+        "FSIP04",
+        "FSJJO202",
+        "FSJJO203",
+        "FSPEC02",
+        "FSPEC04",
+        "FSPEC06",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPEC13",
+        "FSPLIS04",
+        "FSPLIS05",
+        "FSRP03",
+        "FSRP04",
+        "FSRP05"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSRP03",
+      "path": "app/cbl/FSRP03.cbl",
+      "kind": "subprogram",
+      "lines": 3300,
+      "calledBy": [
+        "FSEM0100",
+        "FSIP03",
+        "FSIP04",
+        "FSJJO202",
+        "FSJJO203",
+        "FSPEC02",
+        "FSPEC04",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS03",
+        "FSPLIS05",
+        "FSPLSG02",
+        "FSRP04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSRP04",
+      "path": "app/cbl/FSRP04.cbl",
+      "kind": "subprogram",
+      "lines": 4192,
+      "calledBy": [
+        "FSEM0100",
+        "FSIP04",
+        "FSPEC02",
+        "FSPEC03",
+        "FSPEC04",
+        "FSPEC05",
+        "FSPEC06",
+        "FSPEC07",
+        "FSPEC08",
+        "FSPEC09",
+        "FSPEC10",
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS02",
+        "FSPLIS04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSRP05",
+      "path": "app/cbl/FSRP05.cbl",
+      "kind": "subprogram",
+      "lines": 1146,
+      "calledBy": [
+        "FSPEC11",
+        "FSPEC12",
+        "FSPLIS04"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSRSDT01",
+      "path": "app/cbl/FSRSDT01.cbl",
+      "kind": "subprogram",
+      "lines": 166,
+      "calledBy": [
+        "FSEM0100",
+        "FSGN0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSRSID01",
+      "path": "app/cbl/FSRSID01.cbl",
+      "kind": "subprogram",
+      "lines": 586,
+      "calledBy": [
+        "FSEM0100"
+      ],
+      "jobs": []
+    }
+  ],
+  "excluded": [],
+  "oracle": {
+    "provider": "generic",
+    "clock": "2022-07-05T10:11:12-07:00",
+    "cobcFlags": [
+      "-std=ibm",
+      "-fsign=EBCDIC",
+      "-fstatic-call",
+      "-Wno-others"
+    ],
+    "jobs": [
+      "FJEMIEVT",
+      "FJSCHGEN"
+    ],
+    "datasets": [
+      {
+        "dsn": "FINERACT.RUN.CONTROL",
+        "source": "app/data/RUN.CONTROL.txt",
+        "format": "fixed",
+        "lrecl": 80,
+        "minRecord": 80,
+        "alternateKeys": [],
+        "from": "FSLE0100:RUNCTL-FILE"
+      },
+      {
+        "dsn": "FINERACT.EMI.EVENTS.DATA",
+        "source": "app/data/EMI.EVENTS.txt",
+        "format": "fixed",
+        "lrecl": 250,
+        "minRecord": 250,
+        "alternateKeys": [],
+        "from": "FSLE0100:EVENT-FILE"
+      },
+      {
+        "dsn": "FINERACT.CURRENCY.VSAM.KSDS",
+        "source": "app/data/CURRENCY.txt",
+        "format": "ksds",
+        "lrecl": 40,
+        "minRecord": 40,
+        "key": "1,3",
+        "alternateKeys": [],
+        "from": "FSLE0100:CURRENCY-FILE"
+      },
+      {
+        "dsn": "FINERACT.LOAN.REQUEST.DATA",
+        "source": "app/data/LOAN.REQUEST.txt",
+        "format": "fixed",
+        "lrecl": 200,
+        "minRecord": 200,
+        "alternateKeys": [],
+        "from": "FSLS0100:REQUEST-FILE"
+      }
+    ],
+    "scenarios": [
+      "evbad-01-p12-half_even",
+      "evbad-02-p12-half_up",
+      "events-01-p12-half_even",
+      "events-02-p12-half_up",
+      "events-03-p08-half_down",
+      "events-04-p10-up",
+      "events-05-p06-down",
+      "events-06-p12-ceiling",
+      "events-07-p09-floor",
+      "evmini-01-p12-half_even",
+      "evmini-02-p12-half_up",
+      "evmini-03-p08-half_down",
+      "evmini-04-p10-up",
+      "evmini-05-p06-down",
+      "evmini-06-p12-ceiling",
+      "evmini-07-p09-floor",
+      "fineract-unit-p12-half_up",
+      "mini-p03-ceiling",
+      "mini-p03-down",
+      "mini-p03-floor",
+      "mini-p03-half_down",
+      "mini-p03-half_even",
+      "mini-p03-half_up",
+      "mini-p03-up",
+      "mini-p06-ceiling",
+      "mini-p06-down",
+      "mini-p06-floor",
+      "mini-p06-half_down",
+      "mini-p06-half_even",
+      "mini-p06-half_up",
+      "mini-p06-up",
+      "mini-p09-ceiling",
+      "mini-p09-down",
+      "mini-p09-floor",
+      "mini-p09-half_down",
+      "mini-p09-half_even",
+      "mini-p09-half_up",
+      "mini-p09-up",
+      "mini-p12-ceiling",
+      "mini-p12-down",
+      "mini-p12-floor",
+      "mini-p12-half_down",
+      "mini-p12-half_even",
+      "mini-p12-half_up",
+      "mini-p12-up",
+      "rejects-p12-half_even"
+    ],
+    "scenarioJobs": {
+      "ev*": [
+        "FJEMIEVT"
+      ],
+      "mini-*": [
+        "FJSCHGEN"
+      ],
+      "sample-*": [
+        "FJSCHGEN"
+      ],
+      "edge-*": [
+        "FJSCHGEN"
+      ],
+      "envelope-*": [
+        "FJSCHGEN"
+      ],
+      "fineract-unit-*": [
+        "FJSCHGEN"
+      ],
+      "rejects-*": [
+        "FJSCHGEN"
+      ]
+    },
+    "jobChecks": [
+      {
+        "job": "FJEMIEVT",
+        "scenario": "base",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/base/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/base/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/base/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/base/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/base/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/base/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "base",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/base/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/base/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.EMI.RESULTS.DATA": "oracle/runs/base/jobs/FJSCHGEN/in/FINERACT.EMI.RESULTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/base/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/base/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/base/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/base/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/base/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evbad-01-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evbad-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evbad-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evbad-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evbad-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evbad-01-p12-half_even/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evbad-01-p12-half_even/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evbad-02-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evbad-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evbad-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evbad-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evbad-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evbad-02-p12-half_up/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evbad-02-p12-half_up/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "events-01-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/events-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/events-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/events-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/events-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/events-01-p12-half_even/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/events-01-p12-half_even/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "events-02-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/events-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/events-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/events-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/events-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/events-02-p12-half_up/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/events-02-p12-half_up/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "events-03-p08-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/events-03-p08-half_down/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/events-03-p08-half_down/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/events-03-p08-half_down/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/events-03-p08-half_down/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/events-03-p08-half_down/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/events-03-p08-half_down/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "events-04-p10-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/events-04-p10-up/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/events-04-p10-up/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/events-04-p10-up/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/events-04-p10-up/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/events-04-p10-up/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/events-04-p10-up/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "events-05-p06-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/events-05-p06-down/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/events-05-p06-down/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/events-05-p06-down/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/events-05-p06-down/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/events-05-p06-down/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/events-05-p06-down/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "events-06-p12-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/events-06-p12-ceiling/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/events-06-p12-ceiling/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/events-06-p12-ceiling/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/events-06-p12-ceiling/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/events-06-p12-ceiling/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/events-06-p12-ceiling/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "events-07-p09-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/events-07-p09-floor/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/events-07-p09-floor/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/events-07-p09-floor/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/events-07-p09-floor/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/events-07-p09-floor/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/events-07-p09-floor/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evmini-01-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evmini-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evmini-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evmini-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evmini-01-p12-half_even/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evmini-01-p12-half_even/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evmini-01-p12-half_even/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evmini-02-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evmini-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evmini-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evmini-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evmini-02-p12-half_up/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evmini-02-p12-half_up/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evmini-02-p12-half_up/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evmini-03-p08-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evmini-03-p08-half_down/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evmini-03-p08-half_down/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evmini-03-p08-half_down/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evmini-03-p08-half_down/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evmini-03-p08-half_down/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evmini-03-p08-half_down/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evmini-04-p10-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evmini-04-p10-up/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evmini-04-p10-up/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evmini-04-p10-up/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evmini-04-p10-up/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evmini-04-p10-up/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evmini-04-p10-up/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evmini-05-p06-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evmini-05-p06-down/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evmini-05-p06-down/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evmini-05-p06-down/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evmini-05-p06-down/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evmini-05-p06-down/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evmini-05-p06-down/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evmini-06-p12-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evmini-06-p12-ceiling/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evmini-06-p12-ceiling/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evmini-06-p12-ceiling/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evmini-06-p12-ceiling/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evmini-06-p12-ceiling/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evmini-06-p12-ceiling/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJEMIEVT",
+        "scenario": "evmini-07-p09-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/evmini-07-p09-floor/jobs/FJEMIEVT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/evmini-07-p09-floor/jobs/FJEMIEVT/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/evmini-07-p09-floor/jobs/FJEMIEVT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/evmini-07-p09-floor/jobs/FJEMIEVT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.EMI.RESULTS.DATA": "oracle/runs/evmini-07-p09-floor/jobs/FJEMIEVT/out/FINERACT.EMI.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/evmini-07-p09-floor/jobs/FJEMIEVT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "fineract-unit-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/fineract-unit-p12-half_up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/fineract-unit-p12-half_up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/fineract-unit-p12-half_up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p03-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-ceiling/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p03-ceiling/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-ceiling/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-ceiling/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-ceiling/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-ceiling/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-ceiling/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p03-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-down/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p03-down/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-down/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-down/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-down/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-down/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-down/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p03-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-floor/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p03-floor/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-floor/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-floor/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-floor/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-floor/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-floor/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p03-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_down/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p03-half_down/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_down/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_down/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_down/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_down/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-half_down/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p03-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_even/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p03-half_even/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_even/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_even/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-half_even/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p03-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p03-half_up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-half_up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p03-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p03-up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p06-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-ceiling/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p06-ceiling/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-ceiling/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-ceiling/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-ceiling/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-ceiling/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-ceiling/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p06-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-down/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p06-down/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-down/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-down/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-down/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-down/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-down/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p06-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-floor/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p06-floor/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-floor/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-floor/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-floor/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-floor/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-floor/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p06-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_down/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p06-half_down/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_down/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_down/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_down/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_down/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-half_down/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p06-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_even/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p06-half_even/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_even/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_even/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-half_even/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p06-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p06-half_up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-half_up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p06-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p06-up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p09-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-ceiling/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p09-ceiling/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-ceiling/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-ceiling/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-ceiling/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-ceiling/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-ceiling/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p09-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-down/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p09-down/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-down/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-down/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-down/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-down/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-down/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p09-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-floor/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p09-floor/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-floor/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-floor/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-floor/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-floor/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-floor/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p09-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_down/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p09-half_down/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_down/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_down/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_down/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_down/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-half_down/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p09-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_even/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p09-half_even/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_even/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_even/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-half_even/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p09-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p09-half_up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-half_up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p09-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p09-up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p12-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-ceiling/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p12-ceiling/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-ceiling/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-ceiling/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-ceiling/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-ceiling/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-ceiling/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p12-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-down/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p12-down/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-down/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-down/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-down/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-down/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-down/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p12-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-floor/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p12-floor/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-floor/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-floor/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-floor/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-floor/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-floor/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p12-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_down/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p12-half_down/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_down/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_down/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_down/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_down/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-half_down/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_even/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p12-half_even/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_even/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_even/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-half_even/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p12-half_up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-half_up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "mini-p12-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-up/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/mini-p12-up/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-up/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-up/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-up/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-up/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-up/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FJSCHGEN",
+        "scenario": "rejects-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/rejects-p12-half_even/jobs/FJSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.EMI.EVENTS.DATA": "oracle/runs/rejects-p12-half_even/jobs/FJSCHGEN/in/FINERACT.EMI.EVENTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/rejects-p12-half_even/jobs/FJSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.RUN.CONTROL": "oracle/runs/rejects-p12-half_even/jobs/FJSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/rejects-p12-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/rejects-p12-half_even/jobs/FJSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rejects-p12-half_even/jobs/FJSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      }
+    ],
+    "jobCheckRoot": ".",
+    "status": {
+      "builtAt": "2026-10-12T04:30:22",
+      "units": 4,
+      "unitsCached": 4,
+      "runAt": "2026-10-12T04:30:22",
+      "scenarios": [
+        "base",
+        "evbad-01-p12-half_even",
+        "evbad-02-p12-half_up",
+        "events-01-p12-half_even",
+        "events-02-p12-half_up",
+        "events-03-p08-half_down",
+        "events-04-p10-up",
+        "events-05-p06-down",
+        "events-06-p12-ceiling",
+        "events-07-p09-floor",
+        "evmini-01-p12-half_even",
+        "evmini-02-p12-half_up",
+        "evmini-03-p08-half_down",
+        "evmini-04-p10-up",
+        "evmini-05-p06-down",
+        "evmini-06-p12-ceiling",
+        "evmini-07-p09-floor",
+        "fineract-unit-p12-half_up",
+        "mini-p03-ceiling",
+        "mini-p03-down",
+        "mini-p03-floor",
+        "mini-p03-half_down",
+        "mini-p03-half_even",
+        "mini-p03-half_up",
+        "mini-p03-up",
+        "mini-p06-ceiling",
+        "mini-p06-down",
+        "mini-p06-floor",
+        "mini-p06-half_down",
+        "mini-p06-half_even",
+        "mini-p06-half_up",
+        "mini-p06-up",
+        "mini-p09-ceiling",
+        "mini-p09-down",
+        "mini-p09-floor",
+        "mini-p09-half_down",
+        "mini-p09-half_even",
+        "mini-p09-half_up",
+        "mini-p09-up",
+        "mini-p12-ceiling",
+        "mini-p12-down",
+        "mini-p12-floor",
+        "mini-p12-half_down",
+        "mini-p12-half_even",
+        "mini-p12-half_up",
+        "mini-p12-up",
+        "rejects-p12-half_even"
+      ],
+      "problems": [],
+      "referenceOutputs": 79,
+      "referenceMatch": 79
+    }
+  },
+  "publish": {
+    "jobs": [
+      "FJEMIEVT",
+      "FJSCHGEN"
+    ],
+    "capabilities": [
+      "FNDKRND",
+      "FNDTKRN",
+      "FSJBDEC",
+      "FSLE0100",
+      "FSLS0100"
+    ],
+    "acceptanceScenarios": [
+      "mini-p12-half_even",
+      "evmini-05-p06-down"
+    ],
+    "last": {
+      "path": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\fineract-xl\\publish\\fineract-xl-normalized-spring",
+      "at": "2026-10-12T04:42:46",
+      "programs": 146,
+      "capabilities": 146,
+      "lastTest": {
+        "at": "2026-10-12T05:26:54",
+        "tests": 3157,
+        "failed": 0,
+        "outputs": 127,
+        "match": 127,
+        "referenceOutputs": 79,
+        "referenceMatch": 79,
+        "implementation": "legacy"
+      }
+    }
+  },
+  "gemma": {
+    "designed": []
+  },
+  "reference": {
+    "label": "Fineract jar 4a61d7c (oracle A: FnHarness, EventHarness)",
+    "root": "C:\\Users\\Tomrodgers\\JavaToCOBOLTest\\fineract-cobol-gen\\out\\j3s-m2-2026-10-11-xl\\oracle-a",
+    "scenarioMap": {
+      "base": "fineract-unit-p12-half_even;evmini-01-p12-half_even"
+    },
+    "outputs": {
+      "FINERACT.LOAN.SCHEDULE.DATA": "SCHEDULE.dat",
+      "FINERACT.LOAN.REJECTS.DATA": "REJECTS.dat",
+      "FINERACT.EMI.RESULTS.DATA": "EMIOUT.dat"
+    }
+  },
+  "notes": []
+}

@@ -1,7 +1,34 @@
-# relative-path	accept|xfail	note
+# relative-path	accept|xfail	note	[COBOL-85 grammar, suite ParserAst: sll (default: no errors, SLL alone) | ll (no errors) | - (not parsed)]
 accept/ACCEPT01.cbl	accept	PERFORM VARYING, EVALUATE, IF/ELSE, COMP-3
 accept/ACCEPT02.cbl	accept	COPY REPLACING from cpy/
 accept/ACCEPT03.cbl	accept	sequential I/O, FILE STATUS, 88 SET
 accept/ACCEPT04.cbl	accept	OCCURS INDEXED BY, UNSTRING, STRING, INSPECT
 accept/ACCEPT05.cbl	accept	REDEFINES, PERFORM THRU, GO TO
 accept/XFAIL01.cbl	xfail	undeclared data name must be reported, not defaulted (I5)
+accept/AST01.cbl	accept	COBOL-85 grammar: 88 [WHEN SET TO] FALSE [IS] literal (IBM / COBOL 2002), in a copybook, SET TO FALSE
+accept/AST02.cbl	accept	COBOL-85 grammar: EXIT PERFORM, EXIT PERFORM CYCLE in inline PERFORMs
+accept/AST03.cbl	accept	COBOL-85 grammar: EXIT PARAGRAPH, EXIT SECTION, PERFORM of sections
+accept/AST04.cbl	accept	COBOL-85 grammar: INITIALIZE WITH FILLER, ALL/category TO VALUE, THEN REPLACING, THEN TO DEFAULT
+accept/AST05.cbl	accept	COBOL-85 grammar: RELEASE FROM literal
+accept/AST06.cbl	accept	COBOL-85 grammar: subscripts, reference modification and FUNCTION calls parse in SLL
+accept/AST07.cbl	accept	COBOL-85 grammar: J8 legacy constructs (77, sections, GO TO DEPENDING, ALTER, SEARCH ALL, period IF, COPY REPLACING)
+parity/PARITY05.cbl	accept	OCCURS DEPENDING ON with a qualified object; FD with ODO records
+parity/PARITY06.cbl	accept	group-level USAGE and SIGN
+parity/PARITY07.cbl	accept	REPLACE, COPY REPLACING by text words, listing directives
+parity/PARITY08.cbl	accept	SEARCH and SEARCH ALL
+parity/PARITY09.cbl	accept	INITIALIZE REPLACING, WITH FILLER, ALL TO VALUE, THEN TO DEFAULT
+parity/PARITY10.cbl	accept	SET TO FALSE, 88 WHEN SET TO FALSE
+parity/PARITY11.cbl	accept	PERFORM VARYING AFTER
+parity/PARITY12.cbl	accept	intrinsic functions
+parity/PARITY13.cbl	accept	ALTER
+parity/PARITY14.cbl	accept	DECLARATIVES USE AFTER ERROR
+parity/PARITY15.cbl	accept	COMP-5 native byte order
+parity/PARITY16.cbl	accept	two programs, RECURSIVE, LOCAL-STORAGE per invocation
+parity/PARITY17.cbl	accept	EXTERNAL, CALL RETURNING, IS INITIAL
+parity/PARITY18.cbl	accept	DISPLAY of zoned items with NUL/space bytes
+parity/PARITY19.cbl	accept	SORT, MERGE, RELEASE, RETURN, table SORT
+parity/PARITY20.cbl	accept	decimal kernel fast paths, CALL per round
+parity/PARITY22.cbl	accept	consecutive hyphens inside user-defined words (J3S paragraph names M1128-J3-S--EVENT--HEAD)
+parity/PARITY23.cbl	accept	JVM limits of a large program: 2,400 items, 1,050 paragraphs, a 64 KB paragraph outlined (generated: tools/conformance/gen_parity23.py)
+parity/PARITY24.cbl	accept	LINKAGE records own no storage: INITIAL program called twice with one argument, a 2 MB record BY REFERENCE down two CALL levels
+parity/PARITY25.cbl	accept	arithmetic-osvs: intermediate results truncated as cobc -std=ibm does; harmless cases of its scale-up defect

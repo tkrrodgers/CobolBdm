@@ -1,0 +1,574 @@
+{
+  "schema": "mlcpu.equivalences.v1",
+  "program": "FNMY0100",
+  "tracedCalls": 20865,
+  "traceSources": 31,
+  "generatedPerGroup": 100000,
+  "learningCallsPerGroup": 2000,
+  "seed": 42,
+  "faithfulReplay": {
+    "tracedCallsReplayed": 200,
+    "identical": 200
+  },
+  "functionSelector": "MY-FUNCTION",
+  "verifiedGroups": 6,
+  "groups": [
+    {
+      "group": {
+        "MY-FUNCTION": "DV"
+      },
+      "label": "MY-FUNCTION = 'DV' (MY-DIVIDE)",
+      "status": "verified-with-condition",
+      "tracedCalls": 116,
+      "generatedOnly": false,
+      "family": "operationThenScale",
+      "java": "myMoneyA.divide(myDfB, new MathContext(mcPrecision, mode)).setScale(ltDecimalPlaces, mode)",
+      "bindings": [
+        "myMoneyA = MY-MONEY-A (a BigDecimal of scale 4)",
+        "myDfB = new BigDecimal(MY-DF-B-COEF, -MY-DF-B-EXP) (the value MY-DF-B-COEF \u00d7 10^MY-DF-B-EXP)",
+        "mcPrecision = MC-PRECISION",
+        "ltDecimalPlaces = LT-DECIMAL-PLACES"
+      ],
+      "enum": {
+        "field": "MC-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "MY-MONEY-R = r (scale 4; r fits it exactly)",
+      "resultFields": "MY-MONEY-R",
+      "moreResults": [
+        {
+          "java": "myMoneyA",
+          "bindings": [
+            "myMoneyA = MY-MONEY-A (a BigDecimal of scale 4)"
+          ],
+          "result": "r = (the result).stripTrailingZeros(); MY-DF-R-COEF = r.unscaledValue(), MY-DF-R-EXP = -r.scale() (a zero result: MY-DF-R-COEF = 0, MY-DF-R-EXP = 0)",
+          "resultFields": "MY-DF-R-COEF, MY-DF-R-EXP"
+        }
+      ],
+      "inputs": [
+        "MY-MONEY-A",
+        "MY-DF-B-COEF",
+        "MY-DF-B-EXP",
+        "MC-PRECISION",
+        "LT-DECIMAL-PLACES",
+        "MC-MODE"
+      ],
+      "otherFields": [
+        "ST-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "ArithmeticException: Non-terminating decimal expansion; no exact representable decimal result.",
+          "learningCalls": 41,
+          "effects": [
+            "the program ends abnormally (ABEND 2)"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 116,
+        "tracedMatched": 116,
+        "learning": 2000,
+        "learningMatched": 1927,
+        "generated": 100000,
+        "generatedMatched": 96374,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "MY-DF-B-EXP 0..4",
+          "MC-PRECISION 0..12",
+          "LT-DECIMAL-PLACES 0..4",
+          "myMoneyA digits 1..8 (both signs)",
+          "myDfB digits 1..2",
+          "MC-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 3626,
+        "regions": [
+          {
+            "failsWhen": [
+              "MC-PRECISION = 0"
+            ],
+            "failingGenerated": 1018,
+            "exact": false,
+            "contract": {
+              "effects": [
+                "the program ends abnormally (ABEND 2)"
+              ],
+              "calls": 2018,
+              "traced": 0,
+              "generated": 2018,
+              "identical": 0,
+              "holds": true
+            },
+            "examples": [
+              "inputs MY-MONEY-A=291.3000, MY-DF-B-COEF=5, MY-DF-B-EXP=1, MC-PRECISION=0, LT-DECIMAL-PLACES=0, MC-MODE='D', MY-MONEY-R=400.0447, MY-DF-R-COEF=213, MY-DF-R-EXP=0: the faithful program ABEND 2",
+              "inputs MY-MONEY-A=-1856.2504, MY-DF-B-COEF=2, MY-DF-B-EXP=4, MC-PRECISION=0, LT-DECIMAL-PLACES=3, MC-MODE='H', MY-MONEY-R=9072.0000, MY-DF-R-COEF=2, MY-DF-R-EXP=-2: the faithful program ABEND 2"
+            ]
+          },
+          {
+            "failsWhen": [
+              "LT-DECIMAL-PLACES = 0",
+              "LT-MULTIPLES >= 1",
+              "LT-MULTIPLES-IND = 'Y'",
+              "signum(myMoneyA) = 1"
+            ],
+            "failingGenerated": 982,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "MY-DF-R-COEF, MY-DF-R-EXP as the statement gives them",
+                "ST-RC = 4",
+                "ST-REJECT-CODE = 'RJTNNT03'",
+                "ST-REJECT-SRC = MY-SITE (the value the caller passed)",
+                "every other field unchanged"
+              ],
+              "calls": 1982,
+              "traced": 0,
+              "generated": 1982,
+              "identical": 1982,
+              "holds": true
+            },
+            "examples": [
+              "inputs MY-MONEY-A=8987.9038, MY-DF-B-COEF=12, MY-DF-B-EXP=4, MC-PRECISION=11, LT-DECIMAL-PLACES=0, MC-MODE='H', MY-MONEY-R=850920.2703, MY-DF-R-COEF=1000, MY-DF-R-EXP=-2; faithful after: MY-MONEY-R=850920.2703 (statement: 0.0000), MY-DF-R-COEF=89879038, MY-DF-R-EXP=-4, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:45                   '",
+              "inputs MY-MONEY-A=0.0899, MY-DF-B-COEF=6, MY-DF-B-EXP=2, MC-PRECISION=10, LT-DECIMAL-PLACES=0, MC-MODE='H', MY-MONEY-R=42.9896, MY-DF-R-COEF=821, MY-DF-R-EXP=-2; faithful after: MY-MONEY-R=42.9896 (statement: 0.0000), MY-DF-R-COEF=899, MY-DF-R-EXP=-4, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:45                   '"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs MY-MONEY-A=8987.9038, MY-DF-B-COEF=12, MY-DF-B-EXP=4, MC-PRECISION=11, LT-DECIMAL-PLACES=0, MC-MODE='H', MY-MONEY-R=850920.2703, MY-DF-R-COEF=1000, MY-DF-R-EXP=-2; faithful after: MY-MONEY-R=850920.2703 (statement: 0.0000), MY-DF-R-COEF=89879038, MY-DF-R-EXP=-4, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:45                   '",
+        "inputs MY-MONEY-A=0.0899, MY-DF-B-COEF=6, MY-DF-B-EXP=2, MC-PRECISION=10, LT-DECIMAL-PLACES=0, MC-MODE='H', MY-MONEY-R=42.9896, MY-DF-R-COEF=821, MY-DF-R-EXP=-2; faithful after: MY-MONEY-R=42.9896 (statement: 0.0000), MY-DF-R-COEF=899, MY-DF-R-EXP=-4, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:45                   '",
+        "inputs MY-MONEY-A=7.2764, MY-DF-B-COEF=6, MY-DF-B-EXP=4, MC-PRECISION=11, LT-DECIMAL-PLACES=0, MC-MODE='U', MY-MONEY-R=72162.8579, MY-DF-R-COEF=2, MY-DF-R-EXP=0; faithful after: MY-MONEY-R=72162.8579 (statement: 1.0000), MY-DF-R-COEF=72764, MY-DF-R-EXP=-4, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:45                   '"
+      ],
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "MY-FUNCTION": "MU"
+      },
+      "label": "MY-FUNCTION = 'MU' (MY-MULTIPLY)",
+      "status": "verified-with-condition",
+      "tracedCalls": 184,
+      "generatedOnly": false,
+      "family": "operationThenScale",
+      "java": "myMoneyA.multiply(myDfB, new MathContext(mcPrecision, mode)).setScale(ltDecimalPlaces, mode)",
+      "bindings": [
+        "myMoneyA = MY-MONEY-A (a BigDecimal of scale 4)",
+        "myDfB = new BigDecimal(MY-DF-B-COEF, -MY-DF-B-EXP) (the value MY-DF-B-COEF \u00d7 10^MY-DF-B-EXP)",
+        "mcPrecision = MC-PRECISION",
+        "ltDecimalPlaces = LT-DECIMAL-PLACES"
+      ],
+      "enum": {
+        "field": "MC-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "MY-MONEY-R = r (scale 4; r fits it exactly)",
+      "resultFields": "MY-MONEY-R",
+      "moreResults": [
+        {
+          "java": "myMoneyA",
+          "bindings": [
+            "myMoneyA = MY-MONEY-A (a BigDecimal of scale 4)"
+          ],
+          "result": "r = (the result).stripTrailingZeros(); MY-DF-R-COEF = r.unscaledValue(), MY-DF-R-EXP = -r.scale() (a zero result: MY-DF-R-COEF = 0, MY-DF-R-EXP = 0)",
+          "resultFields": "MY-DF-R-COEF, MY-DF-R-EXP"
+        }
+      ],
+      "inputs": [
+        "MY-MONEY-A",
+        "MY-DF-B-COEF",
+        "MY-DF-B-EXP",
+        "MC-PRECISION",
+        "LT-DECIMAL-PLACES",
+        "MC-MODE"
+      ],
+      "otherFields": [
+        "ST-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 184,
+        "tracedMatched": 184,
+        "learning": 2000,
+        "learningMatched": 1916,
+        "generated": 100000,
+        "generatedMatched": 95293,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "MY-DF-B-EXP 0..4",
+          "MC-PRECISION 0..12",
+          "LT-DECIMAL-PLACES 0..4",
+          "myMoneyA digits 1..8",
+          "myDfB digits 3",
+          "MC-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 4707,
+        "regions": [
+          {
+            "failsWhen": [
+              "LT-DECIMAL-PLACES = 0",
+              "LT-MULTIPLES >= 1",
+              "LT-MULTIPLES-IND = 'Y'",
+              "signum(myMoneyA) = 1"
+            ],
+            "failingGenerated": 2000,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "MY-DF-R-COEF, MY-DF-R-EXP as the statement gives them",
+                "ST-RC = 4",
+                "ST-REJECT-CODE = 'RJTNNT03'",
+                "ST-REJECT-SRC = MY-SITE (the value the caller passed)",
+                "every other field unchanged"
+              ],
+              "calls": 3000,
+              "traced": 0,
+              "generated": 3000,
+              "identical": 3000,
+              "holds": true
+            },
+            "examples": [
+              "inputs MY-MONEY-A=4.7600, MY-DF-B-COEF=100, MY-DF-B-EXP=4, MC-PRECISION=6, LT-DECIMAL-PLACES=0, MC-MODE='C', MY-MONEY-R=-0.0057, MY-DF-R-COEF=4, MY-DF-R-EXP=-2; faithful after: MY-MONEY-R=-0.0057 (statement: 4760000.0000), MY-DF-R-COEF=476, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:35                   '",
+              "inputs MY-MONEY-A=9564.4308, MY-DF-B-COEF=100, MY-DF-B-EXP=2, MC-PRECISION=7, LT-DECIMAL-PLACES=0, MC-MODE='C', MY-MONEY-R=-0.1566, MY-DF-R-COEF=40501, MY-DF-R-EXP=0; faithful after: MY-MONEY-R=-0.1566 (statement: 95644310.0000), MY-DF-R-COEF=95644308, MY-DF-R-EXP=-4, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:35                   '"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs MY-MONEY-A=4.7600, MY-DF-B-COEF=100, MY-DF-B-EXP=4, MC-PRECISION=6, LT-DECIMAL-PLACES=0, MC-MODE='C', MY-MONEY-R=-0.0057, MY-DF-R-COEF=4, MY-DF-R-EXP=-2; faithful after: MY-MONEY-R=-0.0057 (statement: 4760000.0000), MY-DF-R-COEF=476, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:35                   '",
+        "inputs MY-MONEY-A=9564.4308, MY-DF-B-COEF=100, MY-DF-B-EXP=2, MC-PRECISION=7, LT-DECIMAL-PLACES=0, MC-MODE='C', MY-MONEY-R=-0.1566, MY-DF-R-COEF=40501, MY-DF-R-EXP=0; faithful after: MY-MONEY-R=-0.1566 (statement: 95644310.0000), MY-DF-R-COEF=95644308, MY-DF-R-EXP=-4, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:35                   '",
+        "inputs MY-MONEY-A=0.0001, MY-DF-B-COEF=100, MY-DF-B-EXP=3, MC-PRECISION=2, LT-DECIMAL-PLACES=0, MC-MODE='D', MY-MONEY-R=1.0000, MY-DF-R-COEF=1, MY-DF-R-EXP=-2; faithful after: MY-MONEY-R=1.0000 (statement: 10.0000), MY-DF-R-EXP=-4, ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='EA:35                   '"
+      ],
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "MY-FUNCTION": "OD"
+      },
+      "label": "MY-FUNCTION = 'OD' (MY-OF-DF)",
+      "status": "verified-with-condition",
+      "tracedCalls": 14280,
+      "generatedOnly": false,
+      "family": "setScale",
+      "java": "myDfA.setScale(ltDecimalPlaces, mode)",
+      "bindings": [
+        "myDfA = new BigDecimal(MY-DF-A-COEF, -MY-DF-A-EXP) (the value MY-DF-A-COEF \u00d7 10^MY-DF-A-EXP)",
+        "ltDecimalPlaces = LT-DECIMAL-PLACES"
+      ],
+      "enum": {
+        "field": "MC-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "MY-MONEY-R = r (scale 4; r fits it exactly)",
+      "resultFields": "MY-MONEY-R",
+      "inputs": [
+        "MY-DF-A-COEF",
+        "MY-DF-A-EXP",
+        "LT-DECIMAL-PLACES",
+        "MC-MODE"
+      ],
+      "otherFields": [
+        "ST-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "the result does not fit MY-MONEY-R",
+          "learningCalls": 148,
+          "effects": [
+            "the program ends abnormally (ABEND 9)"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 14280,
+        "tracedMatched": 14280,
+        "learning": 2000,
+        "learningMatched": 1905,
+        "generated": 100000,
+        "generatedMatched": 95428,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "MY-DF-A-EXP -14..7",
+          "LT-DECIMAL-PLACES 0..4",
+          "myDfA digits 1..13",
+          "MC-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 4572,
+        "regions": [
+          {
+            "failsWhen": [
+              "LT-DECIMAL-PLACES = 0",
+              "LT-MULTIPLES >= 1",
+              "LT-MULTIPLES-IND = 'Y'",
+              "signum(myDfA) = 1"
+            ],
+            "failingGenerated": 2000,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "ST-RC = 4",
+                "ST-REJECT-CODE = 'RJTNNT03'",
+                "ST-REJECT-SRC = MY-SITE (the value the caller passed)",
+                "every other field unchanged"
+              ],
+              "calls": 3000,
+              "traced": 0,
+              "generated": 3000,
+              "identical": 3000,
+              "holds": true
+            },
+            "examples": [
+              "inputs MY-DF-A-COEF=6, MY-DF-A-EXP=-8, LT-DECIMAL-PLACES=0, MC-MODE='F', MY-MONEY-R=14.3900; faithful after: MY-MONEY-R=14.3900 (statement: 0.0000), ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='PEC:1864                '",
+              "inputs MY-DF-A-COEF=362, MY-DF-A-EXP=-12, LT-DECIMAL-PLACES=0, MC-MODE='D', MY-MONEY-R=8012669.9499; faithful after: MY-MONEY-R=8012669.9499 (statement: 0.0000), ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='LAT:330                 '"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs MY-DF-A-COEF=6, MY-DF-A-EXP=-8, LT-DECIMAL-PLACES=0, MC-MODE='F', MY-MONEY-R=14.3900; faithful after: MY-MONEY-R=14.3900 (statement: 0.0000), ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='PEC:1864                '",
+        "inputs MY-DF-A-COEF=362, MY-DF-A-EXP=-12, LT-DECIMAL-PLACES=0, MC-MODE='D', MY-MONEY-R=8012669.9499; faithful after: MY-MONEY-R=8012669.9499 (statement: 0.0000), ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='LAT:330                 '",
+        "inputs MY-DF-A-COEF=141, MY-DF-A-EXP=3, LT-DECIMAL-PLACES=0, MC-MODE='F', MY-MONEY-R=0.2701; faithful after: MY-MONEY-R=0.2701 (statement: 141000.0000), ST-RC=4, ST-REJECT-CODE='RJTNNT03', ST-REJECT-SRC='LAT:580                 '"
+      ],
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "MY-FUNCTION": "PC"
+      },
+      "label": "MY-FUNCTION = 'PC' (MY-PERCENTAGE-OF)",
+      "status": "verified-with-condition",
+      "tracedCalls": 38,
+      "generatedOnly": false,
+      "family": "percentage",
+      "java": "myDfA.multiply(myDfB.divide(BigDecimal.valueOf(100), new MathContext(mcPrecision, mode)), new MathContext(mcPrecision, mode))",
+      "bindings": [
+        "myDfA = new BigDecimal(MY-DF-A-COEF, -MY-DF-A-EXP) (the value MY-DF-A-COEF \u00d7 10^MY-DF-A-EXP)",
+        "myDfB = new BigDecimal(MY-DF-B-COEF, -MY-DF-B-EXP) (the value MY-DF-B-COEF \u00d7 10^MY-DF-B-EXP)",
+        "mcPrecision = MC-PRECISION"
+      ],
+      "enum": {
+        "field": "MC-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "r = (the result).stripTrailingZeros(); MY-DF-R-COEF = r.unscaledValue(), MY-DF-R-EXP = -r.scale() (a zero result: MY-DF-R-COEF = 0, MY-DF-R-EXP = 0)",
+      "resultFields": "MY-DF-R-COEF, MY-DF-R-EXP",
+      "inputs": [
+        "MY-DF-A-COEF",
+        "MY-DF-A-EXP",
+        "MY-DF-B-COEF",
+        "MY-DF-B-EXP",
+        "MC-PRECISION",
+        "MC-MODE"
+      ],
+      "otherFields": [
+        "ST-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 38,
+        "tracedMatched": 38,
+        "learning": 2000,
+        "learningMatched": 1932,
+        "generated": 100000,
+        "generatedMatched": 96230,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "MY-DF-A-EXP -4..4",
+          "MY-DF-B-EXP -9..4",
+          "MC-PRECISION 0..12",
+          "myDfA digits 1..9",
+          "myDfB digits 1..12",
+          "MC-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 3770,
+        "regions": [
+          {
+            "failsWhen": [
+              "MC-PRECISION = 0"
+            ],
+            "failingGenerated": 2000,
+            "exact": true,
+            "contract": {
+              "effects": [
+                "the program ends abnormally (ABEND 2)"
+              ],
+              "calls": 3000,
+              "traced": 0,
+              "generated": 3000,
+              "identical": 0,
+              "holds": true
+            },
+            "examples": [
+              "inputs MY-DF-A-COEF=123456789, MY-DF-A-EXP=2, MY-DF-B-COEF=0, MY-DF-B-EXP=-1, MC-PRECISION=0, MC-MODE='D', MY-DF-R-COEF=1234568, MY-DF-R-EXP=-4: the faithful program ABEND 2",
+              "inputs MY-DF-A-COEF=1234568, MY-DF-A-EXP=-3, MY-DF-B-COEF=33333333333, MY-DF-B-EXP=-9, MC-PRECISION=0, MC-MODE='H', MY-DF-R-COEF=12346, MY-DF-R-EXP=-2: the faithful program ABEND 2"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs MY-DF-A-COEF=123456789, MY-DF-A-EXP=2, MY-DF-B-COEF=0, MY-DF-B-EXP=-1, MC-PRECISION=0, MC-MODE='D', MY-DF-R-COEF=1234568, MY-DF-R-EXP=-4: the faithful program ABEND 2",
+        "inputs MY-DF-A-COEF=1234568, MY-DF-A-EXP=-3, MY-DF-B-COEF=33333333333, MY-DF-B-EXP=-9, MC-PRECISION=0, MC-MODE='H', MY-DF-R-COEF=12346, MY-DF-R-EXP=-2: the faithful program ABEND 2",
+        "inputs MY-DF-A-COEF=1, MY-DF-A-EXP=-3, MY-DF-B-COEF=0, MY-DF-B-EXP=-2, MC-PRECISION=0, MC-MODE='U', MY-DF-R-COEF=12346, MY-DF-R-EXP=0: the faithful program ABEND 2"
+      ],
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "MY-FUNCTION": "RS"
+      },
+      "label": "MY-FUNCTION = 'RS' (MY-RATE-SET-SCALE)",
+      "status": "verified",
+      "tracedCalls": 6209,
+      "generatedOnly": false,
+      "family": "setScale",
+      "java": "myDfA.setScale(mcPrecision, mode)",
+      "bindings": [
+        "myDfA = new BigDecimal(MY-DF-A-COEF, -MY-DF-A-EXP) (the value MY-DF-A-COEF \u00d7 10^MY-DF-A-EXP)",
+        "mcPrecision = MC-PRECISION"
+      ],
+      "enum": {
+        "field": "MC-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "MY-RATE-R = r (scale 12; r fits it exactly)",
+      "resultFields": "MY-RATE-R",
+      "inputs": [
+        "MY-DF-A-COEF",
+        "MY-DF-A-EXP",
+        "MC-PRECISION",
+        "MC-MODE"
+      ],
+      "otherFields": [
+        "ST-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "the result does not fit MY-RATE-R",
+          "learningCalls": 419,
+          "effects": [
+            "the program ends abnormally (ABEND 9)"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 6209,
+        "tracedMatched": 6209,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "MY-DF-A-EXP -18..0",
+          "MC-PRECISION 0..12",
+          "myDfA digits 1..12",
+          "MC-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "MY-FUNCTION": "TD"
+      },
+      "label": "MY-FUNCTION = 'TD' (MY-TO-DF)",
+      "status": "verified",
+      "tracedCalls": 38,
+      "generatedOnly": false,
+      "family": "identity",
+      "java": "myMoneyA",
+      "bindings": [
+        "myMoneyA = MY-MONEY-A (a BigDecimal of scale 4)"
+      ],
+      "result": "r = (the result).stripTrailingZeros(); MY-DF-R-COEF = r.unscaledValue(), MY-DF-R-EXP = -r.scale() (a zero result: MY-DF-R-COEF = 0, MY-DF-R-EXP = 0)",
+      "resultFields": "MY-DF-R-COEF, MY-DF-R-EXP",
+      "inputs": [
+        "MY-MONEY-A"
+      ],
+      "otherFields": [
+        "ST-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 38,
+        "tracedMatched": 38,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "6",
+        "generatedInputRanges": [
+          "myMoneyA digits 8..9"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "MY-FUNCTION": "RD"
+      },
+      "label": "MY-FUNCTION = 'RD' (MY-RATE-TO-DF)",
+      "status": "unexplained",
+      "tracedCalls": 0,
+      "generatedOnly": true,
+      "note": "no output field takes more than one value on these CALLs (the inputs they depend on never vary in the traces), so no operation can be told apart"
+    }
+  ]
+}
+

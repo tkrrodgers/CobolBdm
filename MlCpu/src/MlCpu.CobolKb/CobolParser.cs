@@ -17,8 +17,13 @@ public static partial class CobolParser
     [GeneratedRegex(@"(?<![\w-])COPY\s+['""]?([A-Z0-9][A-Z0-9-]*)['""]?\s*(?:\.|(?:OF|IN)\s+[A-Z0-9][A-Z0-9-]*\s*\.?|REPLACING\b(.*)$|$)", RegexOptions.IgnoreCase)]
     private static partial Regex CopyDirectiveRx();
 
-    [GeneratedRegex(@"==\s*(.*?)\s*==\s+BY\s+==\s*(.*?)\s*==", RegexOptions.IgnoreCase)]
-    private static partial Regex ReplacingPairRx();
+    /// <summary>
+    /// Listing directives (compiler-directing statements that only shape the listing): EJECT, SKIP1/2/3 and
+    /// TITLE 'literal', each alone on its line with an optional period. They are blanked, so they never swallow the
+    /// next data entry or statement.
+    /// </summary>
+    [GeneratedRegex(@"^\s*(?:EJECT|SKIP[123]|TITLE\s+(?:'[^']*'|""[^""]*""))\s*\.?\s*$", RegexOptions.IgnoreCase)]
+    private static partial Regex ListingDirectiveRx();
 
     [GeneratedRegex(@"\bINCLUDE\s+([A-Z0-9][A-Z0-9-]*)", RegexOptions.IgnoreCase)]
     private static partial Regex SqlIncludeRx();
@@ -58,6 +63,7 @@ public static partial class CobolParser
             {
                 var t = l.TrimStart();
                 result[i] = t.StartsWith('*') || t.StartsWith('/') || t.StartsWith("*>") ? "" : StripInlineComment(l);
+                if (ListingDirectiveRx().IsMatch(result[i])) result[i] = "";
                 if (result[i].Trim().Length > 0) lastCode = i;
                 continue;
             }
@@ -74,6 +80,7 @@ public static partial class CobolParser
             }
             // An open literal runs to column 72, so its trailing spaces are part of the value.
             result[i] = OpenQuote(code) != '\0' ? code.PadRight(65) : code.TrimEnd();
+            if (ListingDirectiveRx().IsMatch(result[i])) result[i] = "";
             if (result[i].Trim().Length > 0) lastCode = i;
         }
         return result;
@@ -131,11 +138,18 @@ public static partial class CobolParser
     /// Expand COPY and EXEC SQL INCLUDE recursively (depth 8, stack-based cycle guard). Lines must be stripped (<see cref="Strip(string)"/>).
     /// REPLACING pairs are case-insensitive literal substring replacements over every member line (§5.3 step 3).
     /// </summary>
-    public static List<SourceLine> ExpandCopies(string[] stripped, Func<string, string[]?>? copyResolver, List<MissingCopybook>? missing = null)
+    public static List<SourceLine> ExpandCopies(string[] stripped, Func<string, string[]?>? copyResolver, List<MissingCopybook>? missing = null,
+        List<string>? problems = null)
     {
         var output = new List<SourceLine>();
         var programLines = stripped.Select((t, i) => new SourceLine(t, "", i + 1, i + 1)).ToList();
         Expand(programLines, copyResolver, output, missing, new Stack<string>(), 0);
+        // REPLACE statements apply to the source after COPY expansion (copybook text included).
+        var texts = output.Select(l => l.Text).ToList();
+        var problem = TextReplacing.ApplyReplaceStatements(texts);
+        if (problem is not null) problems?.Add(problem);
+        for (int i = 0; i < output.Count; i++)
+            if (!ReferenceEquals(texts[i], output[i].Text)) output[i] = output[i] with { Text = texts[i] };
         return output;
     }
 
@@ -184,8 +198,20 @@ public static partial class CobolParser
                 var execAt = prefix.LastIndexOf("EXEC", StringComparison.OrdinalIgnoreCase);
                 if (execAt >= 0) prefix = prefix.Substring(0, execAt);
             }
-            var pairs = ReplacingPairRx().Matches(directive.ToString())
-                .Select(p => (Old: p.Groups[1].Value, New: p.Groups[2].Value)).ToList();
+            // REPLACING operands are matched by text words (TextReplacing), as GnuCOBOL does: ==WS-A== does not touch
+            // WS-A-X, and ==P== does not touch PIC.
+            var pairs = new List<TextReplacing.Pair>();
+            if (!isInclude)
+            {
+                var dtext = directive.ToString();
+                var dw = TextReplacing.Words([dtext]);
+                int at = dw.FindIndex(x => string.Equals(x.Text, "REPLACING", StringComparison.OrdinalIgnoreCase));
+                if (at >= 0)
+                {
+                    int k = at + 1;
+                    pairs = TextReplacing.ParsePairs(dw, [dtext], ref k) ?? [];
+                }
+            }
 
             var memberLines = stack.Contains(member) ? null : resolver?.Invoke(member);
             if (memberLines is null)
@@ -197,15 +223,10 @@ public static partial class CobolParser
                 continue;
             }
             if (prefix.Trim().Length > 0) output.Add(line with { Text = prefix });
-            var stripped = memberLines;
+            var replaced = memberLines.ToList();
+            TextReplacing.ReplaceAll(replaced, pairs);
             var sub = new List<SourceLine>();
-            for (int k = 0; k < stripped.Length; k++)
-            {
-                var text = stripped[k];
-                foreach (var (o, n) in pairs)
-                    if (o.Length > 0) text = text.Replace(o, n, StringComparison.OrdinalIgnoreCase);
-                sub.Add(new SourceLine(text, member, k + 1, line.ProgramLine));
-            }
+            for (int k = 0; k < replaced.Count; k++) sub.Add(new SourceLine(replaced[k], member, k + 1, line.ProgramLine));
             stack.Push(member);
             Expand(sub, resolver, output, missing, stack, depth + 1);
             stack.Pop();

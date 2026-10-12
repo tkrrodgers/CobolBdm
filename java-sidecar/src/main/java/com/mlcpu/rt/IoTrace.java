@@ -74,7 +74,7 @@ public final class IoTrace {
             CobFile.closeAllOpen();
             rc = CobRt.RETURN_CODE.dec().intValue();
         } catch (CobRt.Abend a) {
-            CobFile.forgetOpen();
+            CobFile.closeAllOpen(); // implicit CLOSE, as GnuCOBOL does when the CEE3ABD stub or a runtime error ends the run unit
             rc = 16;
             outcome = "abend " + a.code;
         } finally {

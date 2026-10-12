@@ -9,6 +9,7 @@ import java.util.Map;
  */
 public abstract class CobolBase implements MigratedProgram {
     protected int _goto = -1;
+    private Area[] linkage;
     protected boolean _called;
     private boolean _initialized;
 
@@ -18,6 +19,33 @@ public abstract class CobolBase implements MigratedProgram {
     protected abstract void _dispatch(int pc);
 
     protected abstract int _count();
+
+    /** PROGRAM-ID ... IS INITIAL: each CALL starts from the initial state and closes the files the program left open. */
+    protected boolean _initial() {
+        return false;
+    }
+
+    /** LOCAL-STORAGE areas: allocated and initialized afresh for each invocation (recursive ones included). */
+    private static final Area[] NO_AREAS = new Area[0];
+    private static final byte[][] NO_SAVED = new byte[0][];
+
+    protected Area[] _localAreas() {
+        return NO_AREAS;
+    }
+
+    /** Applies LOCAL-STORAGE's default byte and VALUE clauses to the current invocation's areas. */
+    protected void _initLocal() {
+    }
+
+    /** The program's files (an INITIAL program closes those left open when it returns). */
+    protected CobFile[] _files() {
+        return new CobFile[0];
+    }
+
+    /** The first paragraph the program runs: the one after DECLARATIVES. */
+    protected int _start() {
+        return 0;
+    }
 
     /** Linkage areas in PROCEDURE DIVISION USING order. */
     protected abstract Area[] _linkage();
@@ -45,11 +73,12 @@ public abstract class CobolBase implements MigratedProgram {
 
     /** Truth-table entry point: seed fields as {@link #runParagraph} does, then run the whole program from its first paragraph. */
     public ProgramState runProgram(Map<String, String> inputs) {
-        return runRange(0, _count() - 1, inputs);
+        return runRange(_start(), _count() - 1, inputs);
     }
 
     private ProgramState runRange(int lo, int hi, Map<String, String> inputs) {
         ensureInit();
+        materializeLinkage();
         Map<String, CobField> fields = _fields();
         for (Map.Entry<String, String> e : inputs.entrySet()) {
             CobField f = fields.get(e.getKey());
@@ -75,6 +104,10 @@ public abstract class CobolBase implements MigratedProgram {
             outcome = "FRONTIER";
         } catch (CobRt.RuntimeCheck | CobRt.SizeError e) {
             outcome = "RUNTIME_CHECK:" + e.getMessage();
+        } catch (IndexOutOfBoundsException e) {
+            // A subscript or reference modification outside its record: undefined storage in COBOL (an abend with
+            // SSRANGE). Both versions of a paragraph must reach it at the same point, so it is an outcome, not an error.
+            outcome = "RUNTIME_CHECK:storage outside the record";
         } finally {
             DisplaySink.set(prev);
         }
@@ -92,10 +125,13 @@ public abstract class CobolBase implements MigratedProgram {
     protected final void perform(int lo, int hi) {
         int pc = lo;
         int n = _count();
+        long back = 0; // GO TO jumps back to an earlier paragraph of this range: a GO TO loop
         while (true) {
             _goto = -1;
             _dispatch(pc);
             if (_goto >= 0) {
+                if (_goto <= pc && ++back > CobConfig.LOOP_LIMIT)
+                    CobRt.loopTick("GO TO loop in " + programId() + " (paragraph " + _paragraphNames()[_goto] + ")", back);
                 pc = _goto;
                 continue;
             }
@@ -103,6 +139,12 @@ public abstract class CobolBase implements MigratedProgram {
             pc++;
             if (pc >= n) return;
         }
+    }
+
+    /** LINKAGE records seeded or read without a CALL (characterization): storage of their own, as WORKING-STORAGE has. */
+    private void materializeLinkage() {
+        Area[] lk = linkage != null ? linkage : (linkage = _linkage());
+        for (Area a : lk) a.materialize(CobConfig.DEFAULT_BYTE);
     }
 
     public final void ensureInit() {
@@ -114,19 +156,32 @@ public abstract class CobolBase implements MigratedProgram {
 
     /** Enter the program (main or CALLed). Linkage areas are bound to the arguments BY REFERENCE. */
     public final void call(CobField[] args, boolean called) {
+        if (_initial() && _initialized) _init();
         ensureInit();
-        Area[] lk = _linkage();
+        Area[] lk = linkage != null ? linkage : (linkage = _linkage());
         for (int i = 0; i < Math.min(args.length, lk.length); i++) {
             if (args[i] != null) lk[i].bind(args[i].buf(), args[i].pos());
         }
+        for (Area a : lk) a.materialize(CobConfig.DEFAULT_BYTE); // a USING record no argument was bound to
+        // LOCAL-STORAGE: fresh storage per invocation (after the arguments are bound, so an argument in the caller's
+        // LOCAL-STORAGE keeps pointing at the caller's bytes), the caller's restored on return.
+        Area[] local = _localAreas();
+        byte[][] saved = local.length == 0 ? NO_SAVED : new byte[local.length][];
+        for (int i = 0; i < local.length; i++) {
+            saved[i] = local[i].b;
+            local[i].b = new byte[local[i].size];
+        }
+        if (local.length > 0) _initLocal();
         boolean prev = _called;
         _called = called;
         try {
-            perform(0, _count() - 1);
+            perform(_start(), _count() - 1);
         } catch (CobRt.ProgramExit e) {
             // GOBACK / EXIT PROGRAM
         } finally {
             _called = prev;
+            for (int i = 0; i < local.length; i++) local[i].b = saved[i];
+            if (_initial()) for (CobFile f : _files()) if (f.isOpen()) f.close();
         }
     }
 
@@ -138,6 +193,7 @@ public abstract class CobolBase implements MigratedProgram {
     @Override
     public ProgramState run(ProgramState state) {
         ensureInit();
+        materializeLinkage();
         Map<String, CobField> fields = _fields();
         for (Map.Entry<String, Object> e : state.fields().entrySet()) {
             CobField f = fields.get(e.getKey());

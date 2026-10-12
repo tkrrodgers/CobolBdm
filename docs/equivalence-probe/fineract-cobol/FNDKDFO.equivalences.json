@@ -1,0 +1,293 @@
+{
+  "schema": "mlcpu.equivalences.v1",
+  "program": "FNDKDFO",
+  "tracedCalls": 22485,
+  "traceSources": 31,
+  "generatedPerGroup": 100000,
+  "learningCallsPerGroup": 2000,
+  "seed": 42,
+  "faithfulReplay": {
+    "tracedCallsReplayed": 200,
+    "identical": 200
+  },
+  "functionSelector": "DF-OP",
+  "verifiedGroups": 4,
+  "groups": [
+    {
+      "group": {
+        "DF-OP": "A"
+      },
+      "label": "DF-OP = 'A' (DF-OP-ADD)",
+      "status": "verified",
+      "tracedCalls": 296,
+      "generatedOnly": false,
+      "family": "mathContext",
+      "java": "dfA.add(dfB, new MathContext(dfPrec, mode))",
+      "bindings": [
+        "dfA = new BigDecimal(DF-A-COEF, -DF-A-EXP) (the value DF-A-COEF \u00d7 10^DF-A-EXP)",
+        "dfB = new BigDecimal(DF-B-COEF, -DF-B-EXP) (the value DF-B-COEF \u00d7 10^DF-B-EXP)",
+        "dfPrec = DF-PREC"
+      ],
+      "enum": {
+        "field": "DF-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "r = (the result).stripTrailingZeros(); DF-R-COEF = r.unscaledValue(), DF-R-EXP = -r.scale() (a zero result: DF-R-COEF = 0, DF-R-EXP = 0)",
+      "resultFields": "DF-R-COEF, DF-R-EXP",
+      "inputs": [
+        "DF-A-COEF",
+        "DF-A-EXP",
+        "DF-B-COEF",
+        "DF-B-EXP",
+        "DF-PREC",
+        "DF-MODE"
+      ],
+      "otherFields": [
+        "when DF-A-EXP < DF-B-EXP: DF-A-COEF = DF-B-COEF (the value the caller passed); otherwise DF-A-COEF unchanged",
+        "when DF-A-EXP < DF-B-EXP: DF-A-EXP = DF-B-EXP (the value the caller passed); otherwise DF-A-EXP unchanged",
+        "when DF-A-EXP < DF-B-EXP: DF-B-COEF = DF-A-COEF (the value the caller passed); otherwise DF-B-COEF unchanged",
+        "when DF-A-EXP < DF-B-EXP: DF-B-EXP = DF-A-EXP (the value the caller passed); otherwise DF-B-EXP unchanged",
+        "DF-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 296,
+        "tracedMatched": 296,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DF-A-EXP -14..0",
+          "DF-B-EXP -14..0",
+          "DF-PREC 0..12",
+          "dfA digits 1..12",
+          "dfB digits 1..12",
+          "DF-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DF-OP": "M"
+      },
+      "label": "DF-OP = 'M' (DF-OP-MULTIPLY)",
+      "status": "verified",
+      "tracedCalls": 9166,
+      "generatedOnly": false,
+      "family": "mathContext",
+      "java": "dfA.multiply(dfB, new MathContext(dfPrec, mode))",
+      "bindings": [
+        "dfA = new BigDecimal(DF-A-COEF, -DF-A-EXP) (the value DF-A-COEF \u00d7 10^DF-A-EXP)",
+        "dfB = new BigDecimal(DF-B-COEF, -DF-B-EXP) (the value DF-B-COEF \u00d7 10^DF-B-EXP)",
+        "dfPrec = DF-PREC"
+      ],
+      "enum": {
+        "field": "DF-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "r = (the result).stripTrailingZeros(); DF-R-COEF = r.unscaledValue(), DF-R-EXP = -r.scale() (a zero result: DF-R-COEF = 0, DF-R-EXP = 0)",
+      "resultFields": "DF-R-COEF, DF-R-EXP",
+      "inputs": [
+        "DF-A-COEF",
+        "DF-A-EXP",
+        "DF-B-COEF",
+        "DF-B-EXP",
+        "DF-PREC",
+        "DF-MODE"
+      ],
+      "otherFields": [
+        "DF-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 9166,
+        "tracedMatched": 9166,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DF-A-EXP -18..9",
+          "DF-B-EXP -14..9",
+          "DF-PREC 0..12",
+          "dfA digits 1..12",
+          "dfB digits 1..13",
+          "DF-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DF-OP": "N"
+      },
+      "label": "DF-OP = 'N' (DF-OP-NORMALIZE)",
+      "status": "verified",
+      "tracedCalls": 6451,
+      "generatedOnly": false,
+      "family": "identity",
+      "java": "dfA",
+      "bindings": [
+        "dfA = new BigDecimal(DF-A-COEF, -DF-A-EXP) (the value DF-A-COEF \u00d7 10^DF-A-EXP)"
+      ],
+      "result": "r = (the result).stripTrailingZeros(); DF-R-COEF = r.unscaledValue(), DF-R-EXP = -r.scale() (a zero result: DF-R-COEF = 0, DF-R-EXP = 0)",
+      "resultFields": "DF-R-COEF, DF-R-EXP",
+      "inputs": [
+        "DF-A-COEF",
+        "DF-A-EXP"
+      ],
+      "otherFields": [
+        "DF-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 6451,
+        "tracedMatched": 6451,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DF-A-EXP -12..0",
+          "dfA digits 1..14 (both signs)"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DF-OP": "V"
+      },
+      "label": "DF-OP = 'V' (DF-OP-DIVIDE)",
+      "status": "verified-with-condition",
+      "tracedCalls": 6572,
+      "generatedOnly": false,
+      "family": "mathContext",
+      "java": "dfA.divide(dfB, new MathContext(dfPrec, mode))",
+      "bindings": [
+        "dfA = new BigDecimal(DF-A-COEF, -DF-A-EXP) (the value DF-A-COEF \u00d7 10^DF-A-EXP)",
+        "dfB = new BigDecimal(DF-B-COEF, -DF-B-EXP) (the value DF-B-COEF \u00d7 10^DF-B-EXP)",
+        "dfPrec = DF-PREC"
+      ],
+      "enum": {
+        "field": "DF-MODE",
+        "type": "RoundingMode",
+        "map": {
+          "C": "CEILING",
+          "D": "DOWN",
+          "E": "HALF_EVEN",
+          "F": "FLOOR",
+          "H": "HALF_UP",
+          "N": "HALF_DOWN",
+          "U": "UP"
+        }
+      },
+      "result": "r = (the result).stripTrailingZeros(); DF-R-COEF = r.unscaledValue(), DF-R-EXP = -r.scale() (a zero result: DF-R-COEF = 0, DF-R-EXP = 0)",
+      "resultFields": "DF-R-COEF, DF-R-EXP",
+      "inputs": [
+        "DF-A-COEF",
+        "DF-A-EXP",
+        "DF-B-COEF",
+        "DF-B-EXP",
+        "DF-PREC",
+        "DF-MODE"
+      ],
+      "otherFields": [
+        "DF-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "ArithmeticException: Division by zero",
+          "learningCalls": 22,
+          "effects": [
+            "when DF-PREC = 0: DF-RC = 12; otherwise DF-RC = 16",
+            "DF-R-COEF, DF-R-EXP unchanged"
+          ]
+        },
+        {
+          "when": "ArithmeticException: Non-terminating decimal expansion; no exact representable decimal result.",
+          "learningCalls": 65,
+          "effects": [
+            "DF-RC = 12",
+            "DF-R-COEF, DF-R-EXP unchanged"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 6572,
+        "tracedMatched": 6572,
+        "learning": 2000,
+        "learningMatched": 1983,
+        "generated": 100000,
+        "generatedMatched": 99312,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DF-A-EXP -18..7",
+          "DF-B-EXP -11..0",
+          "DF-PREC 0..12",
+          "dfA digits 1..12 (both signs)",
+          "dfB digits 1..12",
+          "DF-MODE 'C' 'D' 'E' 'F' 'H' 'N' 'U'"
+        ]
+      },
+      "condition": {
+        "failing": 688,
+        "regions": [
+          {
+            "failsWhen": [
+              "DF-PREC = 0"
+            ],
+            "failingGenerated": 688,
+            "exact": false,
+            "contract": {
+              "effects": [
+                "DF-RC = 12",
+                "every other field unchanged"
+              ],
+              "calls": 1688,
+              "traced": 0,
+              "generated": 1688,
+              "identical": 1688,
+              "holds": true
+            },
+            "examples": [
+              "inputs DF-A-COEF=999999999999, DF-A-EXP=-7, DF-B-COEF=20, DF-B-EXP=-11, DF-PREC=0, DF-MODE='H', DF-R-COEF=11949999, DF-R-EXP=-16; faithful after: DF-R-COEF=11949999 (statement: 4999999999995), DF-R-EXP=-16 (statement: 2), DF-RC=12",
+              "inputs DF-A-COEF=650, DF-A-EXP=-2, DF-B-COEF=1, DF-B-EXP=0, DF-PREC=0, DF-MODE='H', DF-R-COEF=97050603605, DF-R-EXP=0; faithful after: DF-R-COEF=97050603605 (statement: 65), DF-R-EXP=0 (statement: -1), DF-RC=12"
+            ]
+          }
+        ],
+        "failuresOutsideTheRegions": 0
+      },
+      "failureExamples": [
+        "inputs DF-A-COEF=999999999999, DF-A-EXP=-7, DF-B-COEF=20, DF-B-EXP=-11, DF-PREC=0, DF-MODE='H', DF-R-COEF=11949999, DF-R-EXP=-16; faithful after: DF-R-COEF=11949999 (statement: 4999999999995), DF-R-EXP=-16 (statement: 2), DF-RC=12",
+        "inputs DF-A-COEF=650, DF-A-EXP=-2, DF-B-COEF=1, DF-B-EXP=0, DF-PREC=0, DF-MODE='H', DF-R-COEF=97050603605, DF-R-EXP=0; faithful after: DF-R-COEF=97050603605 (statement: 65), DF-R-EXP=0 (statement: -1), DF-RC=12",
+        "inputs DF-A-COEF=0, DF-A-EXP=-14, DF-B-COEF=788591441592, DF-B-EXP=0, DF-PREC=0, DF-MODE='E', DF-R-COEF=1811545001, DF-R-EXP=2; faithful after: DF-R-COEF=1811545001 (statement: 0), DF-R-EXP=2 (statement: 0), DF-RC=12"
+      ],
+      "alternativesWithEqualScore": 0
+    }
+  ]
+}
+

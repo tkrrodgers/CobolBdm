@@ -18,12 +18,25 @@ public sealed class OracleService(ProjectService projects, GnuCobolOracle generi
         var (built, cached, problems) = await generic.BuildAsync(p, op, from, from + (to - from) * 0.4, force, ct);
         var scenarios = new List<string> { "base" };
         scenarios.AddRange(p.Oracle.Scenarios.Where(s => s != "base"));
-        var checks = new List<JobCheck>();
-        for (int i = 0; i < scenarios.Count; i++)
-        {
-            double a = from + (to - from) * (0.4 + 0.6 * i / scenarios.Count), b = from + (to - from) * (0.4 + 0.6 * (i + 1) / scenarios.Count);
-            checks.AddRange(await generic.RunScenarioAsync(p, scenarios[i], op, a, b, ct));
-        }
+        // Scenarios are independent (each has its own run directory and context), so after "base" they run in parallel:
+        // a matrix of scenarios costs about one scenario's time per core group, not their sum.
+        var perScenario = new List<JobCheck>[scenarios.Count];
+        perScenario[0] = await generic.RunScenarioAsync(p, scenarios[0], op, from + (to - from) * 0.4, from + (to - from) * (0.4 + 0.6 / scenarios.Count), ct);
+        int done = 1;
+        await Parallel.ForEachAsync(Enumerable.Range(1, scenarios.Count - 1),
+            new ParallelOptions { MaxDegreeOfParallelism = Math.Max(1, Math.Min(16, Environment.ProcessorCount / 4)), CancellationToken = ct },
+            async (i, token) =>
+            {
+                perScenario[i] = await generic.RunScenarioAsync(p, scenarios[i], op, from, from, token);
+                op.Report(from + (to - from) * (0.4 + 0.6 * Interlocked.Increment(ref done) / scenarios.Count), $"{done}/{scenarios.Count} scenarios");
+            });
+        var checks = perScenario.SelectMany(x => x).ToList();
+        // The GnuCOBOL run against the reference oracle (A = B for an estate derived from another application).
+        var dir = projects.Paths(p).Dir;
+        var reference = checks.SelectMany(c => ReferenceOracle.Compare(p, dir, c, key =>
+            c.Outputs.TryGetValue(key, out var rel) ? Path.GetFullPath(Path.Combine(dir, rel)) : null)).ToList();
+        foreach (var d in reference.Where(x => x.Verdict != "MATCH").Take(20)) op.Info($"reference {d.Verdict}: {d.Job} [{d.Scenario}] {d.Output}: {d.Detail}");
+        if (p.Reference is not null) op.Info(ReferenceOracle.Summary(p, reference, "GnuCOBOL"));
         projects.Update(p.Id, x =>
         {
             x.Oracle.JobChecks = checks;
@@ -31,7 +44,8 @@ public sealed class OracleService(ProjectService projects, GnuCobolOracle generi
             x.Oracle.Status = new OracleStatus
             {
                 BuiltAt = DateTime.Now.ToString("s"), Units = built + cached, UnitsCached = cached, RunAt = DateTime.Now.ToString("s"),
-                Scenarios = scenarios, Problems = problems
+                Scenarios = scenarios, Problems = problems,
+                ReferenceOutputs = reference.Count, ReferenceMatch = reference.Count(r => r.Verdict == "MATCH")
             };
         });
         op.Info($"oracle: {checks.Count} job check(s) over {scenarios.Count} scenario(s), {checks.Sum(c => c.Outputs.Count)} outputs");

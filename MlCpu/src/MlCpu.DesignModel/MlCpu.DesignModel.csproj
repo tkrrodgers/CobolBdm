@@ -5,6 +5,11 @@
     <AssemblyName>MlCpu.DesignModel</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Field values in the prompt's form (worked examples, shadow feedback): shared with the kit builder, as source. -->
+    <Compile Include="..\MlCpu.CobolKb.Knowledge\Examples\KitValues.cs" Link="Kit\KitValues.cs" />
+    <Compile Include="..\MlCpu.CobolKb.Knowledge\Examples\CallExamples.cs" Link="Kit\CallExamples.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="LM-Kit.NET" Version="2026.10.3" />
     <PackageReference Include="LM-Kit.NET.Backend.Cuda13.Windows" Version="2026.10.3" />
   </ItemGroup>

@@ -95,7 +95,7 @@ public sealed partial class JavaProjectAssembler
                 files.Set($"replay/ReplayPlan{suffix}.json", ReplayPlanBuilder.BuildJson(plan, models, slug));
                 foreach (var (pid, model) in models)
                     if (compiledIds.Contains(pid) && !packets.ContainsKey(pid) && sources.TryGetValue(pid, out var src))
-                        packets[pid] = RequirementsPacketBuilder.Build(model, MlCpu.Cobol.Analysis.ProgramGraphBuilder.Build(model), src, plan, replay, options.RegressionNote);
+                        packets[pid] = RequirementsPacketBuilder.Build(model, MlCpu.Cobol.Analysis.ProgramGraphBuilder.Build(model, dataDeps: false), src, plan, replay, options.RegressionNote);
             }
 
         var (capabilities, capabilityLedger) = NormalizedCapabilities.Import(files, options.CapabilitiesRoot, packets);
@@ -195,9 +195,17 @@ public sealed partial class JavaProjectAssembler
             applicationDefaultJvmArgs = listOf("-Xss64m")
         }
 
-        tasks.withType<JavaCompile>().configureEach { options.encoding = "UTF-8" }
+        // javac in its own JVM, with room for an estate of hundreds of thousands of lines (the Gradle daemon's default heap is not);
+        // tests in parallel JVMs with room for large records. -Pmlcpu.javacHeap / testHeap / testForks override.
+        tasks.withType<JavaCompile>().configureEach {
+            options.encoding = "UTF-8"
+            options.isFork = true
+            options.forkOptions.memoryMaximumSize = (findProperty("mlcpu.javacHeap") ?: "8g").toString()
+        }
         tasks.test {
             useJUnitPlatform()
+            maxHeapSize = (findProperty("mlcpu.testHeap") ?: "6g").toString()
+            maxParallelForks = (findProperty("mlcpu.testForks")?.toString()?.toInt() ?: (Runtime.getRuntime().availableProcessors() / 8)).coerceIn(1, 8)
             jvmArgs("-Xss64m")
             testLogging { events("passed", "failed", "skipped") }
             systemProperty("mlcpu.characterization.dir", "${projectDir}/characterization")
@@ -521,7 +529,7 @@ public sealed partial class JavaProjectAssembler
     {
         var root = Path.GetFullPath(Path.Combine(targetDir, project.Name));
         var stage = root + ".staging";
-        if (Directory.Exists(stage)) Directory.Delete(stage, true);
+        await Retry(() => { if (Directory.Exists(stage)) Directory.Delete(stage, true); }, ct);
         foreach (var f in project.Files)
         {
             var full = Path.GetFullPath(Path.Combine(stage, f.RelPath));
@@ -532,10 +540,23 @@ public sealed partial class JavaProjectAssembler
             else await File.WriteAllTextAsync(full, f.Content.Replace("\r\n", "\n"), new UTF8Encoding(false), ct);
         }
         var backup = root + ".bak";
-        if (Directory.Exists(backup)) Directory.Delete(backup, true);
-        if (Directory.Exists(root)) Directory.Move(root, backup);
-        Directory.Move(stage, root);
-        if (Directory.Exists(backup)) Directory.Delete(backup, true);
+        await Retry(() => { if (Directory.Exists(backup)) Directory.Delete(backup, true); }, ct);
+        await Retry(() => { if (Directory.Exists(root)) Directory.Move(root, backup); }, ct);
+        await Retry(() => Directory.Move(stage, root), ct);
+        await Retry(() => { if (Directory.Exists(backup)) Directory.Delete(backup, true); }, ct);
         return root;
+    }
+
+    /// <summary>
+    /// A directory move or delete, retried for up to a minute: on Windows a virus scanner or the search indexer briefly
+    /// holds files that were just written, and a publish writes thousands.
+    /// </summary>
+    static async Task Retry(Action io, CancellationToken ct)
+    {
+        for (int attempt = 1; ; attempt++)
+        {
+            try { io(); return; }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException && attempt < 30) { await Task.Delay(2000, ct); }
+        }
     }
 }

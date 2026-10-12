@@ -40,6 +40,8 @@ public sealed class IrProgram
     public Dictionary<string, string>? RecordFile { get; set; }
     /// <summary>ext: full FILE-CONTROL + FD description.</summary>
     public List<IrFile>? Files { get; set; }
+    public bool Initial { get; set; }
+    public bool Recursive { get; set; }
 }
 
 public sealed class IrFile
@@ -99,11 +101,25 @@ public sealed class IrField
     public bool BlankWhenZero { get; set; }
     public List<IrValue>? Values { get; set; }
     public bool ValueAll { get; set; }
+    /// <summary>An 88's WHEN SET TO FALSE literal.</summary>
+    public IrValue? FalseValue { get; set; }
     public string? File { get; set; }
     public int? RedefinesId { get; set; }
     public string? DependingOn { get; set; }
+    /// <summary>The OCCURS DEPENDING ON object's id (resolved with its qualifiers).</summary>
+    public int? DependingOnId { get; set; }
+    /// <summary>OCCURS integer-1 of OCCURS integer-1 TO integer-2 DEPENDING ON.</summary>
+    public int? OccursMin { get; set; }
+    /// <summary>EXTERNAL record: its storage is shared across the run unit by name.</summary>
+    public bool External { get; set; }
+    /// <summary>ASCENDING/DESCENDING KEY phrases of a table, major key first.</summary>
+    public List<IrKey>? Keys { get; set; }
+    /// <summary>INDEXED BY index items of a table, first one first.</summary>
+    public List<int>? IndexedBy { get; set; }
     public int Line { get; set; }
 }
+
+public sealed record IrKey(bool Ascending, int Id);
 
 public sealed class IrParagraph
 {
@@ -178,4 +194,7 @@ public sealed class IrSemParagraph
     public bool IsSection { get; set; }
     public int Line { get; set; }
     public List<Stmt> Statements { get; set; } = [];
+    public bool Declarative { get; set; }
+    public List<string>? UseFiles { get; set; }
+    public List<string>? UseModes { get; set; }
 }

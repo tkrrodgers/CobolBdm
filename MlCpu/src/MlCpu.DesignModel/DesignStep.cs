@@ -29,19 +29,30 @@ public static class DesignStep
         var packet = JsonNode.Parse(File.ReadAllText(packetPath))!.AsObject();
         var schema = File.ReadAllText(schemaPath);
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(outPath))!);
+        // Verified library equivalences sit next to the packet (normalization/<PID>/equivalences.md); the packet is unchanged.
+        var equivalences = Equivalences(packetPath);
+        // So do the verified contracts of the programs it CALLs (normalization/<PID>/callee-contracts.md).
+        var callees = CalleeContracts(packetPath);
+        var eqSection = (equivalences is null ? "" : equivalences + "\n\n") + (callees is null ? "" : callees + "\n\n");
         var outline = "";
         if (outlinePath is not null && File.Exists(outlinePath))
         {
             var text = File.ReadAllText(outlinePath).Replace("\r\n", "\n");
             // Keep room for the schema, the packet and a 16k-token reply (about 3.6 characters per token).
-            if ((schema.Length + packet.ToJsonString().Length + text.Length) / 3.6 + 20000 < context)
+            if ((schema.Length + packet.ToJsonString().Length + eqSection.Length + text.Length) / 3.6 + 20000 < context)
                 outline = $"COBOL-85 AST outline of the program (the original logic, statement by statement):\n```\n{text.TrimEnd()}\n```\n\n";
             else Program.Log("  AST outline left out of the design prompt (context)");
         }
+        var eqRule = equivalences is null ? "" :
+            "Where \"Verified library equivalences\" lists a group of CALLs, design that group's service operation around the named JDK operation " +
+            "(BigDecimal with MathContext/RoundingMode, LocalDate, ChronoUnit) and its field mapping, not around a digit-by-digit or calendar algorithm.\n";
+        if (callees is not null)
+            eqRule += "Where the design computes the result of a program it CALLs instead of calling it, it must produce every effect that program's " +
+                      "verified contract lists for that CALL (result, return and status fields, fields copied from the caller's arguments), on the error paths too.\n";
         var messages = new List<ChatMessage>
         {
             new("system", SystemPrompt),
-            new("user", $"JSON Schema (mlcpu.capability-design.v1):\n{schema}\n\nRequirements packet:\n{packet.ToJsonString()}\n\n{outline}" +
+            new("user", $"JSON Schema (mlcpu.capability-design.v1):\n{schema}\n\nRequirements packet:\n{packet.ToJsonString()}\n\n{eqSection}{outline}{eqRule}" +
                         $"Return the design JSON for program {packet["programId"]} now. requirementsHash must be \"{packet["requirementsHash"]}\".")
         };
         var runs = new JsonArray();
@@ -71,6 +82,26 @@ public static class DesignStep
         }.ToJsonString(Program.Json) + "\n");
         Program.Log(problems.Count == 0 ? $"VALID design written to {outPath}" : $"INVALID design after {attempts} attempts ({problems.Count} problems)");
         return problems.Count == 0;
+    }
+
+    /// <summary>
+    /// normalization/&lt;PID&gt;/equivalences.md next to the packet (the library-equivalence probe's verified statements for a
+    /// subprogram), as a "# Verified library equivalences" section; null when there is none.
+    /// </summary>
+    public static string? Equivalences(string packetPath)
+    {
+        var path = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(packetPath))!, "equivalences.md");
+        if (!File.Exists(path)) return null;
+        var lines = File.ReadAllText(path).Replace("\r\n", "\n").TrimEnd().Split('\n').ToList();
+        if (lines.Count > 0 && lines[0].StartsWith("# ", StringComparison.Ordinal)) lines.RemoveAt(0);
+        return "# Verified library equivalences\n" + string.Join("\n", lines).TrimEnd();
+    }
+
+    /// <summary>normalization/&lt;PID&gt;/callee-contracts.md next to the packet (the verified contracts of the programs it CALLs); null when there is none.</summary>
+    public static string? CalleeContracts(string packetPath)
+    {
+        var path = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(packetPath))!, "callee-contracts.md");
+        return File.Exists(path) ? File.ReadAllText(path).Replace("\r\n", "\n").TrimEnd() : null;
     }
 
     static JsonObject? Extract(string text)

@@ -17,6 +17,18 @@
 * with the provided preprocessor, which executes COPY and REPLACE statements.
 */
 
+/*
+* MlCpu changes to grammars-v4 cobol85 (commit 7535367), each marked "MlCpu" below; docs/AST-GRAMMAR.md:
+*  - IBM Enterprise COBOL / COBOL 2002 constructs: 88-level [WHEN SET TO] FALSE [IS] literal (VALUE literals are no
+*    longer TRUE/FALSE); EXIT PERFORM [CYCLE], EXIT PARAGRAPH, EXIT SECTION (new tokens CYCLE, PARAGRAPH, still
+*    usable as user words); INITIALIZE WITH FILLER, {ALL | category} TO VALUE, THEN REPLACING, THEN TO DEFAULT;
+*    RELEASE ... FROM identifier or literal.
+*  - SLL-friendly identifiers: tableCall before qualifiedDataName, reference-modifier forms of tableCall and
+*    functionCall first. SLL prediction then parses every program of the reference estates, so a 130K-line program
+*    parses in seconds instead of minutes of full LL.
+* Regenerate the C# parser with tools/Generate-CobolParser.ps1.
+*/
+
 // $antlr-format alignTrailingComments true, columnLimit 150, minEmptyLines 1, maxEmptyLinesToKeep 1, reflowComments false, useTab false
 // $antlr-format allowShortRulesOnASingleLine false, allowShortBlocksOnASingleLine true, alignSemicolons hanging, alignColons hanging
 
@@ -1193,7 +1205,13 @@ dataDescriptionEntryFormat2
     ;
 
 dataDescriptionEntryFormat3
-    : LEVEL_NUMBER_88 conditionName dataValueClause DOT_FS
+    : LEVEL_NUMBER_88 conditionName dataValueClause dataWhenSetToFalseClause? DOT_FS
+    ;
+
+// MlCpu (docs/AST-GRAMMAR.md): IBM Enterprise COBOL / COBOL 2002 condition-name FALSE value (SET condition-name TO FALSE);
+// GnuCOBOL also accepts it without WHEN SET TO
+dataWhenSetToFalseClause
+    : (WHEN SET TO)? FALSE IS? literal
     ;
 
 dataDescriptionEntryExecSql
@@ -1359,8 +1377,14 @@ dataValueInterval
     : dataValueIntervalFrom dataValueIntervalTo?
     ;
 
+// MlCpu (docs/AST-GRAMMAR.md): a VALUE literal is never TRUE or FALSE (grammars-v4: literal), so "88 C VALUE 'Y' FALSE 'N'"
+// is the FALSE clause, not three values
 dataValueIntervalFrom
-    : literal
+    : NONNUMERICLITERAL
+    | figurativeConstant
+    | numericLiteral
+    | cicsDfhRespLiteral
+    | cicsDfhValueLiteral
     | cobolWord
     ;
 
@@ -1867,8 +1891,9 @@ exhibitOperand
 
 // exit statement
 
+// MlCpu (docs/AST-GRAMMAR.md): COBOL 2002 / IBM Enterprise COBOL EXIT PERFORM [CYCLE], EXIT PARAGRAPH, EXIT SECTION
 exitStatement
-    : EXIT PROGRAM?
+    : EXIT (PROGRAM | PERFORM CYCLE? | PARAGRAPH | SECTION)?
     ;
 
 // generate statement
@@ -1914,12 +1939,37 @@ ifElse
 
 // initialize statement
 
+// MlCpu (docs/AST-GRAMMAR.md): COBOL 2002 / IBM Enterprise COBOL WITH FILLER, {ALL | category} TO VALUE,
+// THEN REPLACING and THEN TO DEFAULT
 initializeStatement
-    : INITIALIZE identifier+ initializeReplacingPhrase?
+    : INITIALIZE identifier+ initializeFillerPhrase? initializeValuePhrase? initializeReplacingPhrase? initializeDefaultPhrase?
+    ;
+
+initializeFillerPhrase
+    : WITH? FILLER
+    ;
+
+initializeValuePhrase
+    : (
+        ALL
+        | ALPHABETIC
+        | ALPHANUMERIC
+        | ALPHANUMERIC_EDITED
+        | NATIONAL
+        | NATIONAL_EDITED
+        | NUMERIC
+        | NUMERIC_EDITED
+        | DBCS
+        | EGCS
+    ) TO VALUE
     ;
 
 initializeReplacingPhrase
-    : REPLACING initializeReplacingBy+
+    : THEN? REPLACING initializeReplacingBy+
+    ;
+
+initializeDefaultPhrase
+    : THEN? TO DEFAULT
     ;
 
 initializeReplacingBy
@@ -2268,8 +2318,9 @@ receiveStatus
 
 // release statement
 
+// MlCpu (docs/AST-GRAMMAR.md): FROM identifier or literal (COBOL 2002 / IBM), as writeFromPhrase
 releaseStatement
-    : RELEASE recordName (FROM qualifiedDataName)?
+    : RELEASE recordName (FROM (identifier | literal))?
     ;
 
 // return statement
@@ -2812,19 +2863,28 @@ abbreviation
 
 // identifier ----------------------------------
 
+// MlCpu (docs/AST-GRAMMAR.md): tableCall before qualifiedDataName (tableCall subsumes it), so SLL prediction takes a
+// following '(' as a subscript or reference modifier, as full LL does; SLL alone then parses most programs
 identifier
-    : qualifiedDataName
-    | tableCall
+    : tableCall
+    | qualifiedDataName
     | functionCall
     | specialRegister
     ;
 
+// MlCpu (docs/AST-GRAMMAR.md): the reference-modifier forms first, so SLL prediction does not take "(start:length)" for
+// subscripts; the language is unchanged (grammars-v4: qualifiedDataName (subscripts)* referenceModifier?)
 tableCall
-    : qualifiedDataName (LPARENCHAR subscript_ (COMMACHAR? subscript_)* RPARENCHAR)* referenceModifier?
+    : qualifiedDataName referenceModifier
+    | qualifiedDataName LPARENCHAR subscript_ (COMMACHAR? subscript_)* RPARENCHAR referenceModifier
+    | qualifiedDataName (LPARENCHAR subscript_ (COMMACHAR? subscript_)* RPARENCHAR)*
     ;
 
+// MlCpu (docs/AST-GRAMMAR.md): as tableCall (grammars-v4: FUNCTION functionName (arguments)* referenceModifier?)
 functionCall
-    : FUNCTION functionName (LPARENCHAR argument (COMMACHAR? argument)* RPARENCHAR)* referenceModifier?
+    : FUNCTION functionName referenceModifier
+    | FUNCTION functionName LPARENCHAR argument (COMMACHAR? argument)* RPARENCHAR referenceModifier
+    | FUNCTION functionName (LPARENCHAR argument (COMMACHAR? argument)* RPARENCHAR)*
     ;
 
 referenceModifier
@@ -3068,6 +3128,7 @@ cobolWord
     | CONVENTION
     | CRUNCH
     | CURSOR
+    | CYCLE
     | DEFAULT
     | DEFAULT_DISPLAY
     | DEFINITION
@@ -3126,6 +3187,7 @@ cobolWord
     | ORDERLY
     | OVERLINE
     | OWN
+    | PARAGRAPH
     | PASSWORD
     | PORT
     | PRINTER
@@ -3689,6 +3751,10 @@ CURRENCY
 
 CURSOR
     : C U R S O R
+    ;
+
+CYCLE
+    : C Y C L E
     ;
 
 DATA
@@ -4621,6 +4687,10 @@ PAGE
 
 PAGE_COUNTER
     : P A G E MINUSCHAR C O U N T E R
+    ;
+
+PARAGRAPH
+    : P A R A G R A P H
     ;
 
 PASSWORD

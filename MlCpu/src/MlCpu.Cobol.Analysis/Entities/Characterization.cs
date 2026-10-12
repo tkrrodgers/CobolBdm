@@ -11,6 +11,8 @@ public sealed record CharacterizationVector(string Paragraph, string Seed, IRead
 /// CALL. Inputs are the closure's upward-exposed reads that the ProgramState boundary can seed (elementary, uniquely
 /// named, not in a table). Values come from the PICTURE; up to 20 reach seeds set an input to a literal it is compared
 /// with, so both branches are driven. A path it cannot drive is simply not seeded — never guessed.
+/// An input used as a subscript is seeded inside its table's OCCURS bound (1 to n): a PIC-derived 0 or 9999 would only
+/// test storage outside the table, which COBOL leaves undefined.
 /// </summary>
 public static class CharacterizationSeedBuilder
 {
@@ -20,6 +22,7 @@ public static class CharacterizationSeedBuilder
     public static List<CharacterizationVector> Build(CobolProgram program, ProgramGraph graph, PartitionPlan plan)
     {
         var seedable = Seedable(program);
+        var bounds = SubscriptBounds(program, seedable);
         var paras = program.Paragraphs.ToDictionary(p => p.Name, StringComparer.OrdinalIgnoreCase);
         var result = new List<CharacterizationVector>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
@@ -34,7 +37,7 @@ public static class CharacterizationSeedBuilder
                 .Where(seedable.ContainsKey).Distinct().OrderBy(x => x, StringComparer.Ordinal).ToList();
             int marker = 0;
             foreach (var seed in PicSeeds)
-                Add(new CharacterizationVector(pp.Paragraph, seed, inputs.Select(f => (f, Value(seedable[f], seed, ++marker))).ToList()));
+                Add(new CharacterizationVector(pp.Paragraph, seed, inputs.Select(f => (f, Value(seedable[f], seed, ++marker, bounds.GetValueOrDefault(f)))).ToList()));
             int reach = 0;
             foreach (var (field, literal) in Comparisons(closure.Select(n => paras[n]), program).Where(c => seedable.ContainsKey(c.Field)))
             {
@@ -46,7 +49,7 @@ public static class CharacterizationSeedBuilder
                 foreach (var v in values)
                 {
                     if (reach++ >= MaxReachSeeds) break;
-                    var vec = inputs.Select(f => (f, f == field ? v : Value(seedable[f], "zeros", 0))).ToList();
+                    var vec = inputs.Select(f => (f, f == field ? v : Value(seedable[f], "zeros", 0, bounds.GetValueOrDefault(f)))).ToList();
                     if (!inputs.Contains(field)) vec.Add((field, v));
                     Add(new CharacterizationVector(pp.Paragraph, $"reach-{field}={v}", vec));
                 }
@@ -151,10 +154,49 @@ public static class CharacterizationSeedBuilder
         return found.Distinct();
     }
 
+    /// <summary>
+    /// Items used directly as a subscript, with the smallest OCCURS count of the dimensions they index. Only plain
+    /// references count (WS-I, not WS-I + 1); an item that also indexes a larger table keeps the smaller bound.
+    /// </summary>
+    static Dictionary<string, int> SubscriptBounds(CobolProgram p, Dictionary<string, DataItem> seedable)
+    {
+        var items = p.Items.ToDictionary(i => i.Id);
+        var bounds = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        void Visit(Node? n)
+        {
+            if (n is null) return;
+            if (n.K == "ref" && n.Args is { Count: > 0 } subs && n.Id is { } id && items.TryGetValue(id, out var table))
+                for (int k = 0; k < subs.Count && k < table.Dims.Count; k++)
+                    if (subs[k] is { K: "ref", Args: null, Start: null, Id: { } sid } && items.TryGetValue(sid, out var sub)
+                        && seedable.ContainsKey(sub.Name) && table.Dims[k].Count > 0)
+                        bounds[sub.Name] = bounds.TryGetValue(sub.Name, out var b) ? Math.Min(b, table.Dims[k].Count) : table.Dims[k].Count;
+            Visit(n.L); Visit(n.R); Visit(n.Start); Visit(n.Len);
+            foreach (var a in n.Args ?? []) Visit(a);
+        }
+        void Walk(IEnumerable<Stmt> list)
+        {
+            foreach (var s in list)
+            {
+                foreach (var (_, v) in s.N ?? []) Visit(v);
+                foreach (var (_, v) in s.L ?? []) foreach (var x in v) Visit(x);
+                if (s.Blocks is not null) foreach (var b in s.Blocks.Values) Walk(b);
+            }
+        }
+        foreach (var para in p.Paragraphs) Walk(para.Statements);
+        return bounds;
+    }
+
     static decimal Unit(DataItem it) => it.Scale > 0 ? (decimal)Math.Pow(10, -it.Scale) : 1m;
 
-    static string Value(DataItem it, string seed, int marker)
+    static string Value(DataItem it, string seed, int marker, int bound = 0)
     {
+        if (it.Category == Category.Numeric && bound > 0)
+            return (seed switch
+            {
+                "boundary-high" => bound,
+                "distinct-markers" => marker % bound + 1,
+                _ => 1
+            }).ToString(CultureInfo.InvariantCulture);
         if (it.Category == Category.Numeric)
         {
             int intDigits = Math.Max(it.Digits - Math.Max(it.Scale, 0), 0);

@@ -101,7 +101,7 @@ public final class JobEngine {
             CobFile.closeAllOpen();
             rc = CobRt.RETURN_CODE.dec().intValue();
         } catch (CobRt.Abend a) {
-            CobFile.forgetOpen();
+            CobFile.closeAllOpen(); // implicit CLOSE, as GnuCOBOL does when the CEE3ABD stub or a runtime error ends the run unit
             outcome = "ABEND:" + a.code;
             rc = 16;
         } finally {
@@ -198,9 +198,7 @@ public final class JobEngine {
         @Override public String displayNumeric() { return CobConfig.DISPLAY_NUMERIC; }
         @Override public byte storageDefault() { return CobConfig.DEFAULT_BYTE; }
         @Override public void call(String program, byte[]... parameters) {
-            CobField[] args = new CobField[parameters.length];
-            for (int i = 0; i < parameters.length; i++) args[i] = CobField.temp(parameters[i]);
-            CobRt.call(program, args);
+            ModernProgram.callProgram(program, parameters);
         }
     }
 
@@ -239,8 +237,12 @@ public final class JobEngine {
     }
 
     /** The system's abend line (user abend code), identical whichever implementation abended. */
+    /**
+     * The SYSOUT line of an abend: what the oracle's CEE3ABD stub DISPLAYs before its STOP RUN (return code 16), so a
+     * step that abends has the same SYSOUT on GnuCOBOL, in the faithful translation and in a modern implementation.
+     */
     static String abendLine(int code) {
-        return String.format("ABEND U%04d", code);
+        return "ABEND CEE3ABD";
     }
 
     // ------------------------------------------------------------------ COBOL program step
@@ -281,11 +283,11 @@ public final class JobEngine {
                 CobFile.closeAllOpen();
                 return new StepResult(s.id(), s.program(), CobRt.RETURN_CODE.dec().intValue(), "SYSOUT " + sysout.getFileName());
             } catch (CobRt.Abend a) {
-                CobFile.forgetOpen();
+                CobFile.closeAllOpen(); // implicit CLOSE, as GnuCOBOL does when the CEE3ABD stub or a runtime error ends the run unit
                 sink.write(abendLine(a.code), true);
                 return new StepResult(s.id(), s.program(), 16, "ABEND " + a.code);
             } catch (CobRt.FrontierException | CobRt.RuntimeCheck | CobRt.LoopLimit | CobRt.CallNotFound e) {
-                CobFile.forgetOpen();
+                CobFile.closeAllOpen(); // implicit CLOSE, as GnuCOBOL does when the CEE3ABD stub or a runtime error ends the run unit
                 sink.write("RUNTIME ERROR " + e.getMessage(), true);
                 return new StepResult(s.id(), s.program(), 20, e.getMessage());
             } finally {

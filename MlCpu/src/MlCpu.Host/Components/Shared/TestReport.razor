@@ -1,11 +1,17 @@
-@* Results of a build & test: test suites, then each job output against the GnuCOBOL oracle. *@
+@* Results of a build & test: test suites, then each job output against the GnuCOBOL oracle and, when the project has one, the reference oracle. *@
 @{
     var r = Report;
-    bool green = r.Compiled && r.Failed == 0 && r.Match == r.Parity.Count && r.Parity.Count > 0;
+    var refs = r.ReferenceResults;
+    bool refGreen = refs.Count == 0 || r.ReferenceMatch == refs.Count;
+    bool green = r.Compiled && r.Failed == 0 && r.Match == r.Parity.Count && r.Parity.Count > 0 && refGreen;
 }
 <div class="cards">
     <div class="card"><div class="muted">Tests</div><div class="n @(r.Failed == 0 && r.Tests > 0 ? "ok" : "bad")">@(r.Tests - r.Failed)/@r.Tests</div><div class="muted">@r.Suites.Count suites</div></div>
     <div class="card"><div class="muted">Job outputs vs GnuCOBOL</div><div class="n @(r.Match == r.Parity.Count && r.Parity.Count > 0 ? "ok" : "bad")">@r.Match/@r.Parity.Count</div><div class="muted">implementation: @r.Implementation</div></div>
+    @if (refs.Count > 0)
+    {
+        <div class="card"><div class="muted">Job outputs vs the reference</div><div class="n @(refGreen ? "ok" : "bad")">@r.ReferenceMatch/@refs.Count</div><div class="muted">@r.ReferenceLabel</div></div>
+    }
     <div class="card"><div class="muted">Verdict</div><div class="n @(green ? "ok" : "bad")">@(green ? "byte-identical" : r.Compiled ? "differences" : "does not build")</div><div class="muted">@r.At.Replace('T', ' ')</div></div>
 </div>
 @if (r.FailedTests.Count > 0)
@@ -27,6 +33,17 @@
         <tr><td>@x.Job</td><td>@x.Scenario</td><td>@x.Output</td><td class="@(x.Verdict == "MATCH" ? "ok" : "bad")">@x.Verdict</td><td><span class="muted" style="font-family:Consolas,monospace;font-size:.8rem">@x.Detail</span></td></tr>
     }
 </table>
+@if (refs.Count > 0)
+{
+    <p class="muted">Against the reference oracle: @r.ReferenceLabel</p>
+    <table class="grid">
+        <tr><th>Job</th><th>Scenario</th><th>Output</th><th>Verdict</th><th>Detail</th></tr>
+        @foreach (var x in refs)
+        {
+            <tr><td>@x.Job</td><td>@x.Scenario</td><td>@x.Output</td><td class="@(x.Verdict == "MATCH" ? "ok" : "bad")">@x.Verdict</td><td><span class="muted" style="font-family:Consolas,monospace;font-size:.8rem">@x.Detail</span></td></tr>
+        }
+    </table>
+}
 
 @code {
     [Parameter, EditorRequired] public BuildTestReport Report { get; set; } = null!;

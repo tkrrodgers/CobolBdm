@@ -31,6 +31,8 @@ public final class Ir {
         public List<String> using;
         public Map<String, String> recordFile;
         public List<File> files;
+        public boolean initial;
+        public boolean recursive;
     }
 
     public static final class File {
@@ -89,12 +91,27 @@ public final class Ir {
         public boolean blankWhenZero;
         public List<Value> values;
         public boolean valueAll;
+        /** An 88's WHEN SET TO FALSE literal. */
+        public Value falseValue;
         public String file;
         public Integer redefinesId;
         public String dependingOn;
+        /** The OCCURS DEPENDING ON object's id. */
+        public Integer dependingOnId;
+        public Integer occursMin;
+        public boolean external;
+        /** ASCENDING/DESCENDING KEY phrases, major key first. */
+        public List<Key> keys;
+        /** INDEXED BY index item ids. */
+        public List<Integer> indexedBy;
         public int line;
 
         public int lvl() { return Integer.parseInt(level); }
+    }
+
+    public static final class Key {
+        public boolean ascending;
+        public int id;
     }
 
     public static final class Paragraph {
@@ -154,6 +171,9 @@ public final class Ir {
         public boolean isSection;
         public int line;
         public List<Stmt> statements;
+        public boolean declarative;
+        public List<String> useFiles;
+        public List<String> useModes;
     }
 
     public static final class Node {

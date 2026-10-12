@@ -1,0 +1,17 @@
+FNDKRND | acceptance 71/71 | gaps 0 | 636 lines | 52 s
+FNDKDFO | acceptance 71/71 | gaps 2 | 1166 lines | 52 s
+FNDTKRN | acceptance 71/71 | gaps 0 | 795 lines | 52 s
+FNMY0100 | acceptance 71/71 | gaps 0 | 2613 lines | 50 s
+FNDG0100 | acceptance 71/71 | gaps 0 | 1844 lines | 50 s
+FNEM0100 | acceptance 71/71 | gaps 0 | 2546 lines | 49 s
+FNEM0800 | acceptance 71/71 | gaps 0 | 2108 lines | 49 s
+FNEM0700 | acceptance 71/71 | gaps 0 | 3828 lines | 46 s
+FNEM0300 | acceptance 71/71 | gaps 0 | 6781 lines | 46 s
+FNLS0200 | acceptance 71/71 | gaps 0 | 2671 lines | 46 s
+FNEM0500 | acceptance 71/71 | gaps 0 | 19561 lines | 46 s
+FNEM0900 | acceptance 71/71 | gaps 0 | 28885 lines | 48 s
+FNEM0600 | acceptance 71/71 | gaps 0 | 38970 lines | 50 s
+FNEM0400 | acceptance 71/71 | gaps 0 | 61611 lines | 49 s
+FNEM0200 | acceptance 71/71 | gaps 0 | 68048 lines | 51 s
+FNLS0300 | acceptance 71/71 | gaps 0 | 110922 lines | 56 s
+done

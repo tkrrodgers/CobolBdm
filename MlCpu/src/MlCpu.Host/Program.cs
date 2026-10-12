@@ -23,6 +23,7 @@ builder.Services.AddSingleton<ConversionService>();
 builder.Services.AddSingleton<GemmaService>();
 builder.Services.AddSingleton<ForwardService>();
 builder.Services.AddSingleton<WorkspaceActions>();
+builder.Services.AddSingleton<ReferenceSweepService>();
 
 var app = builder.Build();
 
@@ -101,7 +102,7 @@ api.MapPost("/projects/{id}/graphs", (string id, WorkspaceActions a) => Results.
 api.MapPost("/projects/{id}/transpile", (string id, WorkspaceActions a) => Results.Json(OpJson(a.StartTranspile(id))));
 api.MapPost("/projects/{id}/publish", (string id, string? dir, WorkspaceActions a, ProjectService ps) =>
     Results.Json(OpJson(a.StartPublish(id, string.IsNullOrWhiteSpace(dir) ? ps.Paths(ps.Get(id)!).Publish : dir))));
-api.MapPost("/projects/{id}/test", (string id, WorkspaceActions a) => Results.Json(OpJson(a.StartTest(id))));
+api.MapPost("/projects/{id}/test", (string id, bool? tests, WorkspaceActions a) => Results.Json(OpJson(a.StartTest(id, tests ?? true))));
 api.MapPost("/projects/{id}/gemma/design", (string id, string programs, bool? outline, int? attempts, WorkspaceActions a) =>
     Results.Json(OpJson(a.StartGemmaDesign(id, programs.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
         new GemmaOptions(DesignAttempts: attempts ?? 3, AstOutline: outline ?? true)))));
@@ -116,6 +117,19 @@ api.MapPost("/projects/{id}/eval/verify", (string id, string service, string lab
     ps.Get(id) is not { } p ? Results.NotFound()
         : Results.Json(OpJson(ops.Start(id, "eval-verify", $"Verify {label}", async (op, ct) =>
             op.Result = await parity.BuildAndTestAsync(p, service, "normalized", label, op, 0, 1, ct)))));
+// Reference sweep (gate G5 / G6b over the full corpus): a built service — by default the published estate (legacy) or
+// Gemma's service (normalized) — runs every scenario the reference oracle has whose inputs are under `inputs`, in parallel,
+// and each job output is compared with the reference. Report: runs/sweep-<implementation>-<time>/REPORT.md.
+api.MapPost("/projects/{id}/reference-sweep", (string id, string inputs, string? implementation, string? service, string? filter, int? parallel,
+        ProjectService ps, OperationService ops, ReferenceSweepService sweep) =>
+{
+    if (ps.Get(id) is not { } p) return Results.NotFound();
+    var impl = implementation ?? "legacy";
+    var dir = !string.IsNullOrWhiteSpace(service) ? service : impl == "normalized" ? p.Gemma.ServicePath : p.Publish.Last?.Path;
+    if (string.IsNullOrWhiteSpace(dir)) return Results.BadRequest(new { error = "no service: publish (legacy) or assemble Gemma's service (normalized) first, or pass service=" });
+    return Results.Json(OpJson(ops.Start(id, "reference-sweep", $"Reference sweep ({impl}, {filter ?? "*"})", async (op, ct) =>
+        op.Result = await sweep.RunAsync(id, dir, impl, inputs, filter, parallel ?? Math.Max(1, Environment.ProcessorCount / 3), op, ct))));
+});
 api.MapGet("/projects/{id}/gemma/status", (string id, ProjectService ps, GemmaService g) => ps.Get(id) is { } p
     ? Results.Json(g.Capabilities(p).Select(c => g.Status(p, c.ProgramId) with { Design = null }), indented) : Results.NotFound());
 api.MapGet("/operations", (string? project, OperationService ops) =>

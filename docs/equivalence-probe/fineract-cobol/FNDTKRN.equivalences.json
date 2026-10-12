@@ -1,0 +1,439 @@
+{
+  "schema": "mlcpu.equivalences.v1",
+  "program": "FNDTKRN",
+  "tracedCalls": 21149,
+  "traceSources": 31,
+  "generatedPerGroup": 100000,
+  "learningCallsPerGroup": 2000,
+  "seed": 42,
+  "faithfulReplay": {
+    "tracedCallsReplayed": 200,
+    "identical": 200
+  },
+  "functionSelector": "DT-FUNCTION",
+  "dayNumberEncodings": "[day number (day 1 = 2024-01-02, solved from the CALLs), COBOL INTEGER-OF-DATE (day 1 = 1601-01-01)]",
+  "verifiedGroups": 10,
+  "groups": [
+    {
+      "group": {
+        "DT-FUNCTION": "BT"
+      },
+      "label": "DT-FUNCTION = 'BT' (DT-FN-BETWEEN)",
+      "status": "verified",
+      "tracedCalls": 2247,
+      "generatedOnly": false,
+      "family": "dateBetween",
+      "java": "unit.between(dtDayDate, dtDay2Date)",
+      "bindings": [
+        "dtDayDate = LocalDate.of(1600, 12, 31).plusDays(DT-DAY) (DT-DAY is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))",
+        "dtDay2Date = LocalDate.of(1600, 12, 31).plusDays(DT-DAY2) (DT-DAY2 is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))"
+      ],
+      "enum": {
+        "field": "DT-UNIT",
+        "type": "ChronoUnit",
+        "map": {
+          "D": "DAYS",
+          "M": "MONTHS",
+          "W": "WEEKS",
+          "Y": "YEARS"
+        }
+      },
+      "result": "DT-RESULT = r",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-DAY",
+        "DT-DAY2",
+        "DT-UNIT"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 2247,
+        "tracedMatched": 2247,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DT-DAY 154160..154833",
+          "DT-DAY2 154160..155346",
+          "DT-UNIT 'D' 'M' 'W' 'Y'"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "DM"
+      },
+      "label": "DT-FUNCTION = 'DM' (DT-FN-DAY-OF-MONTH)",
+      "status": "verified",
+      "tracedCalls": 2802,
+      "generatedOnly": false,
+      "family": "dateProperty",
+      "java": "dtDayDate.getDayOfMonth()",
+      "bindings": [
+        "dtDayDate = LocalDate.of(1600, 12, 31).plusDays(DT-DAY) (DT-DAY is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))"
+      ],
+      "result": "DT-RESULT = r",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-DAY"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 2802,
+        "tracedMatched": 2802,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DT-DAY 153705..155346"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "DN"
+      },
+      "label": "DT-FUNCTION = 'DN' (DT-FN-DAY-OF-DATE)",
+      "status": "verified",
+      "tracedCalls": 190,
+      "generatedOnly": false,
+      "family": "dateConversion",
+      "java": "dtYyyymmddDate",
+      "bindings": [
+        "dtYyyymmddDate = LocalDate.parse(DT-YYYYMMDD as 8 digits, DateTimeFormatter.BASIC_ISO_DATE)"
+      ],
+      "result": "DT-RESULT = ChronoUnit.DAYS.between(LocalDate.of(1600, 12, 31), r) (a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-YYYYMMDD"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "invalid DT-YYYYMMDD",
+          "learningCalls": 94,
+          "effects": [
+            "DT-RESULT = 0",
+            "DT-RC = 0"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 190,
+        "tracedMatched": 190,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "691",
+        "generatedInputRanges": [
+          "DT-YYYYMMDD 20230128..20241115"
+        ]
+      },
+      "alternativesWithEqualScore": 2
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "LM"
+      },
+      "label": "DT-FUNCTION = 'LM' (DT-FN-LENGTH-OF-MONTH)",
+      "status": "verified",
+      "tracedCalls": 763,
+      "generatedOnly": false,
+      "family": "dateProperty",
+      "java": "dtDayDate.lengthOfMonth()",
+      "bindings": [
+        "dtDayDate = LocalDate.of(1600, 12, 31).plusDays(DT-DAY) (DT-DAY is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))"
+      ],
+      "result": "DT-RESULT = r",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-DAY"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 763,
+        "tracedMatched": 763,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "877",
+        "generatedInputRanges": [
+          "DT-DAY 153797..154894"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "LY"
+      },
+      "label": "DT-FUNCTION = 'LY' (DT-FN-LENGTH-OF-YEAR)",
+      "status": "verified",
+      "tracedCalls": 1049,
+      "generatedOnly": false,
+      "family": "dateProperty",
+      "java": "dtDayDate.lengthOfYear()",
+      "bindings": [
+        "dtDayDate = LocalDate.of(1600, 12, 31).plusDays(DT-DAY) (DT-DAY is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))"
+      ],
+      "result": "DT-RESULT = r",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-DAY"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 1049,
+        "tracedMatched": 1049,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DT-DAY 153705..156324"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "PL"
+      },
+      "label": "DT-FUNCTION = 'PL' (DT-FN-PLUS)",
+      "status": "verified",
+      "tracedCalls": 6192,
+      "generatedOnly": false,
+      "family": "datePlus",
+      "java": "dtDayDate.plus(dtN, unit)",
+      "bindings": [
+        "dtN = DT-N",
+        "dtDayDate = LocalDate.of(1600, 12, 31).plusDays(DT-DAY) (DT-DAY is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))"
+      ],
+      "enum": {
+        "field": "DT-UNIT",
+        "type": "ChronoUnit",
+        "map": {
+          "D": "DAYS",
+          "M": "MONTHS",
+          "W": "WEEKS",
+          "Y": "YEARS"
+        }
+      },
+      "result": "DT-RESULT = ChronoUnit.DAYS.between(LocalDate.of(1600, 12, 31), r) (a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-DAY",
+        "DT-N",
+        "DT-UNIT"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 6192,
+        "tracedMatched": 6192,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DT-DAY 153736..158516",
+          "DT-N -365..390",
+          "DT-UNIT 'D' 'M' 'W' 'Y'"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "WD"
+      },
+      "label": "DT-FUNCTION = 'WD' (DT-FN-WITH-DAY-OF-MONTH)",
+      "status": "verified",
+      "tracedCalls": 18,
+      "generatedOnly": false,
+      "family": "dateWith",
+      "java": "dtDayDate.withDayOfMonth(dtN)",
+      "bindings": [
+        "dtN = DT-N",
+        "dtDayDate = LocalDate.of(1600, 12, 31).plusDays(DT-DAY) (DT-DAY is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))"
+      ],
+      "result": "DT-RESULT = ChronoUnit.DAYS.between(LocalDate.of(1600, 12, 31), r) (a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-DAY",
+        "DT-N"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "DateTimeException",
+          "learningCalls": 302,
+          "effects": [
+            "DT-RESULT = 0",
+            "DT-RC = 0"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 18,
+        "tracedMatched": 18,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "248",
+        "generatedInputRanges": [
+          "DT-DAY 153887..154983",
+          "DT-N 0..31"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "YE"
+      },
+      "label": "DT-FUNCTION = 'YE' (DT-FN-YEAR-END)",
+      "status": "verified",
+      "tracedCalls": 400,
+      "generatedOnly": false,
+      "family": "dateOf",
+      "java": "LocalDate.of(dtN, 12, 31)",
+      "bindings": [
+        "dtN = DT-N"
+      ],
+      "result": "DT-RESULT = ChronoUnit.DAYS.between(LocalDate.of(1600, 12, 31), r) (a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-N"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [
+        {
+          "when": "the result does not fit DT-RESULT",
+          "learningCalls": 424,
+          "effects": [
+            "DT-RC = 20",
+            "DT-RESULT unchanged"
+          ]
+        }
+      ],
+      "checked": {
+        "traced": 400,
+        "tracedMatched": 400,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "12",
+        "generatedInputRanges": [
+          "DT-N 0..2028"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "YM"
+      },
+      "label": "DT-FUNCTION = 'YM' (DT-FN-DATE-OF-DAY)",
+      "status": "verified",
+      "tracedCalls": 1091,
+      "generatedOnly": false,
+      "family": "dateConversion",
+      "java": "dtDayDate",
+      "bindings": [
+        "dtDayDate = LocalDate.of(1600, 12, 31).plusDays(DT-DAY) (DT-DAY is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))"
+      ],
+      "result": "DT-YYYYMMDD = r as yyyyMMdd (r.format(DateTimeFormatter.BASIC_ISO_DATE))",
+      "resultFields": "DT-YYYYMMDD",
+      "inputs": [
+        "DT-DAY"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 1091,
+        "tracedMatched": 1091,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DT-DAY 153736..155927"
+        ]
+      },
+      "alternativesWithEqualScore": 4
+    },
+    {
+      "group": {
+        "DT-FUNCTION": "YR"
+      },
+      "label": "DT-FUNCTION = 'YR' (DT-FN-YEAR)",
+      "status": "verified",
+      "tracedCalls": 6397,
+      "generatedOnly": false,
+      "family": "dateProperty",
+      "java": "dtDayDate.getYear()",
+      "bindings": [
+        "dtDayDate = LocalDate.of(1600, 12, 31).plusDays(DT-DAY) (DT-DAY is a COBOL INTEGER-OF-DATE (day 1 = 1601-01-01))"
+      ],
+      "result": "DT-RESULT = r",
+      "resultFields": "DT-RESULT",
+      "inputs": [
+        "DT-DAY"
+      ],
+      "otherFields": [
+        "DT-RC = 0"
+      ],
+      "exceptions": [],
+      "checked": {
+        "traced": 6397,
+        "tracedMatched": 6397,
+        "learning": 2000,
+        "learningMatched": 2000,
+        "generated": 100000,
+        "generatedMatched": 100000,
+        "distinctInputCombinations": "1000 or more",
+        "generatedInputRanges": [
+          "DT-DAY 153705..156292"
+        ]
+      },
+      "alternativesWithEqualScore": 0
+    }
+  ]
+}
+

@@ -18,6 +18,7 @@ var report = new Report(opts.GetValueOrDefault("suite"));
 var env = new Toolchain(repo);
 
 Suites.ParserAcceptance(report, corpus);
+Suites.ParserAst(report, corpus, carddemo);
 Suites.Jcl(report, corpus, carddemo);
 Suites.DdBinding(report, corpus, carddemo);
 Suites.Replay(report, corpus, carddemo);
@@ -25,6 +26,8 @@ Suites.DomainBatch(report, corpus);
 await Suites.Lowering(report, corpus, env);
 await Suites.Truth(report, corpus, env);
 await Suites.Parity(report, corpus, env);
+Suites.KitValuesDecoding(report, corpus, env);
+Suites.RecordKitScale(report, env);
 await Suites.Projections(report, corpus, env);
 return report.Finish();
 
@@ -129,16 +132,25 @@ sealed class Toolchain
         return null;
     }
 
-    public async Task<JsonNode> Transpile(string cobolPath)
+    public Task<JsonNode> Transpile(string cobolPath) => Transpile(CobolModelBuilder.BuildGroundedFull(cobolPath));
+
+    /// <summary>Every program of the source (separate and nested), the first one first.</summary>
+    public async Task<List<JsonNode>> TranspileAll(string cobolPath)
     {
-        var ir = IrExporter.Export(CobolModelBuilder.BuildGroundedFull(cobolPath));
+        var all = new List<JsonNode>();
+        foreach (var p in CobolModelBuilder.BuildAllGroundedFull(cobolPath)) all.Add(await Transpile(p));
+        return all;
+    }
+
+    public async Task<JsonNode> Transpile(MlCpu.Cobol.Analysis.CobolProgram program)
+    {
+        var ir = IrExporter.Export(program);
         var request = new JsonObject
         {
-            ["ir"] = JsonNode.Parse(IrExporter.ToJson(ir)),
             ["battery"] = new JsonArray(new JsonObject { ["inputs"] = new JsonObject(), ["expect"] = new JsonObject() }),
             ["useLir"] = false, ["loopPolicy"] = "TERMINATE", ["includeJavaSource"] = true, ["transpileOnly"] = true
         };
-        var resp = await _http.PostAsync("/transpile-verify", new StringContent(request.ToJsonString(), Encoding.UTF8, "application/json"));
+        var resp = await _http.PostAsync("/transpile-verify", new StringContent(IrExporter.TranspileRequest(ir, request), Encoding.UTF8, "application/json"));
         return JsonNode.Parse(await resp.Content.ReadAsStringAsync())!;
     }
 

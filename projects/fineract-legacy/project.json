@@ -1,0 +1,2490 @@
+{
+  "schema": "mlcpu.project.v1",
+  "id": "fineract-legacy",
+  "name": "fineract-legacy",
+  "origin": "C:\\Users\\Tomrodgers\\JavaToCOBOLTest-j8\\fineract-cobol-gen\\out\\tier1-2026-10-11-legacy\\source",
+  "onboardedAt": "2026-10-11T15:43:06",
+  "layout": {
+    "sourceDir": "source",
+    "codeRoots": [
+      "app/cbl"
+    ],
+    "copybookRoots": [
+      "app/cpy"
+    ],
+    "jclRoots": [
+      "app/jcl"
+    ],
+    "procRoots": [
+      "app/proc"
+    ],
+    "controlCardRoots": [],
+    "dataRoots": [
+      "app/data"
+    ]
+  },
+  "programs": [
+    {
+      "id": "FNDG0100",
+      "path": "app/cbl/FNDG0100.cbl",
+      "kind": "subprogram",
+      "lines": 237,
+      "calledBy": [
+        "FNLS0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNDKDFO",
+      "path": "app/cbl/FNDKDFO.cbl",
+      "kind": "subprogram",
+      "lines": 398,
+      "calledBy": [
+        "FNEM0300",
+        "FNEM0400",
+        "FNEM04XA",
+        "FNEM0700",
+        "FNMY0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNDKRND",
+      "path": "app/cbl/FNDKRND.cbl",
+      "kind": "subprogram",
+      "lines": 238,
+      "calledBy": [
+        "FNDKDFO",
+        "FNMY0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNDTKRN",
+      "path": "app/cbl/FNDTKRN.cbl",
+      "kind": "subprogram",
+      "lines": 352,
+      "calledBy": [
+        "FNDG0100",
+        "FNLS01XA",
+        "FNLS0200"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0100",
+      "path": "app/cbl/FNEM0100.cbl",
+      "kind": "subprogram",
+      "lines": 129,
+      "calledBy": [
+        "FNLS0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0200",
+      "path": "app/cbl/FNEM0200.cbl",
+      "kind": "subprogram",
+      "lines": 346,
+      "calledBy": [
+        "FNLS0300"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0300",
+      "path": "app/cbl/FNEM0300.cbl",
+      "kind": "subprogram",
+      "lines": 1124,
+      "calledBy": [
+        "FNEM0400",
+        "FNEM0500",
+        "FNEM0600"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0400",
+      "path": "app/cbl/FNEM0400.cbl",
+      "kind": "subprogram",
+      "lines": 504,
+      "calledBy": [
+        "FNEM0200"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM04XA",
+      "path": "app/cbl/FNEM04XA.cbl",
+      "kind": "subprogram",
+      "lines": 53,
+      "calledBy": [
+        "FNEM0400"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0500",
+      "path": "app/cbl/FNEM0500.cbl",
+      "kind": "subprogram",
+      "lines": 465,
+      "calledBy": [
+        "FNEM0400",
+        "FNEM0600",
+        "FNEM0900"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0600",
+      "path": "app/cbl/FNEM0600.cbl",
+      "kind": "subprogram",
+      "lines": 314,
+      "calledBy": [
+        "FNLS0300"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0700",
+      "path": "app/cbl/FNEM0700.cbl",
+      "kind": "subprogram",
+      "lines": 679,
+      "calledBy": [
+        "FNEM0400",
+        "FNEM0500",
+        "FNEM0600",
+        "FNEM0900",
+        "FNLS0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM07XA",
+      "path": "app/cbl/FNEM07XA.cbl",
+      "kind": "subprogram",
+      "lines": 44,
+      "calledBy": [
+        "FNEM0700"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0800",
+      "path": "app/cbl/FNEM0800.cbl",
+      "kind": "subprogram",
+      "lines": 493,
+      "calledBy": [
+        "FNEM0200",
+        "FNEM0300",
+        "FNEM0400",
+        "FNEM0500",
+        "FNEM0600",
+        "FNLS0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNEM0900",
+      "path": "app/cbl/FNEM0900.cbl",
+      "kind": "subprogram",
+      "lines": 497,
+      "calledBy": [
+        "FNEM0400"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNLS0100",
+      "path": "app/cbl/FNLS0100.cbl",
+      "kind": "batch",
+      "lines": 809,
+      "calledBy": [],
+      "jobs": [
+        "FNSCHGEN"
+      ]
+    },
+    {
+      "id": "FNLS01XA",
+      "path": "app/cbl/FNLS01XA.cbl",
+      "kind": "subprogram",
+      "lines": 33,
+      "calledBy": [
+        "FNLS0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNLS0200",
+      "path": "app/cbl/FNLS0200.cbl",
+      "kind": "subprogram",
+      "lines": 198,
+      "calledBy": [
+        "FNLS0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNLS0300",
+      "path": "app/cbl/FNLS0300.cbl",
+      "kind": "subprogram",
+      "lines": 207,
+      "calledBy": [
+        "FNLS0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNMY0100",
+      "path": "app/cbl/FNMY0100.cbl",
+      "kind": "subprogram",
+      "lines": 472,
+      "calledBy": [
+        "FNEM0300",
+        "FNEM0400",
+        "FNEM0700",
+        "FNEM0900",
+        "FNLS0200",
+        "FNLS0300"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNRP0100",
+      "path": "app/cbl/FNRP0100.cbl",
+      "kind": "batch",
+      "lines": 323,
+      "calledBy": [],
+      "jobs": [
+        "FNSCHRPT"
+      ]
+    }
+  ],
+  "excluded": [],
+  "oracle": {
+    "provider": "generic",
+    "clock": "2022-07-05T10:11:12-07:00",
+    "cobcFlags": [
+      "-std=ibm",
+      "-fsign=EBCDIC",
+      "-fstatic-call",
+      "-Wno-others"
+    ],
+    "jobs": [
+      "FNSCHGEN",
+      "FNSCHRPT"
+    ],
+    "datasets": [
+      {
+        "dsn": "FINERACT.RUN.CONTROL",
+        "source": "app/data/RUN.CONTROL.txt",
+        "format": "fixed",
+        "lrecl": 80,
+        "minRecord": 80,
+        "alternateKeys": [],
+        "from": "FNLS0100:RUNCTL-FILE"
+      },
+      {
+        "dsn": "FINERACT.LOAN.REQUEST.DATA",
+        "source": "app/data/LOAN.REQUEST.txt",
+        "format": "fixed",
+        "lrecl": 200,
+        "minRecord": 200,
+        "alternateKeys": [],
+        "from": "FNLS0100:LOANREQ-FILE"
+      },
+      {
+        "dsn": "FINERACT.CURRENCY.VSAM.KSDS",
+        "source": "app/data/CURRENCY.txt",
+        "format": "ksds",
+        "lrecl": 40,
+        "minRecord": 40,
+        "key": "1,3",
+        "alternateKeys": [],
+        "from": "FNLS0100:CURRENCY-FILE"
+      },
+      {
+        "dsn": "FINERACT.LOAN.SCHEDULE.SORTED",
+        "format": "fixed",
+        "lrecl": 200,
+        "minRecord": 200,
+        "alternateKeys": [],
+        "from": "FNRP0100:SCHEDULE-FILE"
+      }
+    ],
+    "scenarios": [
+      "fineract-unit-p12-half_up",
+      "mini-p03-ceiling",
+      "mini-p03-down",
+      "mini-p03-floor",
+      "mini-p03-half_down",
+      "mini-p03-half_even",
+      "mini-p03-half_up",
+      "mini-p03-up",
+      "mini-p06-ceiling",
+      "mini-p06-down",
+      "mini-p06-floor",
+      "mini-p06-half_down",
+      "mini-p06-half_even",
+      "mini-p06-half_up",
+      "mini-p06-up",
+      "mini-p09-ceiling",
+      "mini-p09-down",
+      "mini-p09-floor",
+      "mini-p09-half_down",
+      "mini-p09-half_even",
+      "mini-p09-half_up",
+      "mini-p09-up",
+      "mini-p12-ceiling",
+      "mini-p12-down",
+      "mini-p12-floor",
+      "mini-p12-half_down",
+      "mini-p12-half_even",
+      "mini-p12-half_up",
+      "mini-p12-up",
+      "rejects-p12-half_even",
+      "sample-p03-ceiling",
+      "sample-p03-down",
+      "sample-p03-floor",
+      "sample-p03-half_down",
+      "sample-p03-half_even",
+      "sample-p03-half_up",
+      "sample-p03-up",
+      "sample-p06-ceiling",
+      "sample-p06-down",
+      "sample-p06-floor",
+      "sample-p06-half_down",
+      "sample-p06-half_even",
+      "sample-p06-half_up",
+      "sample-p06-up",
+      "sample-p09-ceiling",
+      "sample-p09-down",
+      "sample-p09-floor",
+      "sample-p09-half_down",
+      "sample-p09-half_even",
+      "sample-p09-half_up",
+      "sample-p09-up",
+      "sample-p12-ceiling",
+      "sample-p12-down",
+      "sample-p12-floor",
+      "sample-p12-half_down",
+      "sample-p12-half_even",
+      "sample-p12-half_up",
+      "sample-p12-up"
+    ],
+    "jobChecks": [
+      {
+        "job": "FNSCHGEN",
+        "scenario": "base",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/base/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/base/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/base/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/base/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/base/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/base/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/base/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "base",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/base/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/base/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/base/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/base/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/base/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/base/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/base/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/base/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/base/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/base/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "fineract-unit-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "fineract-unit-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/fineract-unit-p12-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p03-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-ceiling/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-ceiling/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-ceiling/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p03-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p03-ceiling/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p03-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p03-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p03-down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p03-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-floor/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-floor/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-floor/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p03-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p03-floor/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p03-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-half_down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p03-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p03-half_down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p03-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p03-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p03-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p03-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p03-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p03-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p03-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p03-up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p03-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p03-up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p06-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-ceiling/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-ceiling/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-ceiling/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p06-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p06-ceiling/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p06-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p06-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p06-down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p06-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-floor/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-floor/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-floor/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p06-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p06-floor/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p06-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-half_down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p06-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p06-half_down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p06-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p06-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p06-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p06-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p06-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p06-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p06-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p06-up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p06-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p06-up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p09-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-ceiling/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-ceiling/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-ceiling/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p09-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p09-ceiling/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p09-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p09-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p09-down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p09-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-floor/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-floor/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-floor/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p09-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p09-floor/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p09-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-half_down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p09-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p09-half_down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p09-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p09-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p09-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p09-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p09-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p09-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p09-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p09-up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p09-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p09-up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p12-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-ceiling/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-ceiling/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-ceiling/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p12-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p12-ceiling/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p12-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p12-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p12-down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p12-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-floor/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-floor/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-floor/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p12-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p12-floor/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p12-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-half_down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p12-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p12-half_down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p12-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p12-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "mini-p12-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/mini-p12-up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "mini-p12-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/mini-p12-up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "rejects-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/rejects-p12-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/rejects-p12-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/rejects-p12-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/rejects-p12-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/rejects-p12-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/rejects-p12-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rejects-p12-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "rejects-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/rejects-p12-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p03-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-ceiling/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-ceiling/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p03-ceiling/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p03-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p03-ceiling/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p03-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p03-down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p03-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p03-down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p03-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-floor/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-floor/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p03-floor/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p03-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p03-floor/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p03-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-half_down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-half_down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p03-half_down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p03-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p03-half_down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p03-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p03-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p03-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p03-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p03-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p03-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p03-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p03-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p03-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p03-up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p03-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p03-up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p06-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-ceiling/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-ceiling/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p06-ceiling/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p06-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p06-ceiling/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p06-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p06-down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p06-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p06-down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p06-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-floor/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-floor/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p06-floor/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p06-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p06-floor/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p06-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-half_down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-half_down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p06-half_down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p06-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p06-half_down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p06-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p06-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p06-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p06-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p06-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p06-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p06-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p06-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p06-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p06-up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p06-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p06-up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p09-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-ceiling/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-ceiling/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p09-ceiling/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p09-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p09-ceiling/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p09-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p09-down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p09-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p09-down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p09-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-floor/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-floor/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p09-floor/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p09-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p09-floor/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p09-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-half_down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-half_down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p09-half_down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p09-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p09-half_down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p09-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p09-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p09-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p09-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p09-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p09-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p09-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p09-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p09-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p09-up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p09-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p09-up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p12-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-ceiling/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-ceiling/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-ceiling/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-ceiling/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p12-ceiling/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p12-ceiling",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p12-ceiling/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p12-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p12-down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p12-down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p12-down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p12-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-floor/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-floor/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-floor/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-floor/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p12-floor/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p12-floor",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p12-floor/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p12-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-half_down/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_down/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-half_down/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-half_down/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p12-half_down/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p12-half_down",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p12-half_down/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-half_even/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_even/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-half_even/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-half_even/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p12-half_even/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p12-half_even",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p12-half_even/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-half_up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-half_up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-half_up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p12-half_up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p12-half_up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p12-half_up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHGEN",
+        "scenario": "sample-p12-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-up/jobs/FNSCHGEN/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-up/jobs/FNSCHGEN/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-up/jobs/FNSCHGEN/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-up/jobs/FNSCHGEN/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-up/jobs/FNSCHGEN/out/FINERACT.LOAN.REJECTS.DATA",
+          "data:FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-up/jobs/FNSCHGEN/out/FINERACT.LOAN.SCHEDULE.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/sample-p12-up/jobs/FNSCHGEN/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "FNSCHRPT",
+        "scenario": "sample-p12-up",
+        "inputs": {
+          "FINERACT.CURRENCY.VSAM.KSDS": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/in/FINERACT.CURRENCY.VSAM.KSDS",
+          "FINERACT.LOAN.REJECTS.DATA": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REJECTS.DATA",
+          "FINERACT.LOAN.REQUEST.DATA": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/in/FINERACT.LOAN.REQUEST.DATA",
+          "FINERACT.LOAN.SCHEDULE.DATA": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.DATA",
+          "FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/in/FINERACT.LOAN.SCHEDULE.SORTED",
+          "FINERACT.RUN.CONTROL": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/in/FINERACT.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:FINERACT.LOAN.SCHEDULE.BACKUP": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.BACKUP",
+          "data:FINERACT.LOAN.SCHEDULE.REPORT": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.REPORT",
+          "data:FINERACT.LOAN.SCHEDULE.SORTED": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/out/FINERACT.LOAN.SCHEDULE.SORTED",
+          "sysout:STEP20_RPT.SYSOUT.txt": "oracle/runs/sample-p12-up/jobs/FNSCHRPT/out/sysout/STEP20_RPT.SYSOUT.txt"
+        }
+      }
+    ],
+    "jobCheckRoot": ".",
+    "status": {
+      "builtAt": "2026-10-11T15:49:05",
+      "units": 4,
+      "unitsCached": 0,
+      "runAt": "2026-10-11T15:49:05",
+      "scenarios": [
+        "base",
+        "fineract-unit-p12-half_up",
+        "mini-p03-ceiling",
+        "mini-p03-down",
+        "mini-p03-floor",
+        "mini-p03-half_down",
+        "mini-p03-half_even",
+        "mini-p03-half_up",
+        "mini-p03-up",
+        "mini-p06-ceiling",
+        "mini-p06-down",
+        "mini-p06-floor",
+        "mini-p06-half_down",
+        "mini-p06-half_even",
+        "mini-p06-half_up",
+        "mini-p06-up",
+        "mini-p09-ceiling",
+        "mini-p09-down",
+        "mini-p09-floor",
+        "mini-p09-half_down",
+        "mini-p09-half_even",
+        "mini-p09-half_up",
+        "mini-p09-up",
+        "mini-p12-ceiling",
+        "mini-p12-down",
+        "mini-p12-floor",
+        "mini-p12-half_down",
+        "mini-p12-half_even",
+        "mini-p12-half_up",
+        "mini-p12-up",
+        "rejects-p12-half_even",
+        "sample-p03-ceiling",
+        "sample-p03-down",
+        "sample-p03-floor",
+        "sample-p03-half_down",
+        "sample-p03-half_even",
+        "sample-p03-half_up",
+        "sample-p03-up",
+        "sample-p06-ceiling",
+        "sample-p06-down",
+        "sample-p06-floor",
+        "sample-p06-half_down",
+        "sample-p06-half_even",
+        "sample-p06-half_up",
+        "sample-p06-up",
+        "sample-p09-ceiling",
+        "sample-p09-down",
+        "sample-p09-floor",
+        "sample-p09-half_down",
+        "sample-p09-half_even",
+        "sample-p09-half_up",
+        "sample-p09-up",
+        "sample-p12-ceiling",
+        "sample-p12-down",
+        "sample-p12-floor",
+        "sample-p12-half_down",
+        "sample-p12-half_even",
+        "sample-p12-half_up",
+        "sample-p12-up"
+      ],
+      "problems": [],
+      "referenceOutputs": 118,
+      "referenceMatch": 118
+    }
+  },
+  "publish": {
+    "jobs": [
+      "FNSCHGEN",
+      "FNSCHRPT"
+    ],
+    "capabilities": [
+      "FNDG0100",
+      "FNDKDFO",
+      "FNDKRND",
+      "FNDTKRN",
+      "FNEM0100",
+      "FNEM0200",
+      "FNEM0300",
+      "FNEM0400",
+      "FNEM04XA",
+      "FNEM0500",
+      "FNEM0600",
+      "FNEM0700",
+      "FNEM07XA",
+      "FNEM0800",
+      "FNEM0900",
+      "FNLS0100",
+      "FNLS01XA",
+      "FNLS0200",
+      "FNLS0300",
+      "FNMY0100",
+      "FNRP0100"
+    ],
+    "acceptanceScenarios": [
+      "fineract-unit-p12-half_up",
+      "rejects-p12-half_even",
+      "mini-p03-ceiling",
+      "mini-p03-down",
+      "mini-p03-floor",
+      "mini-p03-half_down",
+      "mini-p03-half_even",
+      "mini-p03-half_up",
+      "mini-p03-up",
+      "mini-p06-ceiling",
+      "mini-p06-down",
+      "mini-p06-floor",
+      "mini-p06-half_down",
+      "mini-p06-half_even",
+      "mini-p06-half_up",
+      "mini-p06-up",
+      "mini-p09-ceiling",
+      "mini-p09-down",
+      "mini-p09-floor",
+      "mini-p09-half_down",
+      "mini-p09-half_even",
+      "mini-p09-half_up",
+      "mini-p09-up",
+      "mini-p12-ceiling",
+      "mini-p12-down",
+      "mini-p12-floor",
+      "mini-p12-half_down",
+      "mini-p12-half_even",
+      "mini-p12-half_up",
+      "mini-p12-up"
+    ],
+    "last": {
+      "path": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\fineract-legacy\\publish\\fineract-legacy-normalized-spring",
+      "at": "2026-10-11T15:59:12",
+      "programs": 21,
+      "capabilities": 21,
+      "lastTest": {
+        "at": "2026-10-11T16:39:15",
+        "tests": 0,
+        "failed": 0,
+        "outputs": 0,
+        "match": 0,
+        "referenceOutputs": 0,
+        "referenceMatch": 0,
+        "implementation": "legacy"
+      }
+    }
+  },
+  "gemma": {
+    "designed": []
+  },
+  "reference": {
+    "label": "Fineract jar 4a61d7c (oracle A, FnHarness)",
+    "root": "C:\\Users\\Tomrodgers\\JavaToCOBOLTest\\fineract-cobol-gen\\build\\cobolbdm-reference",
+    "scenarioMap": {
+      "base": "fineract-unit-p12-half_even"
+    },
+    "outputs": {
+      "FINERACT.LOAN.SCHEDULE.DATA": "SCHEDULE.dat",
+      "FINERACT.LOAN.REJECTS.DATA": "REJECTS.dat"
+    }
+  },
+  "notes": [
+    "FNSCHRPT: no data file matches FINERACT.LOAN.SCHEDULE.SORTED; it starts empty (add one under scenarios/ or edit project.json)"
+  ]
+}

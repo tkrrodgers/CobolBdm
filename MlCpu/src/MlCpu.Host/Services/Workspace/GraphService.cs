@@ -13,7 +13,7 @@ public sealed record GraphProgramStatus(string ProgramId, bool AstOk, int AstErr
 /// Program and estate graphs for the active project (graphs/):
 ///   ast/&lt;PID&gt;.ast.json      COBOL-85 parse tree (grammars-v4 Cobol85.g4 via ANTLR), mlcpu.cobol85-ast.v1
 ///   ast/&lt;PID&gt;.outline.txt   the same tree as a structured outline (what the model reads)
-///   ddg/&lt;PID&gt;.ddg.json      data dependence graph: statements and def→use edges over byte ranges, mlcpu.ddg.v1
+///   ddg/&lt;PID&gt;.ddg.json      data dependence graph: statements and def→use edges over byte ranges, mlcpu.ddg.v2 (WriteDdg)
 ///   callgraph.json            jobs → programs (EXEC), programs → programs (CALL), per program paragraphs (PERFORM/GO TO/fall-through)
 ///   index.json                per-program status
 /// The PDG (control + data dependences, statement CFG) is built in memory on demand and cached per program.
@@ -33,19 +33,21 @@ public sealed class GraphService(ProjectService projects)
         var dir = Dir(p);
         Directory.CreateDirectory(Path.Combine(dir, "ast"));
         Directory.CreateDirectory(Path.Combine(dir, "ddg"));
-        var statuses = new List<GraphProgramStatus>();
-        var graphs = new List<ProgramGraph>();
-        var programNodes = new JsonObject();
-        int i = 0;
-        foreach (var prog in p.Programs)
+        // In-memory PDGs of this project are rebuilt on demand (Pdg); a rebuild must not keep every program's graph alive.
+        foreach (var k in _pdg.Keys.Where(k => k.StartsWith(p.Id + "/", StringComparison.Ordinal)).ToList()) _pdg.TryRemove(k, out _);
+        // Programs are parsed and analysed in parallel, the largest first; each keeps only its CALL sites for the estate call
+        // graph, so the data dependences (millions for a large J3S program) are written and dropped one program at a time.
+        var results = new (GraphProgramStatus Status, ProgramGraph? Calls, JsonObject? Node)[p.Programs.Count];
+        var order = Enumerable.Range(0, p.Programs.Count).OrderByDescending(k => p.Programs[k].Lines).ToList();
+        int done = 0;
+        await Parallel.ForEachAsync(order, new ParallelOptions { MaxDegreeOfParallelism = GraphParallelism, CancellationToken = ct }, async (k, token) =>
         {
-            ct.ThrowIfCancellationRequested();
-            op.Report(from + (to - from) * i++ / Math.Max(1, p.Programs.Count + 1), $"graphs {prog.Id}");
+            var prog = p.Programs[k];
             var path = sources[prog.Id];
-            var parse = await Task.Run(() => CobolAntlr.Parse(path, TimeSpan.FromMinutes(2)), ct);
+            var parse = await Task.Run(() => CobolAntlr.Parse(path, TimeSpan.FromMinutes(2)), token);
             var ast = AstExport.ToJsonText(parse);
-            await File.WriteAllTextAsync(Path.Combine(dir, "ast", prog.Id + ".ast.json"), ast, ct);
-            await File.WriteAllTextAsync(Path.Combine(dir, "ast", prog.Id + ".outline.txt"), AstExport.Outline(parse), ct);
+            await File.WriteAllTextAsync(Path.Combine(dir, "ast", prog.Id + ".ast.json"), ast, token);
+            await File.WriteAllTextAsync(Path.Combine(dir, "ast", prog.Id + ".outline.txt"), AstExport.Outline(parse), token);
             CobolProgram model;
             ProgramGraph graph;
             try
@@ -56,18 +58,23 @@ public sealed class GraphService(ProjectService projects)
             catch (Exception e)
             {
                 op.Info($"{prog.Id}: model failed: {e.Message}");
-                statuses.Add(new GraphProgramStatus(prog.Id, parse.Ok, parse.Errors.Count, parse.Errors.FirstOrDefault(), (long)parse.Elapsed.TotalMilliseconds, ast.Length, 0, 0, 0, 0, 0, 0));
-                continue;
+                results[k] = (new GraphProgramStatus(prog.Id, parse.Ok, parse.Errors.Count, parse.Errors.FirstOrDefault(), (long)parse.Elapsed.TotalMilliseconds, ast.Length, 0, 0, 0, 0, 0, 0), null, null);
+                return;
             }
-            _pdg[Key(p, prog.Id)] = (model, graph);
-            graphs.Add(graph);
-            await File.WriteAllTextAsync(Path.Combine(dir, "ddg", prog.Id + ".ddg.json"), Ddg(model, graph).ToJsonString(Indented), ct);
-            programNodes[prog.Id] = ParagraphGraph(model, graph);
+            WriteDdg(Path.Combine(dir, "ddg", prog.Id + ".ddg.json"), model, graph);
             var stmts = Statements(model).Count();
-            statuses.Add(new GraphProgramStatus(prog.Id, parse.Ok, parse.Errors.Count, parse.Errors.FirstOrDefault(), (long)parse.Elapsed.TotalMilliseconds, ast.Length,
-                model.Paragraphs.Count, stmts, graph.DataDeps.Count, graph.CtrlDeps.Count, graph.Calls.Count, graph.DeadParagraphs.Count));
+            var calls = new ProgramGraph { ProgramId = graph.ProgramId };
+            calls.Calls.AddRange(graph.Calls);
+            results[k] = (new GraphProgramStatus(prog.Id, parse.Ok, parse.Errors.Count, parse.Errors.FirstOrDefault(), (long)parse.Elapsed.TotalMilliseconds, ast.Length,
+                model.Paragraphs.Count, stmts, graph.DataDeps.Count, graph.CtrlDeps.Count, graph.Calls.Count, graph.DeadParagraphs.Count), calls, ParagraphGraph(model, graph));
+            op.Report(from + (to - from) * Interlocked.Increment(ref done) / Math.Max(1, p.Programs.Count + 1), $"graphs {prog.Id}");
             op.Info($"{prog.Id,-9} AST {(parse.Ok ? "ok" : $"{parse.Errors.Count} error(s)")} {parse.Elapsed.TotalMilliseconds:N0} ms, {stmts} statements, {graph.DataDeps.Count} data deps, {graph.Calls.Count} calls");
-        }
+        });
+        var statuses = results.Select(r => r.Status).ToList();
+        var graphs = results.Select(r => r.Calls).OfType<ProgramGraph>().ToList();
+        var programNodes = new JsonObject();
+        foreach (var r in results.Where(r => r.Node is not null)) programNodes[r.Status.ProgramId] = r.Node;
+        int i = p.Programs.Count;
         op.Report(from + (to - from) * i / Math.Max(1, p.Programs.Count + 1), "estate call graph");
         var estate = CallGraph(p, src, graphs);
         estate["programs"] = programNodes;
@@ -150,18 +157,57 @@ public sealed class GraphService(ProjectService projects)
         return m.Paragraphs.SelectMany(p => Walk(p.Statements, p.Name));
     }
 
-    static JsonObject Ddg(CobolProgram m, ProgramGraph g) => new()
+    /// <summary>Programs whose graphs are built at once (MLCPU_GRAPH_PARALLEL, default 4).</summary>
+    static int GraphParallelism => int.TryParse(Environment.GetEnvironmentVariable("MLCPU_GRAPH_PARALLEL"), out var n) && n > 0 ? n : 4;
+
+    /// <summary>
+    /// The DDG file, mlcpu.ddg.v2, streamed: the statements as in v1, the fields a dependence goes through once each, and
+    /// every edge as [from statement index, to statement index, field index]. v1's one object per edge took 684 MB for
+    /// the largest J3S program (5.2 million edges); v2 takes about a tenth.
+    /// </summary>
+    static void WriteDdg(string file, CobolProgram m, ProgramGraph g)
     {
-        ["schema"] = "mlcpu.ddg.v1",
-        ["programId"] = m.ProgramId,
-        ["basis"] = "reaching definitions over byte ranges per storage area (group, REDEFINES and FD-record overlaps honoured)",
-        ["dataflowIterations"] = g.DataflowIterations,
-        ["nodes"] = new JsonArray(Statements(m).Select(s => (JsonNode)new JsonObject
+        using var fs = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.None, 1 << 16);
+        using var w = new Utf8JsonWriter(fs);
+        w.WriteStartObject();
+        w.WriteString("schema", "mlcpu.ddg.v2");
+        w.WriteString("programId", m.ProgramId);
+        w.WriteString("basis", "reaching definitions over byte ranges per storage area (group, REDEFINES and FD-record overlaps honoured)");
+        w.WriteString("edgeFormat", "[from: index in nodes, to: index in nodes, field: index in fields]");
+        w.WriteNumber("dataflowIterations", g.DataflowIterations);
+        var index = new Dictionary<string, int>(StringComparer.Ordinal);
+        w.WriteStartArray("nodes");
+        foreach (var s in Statements(m))
         {
-            ["id"] = s.Stmt.StepId, ["paragraph"] = s.Paragraph, ["verb"] = s.Stmt.Verb, ["line"] = s.Stmt.Line, ["text"] = Short(s.Stmt.Text, 240)
-        }).ToArray()),
-        ["edges"] = new JsonArray(g.DataDeps.Select(e => (JsonNode)new JsonObject { ["from"] = e.FromStepId, ["to"] = e.ToStepId, ["field"] = e.Field }).ToArray())
-    };
+            index.TryAdd(s.Stmt.StepId, index.Count);
+            w.WriteStartObject();
+            w.WriteString("id", s.Stmt.StepId);
+            w.WriteString("paragraph", s.Paragraph);
+            w.WriteString("verb", s.Stmt.Verb);
+            w.WriteNumber("line", s.Stmt.Line);
+            w.WriteString("text", Short(s.Stmt.Text, 240));
+            w.WriteEndObject();
+        }
+        w.WriteEndArray();
+        var fields = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var e in g.DataDeps) fields.TryAdd(e.Field, fields.Count);
+        w.WriteStartArray("fields");
+        foreach (var f in fields.Keys) w.WriteStringValue(f);
+        w.WriteEndArray();
+        w.WriteStartArray("edges");
+        foreach (var e in g.DataDeps)
+        {
+            if (!index.TryGetValue(e.FromStepId, out var from) || !index.TryGetValue(e.ToStepId, out var to)) continue;
+            w.WriteStartArray();
+            w.WriteNumberValue(from);
+            w.WriteNumberValue(to);
+            w.WriteNumberValue(fields[e.Field]);
+            w.WriteEndArray();
+            if (w.BytesPending > 1 << 16) w.Flush();
+        }
+        w.WriteEndArray();
+        w.WriteEndObject();
+    }
 
     static JsonObject ParagraphGraph(CobolProgram m, ProgramGraph g)
     {

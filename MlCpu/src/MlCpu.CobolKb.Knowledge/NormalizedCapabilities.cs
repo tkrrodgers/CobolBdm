@@ -66,8 +66,9 @@ public static class NormalizedCapabilities
                 continue;
             }
             if (design is not null) files.Set($"normalization/{pid}/design.json", design.ToJsonString(Indented) + "\n");
-            // The model's kit: worked examples traced from the faithful program and the AST outline.
-            foreach (var extra in new[] { "examples.md", "ast-outline.txt" })
+            // The model's kit: worked examples traced from the faithful program, the AST outline, the CALL groups the
+            // library-equivalence probe verified as JDK operations (subprograms), and the contracts of the programs it CALLs.
+            foreach (var extra in new[] { "examples.md", "ast-outline.txt", "equivalences.md", "equivalences.json", "callee-contracts.md" })
                 if (File.Exists(Path.Combine(root!, "normalization", pid, extra)))
                     files.Set($"normalization/{pid}/{extra}", File.ReadAllText(Path.Combine(root!, "normalization", pid, extra)).Replace("\r\n", "\n"));
             if (Read(root!, cap["conformance"]?.GetValue<string>()) is { } conformance)
@@ -88,6 +89,10 @@ public static class NormalizedCapabilities
             files.Set("capability-manifest.json", File.ReadAllText(manifestPath).Replace("\r\n", "\n"));
             if (File.Exists(Path.Combine(root!, "normalization", "parity-notes.md")))
                 files.Set("normalization/parity-notes.md", File.ReadAllText(Path.Combine(root!, "normalization", "parity-notes.md")).Replace("\r\n", "\n"));
+            // What the kit offers beyond pipeline v2 (examples in values, the compact prompt packet, shadow feedback): the
+            // implementation step renders a kit without this file exactly as before.
+            if (File.Exists(Path.Combine(root!, "normalization", "kit-features.json")))
+                files.Set("normalization/kit-features.json", File.ReadAllText(Path.Combine(root!, "normalization", "kit-features.json")).Replace("\r\n", "\n"));
         }
         if (imports.Count > 0)
             foreach (var kind in new[] { "main", "test", "testResources" })

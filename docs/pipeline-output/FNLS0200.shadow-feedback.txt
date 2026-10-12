@@ -1,0 +1,86 @@
+## CALL-level comparison: where your FNLS0200 leaves different results
+Each CALL of the failing scenarios below was answered twice, by the faithful FNLS0200 and by yours, each on its own copy of the caller's arguments; the run went on with the faithful results, so every CALL had the faithful run's inputs.
+- 'oracle scenario rejects-p12-half_even': 26 CALL(s), 4 with different results (first: CALL 1).
+Your results differ in 2 different ways (the items that differ); the first CALL of each is shown:
+- LT-FREQ-TYPE: CALL 1 of 'oracle scenario rejects-p12-half_even'
+- LT-SUBMITTED-DAY, LT-EXP-DISB-DAY, LT-SEED-DAY, LT-NUM-REPAYMENTS, LT-REPAY-EVERY, LT-ANNUAL-RATE, LT-DAYS-IN-MONTH, LT-DAYS-IN-YEAR, LT-DOWNPAY-SW, LT-DOWNPAY-PCT-IND, LT-FIXED-LENGTH-IND, LT-FIXED-L…: CALL 21 of 'oracle scenario rejects-p12-half_even'
+
+### CALL 1 of 'oracle scenario rejects-p12-half_even'
+Passed in (the items that select what the CALL does; small input records in full):
+- FN-LOAN-REQUEST: RQ-REC-TYPE = 'LR', RQ-LOAN-ID = 34, RQ-SCHED-START-DATE = 20240101, RQ-CURRENCY-CODE = 'USD', RQ-DISB-AMOUNT = 1000.0000, RQ-DISB-DATE = 20240101, RQ-NUM-REPAYMENTS = 12, RQ-REPAY-EVERY = 1, RQ-FREQ-TYPE = 'MONTHLY', RQ-ANNUAL-RATE = 12.000000000, RQ-DOWNPAY-ENABLED = 'N', RQ-DAYS-IN-MONTH = 30, RQ-DAYS-IN-YEAR = 360, RQ-DOWNPAY-PCT-IND = 'N', RQ-DOWNPAY-PCT = 0.000000000, RQ-MULTIPLES-IND = 'N', RQ-MULTIPLES = 0, RQ-FIXED-LENGTH-IND = 'N', RQ-FIXED-LENGTH = 0, RQ-INT-RECOG-DISB = 'N', RQ-INTEREST-METHOD = 'DECLINING_BALANCE', RQ-ALLOW-PARTIAL = 'N', RQ-FULL-TERM-TRANCHE = 'N'
+- FN-CURRENCY-REC: CU-CODE = 'USD', CU-DECIMAL-PLACES = 2, CU-MULTIPLES-IND = 'N', CU-MULTIPLES = 0, CU-NAME = 'US Dollar'
+- FN-MATH-CONTEXT: MC-PRECISION = 12, MC-MODE = 'E'
+- FN-LOAN-TERMS: (blank)
+- FN-STATUS: (blank)
+Results that differ (the value before the CALL; the faithful program's; yours):
+- FN-LOAN-TERMS:
+  LT-FREQ-TYPE: before 0; faithful 0; yours 5
+  (the faithful CALL also changed LT-CURRENCY-CODE, LT-DECIMAL-PLACES, LT-MULTIPLES-IND, LT-PRINCIPAL, LT-ANNUAL-RATE, LT-DOWNPAY-SW, LT-DOWNPAY-PCT-IND, LT-DOWNPAY-PCT, LT-DOWNPAY-AMOUNT, LT-FIXED-LENGTH-IND, LT-FULL-TERM-SW, LT-LCD-INT-RECOG-SW, LT-INT-RECOG-SW, LT-PARTIAL-SW, and yours did the same)
+Rules of FNLS0200 that write these items (requirements packet; the AST outline has their statements):
+- R-FNLS0200-004 in 2000-FREQUENCY-TYPE: EVALUATE RQ-FREQ-TYPE WHEN 'DAYS' (writes LT-FREQ-TYPE)
+
+### CALL 21 of 'oracle scenario rejects-p12-half_even'
+Passed in (the items that select what the CALL does; small input records in full):
+- FN-LOAN-REQUEST: RQ-REC-TYPE = 'LR', RQ-LOAN-ID = 54, RQ-SCHED-START-DATE = 20240101, RQ-CURRENCY-CODE = 'USD', RQ-DISB-AMOUNT = 1000.0000, RQ-DISB-DATE = 20240101, RQ-NUM-REPAYMENTS = 12, RQ-REPAY-EVERY = 1, RQ-FREQ-TYPE = 'INVALID', RQ-ANNUAL-RATE = 12.000000000, RQ-DOWNPAY-ENABLED = 'N', RQ-DAYS-IN-MONTH = 30, RQ-DAYS-IN-YEAR = 360, RQ-DOWNPAY-PCT-IND = 'N', RQ-DOWNPAY-PCT = 0.000000000, RQ-MULTIPLES-IND = 'N', RQ-MULTIPLES = 0, RQ-FIXED-LENGTH-IND = 'Y', RQ-FIXED-LENGTH = 5, RQ-INT-RECOG-DISB = 'N', RQ-INTEREST-METHOD = 'DECLINING_BALANCE', RQ-ALLOW-PARTIAL = 'N', RQ-FULL-TERM-TRANCHE = 'N'
+- FN-CURRENCY-REC: CU-CODE = 'USD', CU-DECIMAL-PLACES = 2, CU-MULTIPLES-IND = 'N', CU-MULTIPLES = 0, CU-NAME = 'US Dollar'
+- FN-MATH-CONTEXT: MC-PRECISION = 12, MC-MODE = 'E'
+- FN-LOAN-TERMS: LT-CURRENCY-CODE = 'USD', LT-DECIMAL-PLACES = 2, LT-MULTIPLES-IND = 'N', LT-FREQ-TYPE = 4, LT-DAYS-IN-MONTH = 30, LT-DAYS-IN-YEAR = 360, LT-DOWNPAY-SW = 'N', LT-DOWNPAY-PCT-IND = 'N', LT-FIXED-LENGTH-IND = 'Y', LT-FULL-TERM-SW = 'N', LT-LCD-INT-RECOG-SW = 'N', LT-INT-RECOG-SW = 'N', LT-PARTIAL-SW = 'N' (an argument the CALL writes; 10 other item(s) set)
+- FN-STATUS: (blank)
+Results that differ (the value before the CALL; the faithful program's; yours):
+- FN-LOAN-TERMS:
+  LT-SUBMITTED-DAY: before 154498; faithful 154498; yours 0
+  LT-EXP-DISB-DAY: before 154498; faithful 154498; yours 0
+  LT-SEED-DAY: before 154498; faithful 154498; yours 0
+  LT-NUM-REPAYMENTS: before 12; faithful 12; yours 0
+  LT-REPAY-EVERY: before 1; faithful 1; yours 0
+  LT-ANNUAL-RATE: before 12.000000000; faithful 12.000000000; yours 0.000000000
+  LT-DAYS-IN-MONTH: before 30; faithful 30; yours 0
+  LT-DAYS-IN-YEAR: before 360; faithful 360; yours 0
+  LT-DOWNPAY-SW: before 'N'; faithful 'N'; yours (spaces)
+  LT-DOWNPAY-PCT-IND: before 'N'; faithful 'N'; yours (spaces)
+  LT-FIXED-LENGTH-IND: before 'Y'; faithful 'Y'; yours (spaces)
+  LT-FIXED-LENGTH: before 5; faithful 5; yours 0
+  LT-FULL-TERM-SW: before 'N'; faithful 'N'; yours (spaces)
+  LT-LCD-INT-RECOG-SW: before 'N'; faithful 'N'; yours (spaces)
+  LT-INT-RECOG-SW: before 'N'; faithful 'N'; yours (spaces)
+  LT-PARTIAL-SW: before 'N'; faithful 'N'; yours (spaces)
+  (the faithful CALL also changed LT-FREQ-TYPE, and yours did the same)
+- FN-STATUS:
+  ST-RC: before 0; faithful 0; yours 4
+  ST-REJECT-CODE: before (spaces); faithful (spaces); yours 'RJFREQ01'
+  ST-REJECT-SRC: before (spaces); faithful (spaces); yours 'LAT:592'
+Rules of FNLS0200 that write these items (requirements packet; the AST outline has their statements):
+- R-FNLS0200-004 in 2000-FREQUENCY-TYPE: EVALUATE RQ-FREQ-TYPE WHEN 'DAYS' (writes ST-RC, ST-REJECT-CODE, ST-REJECT-SRC)
+- R-FNLS0200-005 in 3000-BUILDER-FIELDS: MOVE RQ-NUM-REPAYMENTS TO LT-NUM-REPAYMENTS; MOVE RQ-REPAY-EVERY TO LT-REPAY-EVERY; MOVE RQ-ANNUAL-RATE TO LT-ANNUAL-RATE (writes LT-ANNUAL-RATE, LT-NUM-REPAYMENTS, LT-REPAY-EVERY)
+- R-FNLS0200-006 in 3000-BUILDER-FIELDS: MOVE DT-RESULT TO LT-EXP-DISB-DAY; MOVE DT-RESULT TO LT-SEED-DAY; MOVE RQ-SCHED-START-DATE TO DT-YYYYMMDD (writes LT-EXP-DISB-DAY, LT-SEED-DAY)
+- R-FNLS0200-007 in 3000-BUILDER-FIELDS: MOVE DT-RESULT TO LT-SUBMITTED-DAY; EVALUATE RQ-DAYS-IN-MONTH WHEN 1 WHEN 30; EVALUATE RQ-DAYS-IN-YEAR WHEN 1 WHEN 360 WHEN 364 WHEN 365 (writes LT-DAYS-IN-MONTH, LT-DAYS-IN-YEAR, LT-DOWNPAY-PCT-IND, LT-DOWNPAY-SW, LT-FIXED-LENGTH, LT-FIXED-LENGTH-IND, LT-FULL-TERM-SW, LT-INT-RECOG-SW, LT-LCD-INT-RECOG-SW, LT-PARTIAL-SW, LT-SUBMITTED-DAY)
+- R-FNLS0200-009 in 4000-DOWN-PAYMENT, when IF LT-DOWNPAY-ENABLED AND IF LT-PRINCIPAL > 0 AND NOT LT-DOWNPAY-PCT-PRESENT: MOVE 4 TO ST-RC; MOVE 'RJNULL01' TO ST-REJECT-CODE; MOVE 'LAT:331' TO ST-REJECT-SRC (writes ST-RC, ST-REJECT-CODE, ST-REJECT-SRC)
+
+acceptance 69/71
+- oracle scenario rejects-p12-half_even: org.opentest4j.AssertionFailedError: oracle scenario rejects-p12-half_even ==> expected: <[]> but was: <[data/FINERACT.LOAN.REJECTS.DATA: first difference at byte 6378 (legacy 6600 / normalized 6600 bytes) legacy «  0000000000000054RJNULL02DSG:63                  FIXED LENG» normalized «  0000000000000054RJFREQ01LAT:592                 REPAYMENT »]>
+- GnuCOBOL oracle: rejects-p12-half_even: org.opentest4j.AssertionFailedError: rejects-p12-half_even ==> expected: <[]> but was: <[data/FINERACT.LOAN.REJECTS.DATA: first difference at byte 6378 (actual 6600 / oracle 6600) actual «  0000000000000054RJFREQ01LAT:592                 REPAYMENT » oracle «  0000000000000054RJNULL02DSG:63                  FIXED LENG»]>
+
+Detail for 1 failing scenario(s) with different symptoms:
+## Scenario 'oracle scenario rejects-p12-half_even'
+data/FINERACT.LOAN.REJECTS.DATA (120-byte records; legacy 55, yours 55): 1 differ
+  record 54 (FN-REJECT-REC):
+    RJ-CODE (PIC X(8) @16+8): legacy «RJNULL02», yours «RJFREQ01»
+    RJ-SOURCE (PIC X(24) @24+24): legacy «DSG:63                  », yours «LAT:592                 »
+    RJ-TEXT (PIC X(60) @48+60): legacy «FIXED LENGTH WITH NON-ADVANCING FREQUENCY                   », yours «REPAYMENT FREQUENCY TYPE NOT RECOGNISED                     »
+CALL 1 (the first whose results differ):
+  FN-LOAN-REQUEST passed in: «LR000000000000003420240101USD+000000000100000002024010100120001MONTHLY   +012000000000N30360N+000000000000N000000000N00000N                 …»
+  FN-CURRENCY-REC passed in: «USD02N00000US Dollar                    »
+  FN-MATH-CONTEXT passed in: «\x00\fE»
+  FN-LOAN-TERMS passed in: «\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00»
+  FN-STATUS passed in: «\x00\x00                                                                                            »
+  FN-LOAN-TERMS after the CALL (FN-LOAN-TERMS):
+    LT-FREQ-TYPE (PIC S9(4) COMP @39+2, ltFreqType()): legacy 0 «0000», yours 5 «0005»
+    (the faithful FN-LOAN-TERMS changes LT-CURRENCY-CODE, LT-DECIMAL-PLACES, LT-MULTIPLES-IND, LT-PRINCIPAL, LT-ANNUAL-RATE, LT-DOWNPAY-SW, LT-DOWNPAY-PCT-IND, LT-DOWNPAY-PCT, LT-DOWNPAY-AMOUNT, LT-FIXED-LENGTH-IND, LT-FULL-TERM-SW, LT-LCD-INT-RECOG-SW, LT-INT-RECOG-SW, LT-PARTIAL-SW on this CALL)
+Where the runs part:
+- The first difference in the order the program runs is data/FINERACT.LOAN.REJECTS.DATA record 54 (it differs). The faithful program wrote it as effect 150 of its run:
+    2900-WRITE-REJECT:10:WRITE:L688 WRITE FN-REJECT-REC
+    performed from 2000-PROCESS-LOAN:15:PERFORM:L259 PERFORM 2900-WRITE-REJECT
+    performed from 0000-MAIN:5:PERFORM:L128 PERFORM 2000-PROCESS-LOAN
+    after READ KEY CURRFILE: «USD02N00000US Dollar                    »
+    after READ LOANREQ: «LR000000000000005420240101USD+000000000100000002024010100120001INVALID   +012000000000N30360N+000000000000N000…»
+    after READ RUNCTL: «MC12HALF_EVEN                                                                   »

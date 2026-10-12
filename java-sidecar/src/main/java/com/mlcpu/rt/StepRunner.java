@@ -64,10 +64,11 @@ public final class StepRunner {
             CobFile.closeAllOpen();
             rc = CobRt.RETURN_CODE.dec().intValue();
         } catch (CobRt.Abend a) {
-            CobFile.forgetOpen();
-            sink.write("ABEND " + a.getMessage(), true);
+            CobFile.closeAllOpen(); // implicit CLOSE, as GnuCOBOL does when the CEE3ABD stub or a runtime error ends the run unit
+            sink.write(JobEngine.abendLine(a.code), true);
             rc = 16;
         } catch (CobRt.FrontierException | CobRt.RuntimeCheck | CobRt.LoopLimit | CobRt.CallNotFound e) {
+            CobFile.closeAllOpen(); // GnuCOBOL closes open files when a runtime error ends the run unit
             sink.write("RUNTIME ERROR " + e.getMessage(), true);
             rc = 20;
         } finally {
