@@ -1,6 +1,7 @@
 using MlCpu.Host.Components;
 using MlCpu.Host.Services;
 using MlCpu.Host.Services.Workspace;
+using MlCpu.Host.Services.Knowledge;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddSingleton<GemmaService>();
 builder.Services.AddSingleton<ForwardService>();
 builder.Services.AddSingleton<WorkspaceActions>();
 builder.Services.AddSingleton<ReferenceSweepService>();
+builder.Services.AddSingleton<KnowledgeService>();
 
 var app = builder.Build();
 
@@ -141,5 +143,8 @@ api.MapPost("/operations/{opId}/cancel", (string opId, OperationService ops) =>
     o.Cancellation.Cancel();
     return Results.Ok();
 });
+
+// Knowledge base: search, catalogs, glossary, grounding packets (knowledgeBaseGroundGemma4.md §10).
+app.MapKnowledgeApi();
 
 app.Run();

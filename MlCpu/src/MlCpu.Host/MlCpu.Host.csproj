@@ -10,6 +10,7 @@
     <ProjectReference Include="..\MlCpu.Cobol.Analysis\MlCpu.Cobol.Analysis.csproj" />
     <ProjectReference Include="..\MlCpu.CobolKb.Knowledge\MlCpu.CobolKb.Knowledge.csproj" />
     <ProjectReference Include="..\MlCpu.Cobol.Antlr\MlCpu.Cobol.Antlr.csproj" />
+    <ProjectReference Include="..\MlCpu.SemanticKb\MlCpu.SemanticKb.csproj" />
   </ItemGroup>
 
   <ItemGroup>

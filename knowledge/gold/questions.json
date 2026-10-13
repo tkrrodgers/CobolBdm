@@ -1,0 +1,557 @@
+{
+  "schema": "mlcpu.kb-gold-questions.v1",
+  "note": "Retrieval gold set for `kb eval` (knowledgeBaseGroundGemma4.md §12), written in the SME role from the COBOL sources, the requirements packets and the Gemma 4 designs; questions are phrased as a user would ask (kind prose); kind identifier questions name code (a data name, a rule id, a program id), where BM25 should help. A hit matches when it is in the expected project and program, and in the paragraph when one is given (any listed alternative counts). Searched across all three projects. Unreviewed.",
+  "questions": [
+    {
+      "id": "cd-01",
+      "project": "carddemo",
+      "question": "How is the monthly interest on a credit card account calculated?",
+      "expect": [
+        {
+          "program": "CBACT04C",
+          "paragraph": "1300-COMPUTE-INTEREST"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-02",
+      "project": "carddemo",
+      "question": "Which interest rate is used when the account's group has no rate defined?",
+      "expect": [
+        {
+          "program": "CBACT04C",
+          "paragraph": "1200-A-GET-DEFAULT-INT-RATE"
+        },
+        {
+          "program": "CBACT04C",
+          "paragraph": "1200-GET-INTEREST-RATE"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-03",
+      "project": "carddemo",
+      "question": "Why would a daily transaction be rejected during posting?",
+      "expect": [
+        {
+          "program": "CBTRN02C",
+          "paragraph": "1500-VALIDATE-TRAN"
+        },
+        {
+          "program": "CBTRN02C",
+          "paragraph": "1500-A-LOOKUP-XREF"
+        },
+        {
+          "program": "CBTRN02C",
+          "paragraph": "1500-B-LOOKUP-ACCT"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-04",
+      "project": "carddemo",
+      "question": "How is the over-limit check done for a card transaction?",
+      "expect": [
+        {
+          "program": "CBTRN02C",
+          "paragraph": "1500-B-LOOKUP-ACCT"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-05",
+      "project": "carddemo",
+      "question": "Where are the account's current balance and cycle credit and debit updated when a transaction posts?",
+      "expect": [
+        {
+          "program": "CBTRN02C",
+          "paragraph": "2800-UPDATE-ACCOUNT-REC"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-06",
+      "project": "carddemo",
+      "question": "What happens when the transaction category balance record does not exist yet?",
+      "expect": [
+        {
+          "program": "CBTRN02C",
+          "paragraph": "2700-A-CREATE-TCATBAL-REC"
+        },
+        {
+          "program": "CBTRN02C",
+          "paragraph": "2700-UPDATE-TCATBAL"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-07",
+      "project": "carddemo",
+      "question": "How does the transaction report print page totals and account totals?",
+      "expect": [
+        {
+          "program": "CBTRN03C",
+          "paragraph": "1110-WRITE-PAGE-TOTALS"
+        },
+        {
+          "program": "CBTRN03C",
+          "paragraph": "1120-WRITE-ACCOUNT-TOTALS"
+        },
+        {
+          "program": "CBTRN03C",
+          "paragraph": "1100-WRITE-TRANSACTION-REPORT"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-08",
+      "project": "carddemo",
+      "question": "How does a user sign on and how is the password checked?",
+      "expect": [
+        {
+          "program": "COSGN00C"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-09",
+      "project": "carddemo",
+      "question": "How is a customer's credit score validated when an account is updated online?",
+      "expect": [
+        {
+          "program": "COACTUPC",
+          "paragraph": "1275-EDIT-FICO-SCORE"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-10",
+      "project": "carddemo",
+      "question": "How does online bill payment pay off the account balance?",
+      "expect": [
+        {
+          "program": "COBIL00C"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-11",
+      "project": "carddemo",
+      "question": "How are account statements produced for customers?",
+      "expect": [
+        {
+          "program": "CBSTM03A"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-12",
+      "project": "carddemo",
+      "question": "How is customer data exported for a branch migration?",
+      "expect": [
+        {
+          "program": "CBEXPORT"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "cd-13",
+      "project": "carddemo",
+      "question": "Where is WS-MONTHLY-INT computed?",
+      "kind": "identifier",
+      "expect": [
+        {
+          "program": "CBACT04C",
+          "paragraph": "1300-COMPUTE-INTEREST"
+        }
+      ]
+    },
+    {
+      "id": "cd-14",
+      "project": "carddemo",
+      "question": "What does rule R-CBTRN02C-009 do?",
+      "kind": "identifier",
+      "expect": [
+        {
+          "program": "CBTRN02C",
+          "paragraph": "1500-B-LOOKUP-ACCT"
+        }
+      ]
+    },
+    {
+      "id": "sam-01",
+      "project": "zopeneditor-sample",
+      "question": "How are customer records updated from the transaction file?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "100-PROCESS-TRANSACTIONS"
+        },
+        {
+          "program": "SAM1",
+          "paragraph": "200-PROCESS-UPDATE-TRAN"
+        },
+        {
+          "program": "SAM2",
+          "paragraph": "200-PROCESS-TRAN"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-02",
+      "project": "zopeneditor-sample",
+      "question": "What happens when a transaction asks to add a new customer?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "210-PROCESS-ADD-TRAN"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-03",
+      "project": "zopeneditor-sample",
+      "question": "How is a customer removed from the master file?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "220-PROCESS-DELETE-TRAN"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-04",
+      "project": "zopeneditor-sample",
+      "question": "How are invalid transactions reported?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "299-REPORT-BAD-TRAN"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-05",
+      "project": "zopeneditor-sample",
+      "question": "How does the update subroutine validate a transaction before applying it?",
+      "expect": [
+        {
+          "program": "SAM2",
+          "paragraph": "100-VALIDATE-TRAN"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-06",
+      "project": "zopeneditor-sample",
+      "question": "How is an amount added to or subtracted from a customer's balance field?",
+      "expect": [
+        {
+          "program": "SAM2",
+          "paragraph": "200-PROCESS-TRAN"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-07",
+      "project": "zopeneditor-sample",
+      "question": "What totals are printed at the end of the customer update report?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "850-REPORT-TRAN-STATS"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-08",
+      "project": "zopeneditor-sample",
+      "question": "What return code does the program set when a file cannot be opened?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "700-OPEN-FILES"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-09",
+      "project": "zopeneditor-sample",
+      "question": "How does the program line up a transaction's key with the sorted customer master?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "720-POSITION-CUST-FILE"
+        },
+        {
+          "program": "SAM1",
+          "paragraph": "721-COPY-RECORDS"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-10",
+      "project": "zopeneditor-sample",
+      "question": "How is the report heading with the run date and time written?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "800-INIT-REPORT"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-11",
+      "project": "zopeneditor-sample",
+      "question": "What does the CPU-intensive loop in the subroutine do?",
+      "expect": [
+        {
+          "program": "SAM2",
+          "paragraph": "300-PROCESS-CPU-CRUNCH"
+        },
+        {
+          "program": "SAM2",
+          "paragraph": "310-CRUNCH-LOOP"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-12",
+      "project": "zopeneditor-sample",
+      "question": "How is an updated customer record written to the new master file?",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "740-WRITE-CUSTOUT-FILE"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "sam-13",
+      "project": "zopeneditor-sample",
+      "question": "Where is WS-CUSTFILE-STATUS checked?",
+      "kind": "identifier",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "700-OPEN-FILES"
+        },
+        {
+          "program": "SAM1",
+          "paragraph": "730-READ-CUSTOMER-FILE"
+        },
+        {
+          "program": "SAM1",
+          "paragraph": "720-POSITION-CUST-FILE"
+        }
+      ]
+    },
+    {
+      "id": "sam-14",
+      "project": "zopeneditor-sample",
+      "question": "Which paragraph moves 16 to RETURN-CODE in SAM1?",
+      "kind": "identifier",
+      "expect": [
+        {
+          "program": "SAM1",
+          "paragraph": "700-OPEN-FILES"
+        }
+      ]
+    },
+    {
+      "id": "fn-01",
+      "project": "fineract-legacy",
+      "question": "How is the rate factor of an interest period calculated?",
+      "expect": [
+        {
+          "program": "FNEM0300"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-02",
+      "project": "fineract-legacy",
+      "question": "How is the equated monthly installment computed for a declining balance loan?",
+      "expect": [
+        {
+          "program": "FNEM0400"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-03",
+      "project": "fineract-legacy",
+      "question": "How is the installment of the last unpaid repayment period adjusted?",
+      "expect": [
+        {
+          "program": "FNEM0500",
+          "paragraph": "1300-ADJUST-LAST-UNPAID-EMI"
+        },
+        {
+          "program": "FNEM0500",
+          "paragraph": "1200-FIND-LAST-UNPAID"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-04",
+      "project": "fineract-legacy",
+      "question": "How is a loan disbursement applied to the interest schedule?",
+      "expect": [
+        {
+          "program": "FNEM0200"
+        },
+        {
+          "program": "FNLS0300"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-05",
+      "project": "fineract-legacy",
+      "question": "How is the outstanding loan balance found at a given date?",
+      "expect": [
+        {
+          "program": "FNEM0600"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-06",
+      "project": "fineract-legacy",
+      "question": "How are amounts rounded to the currency's decimal places with the configured rounding mode?",
+      "expect": [
+        {
+          "program": "FNMY0100"
+        },
+        {
+          "program": "FNDKRND"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-07",
+      "project": "fineract-legacy",
+      "question": "How is the number of days between two dates calculated?",
+      "expect": [
+        {
+          "program": "FNDTKRN",
+          "paragraph": "3000-BETWEEN"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-08",
+      "project": "fineract-legacy",
+      "question": "How are the repayment due dates generated from the repayment frequency?",
+      "expect": [
+        {
+          "program": "FNDG0100"
+        },
+        {
+          "program": "FNDTKRN",
+          "paragraph": "2100-PLUS-MONTHS"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-09",
+      "project": "fineract-legacy",
+      "question": "Why would a loan request be rejected instead of getting a schedule?",
+      "expect": [
+        {
+          "program": "FNLS0100"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-10",
+      "project": "fineract-legacy",
+      "question": "How is the down payment amount derived from its percentage?",
+      "expect": [
+        {
+          "program": "FNLS0200",
+          "paragraph": "4000-DOWN-PAYMENT"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-11",
+      "project": "fineract-legacy",
+      "question": "How are installments evened out over the related repayment periods?",
+      "expect": [
+        {
+          "program": "FNEM0900"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-12",
+      "project": "fineract-legacy",
+      "question": "How is the printed repayment schedule laid out, including the loan totals?",
+      "expect": [
+        {
+          "program": "FNRP0100"
+        }
+      ],
+      "kind": "prose"
+    },
+    {
+      "id": "fn-13",
+      "project": "fineract-legacy",
+      "question": "What does FNDKRND do?",
+      "kind": "identifier",
+      "expect": [
+        {
+          "program": "FNDKRND"
+        }
+      ]
+    },
+    {
+      "id": "fn-14",
+      "project": "fineract-legacy",
+      "question": "Where is LT-DOWNPAY-PCT set from the loan request?",
+      "kind": "identifier",
+      "expect": [
+        {
+          "program": "FNLS0200"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MlCpu.SemanticKb.Cli</RootNamespace>
+    <AssemblyName>kb</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MlCpu.SemanticKb\MlCpu.SemanticKb.csproj" />
+  </ItemGroup>
+
+</Project>

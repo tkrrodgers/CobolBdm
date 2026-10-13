@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>MlCpu.SemanticKb</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- EmbeddingGemma 300M (ONNX) runs through ML.NET's ONNX transformer; the classifiers are ML.NET trainers. -->
+    <PackageReference Include="Microsoft.ML" Version="5.0.0" />
+    <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="5.0.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.31.0" />
+    <PackageReference Include="Microsoft.ML.Tokenizers" Version="2.0.0" />
+    <PackageReference Include="Microsoft.ML.LightGbm" Version="5.0.0" />
+  </ItemGroup>
+
+</Project>
