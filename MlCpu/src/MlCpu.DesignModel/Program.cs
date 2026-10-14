@@ -138,11 +138,23 @@ public static class Program
                     Console.WriteLine(detail ?? "(no differences or the probe could not run)");
                     return detail is null ? 1 : 0;
                 }
-                // Forward engineering (tools/eval/PROTOCOL-forward.md): --cas forward/cas is the SME package.
+                // Forward engineering (tools/eval/PROTOCOL-forward.md): --cas forward/cas is the SME package; --slices a,b limits it to
+                // those slices (a pilot: forward/loans --slices calendar).
                 case "fwd-architecture":
-                    return Forward.ForwardDesign.Architecture(chat, new Forward.ForwardInputs(Need("cas")), outArg, designAttempts, name, reasoning, maxTokens) ? 0 : 1;
+                    return Forward.ForwardDesign.Architecture(chat, FwdInputs(a), outArg, designAttempts, name, reasoning, maxTokens) ? 0 : 1;
+                case "fwd-leaks":
+                    // fwd-leaks --cas dir [--in dir]: the package's files against the leak checker (exit 1 on a hit), or with --in the
+                    // source system's names in a model's output (designs, code): reported, written to out/overlap.json.
+                    return Forward.ForwardContamination.Leaks(FwdInputs(a, scanPackage: false), a.GetValueOrDefault("in"), outArg);
+                case "fwd-judge":
+                    // fwd-judge --cas dir [--slices a,b] --java dir --out dir [--harness dir]: judge those files as an attempt is judged.
+                    return Forward.ForwardImplement.JudgeOnly(FwdInputs(a), Need("java"),
+                        a.GetValueOrDefault("harness") ?? Path.Combine(Path.GetTempPath(), "mlcpu-forward-judge"), testTimeout);
+                case "fwd-contamination":
+                    // fwd-contamination --cas dir --out dir: the probe of section 4.3, once per model before the design (no package in the prompt).
+                    return Forward.ForwardContamination.Probe(chat, FwdInputs(a, scanPackage: false), outArg, name, reasoning, maxTokens);
                 case "fwd-slices":
-                    return Forward.ForwardDesign.Slices(chat, new Forward.ForwardInputs(Need("cas")), Need("architecture"),
+                    return Forward.ForwardDesign.Slices(chat, FwdInputs(a), Need("architecture"),
                         Need("normalization").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), outArg, designAttempts, name,
                         reasoning, maxTokens, ctx, a.GetValueOrDefault("only")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) ? 0 : 1;
                 case "fwd-review":
@@ -150,13 +162,14 @@ public static class Program
                     // --designs "P=path\architecture.json;Q=path\architecture.json"
                     var designs = Need("designs").Split([';', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                         .Select(d => d.Split('=', 2)).ToDictionary(d => d[0], d => d[1], StringComparer.Ordinal);
-                    return Forward.ForwardDesign.Review(chat, new Forward.ForwardInputs(Need("cas")), designs, outArg, designAttempts, name, reasoning, maxTokens) ? 0 : 1;
+                    return Forward.ForwardDesign.Review(chat, FwdInputs(a), designs, outArg, designAttempts, name, reasoning, maxTokens) ? 0 : 1;
                 }
                 case "fwd-implement":
-                    return Forward.ForwardImplement.Run(chat, new Forward.ForwardInputs(Need("cas")), Need("design"), outArg,
+                    return Forward.ForwardImplement.Run(chat, FwdInputs(a), Need("design"), outArg,
                         a.GetValueOrDefault("harness") ?? Path.Combine(Path.GetTempPath(), "mlcpu-forward-harness", Safe(name)), implAttempts, name, implReasoning,
                         maxTokens, ctx, testTimeout, a.GetValueOrDefault("arm") ?? "S", a.GetValueOrDefault("designer") ?? name,
-                        int.Parse(a.GetValueOrDefault("plateau") ?? "3"));
+                        int.Parse(a.GetValueOrDefault("plateau") ?? "3"), a.ContainsKey("debug-prompt"), a.GetValueOrDefault("resume"),
+                        a.GetValueOrDefault("warm-start"));
                 default:
                     Console.Error.WriteLine($"unknown verb '{verb}' (design | implement | run)");
                     return 2;
@@ -167,6 +180,21 @@ public static class Program
             Console.Error.WriteLine(e.Message);
             return 2;
         }
+        catch (Forward.LeakException e)
+        {
+            // A prompt (or package file) carries the source system's names: nothing is sent (ForwardEngineeringFineract.md 4.3).
+            Log(e.Message);
+            Console.Error.WriteLine(e.Message);
+            return 3;
+        }
+    }
+
+    /// <summary>The forward package of --cas, limited to --slices when given.</summary>
+    static Forward.ForwardInputs FwdInputs(Dictionary<string, string?> a, bool scanPackage = true)
+    {
+        var dir = a.GetValueOrDefault("cas") ?? throw new ArgumentException("--cas is required");
+        var only = a.GetValueOrDefault("slices")?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return new Forward.ForwardInputs(dir, only, scanPackage);
     }
 
     static int RunAll(FallbackBackend chat, Dictionary<string, string?> a, string name, string outRoot, int designAttempts, int implAttempts,
@@ -297,7 +325,7 @@ public static class Program
                         : null;
                     r = ImplementStep.Run(chat, cap, Path.Combine(normalization, pid, "requirements.json"), design, project, dir, Path.Combine(harnessRoot, pid),
                         attempts, name, reasoning, maxTokens, testTimeout, examples, notes, outline, ctx, a.GetValueOrDefault("patterns"), a.GetValueOrDefault("embeddings"),
-                        warm);
+                        warm, a.ContainsKey("debug-prompt"));
                 }
                 catch (PromptTooLargeException e)
                 {

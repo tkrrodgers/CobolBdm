@@ -726,10 +726,18 @@ public sealed class FeedbackRenderer
     static readonly Regex TagRx = new(@"^\s*// \[([^\]]+)\] ?(.*)$");
 
     /// <summary>The statement at each faithful frame, innermost first, from the step tags above the frame's line.</summary>
-    List<Step> Chain(ProbeEvent e)
+    List<Step> Chain(ProbeEvent e) => Chain(e.At);
+
+    /// <summary>
+    /// The COBOL statements at faithful frames, innermost first, as "step-id statement" (a CALL's place in the faithful run, for
+    /// the shadow feedback and the debug prompt).
+    /// </summary>
+    public List<(string Tag, string Text)> StatementsAt(IEnumerable<ProbeFrame> frames) => Chain(frames).Select(s => (s.Tag, s.Text)).ToList();
+
+    List<Step> Chain(IEnumerable<ProbeFrame> frames)
     {
         var list = new List<Step>();
-        foreach (var f in e.At)
+        foreach (var f in frames)
         {
             var t = Tags(f.Class);
             var tag = t.LastOrDefault(x => x.Line <= f.Line);

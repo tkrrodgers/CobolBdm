@@ -26,7 +26,12 @@ public sealed record ShadowArg(byte[]? Bytes, int Length, string? Hash)
 }
 
 /// <summary>A CALL that a shadowed CALL made to one of its callees: the arguments before and after, and how it ended.</summary>
-public sealed record ShadowNestedCall(string Program, IReadOnlyList<ShadowArg> Before, IReadOnlyList<ShadowArg> After, string? End);
+public sealed record ShadowNestedCall(string Program, IReadOnlyList<ShadowArg> Before, IReadOnlyList<ShadowArg> After, string? End,
+    IReadOnlyList<string>? At = null, IReadOnlyList<string>? Own = null)
+{
+    /// <summary>The faithful paragraphs on the stack when the CALL was made ("class#method:line"), innermost first.</summary>
+    public IReadOnlyList<ProbeFrame> Frames => (At ?? []).Select(Probe.Frame).ToList();
+}
 
 /// <summary>
 /// The CALLs a shadowed CALL made to its callees, in the faithful run and in yours, in order (kit feature subprogram-calls);
@@ -348,6 +353,8 @@ public static class Probe
                         for (int i = 0; i < params.length; i++) before[i] = logged(params[i]);
                     }
                     String end = null;
+                    // Where the CALL was made: the faithful paragraphs on the stack, and the model's own frames (one of the two is empty).
+                    String at = log == null ? null : frames(), own = log == null ? null : ownFrames();
                     NEST_DEPTH++;
                     try {
                         ProgramRegistry.callFaithful(id, params);
@@ -360,7 +367,7 @@ public static class Probe
                             if (log.size() < MAX_NESTED) {
                                 Object[] after = new Object[params.length];
                                 for (int i = 0; i < params.length; i++) after[i] = logged(params[i]);
-                                log.add(new Object[] {id, before, after, end});
+                                log.add(new Object[] {id, before, after, end, at, own});
                             } else NESTED_TRUNCATED = true;
                         }
                     }
@@ -375,7 +382,19 @@ public static class Probe
                 List<String> b = new ArrayList<>(), a = new ArrayList<>();
                 for (Object x : (Object[]) e[1]) b.add(argJson(x));
                 for (Object x : (Object[]) e[2]) a.add(argJson(x));
-                return "{\"program\":" + q((String) e[0]) + ",\"before\":[" + String.join(",", b) + "],\"after\":[" + String.join(",", a) + "],\"end\":" + q((String) e[3]) + "}";
+                return "{\"program\":" + q((String) e[0]) + ",\"before\":[" + String.join(",", b) + "],\"after\":[" + String.join(",", a) + "],\"end\":" + q((String) e[3])
+                       + ",\"at\":" + (e.length > 4 && e[4] != null ? (String) e[4] : "[]") + ",\"own\":" + (e.length > 5 && e[5] != null ? (String) e[5] : "[]") + "}";
+            }
+
+            /** The model's own frames on the stack (its package; not the faithful legacy classes, not tests), innermost first. */
+            static String ownFrames() {
+                String pkg = {{ProbeClass}}.class.getPackageName() + ".";
+                List<String> f = StackWalker.getInstance().walk(st -> st
+                    .filter(x -> x.getClassName().startsWith(pkg) && !x.getClassName().contains(".legacy.")
+                                 && !x.getClassName().endsWith("EquivalenceTest") && !x.getClassName().contains("{{ProbeClass}}"))
+                    .limit(4).map(x -> q(x.getClassName().substring(pkg.length()) + "." + x.getMethodName() + "(" + x.getFileName() + ":" + x.getLineNumber() + ")"))
+                    .toList());
+                return "[" + String.join(",", f) + "]";
             }
 
             /** The CALLs to callees in both runs, in order (the first 300 of each), for the pipeline to align and compare. */
@@ -478,7 +497,16 @@ public static class Probe
     }
 
     static ShadowNestedCall NestedCall(JsonNode n) => new(n["program"]!.GetValue<string>(),
-        n["before"]!.AsArray().Select(Arg).ToList(), n["after"]!.AsArray().Select(Arg).ToList(), n["end"]?.GetValue<string>());
+        n["before"]!.AsArray().Select(Arg).ToList(), n["after"]!.AsArray().Select(Arg).ToList(), n["end"]?.GetValue<string>(),
+        n["at"]?.AsArray().Select(x => x!.GetValue<string>()).ToList(), n["own"]?.AsArray().Select(x => x!.GetValue<string>()).ToList());
+
+    /// <summary>A faithful frame as the probe writes it: "class#method:line".</summary>
+    public static ProbeFrame Frame(string s)
+    {
+        var hash = s.IndexOf('#');
+        var colon = s.LastIndexOf(':');
+        return new ProbeFrame(s[..hash], s[(hash + 1)..colon], int.Parse(s[(colon + 1)..]));
+    }
 
     static ShadowNested? NestedOf(JsonNode? n) => n is null ? null : new(
         n["faithful"]!.AsArray().Select(c => NestedCall(c!)).ToList(), n["yours"]!.AsArray().Select(c => NestedCall(c!)).ToList(),

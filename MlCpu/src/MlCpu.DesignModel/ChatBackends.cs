@@ -6,7 +6,14 @@ using System.Text.Json.Nodes;
 
 namespace MlCpu.DesignModel;
 
-public sealed record ChatMessage(string Role, string Content);
+/// <summary>
+/// One chat message. Its text always has LF line ends: a C# raw string takes the line ends of its source file, and the working
+/// copy checks out with CRLF (core.autocrlf), so a prompt's bytes depended on the checkout (the CAS runs of 2026-10-11 were LF).
+/// </summary>
+public sealed record ChatMessage(string Role, string Content)
+{
+    public string Content { get; init; } = Content.Replace("\r\n", "\n");
+}
 
 public sealed record ChatResult(string Content, string? Reasoning, int PromptTokens, int GeneratedTokens, double TokensPerSecond,
     double PromptTokensPerSecond, double Seconds, string Stop, string Backend);

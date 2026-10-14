@@ -29,6 +29,15 @@ public static class ForwardDesign
     public static bool Architecture(IChatBackend chat, ForwardInputs inputs, string outDir, int attempts, string modelName, string reasoning, int maxTokens)
     {
         Directory.CreateDirectory(outDir);
+        var prompt = ArchitecturePrompt(inputs);
+        inputs.CheckLeaks(prompt, "architecture prompt");
+        return JsonStep(chat, inputs.Java(ArchitectSystem), prompt, Path.Combine(outDir, "architecture.json"), attempts, modelName, reasoning, maxTokens,
+            d => CheckArchitecture(d, inputs), "mlcpu.service-design.v1");
+    }
+
+    /// <summary>The architecture prompt (1a).</summary>
+    public static string ArchitecturePrompt(ForwardInputs inputs)
+    {
         var sb = new StringBuilder();
         sb.Append(inputs.Spec.TrimEnd()).Append("\n\n# Design rules (RULES.md)\n").Append(inputs.Rules.TrimEnd()).Append("\n\n");
         sb.Append(inputs.ApiSection()).Append('\n');
@@ -36,21 +45,20 @@ public static class ForwardDesign
         sb.Append("# JSON Schema (mlcpu.service-design.v1)\n").Append(inputs.Schema("service-design.schema.json").TrimEnd()).Append("\n\n");
         sb.Append($"""
             # Task
-            Design the architecture of the Customer Account Service:
-            - the five implementation modules (cas-accounts, cas-customers, cas-reporting, cas-statements, cas-application), their
+            Design the architecture of the {inputs.ServiceName}:
+            - the {ForwardInputs.Words(inputs.Modules.Count)} implementation modules ({string.Join(", ", inputs.Modules.Select(m => m.Module))}), their
               responsibilities, packages and dependencies;
             - the domain model of each bounded context: aggregates with the invariants they enforce, value objects, domain services
               and named policies;
-            - one use-case flow per CustomerAccountService method, naming the classes and methods involved, how idempotency is
+            - one use-case flow per {inputs.ServiceInterface} method, naming the classes and methods involved, how idempotency is
               handled and what is written when (rejections, exceptions);
             - a trace of every rule to the module, class and method that will implement it;
             - your main decisions and the risks you see.
             The design must be implementable by another developer from this document alone, and it must respect RULES.md.
-            Rule ids to trace, each exactly once: {string.Join(", ", inputs.AllRules)}.
+            {(inputs.NotBuilt.Count > 0 ? inputs.NotBuiltNote() + "\n" : "")}Rule ids to trace, each exactly once: {string.Join(", ", inputs.AllRules)}.
             Return the JSON now.
             """);
-        return JsonStep(chat, ArchitectSystem, sb.ToString(), Path.Combine(outDir, "architecture.json"), attempts, modelName, reasoning, maxTokens,
-            d => CheckArchitecture(d, inputs), "mlcpu.service-design.v1");
+        return sb.ToString();
     }
 
     /// <summary>The automated checks of protocol section 5 for an architecture: problems, empty when it passes.</summary>
@@ -60,29 +68,27 @@ public static class ForwardDesign
         if (d["schema"]?.ToString() != "mlcpu.service-design.v1") p.Add("schema must be \"mlcpu.service-design.v1\"");
         foreach (var k in new[] { "summary", "modules", "domainModel", "useCases", "ruleTrace", "decisions", "risks" })
             if (d[k] is null) p.Add($"missing property {k}");
-        var roots = ForwardInputs.Modules.ToDictionary(m => m.Module, m => m.Package);
-        var contexts = ForwardInputs.Slices.Select(s => s.Module).ToHashSet();
+        var roots = inputs.Modules.ToDictionary(m => m.Module, m => m.Package);
         var modules = (d["modules"] as JsonArray ?? []).OfType<JsonObject>().ToList();
         foreach (var m in roots.Keys.Where(m => modules.All(x => x["module"]?.ToString() != m))) p.Add($"modules[] has no entry for {m}");
         foreach (var m in modules)
         {
             var name = m["module"]?.ToString() ?? "";
-            if (!roots.TryGetValue(name, out var root)) { p.Add($"modules[]: {name} is not one of the five implementation modules"); continue; }
+            if (!roots.TryGetValue(name, out var root)) { p.Add($"modules[]: {name} is not one of the {ForwardInputs.Words(roots.Count)} implementation modules"); continue; }
             foreach (var pkg in (m["packages"] as JsonArray ?? []).Select(x => x?.ToString() ?? ""))
                 if (pkg != root && !pkg.StartsWith(root + ".", StringComparison.Ordinal)) p.Add($"modules[{name}]: package {pkg} is not under {root} (RULES.md A-7)");
+            var allowed = inputs.AllowedDependencies(name);
             foreach (var dep in (m["dependsOn"] as JsonArray ?? []).Select(x => x?.ToString() ?? ""))
-            {
-                bool ok = dep == "cas-api" || (name == "cas-application" && contexts.Contains(dep));
-                if (!ok) p.Add($"modules[{name}]: depends on {dep}, which RULES.md forbids (A-1, A-2)");
-            }
+                if (inputs.NotBuilt.Contains(dep)) p.Add($"modules[{name}]: depends on {dep}, which this run does not build: keep that code in {name}");
+                else if (!allowed.Contains(dep)) p.Add($"modules[{name}]: depends on {dep}, which RULES.md forbids (A-1, A-2)");
         }
         var seenContexts = (d["domainModel"] as JsonArray ?? []).Select(x => x?["context"]?.ToString()).ToHashSet();
-        foreach (var c in ForwardInputs.Slices.Select(s => s.Name).Where(c => !seenContexts.Contains(c))) p.Add($"domainModel[] has no entry for context {c}");
+        foreach (var c in inputs.Slices.Select(s => s.Name).Where(c => !seenContexts.Contains(c))) p.Add($"domainModel[] has no entry for context {c}");
         var methods = (d["useCases"] as JsonArray ?? []).Select(x => x?["method"]?.ToString()).ToHashSet();
-        foreach (var m in ForwardInputs.UseCaseMethods.Where(m => !methods.Contains(m))) p.Add($"useCases[] has no flow for CustomerAccountService.{m}");
+        foreach (var m in inputs.UseCaseMethods.Where(m => !methods.Contains(m))) p.Add($"useCases[] has no flow for {inputs.ServiceInterface}.{m}");
         foreach (var u in (d["useCases"] as JsonArray ?? []).OfType<JsonObject>())
-            if (u["class"]?.ToString() is { } cls && !cls.StartsWith("com.mlcpu.cas.application.", StringComparison.Ordinal))
-                p.Add($"useCases[{u["method"]}]: class {cls} is not in com.mlcpu.cas.application");
+            if (u["class"]?.ToString() is { } cls && !cls.StartsWith(inputs.ApplicationPackage + ".", StringComparison.Ordinal))
+                p.Add($"useCases[{u["method"]}]: class {cls} is not in {inputs.ApplicationPackage}");
         TraceProblems(p, d["ruleTrace"] as JsonArray, inputs.AllRules, roots, null);
         return p;
     }
@@ -132,47 +138,59 @@ public static class ForwardDesign
         Directory.CreateDirectory(outDir);
         var architecture = JsonNode.Parse(File.ReadAllText(architecturePath))!.ToJsonString(Program.Json);
         bool all = true;
-        foreach (var slice in ForwardInputs.Slices.Where(s => only is null || only.Contains(s.Name)))
+        foreach (var slice in inputs.Slices.Where(s => only is null || only.Contains(s.Name)))
         {
             Program.Log($"===== {modelName}: slice design {slice.Name}");
-            var sb = new StringBuilder();
-            sb.Append(inputs.Spec.TrimEnd()).Append("\n\n# Design rules (RULES.md)\n").Append(inputs.Rules.TrimEnd()).Append("\n\n");
-            sb.Append(inputs.ApiSection()).Append('\n');
-            sb.Append("# Your architecture (mlcpu.service-design.v1)\n").Append(architecture).Append("\n\n");
-            sb.Append(inputs.DigestSection(slice.Digests));
-            var packets = new StringBuilder();
-            foreach (var pid in slice.Packets)
-            {
-                var file = normalizationDirs.Select(d => Path.Combine(d, pid, "requirements.json")).FirstOrDefault(File.Exists)
-                           ?? throw new FileNotFoundException($"requirements packet of {pid} not found in {string.Join("; ", normalizationDirs)}");
-                packets.Append($"# Requirements packet of {pid} (mlcpu.requirements-packet.v1, extracted from the COBOL source)\n")
-                    .Append(JsonNode.Parse(File.ReadAllText(file))!.ToJsonString()).Append("\n\n");
-            }
-            var schema = inputs.Schema("slice-design.schema.json");
+            var prompt = SlicePrompt(inputs, slice, architecture, normalizationDirs, maxTokens, context);
+            inputs.CheckLeaks(prompt, $"slice design prompt of {slice.Name}", architecture);
             var rules = inputs.RulesOf(slice).ToList();
-            var task = $"""
-                # Task
-                Detail the slice "{slice.Name}" of your architecture: every class of {slice.Module} ({slice.Package}) and the application
-                classes (com.mlcpu.cas.application) that its use cases need ({string.Join(", ", slice.Methods.Select(m => "CustomerAccountService." + m))}).
-                For each class give its kind, fields and method signatures with their purpose and the rules they implement. Simple class
-                names must be unique across the service. Trace every rule of the slice, each exactly once: {string.Join(", ", rules)}.
-                Add the notes an implementer needs: numeric details, ordering, edge cases.{(slice.Packets.Length == 0 ? " This slice has no legacy program: SPEC.md section 6 is its source." : "")}
-                Return the JSON now.
-                """;
-            var prompt = sb + packets.ToString() + "# JSON Schema (mlcpu.slice-design.v1)\n" + schema.TrimEnd() + "\n\n" + task;
-            if (prompt.Length / 3.6 + maxTokens > context)
-            {
-                Program.Log($"  requirements packets left out of the {slice.Name} prompt (context)");
-                prompt = sb + "# JSON Schema (mlcpu.slice-design.v1)\n" + schema.TrimEnd() + "\n\n" + task;
-            }
-            var roots = ForwardInputs.Modules.ToDictionary(m => m.Module, m => m.Package);
-            all &= JsonStep(chat, ArchitectSystem, prompt, Path.Combine(outDir, $"slice-{slice.Name}.json"), attempts, modelName, reasoning, maxTokens,
-                d => CheckSlice(d, slice, rules, roots), "mlcpu.slice-design.v1");
+            var roots = inputs.Modules.ToDictionary(m => m.Module, m => m.Package);
+            all &= JsonStep(chat, inputs.Java(ArchitectSystem), prompt, Path.Combine(outDir, $"slice-{slice.Name}.json"), attempts, modelName, reasoning, maxTokens,
+                d => CheckSlice(d, slice, rules, roots, inputs.ApplicationModule), "mlcpu.slice-design.v1");
         }
         return all;
     }
 
-    public static List<string> CheckSlice(JsonObject d, ForwardInputs.Slice slice, IEnumerable<string> rules, IReadOnlyDictionary<string, string> roots)
+    /// <summary>A slice-design prompt (1b): the architecture, the slice's digests and requirements packets (left out when the
+    /// prompt would not fit the context).</summary>
+    public static string SlicePrompt(ForwardInputs inputs, ForwardInputs.Slice slice, string architecture, IReadOnlyList<string> normalizationDirs,
+        int maxTokens, int context)
+    {
+        var sb = new StringBuilder();
+        sb.Append(inputs.Spec.TrimEnd()).Append("\n\n# Design rules (RULES.md)\n").Append(inputs.Rules.TrimEnd()).Append("\n\n");
+        sb.Append(inputs.ApiSection()).Append('\n');
+        sb.Append("# Your architecture (mlcpu.service-design.v1)\n").Append(architecture).Append("\n\n");
+        sb.Append(inputs.DigestSection(slice.Digests));
+        var packets = new StringBuilder();
+        foreach (var pid in slice.Packets)
+        {
+            var file = normalizationDirs.Select(d => Path.Combine(d, pid, "requirements.json")).FirstOrDefault(File.Exists)
+                       ?? throw new FileNotFoundException($"requirements packet of {pid} not found in {string.Join("; ", normalizationDirs)}");
+            packets.Append($"# Requirements packet of {pid} (mlcpu.requirements-packet.v1, extracted from the COBOL source)\n")
+                .Append(JsonNode.Parse(File.ReadAllText(file))!.ToJsonString()).Append("\n\n");
+        }
+        var schema = inputs.Schema("slice-design.schema.json");
+        var rules = inputs.RulesOf(slice).ToList();
+        var task = $"""
+            # Task
+            Detail the slice "{slice.Name}" of your architecture: every class of {slice.Module} ({slice.Package}) and the application
+            classes ({inputs.ApplicationPackage}) that its use cases need ({string.Join(", ", slice.Methods.Select(m => inputs.ServiceInterface + "." + m))}).
+            For each class give its kind, fields and method signatures with their purpose and the rules they implement. Simple class
+            names must be unique across the service. Trace every rule of the slice, each exactly once: {string.Join(", ", rules)}.
+            Add the notes an implementer needs: numeric details, ordering, edge cases.{(slice.Packets.Length == 0 ? " This slice has no legacy program: SPEC.md section 6 is its source." : "")}
+            Return the JSON now.
+            """;
+        var prompt = sb + packets.ToString() + "# JSON Schema (mlcpu.slice-design.v1)\n" + schema.TrimEnd() + "\n\n" + task;
+        if (prompt.Length / 3.6 + maxTokens > context)
+        {
+            Program.Log($"  requirements packets left out of the {slice.Name} prompt (context)");
+            prompt = sb + "# JSON Schema (mlcpu.slice-design.v1)\n" + schema.TrimEnd() + "\n\n" + task;
+        }
+        return prompt;
+    }
+
+    public static List<string> CheckSlice(JsonObject d, ForwardInputs.Slice slice, IEnumerable<string> rules, IReadOnlyDictionary<string, string> roots,
+        string applicationModule)
     {
         var p = new List<string>();
         if (d["schema"]?.ToString() != "mlcpu.slice-design.v1") p.Add("schema must be \"mlcpu.slice-design.v1\"");
@@ -186,7 +204,7 @@ public static class ForwardDesign
             var module = c["module"]?.ToString() ?? "";
             names.Add(name);
             if (!simple.Add(name[(name.LastIndexOf('.') + 1)..])) p.Add($"classes[]: the simple name of {name} is used twice");
-            if (module != slice.Module && module != "cas-application") p.Add($"classes[{name}]: module {module} is not {slice.Module} or cas-application");
+            if (module != slice.Module && module != applicationModule) p.Add($"classes[{name}]: module {module} is not {slice.Module} or {applicationModule}");
             else if (!name.StartsWith(roots[module] + ".", StringComparison.Ordinal)) p.Add($"classes[{name}]: not in {roots[module]}");
         }
         if (names.Count == 0) p.Add("classes[] is empty");
@@ -215,6 +233,7 @@ public static class ForwardDesign
                 Score design {label} on the rubric's six criteria (C1 to C6), each from 1 to 5 against its anchors, with a justification
                 that cites the design. "design" must be "{label}". Return the JSON now.
                 """);
+            inputs.CheckLeaks(sb.ToString(), $"review prompt of design {label}", JsonNode.Parse(File.ReadAllText(file))!.ToJsonString(Program.Json));
             all &= JsonStep(chat, ReviewerSystem, sb.ToString(), Path.Combine(outDir, $"review-{label}.json"), attempts, modelName, reasoning, maxTokens,
                 d => CheckReview(d, label), "mlcpu.design-review.v1");
         }

@@ -66,7 +66,7 @@ public static class ImplementStep
     public static Result Run(IChatBackend chat, Capability cap, string packetPath, string designPath, string projectDir, string outDir,
         string harnessDir, int attempts, string modelName, string reasoning, int maxTokens, TimeSpan testTimeout,
         string? examplesPath = null, string? notesPath = null, string? outlinePath = null, int context = 131072,
-        string? patternsDir = null, string? embeddingsUrl = null, IReadOnlyDictionary<string, string>? warmStart = null)
+        string? patternsDir = null, string? embeddingsUrl = null, IReadOnlyDictionary<string, string>? warmStart = null, bool debugPrompt = false)
     {
         Directory.CreateDirectory(outDir);
         var stepSimple = cap.StepClass[(cap.StepClass.LastIndexOf('.') + 1)..];
@@ -127,6 +127,11 @@ public static class ImplementStep
             ? new ShadowFeedback(cap.ProgramId, File.Exists(layoutsPath) ? layoutsPath : null, packetPath, NestedShadow(features, projectDir)) : null;
         var stepCalls = cap.Kind != "subprogram" && NestedShadow(features, projectDir)
             ? new ShadowFeedback(cap.ProgramId, File.Exists(layoutsPath) ? layoutsPath : null, packetPath, nested: true) : null;
+        // The faithful statement at a differing CALL, from the step tags of the faithful classes in the harness.
+        if (shadow is not null) shadow.Statements = feedback.StatementsAt;
+        if (stepCalls is not null) stepCalls.Statements = feedback.StatementsAt;
+        // Debug mode: the outline the debug prompt takes its COBOL slices from.
+        var debugOutline = debugPrompt && outlinePath is not null && File.Exists(outlinePath) ? File.ReadAllText(outlinePath) : null;
         File.WriteAllText(Path.Combine(outDir, "implementation.prompt.md"), prompt);
         var baseMessages = new List<ChatMessage> { new("system", SystemPrompt), new("user", prompt) };
         var messages = new List<ChatMessage>(baseMessages);
@@ -147,6 +152,33 @@ public static class ImplementStep
         // CALLs with other results than the faithful program's (subprograms' shadow run): the tie-breaker between attempts with the
         // same acceptance result. FNEM0300 cut its differing CALLs from 27 to 11 while its output differences stayed at 71.
         int bestCalls = int.MaxValue;
+        // The scenarios the best code passes (the ratchet: an attempt that loses one of them is told which, and counts as worse
+        // unless it passes more), and whether the next turn is a debug turn.
+        var bestPassing = new HashSet<string>(StringComparer.Ordinal);
+        bool debugTurn = false;
+        // The COBOL paragraphs the best code's feedback points at: the slice of a debug turn after a rollback or after an
+        // attempt that gave no CALL-level feedback (it did not compile).
+        IReadOnlyList<string> bestGuide = [];
+        // The attempts since the best code, each worse than it: a debug turn names them. With a fixed seed and a rollback, the
+        // debug prompt was otherwise the same as two turns before, and so was the reply (Gemma's FNEM0300 looped on two answers).
+        var tried = new List<string>();
+        // A debug turn's reply may use the context its smaller prompt leaves (the reply budget was planned for the first prompt:
+        // Muse Glimmer's reasoning and answer on FNEM0300 run past it).
+        int debugReplyTokens = maxTokens;
+        // A debug turn's messages: the focused prompt alone, built from the current code and the last feedback (also written out).
+        List<ChatMessage> DebugMessages(int forAttempt, string status, IReadOnlyList<string> guide, IReadOnlyCollection<string> passing)
+        {
+            // Most scenarios pass (in the code shown): edits only.
+            bool editsOnly = best.Total > 0 && passing.Count * 2 >= best.Total;
+            var text = DebugPrompt.Build(cap.ProgramId, prompt, debugOutline, kit, equivalences, callees, guide, Render(files), lastFeedback, status, passing,
+                editsOnly, tried);
+            File.WriteAllText(Path.Combine(outDir, $"implementation.debug{forAttempt}.prompt.md"), text);
+            int size = Tokens(text);
+            debugReplyTokens = Math.Max(maxTokens, context - size - Tokens(SystemPrompt) - 512);
+            Program.Log($"  debug prompt for attempt {forAttempt}: {size:N0} tokens (the first prompt: {Tokens(prompt):N0}; reply up to {debugReplyTokens:N0}); " +
+                        $"COBOL slice: {(guide.Count == 0 ? "none" : string.Join(", ", guide.Take(6)))}");
+            return [new("system", SystemPrompt), new("user", text)];
+        }
         string backend = chat.Name;
         // Warm start (implement-all --warm-start): the previous run's best code is where this run begins, with the feedback this
         // pipeline gives for it, so a run that ended while still converging (FNEM0300, round 3b: 85 differences at its last
@@ -156,24 +188,38 @@ public static class ImplementStep
             foreach (var (n, src) in warmStart) files[n] = src;
             // The starting code is the best so far: an attempt replaces it only by doing better, so a run that only regresses
             // (FNEM0300, round 3c: 71 differences in, 143 after its first attempt) hands back the code it began with.
+            IReadOnlyList<string> startGuide = [];
             var start = FeedbackFor(cap, packetPath, projectDir, harnessDir, files, testTimeout,
-                results: (p, t, d, c) => { best = (0, true, p, t, d, new SortedDictionary<string, string>(files, StringComparer.Ordinal)); bestCalls = c; });
+                results: s =>
+                {
+                    best = (0, true, s.Passed, s.Total, s.Diffs, new SortedDictionary<string, string>(files, StringComparer.Ordinal));
+                    bestCalls = s.Calls;
+                    bestPassing = s.Passing;
+                    startGuide = s.Paragraphs;
+                });
+            bestGuide = startGuide;
             File.WriteAllText(Path.Combine(outDir, "implementation.warm-start.txt"), start);
             Program.Log($"  warm start: {warmStart.Count} file(s) of the previous run's best attempt; " +
                         Clip(start.Split('\n').FirstOrDefault(l => l.StartsWith("acceptance", StringComparison.Ordinal)) ?? "feedback ready", 80));
             lastFeedback = start + "\nFix the cause. " + Edits.Instructions;
             if (best.Files is not null) bestFeedback = start;
-            messages = [.. baseMessages, new("assistant", Render(files)), new("user", lastFeedback)];
+            // Debug mode: the code compiles, so the first turn is already a repair with the focused prompt.
+            debugTurn = debugPrompt && best.Files is not null;
+            messages = debugTurn
+                ? DebugMessages(1, $"Your {cap.ProgramId} compiles and {best.Passed} of {best.Total} acceptance scenarios pass.", startGuide, bestPassing)
+                : [.. baseMessages, new("assistant", Render(files)), new("user", lastFeedback)];
         }
         for (int attempt = 1; attempt <= attempts; attempt++)
         {
             used = attempt;
             // This attempt's acceptance result (-1: it did not compile or test), for the rollback below.
             int attemptPassed = -1, attemptDiffs = int.MaxValue, attemptCalls = int.MaxValue;
+            HashSet<string>? passingNow = null;
+            IReadOnlyList<string>? attemptGuide = null;
             ChatResult r;
             try
             {
-                r = chat.Complete(messages, maxTokens, reasoning);
+                r = chat.Complete(messages, debugTurn ? debugReplyTokens : maxTokens, reasoning);
             }
             catch (HttpRequestException e) when (e.Message.StartsWith("llama-server error:", StringComparison.Ordinal) && e.Message.Contains("\"code\":500"))
             {
@@ -263,6 +309,7 @@ public static class ImplementStep
                     var failing = cases.Where(c => c.Failure is not null).ToList();
                     int diffs = failing.Sum(f => Differences(f.Failure!));
                     (attemptPassed, attemptDiffs) = (passed, diffs);
+                    passingNow = cases.Where(c => c.Failure is null).Select(c => c.Name).ToHashSet(StringComparer.Ordinal);
                     attemptJson["tests"] = new JsonObject
                     {
                         ["total"] = total, ["passed"] = passed, ["outputDifferences"] = diffs, ["timedOut"] = test.TimedOut,
@@ -309,6 +356,7 @@ public static class ImplementStep
                             {
                                 // The step's first CALL that parts from the faithful step's goes first, like the subprograms' shadow.
                                 var text = stepCalls.RenderStepCalls(sc);
+                                attemptGuide = stepCalls.Paragraphs.ToList();
                                 message = text + "\n" + message;
                                 attemptJson["stepCalls"] = text;
                                 Program.Log($"  step CALLs: '{sc[0].Name}': faithful {sc[0].Nested.FaithfulTotal}, yours {sc[0].Nested.YoursTotal} (rc {sc[0].FaithfulRc} / {sc[0].YoursRc})");
@@ -318,6 +366,7 @@ public static class ImplementStep
                             {
                                 // CALL-level shadow feedback goes first: the first CALL whose results differ, not the output byte far after it.
                                 var text = shadow.Render(shadowed);
+                                attemptGuide = shadow.Paragraphs.ToList();
                                 message = text + "\n" + message;
                                 attemptJson["shadow"] = text;
                                 Program.Log($"  shadow: {shadowed.Count} scenario(s), first differing CALL: " +
@@ -327,8 +376,14 @@ public static class ImplementStep
                     }
                 }
             }
+            // The ratchet: scenarios the best code passes that this attempt fails are named (a fix elsewhere broke them).
+            var lost = passingNow is null || best.Attempt == attempt ? new List<string>() : bestPassing.Where(s => !passingNow.Contains(s)).ToList();
+            if (lost.Count > 0)
+                message += $"\nThese scenarios passed in your best version and fail now (restore them): {string.Join(", ", lost.Take(20))}" +
+                           $"{(lost.Count > 20 ? $" and {lost.Count - 20} more" : "")}.\n";
             message = editNote + message;
             fixes.Add(Clip(message.Split('\n').FirstOrDefault(l => l.Trim().Length > 0) ?? "", 300));
+            if (debugTurn) attemptJson["debugPrompt"] = true;
             runs.Add(attemptJson);
             // The same acceptance result with fewer differing CALLs is a better attempt (closer to the faithful program).
             if (best.Files is not null && best.Attempt != attempt && attemptPassed == best.Passed && attemptDiffs == best.Diffs && attemptCalls < bestCalls)
@@ -337,11 +392,22 @@ public static class ImplementStep
                 WriteDeliverable(outDir, pkgPath, best.Files);
                 Program.Log($"  best so far: same acceptance result, {attemptCalls} differing CALL(s) (was {(bestCalls == int.MaxValue ? "unknown" : bestCalls.ToString())})");
             }
-            if (best.Attempt == attempt) bestCalls = attemptCalls;
+            if (best.Attempt == attempt)
+            {
+                bestCalls = attemptCalls;
+                if (passingNow is not null) bestPassing = passingNow;
+                if (attemptGuide is not null) bestGuide = attemptGuide;
+                tried.Clear();
+            }
+            else
+                tried.Add($"attempt {attempt}: " + (attemptPassed < 0
+                    ? Clip(message.Split('\n').FirstOrDefault(l => l.Trim().Length > 0) ?? "it did not compile", 200)
+                    : $"{attemptPassed}/{best.Total} pass, {attemptDiffs} output difference(s){(lost.Count > 0 ? $", {lost.Count} that passed now fail" : "")}"));
             // Only attempts that do strictly worse than the best, one after another, lead to a rollback: one that ties it is other code
             // with the same result, which may be on its way (FNEM0300 tied at 71 differences and was rolled back each second attempt).
+            // Losing a scenario the best passes is worse unless more pass.
             bool worse = attemptPassed < best.Passed || (attemptPassed == best.Passed
-                         && (attemptDiffs > best.Diffs || (attemptDiffs == best.Diffs && attemptCalls > bestCalls)));
+                         && (lost.Count > 0 || attemptDiffs > best.Diffs || (attemptDiffs == best.Diffs && attemptCalls > bestCalls)));
             if (best.Attempt == attempt && best.Files is not null) { bestFeedback = message; worseStreak = 0; }
             else if (best.Files is not null && worse) worseStreak++;
             else worseStreak = 0;
@@ -360,7 +426,23 @@ public static class ImplementStep
                 worseStreak = 0;
             }
             else lastFeedback = message + "\nFix the cause. " + Edits.Instructions;
-            messages = [.. baseMessages, new("assistant", Render(files)), new("user", lastFeedback)];
+            // Debug mode: with code that compiled, every next turn gets the focused prompt (contract, the COBOL slice the feedback
+            // points at, record kit, current code, feedback) in place of the whole first prompt. A turn with the whole prompt
+            // after two debug turns without a new best was tried and dropped: on Muse Glimmer's FNEM0300 both such turns rewrote
+            // the program (53/71 to 5/71; a contract break), while the rollback to the best code already ends a drift.
+            debugTurn = debugPrompt && best.Files is not null;
+            if (debugTurn)
+            {
+                bool rolledBack = attemptJson["rolledBackTo"] is not null;
+                var status = rolledBack || attemptPassed < 0 && best.Attempt != attempt
+                    ? (attemptPassed < 0 && !rolledBack
+                        ? $"Your current {cap.ProgramId} does not compile (the feedback has the errors); your best version passed {best.Passed} of {best.Total} acceptance scenarios."
+                        : $"Your {cap.ProgramId} (your best version) compiles and {best.Passed} of {best.Total} acceptance scenarios pass.")
+                    : $"Your {cap.ProgramId} compiles and {attemptPassed} of {best.Total} acceptance scenarios pass.";
+                var guide = rolledBack ? bestGuide : attemptGuide ?? bestGuide;
+                messages = DebugMessages(attempt + 1, status, guide, rolledBack ? bestPassing : passingNow ?? bestPassing);
+            }
+            else messages = [.. baseMessages, new("assistant", Render(files)), new("user", lastFeedback)];
         }
         // The deliverable is the best attempt (most scenarios passed, then fewest output differences); a later attempt that
         // regressed (for instance stopped compiling) does not replace it.
@@ -1054,12 +1136,18 @@ public static class ImplementStep
     }
 
     /// <summary>
+    /// What <see cref="FeedbackFor"/> found: the acceptance result, the differing CALLs (int.MaxValue: no shadow run), the
+    /// scenarios that pass and the COBOL paragraphs the feedback points at.
+    /// </summary>
+    public sealed record FeedbackResult(int Passed, int Total, int Diffs, int Calls, HashSet<string> Passing, IReadOnlyList<string> Paragraphs);
+
+    /// <summary>
     /// The feedback this pipeline gives for the given capability classes (name → source), compiled and tested in a fresh
     /// harness of the project: the shadow verb (a model's delivered java folder) and replay. Under kit feature
     /// shadow-feedback the CALL-level comparison comes first, as in an implementation run.
     /// </summary>
     public static string FeedbackFor(Capability cap, string packetPath, string projectDir, string harnessDir, IDictionary<string, string> files,
-        TimeSpan testTimeout, List<string>? problems = null, Action<int, int, int, int>? results = null)
+        TimeSpan testTimeout, List<string>? problems = null, Action<FeedbackResult>? results = null)
     {
         problems ??= [];
         var stepSimple = cap.StepClass[(cap.StepClass.LastIndexOf('.') + 1)..];
@@ -1096,17 +1184,21 @@ public static class ImplementStep
         var chosen = ProbeScenarios(failing.Select(f => (f.Name, f.Failure!)));
         var shadowWanted = shadow is null ? null : ShadowScenarios(failing.Select(f => f.Name));
         string? lead = null;
+        IReadOnlyList<string> guide = [];
         if (!test.TimedOut && (chosen.Count > 0 || shadowWanted is { Count: > 0 }))
         {
             var stepCalls = cap.Kind != "subprogram" && NestedShadow(features, projectDir)
                 ? new ShadowFeedback(cap.ProgramId, File.Exists(layoutsPath) ? layoutsPath : null, packetPath, nested: true) : null;
+            if (shadow is not null) shadow.Statements = feedback.StatementsAt;
+            if (stepCalls is not null) stepCalls.Statements = feedback.StatementsAt;
             var (probed, shadowed) = RunProbe(harnessDir, testFile, cap, chosen, shadowWanted, TimeSpan.FromMinutes(10), shadow?.Callees, stepCalls?.Callees);
             if (probed is { Count: > 0 }) sb.Append($"\nDetail for {chosen.Count} failing scenario(s) with different symptoms:\n").Append(feedback.Render(probed)).Append('\n');
             if (shadowed is { Count: > 0 }) callsN = shadowed.Sum(s => s.Differing);
-            if (shadow is not null && shadowed is { Count: > 0 }) lead = shadow.Render(shadowed);
-            else if (stepCalls is not null && ReadStepCalls(harnessDir) is { Count: > 0 } sc) lead = stepCalls.RenderStepCalls(sc);
+            if (shadow is not null && shadowed is { Count: > 0 }) { lead = shadow.Render(shadowed); guide = shadow.Paragraphs; }
+            else if (stepCalls is not null && ReadStepCalls(harnessDir) is { Count: > 0 } sc) { lead = stepCalls.RenderStepCalls(sc); guide = stepCalls.Paragraphs; }
         }
-        results?.Invoke(passedN, cases.Count, diffsN, callsN);
+        results?.Invoke(new FeedbackResult(passedN, cases.Count, diffsN, callsN,
+            cases.Where(c => c.Failure is null).Select(c => c.Name).ToHashSet(StringComparer.Ordinal), guide));
         return lead is null ? sb.ToString() : lead + "\n" + sb;
     }
 

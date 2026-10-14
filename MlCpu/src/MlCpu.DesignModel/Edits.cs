@@ -68,8 +68,13 @@ public static class Edits
             edits.Add(new Edit(file, search, m.Groups[3].Value));
             return "";
         });
+        // A fence that held edits and, besides them, only a package line or imports (Muse Glimmer on FNEM0300 put its edit in
+        // a ```java block under the package line) is not a file.
+        if (edits.Count > 0) rest = HeaderOnlyFence.Replace(rest, "");
         return (edits, rest);
     }
+
+    static readonly Regex HeaderOnlyFence = new(@"```[ \t]*java[ \t]*\n(?:[ \t]*(?:(?:package|import)[ \t][^\n]*)?\n)*[ \t]*```");
 
     /// <summary>
     /// Applies the edits to the files (keyed by type name); an edit that does not apply is reported and leaves its file as it
@@ -86,8 +91,12 @@ public static class Edits
             string? key = type is not null && files.ContainsKey(type) ? type : null;
             if (key is null)
             {
+                // The file the SEARCH lines are in: exactly, else line by line ignoring indentation (Muse Glimmer named the
+                // instructions' placeholder Name.java and indented its SEARCH lines by 4 where the file has 8); with one file, that one.
                 var holders = files.Where(f => f.Value.Contains(e.Search, StringComparison.Ordinal)).Select(f => f.Key).ToList();
+                if (holders.Count == 0) holders = files.Where(f => LineHits(f.Value, e.Search).Count > 0).Select(f => f.Key).ToList();
                 if (holders.Count == 1) key = holders[0];
+                else if (holders.Count == 0 && files.Count == 1) key = files.Keys.Single();
             }
             if (key is not null && superseded?.Contains(key) == true) continue;
             if (key is null && superseded is { Count: > 0 }) continue;
@@ -108,11 +117,8 @@ public static class Edits
             if (at >= 0) { problems.Add($"edit {n} ({key}.java): the SEARCH lines occur more than once; include surrounding lines to make them unique"); continue; }
             // Line by line, ignoring indentation and trailing spaces.
             var lines = src.Split('\n');
-            var want = e.Search.Split('\n').Select(l => l.Trim()).ToList();
-            while (want.Count > 0 && want[^1].Length == 0) want.RemoveAt(want.Count - 1);
-            var hits = new List<int>();
-            for (int i = 0; i + want.Count <= lines.Length; i++)
-                if (want.Select((w, k) => lines[i + k].Trim() == w).All(x => x)) hits.Add(i);
+            var want = Wanted(e.Search);
+            var hits = LineHits(src, e.Search);
             if (hits.Count == 1)
             {
                 var replaced = lines.Take(hits[0]).Concat(e.Replace.Split('\n')).Concat(lines.Skip(hits[0] + want.Count));
@@ -125,6 +131,26 @@ public static class Edits
                 : $"edit {n} ({key}.java): the SEARCH lines occur {hits.Count} times; include surrounding lines to make them unique");
         }
         return applied;
+    }
+
+    /// <summary>The SEARCH lines trimmed, without trailing empty lines.</summary>
+    static List<string> Wanted(string search)
+    {
+        var want = search.Split('\n').Select(l => l.Trim()).ToList();
+        while (want.Count > 0 && want[^1].Length == 0) want.RemoveAt(want.Count - 1);
+        return want;
+    }
+
+    /// <summary>The line numbers where the SEARCH lines start, ignoring indentation and trailing spaces.</summary>
+    static List<int> LineHits(string src, string search)
+    {
+        var lines = src.Split('\n');
+        var want = Wanted(search);
+        var hits = new List<int>();
+        if (want.Count == 0) return hits;
+        for (int i = 0; i + want.Count <= lines.Length; i++)
+            if (want.Select((w, k) => lines[i + k].Trim() == w).All(x => x)) hits.Add(i);
+        return hits;
     }
 
     static string? TypeName(string file)

@@ -6,40 +6,47 @@ using System.Xml.Linq;
 namespace MlCpu.DesignModel.Forward;
 
 /// <summary>
-/// The forward-engineering judge (tools/eval/PROTOCOL-forward.md section 6): a copy of forward/cas/service (the given API, the
-/// architecture tests, the acceptance suite with public and hidden scenarios) with the candidate's files in the five
-/// implementation modules. Each judgement compiles everything, runs the architecture tests and the acceptance scenarios of the
+/// The forward-engineering judge (tools/eval/PROTOCOL-forward.md section 6): a copy of the package's service (forward/cas/service:
+/// the given API, the architecture tests, the acceptance suite with public and hidden scenarios) with the candidate's files in
+/// the implementation modules (forward.json). Each judgement compiles everything, runs the architecture tests and the acceptance scenarios of the
 /// slices built so far, and returns the architecture failures in full, the public scenario failures in full, and the hidden
 /// scenarios as counts only.
 /// </summary>
 public sealed class ForwardJudge
 {
     public string Harness { get; }
+    readonly ForwardInputs inputs;
     readonly HashSet<string> written = new(StringComparer.OrdinalIgnoreCase);
 
-    public sealed record SliceCount(int PublicPassed, int PublicTotal, int HiddenPassed, int HiddenTotal);
+    /// <param name="PrivilegedPassed">Privileged scenarios (expected values from oracle A beyond the legacy envelope, decision D-6;
+    /// FE section 10 "envelope value"): counted apart, never shown, not part of passing.</param>
+    public sealed record SliceCount(int PublicPassed, int PublicTotal, int HiddenPassed, int HiddenTotal, int PrivilegedPassed = 0, int PrivilegedTotal = 0);
 
+    /// <param name="PublicPassing">The public scenarios that pass, by test name (the debug mode's ratchet).</param>
     public sealed record Verdict(bool Compiled, IReadOnlyList<string> CompileErrors, string BuildOutput, int ArchPassed, int ArchTotal,
         IReadOnlyList<(string Test, string Message)> ArchFailures, IReadOnlyDictionary<string, SliceCount> Slices,
-        IReadOnlyList<(string Scenario, string Message)> PublicFailures, bool TimedOut)
+        IReadOnlyList<(string Scenario, string Message)> PublicFailures, bool TimedOut, IReadOnlySet<string>? PublicPassing = null)
     {
         public bool ArchGreen => Compiled && ArchTotal > 0 && ArchPassed == ArchTotal;
         public int PublicPassed => Slices.Values.Sum(s => s.PublicPassed);
         public int PublicTotal => Slices.Values.Sum(s => s.PublicTotal);
         public int HiddenPassed => Slices.Values.Sum(s => s.HiddenPassed);
         public int HiddenTotal => Slices.Values.Sum(s => s.HiddenTotal);
+        public int PrivilegedPassed => Slices.Values.Sum(s => s.PrivilegedPassed);
+        public int PrivilegedTotal => Slices.Values.Sum(s => s.PrivilegedTotal);
         public bool AllPass => ArchGreen && !TimedOut && PublicTotal + HiddenTotal > 0 && PublicPassed == PublicTotal && HiddenPassed == HiddenTotal;
     }
 
     public ForwardJudge(ForwardInputs inputs, string harnessDir)
     {
+        this.inputs = inputs;
         Harness = Path.GetFullPath(harnessDir);
         if (Directory.Exists(Harness)) Directory.Delete(Harness, true);
-        CopyTree(Path.Combine(inputs.CasDir, "service"), Harness);
+        CopyTree(Path.Combine(inputs.CasDir, inputs.ServiceDir), Harness);
         // The SME's tools never reach the judge (they are not in service/, but a stale copy must not either).
-        var sme = Path.Combine(Harness, "cas-acceptance", "src", "test", "java", "com", "mlcpu", "cas", "acceptance", "sme");
-        if (Directory.Exists(sme)) Directory.Delete(sme, true);
-        foreach (var (module, _) in ForwardInputs.Modules)
+        if (inputs.SmeDir is { } smeDir && Path.Combine(Harness, smeDir.Replace('/', Path.DirectorySeparatorChar)) is var sme && Directory.Exists(sme))
+            Directory.Delete(sme, true);
+        foreach (var (module, _) in inputs.Modules)
         {
             var src = Path.Combine(Harness, module, "src");
             if (Directory.Exists(src)) Directory.Delete(src, true);
@@ -60,21 +67,7 @@ public sealed class ForwardJudge
         foreach (var f in Directory.EnumerateFiles(from)) File.Copy(f, Path.Combine(to, Path.GetFileName(f)), true);
     }
 
-    static readonly Regex PackageDecl = new(@"^\s*package\s+([\w.]+)\s*;", RegexOptions.Multiline);
-
-    /// <summary>The module a package belongs to (by root package), or null.</summary>
-    public static string? ModuleOf(string package) =>
-        ForwardInputs.Modules.Where(m => package == m.Package || package.StartsWith(m.Package + ".", StringComparison.Ordinal))
-            .Select(m => m.Module).FirstOrDefault();
-
-    public static string? PackageOf(string source) => PackageDecl.Match(source) is { Success: true } m ? m.Groups[1].Value : null;
-
-    /// <summary>Relative path of a file in the harness: module/src/main/java/package/Type.java.</summary>
-    public static string PathOf(string type, string source)
-    {
-        var pkg = PackageOf(source) ?? "";
-        return $"{ModuleOf(pkg) ?? "unplaced"}/src/main/java/{pkg.Replace('.', '/')}/{type}.java";
-    }
+    public static string? PackageOf(string source) => ForwardInputs.PackageOf(source);
 
     /// <summary>Puts the files (type name → source) into their modules and removes the files of an earlier write that are gone.</summary>
     public void Write(IReadOnlyDictionary<string, string> files)
@@ -82,7 +75,7 @@ public sealed class ForwardJudge
         var now = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var (type, src) in files)
         {
-            var rel = PathOf(type, src);
+            var rel = inputs.PathOf(type, src);
             if (rel.StartsWith("unplaced/", StringComparison.Ordinal)) continue;
             var full = Path.Combine(Harness, rel.Replace('/', Path.DirectorySeparatorChar));
             Directory.CreateDirectory(Path.GetDirectoryName(full)!);
@@ -99,30 +92,34 @@ public sealed class ForwardJudge
         var build = Gradle("compileJava compileTestJava", TimeSpan.FromMinutes(10));
         if (build.ExitCode != 0)
             return new Verdict(false, CompileErrors(build.Output), build.Output, 0, 0, [], new Dictionary<string, SliceCount>(), [], build.TimedOut);
-        foreach (var m in new[] { "cas-architecture", "cas-acceptance" })
+        foreach (var m in new[] { inputs.ArchitectureModule, inputs.AcceptanceModule })
         {
             var results = Path.Combine(Harness, m, "build", "test-results", "test");
             if (Directory.Exists(results)) Directory.Delete(results, true);
         }
         var list = string.Join(",", slices);
-        var test = Gradle($":cas-architecture:test :cas-acceptance:test --continue \"-PcasSlices={list}\"", timeout);
-        var arch = Cases(Path.Combine(Harness, "cas-architecture", "build", "test-results", "test"));
-        var scenarios = Cases(Path.Combine(Harness, "cas-acceptance", "build", "test-results", "test"));
+        var test = Gradle($":{inputs.ArchitectureModule}:test :{inputs.AcceptanceModule}:test --continue \"-P{inputs.SliceProperty}={list}\"", timeout);
+        var arch = Cases(Path.Combine(Harness, inputs.ArchitectureModule, "build", "test-results", "test"));
+        var scenarios = Cases(Path.Combine(Harness, inputs.AcceptanceModule, "build", "test-results", "test"));
         var counts = new SortedDictionary<string, SliceCount>(StringComparer.Ordinal);
         foreach (var s in slices) counts[s] = new SliceCount(0, 0, 0, 0);
         var publicFailures = new List<(string, string)>();
+        var publicPassing = new HashSet<string>(StringComparer.Ordinal);
         foreach (var (name, failure) in scenarios)
         {
             var parts = name.Split(' ', 3);
             if (parts.Length < 3 || !counts.TryGetValue(parts[1], out var c)) continue;
             bool pub = parts[0] == "public", ok = failure is null;
-            counts[parts[1]] = pub
+            counts[parts[1]] = parts[0] == "privileged"
+                ? c with { PrivilegedTotal = c.PrivilegedTotal + 1, PrivilegedPassed = c.PrivilegedPassed + (ok ? 1 : 0) }
+                : pub
                 ? c with { PublicTotal = c.PublicTotal + 1, PublicPassed = c.PublicPassed + (ok ? 1 : 0) }
                 : c with { HiddenTotal = c.HiddenTotal + 1, HiddenPassed = c.HiddenPassed + (ok ? 1 : 0) };
             if (pub && !ok) publicFailures.Add((name, failure!));
+            if (pub && ok) publicPassing.Add(name);
         }
         var archFailures = arch.Where(a => a.Failure is not null).Select(a => (a.Name, a.Failure!)).ToList();
-        return new Verdict(true, [], test.Output, arch.Count - archFailures.Count, arch.Count, archFailures, counts, publicFailures, test.TimedOut);
+        return new Verdict(true, [], test.Output, arch.Count - archFailures.Count, arch.Count, archFailures, counts, publicFailures, test.TimedOut, publicPassing);
     }
 
     static readonly Regex AssertionPrefix = new(@"^(?:org\.opentest4j\.AssertionFailedError|java\.lang\.AssertionError): ");
@@ -187,10 +184,10 @@ public sealed class ForwardJudge
     }
 
     /// <summary>The path from the module directory on (cas-accounts/src/main/java/...), whatever form Gradle printed it in.</summary>
-    static string Relative(string path)
+    string Relative(string path)
     {
         var p = path.Replace('\\', '/');
-        var m = Regex.Match(p, @"/(cas-[a-z]+/src/.*)$");
+        var m = Regex.Match(p, $"/((?:{string.Join("|", inputs.AllModules().Select(Regex.Escape))})/src/.*)$");
         return m.Success ? m.Groups[1].Value : p;
     }
 
