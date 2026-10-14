@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0119",
+  "slice": "disclosure",
+  "origin": "corpus sample-p09-floor, loan 0000000000001063: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-01","DISC-02","DISC-03","DISC-04","DISC-05","DISC-09"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000001063","scheduleStart":"2024-01-01","currency":{"code":"CLF","decimalPlaces":4,"roundingMultiple":null},"principal":"12345.6789","disbursementDate":"2024-01-11","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":"12.500000000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"FLOOR"}},
+    "expected": {"@type":"Disclosed","disclosure":{"amountFinanced":"10802.4691","financeCharge":"678.1810","totalOfPayments":"11480.6501","annualPercentageRate":"11.96"}}
+  } ]
+}

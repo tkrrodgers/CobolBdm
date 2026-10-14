@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0125",
+  "slice": "disclosure",
+  "origin": "corpus envelope-1-p06-ceiling, loan 0000000000000033: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-07"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000033","scheduleStart":"2050-11-11","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"24851.2000","disbursementDate":"2050-11-11","installments":14,"every":13,"frequency":"DAYS","annualRatePercent":"46.420000000","downPaymentPercent":"100.000000000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000033","reason":"DOWN_PAYMENT_COVERS_PRINCIPAL","field":null}
+  } ]
+}

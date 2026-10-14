@@ -1,0 +1,11 @@
+{
+  "id": "rate-0003",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, scenario mini-p06-ceiling, CALL 10 (function P)",
+  "rules": ["RATE-01","RATE-03","RATE-04","RATE-05","RATE-09"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"2023-12-01","period":{"from":"2023-12-01","due":"2024-02-29"},"from":"2023-12-01","to":"2023-12-01","annualRatePercent":"18.750000000","frequency":"DAYS","every":90,"monthDays":"ACTUAL","yearDays":"ACTUAL"},"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Factors","installment":"0.000000","interest":"0.046149"}
+  } ]
+}

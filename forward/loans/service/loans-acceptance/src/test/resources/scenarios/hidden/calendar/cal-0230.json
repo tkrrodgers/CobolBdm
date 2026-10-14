@@ -1,0 +1,27 @@
+{
+  "id": "cal-0230",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000009783 (= the faithful job)",
+  "rules": ["CAL-01","CAL-05","CAL-07","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000009783","scheduleStart":"2186-01-30","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"3466054.9969","disbursementDate":"2186-01-30","installments":15,"every":11,"frequency":"MONTHS","annualRatePercent":"18.230000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":158,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2186-01-30","due":"2186-12-30"},
+      {"from":"2186-12-30","due":"2187-11-30"},
+      {"from":"2187-11-30","due":"2188-10-30"},
+      {"from":"2188-10-30","due":"2189-09-30"},
+      {"from":"2189-09-30","due":"2190-08-30"},
+      {"from":"2190-08-30","due":"2191-07-30"},
+      {"from":"2191-07-30","due":"2192-06-30"},
+      {"from":"2192-06-30","due":"2193-05-30"},
+      {"from":"2193-05-30","due":"2194-04-30"},
+      {"from":"2194-04-30","due":"2195-03-30"},
+      {"from":"2195-03-30","due":"2196-02-29"},
+      {"from":"2196-02-29","due":"2197-01-30"},
+      {"from":"2197-01-30","due":"2197-12-30"},
+      {"from":"2197-12-30","due":"2198-11-30"},
+      {"from":"2198-11-30","due":"2199-03-30"}
+    ]
+  } ]
+}

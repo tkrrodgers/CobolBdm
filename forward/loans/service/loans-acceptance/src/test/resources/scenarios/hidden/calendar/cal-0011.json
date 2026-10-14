@@ -1,0 +1,17 @@
+{
+  "id": "cal-0011",
+  "slice": "calendar",
+  "origin": "FNDG0100 CALL trace, scenario mini-p06-ceiling, CALL 3 (loan 0000000000000736); the same periods as oracle A's schedule of that loan",
+  "rules": ["CAL-01","CAL-03"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000736","scheduleStart":"2023-12-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2023-12-01","installments":5,"every":90,"frequency":"DAYS","annualRatePercent":"18.750000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2023-12-01","due":"2024-02-29"},
+      {"from":"2024-02-29","due":"2024-05-29"},
+      {"from":"2024-05-29","due":"2024-08-27"},
+      {"from":"2024-08-27","due":"2024-11-25"},
+      {"from":"2024-11-25","due":"2025-02-23"}
+    ]
+  } ]
+}

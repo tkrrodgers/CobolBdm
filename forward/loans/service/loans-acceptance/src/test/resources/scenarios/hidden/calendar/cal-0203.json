@@ -1,0 +1,21 @@
+{
+  "id": "cal-0203",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000007221 (= the faithful job)",
+  "rules": ["CAL-01","CAL-05","CAL-07"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000007221","scheduleStart":"2065-01-31","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"4.0090","disbursementDate":"2065-01-31","installments":9,"every":7,"frequency":"MONTHS","annualRatePercent":"6.940000000","downPaymentPercent":"88.235800000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2065-01-31","due":"2065-08-31"},
+      {"from":"2065-08-31","due":"2066-03-31"},
+      {"from":"2066-03-31","due":"2066-10-31"},
+      {"from":"2066-10-31","due":"2067-05-31"},
+      {"from":"2067-05-31","due":"2067-12-31"},
+      {"from":"2067-12-31","due":"2068-07-31"},
+      {"from":"2068-07-31","due":"2069-02-28"},
+      {"from":"2069-02-28","due":"2069-09-30"},
+      {"from":"2069-09-30","due":"2070-04-30"}
+    ]
+  } ]
+}

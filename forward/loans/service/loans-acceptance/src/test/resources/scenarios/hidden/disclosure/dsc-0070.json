@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0070",
+  "slice": "disclosure",
+  "origin": "corpus envelope-2-p12-down, loan 0000000000000014: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-02","DISC-05"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000014","scheduleStart":"1946-04-22","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"10.4970","disbursementDate":"1946-04-22","installments":28,"every":215,"frequency":"DAYS","annualRatePercent":"96.550000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Disclosed","disclosure":{"amountFinanced":"10.497","financeCharge":"36.452","totalOfPayments":"46.949","annualPercentageRate":"97.88"}}
+  } ]
+}

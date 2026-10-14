@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0129",
+  "slice": "disclosure",
+  "origin": "corpus envelope-1-p09-ceiling, loan 0000000000000029: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-07"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000029","scheduleStart":"2041-02-20","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"1754847.5100","disbursementDate":"2041-02-20","installments":9,"every":178,"frequency":"DAYS","annualRatePercent":"95.810000000","downPaymentPercent":null,"downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000029","reason":"DOWN_PAYMENT_PERCENT_MISSING","field":null}
+  } ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "cal-0109",
+  "slice": "calendar",
+  "origin": "FNDG0100 CALL trace, scenario base, CALL 18 (loan 0000000000000018); the same periods as oracle A's schedule of that loan",
+  "rules": ["CAL-01","CAL-05","CAL-07"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000018","scheduleStart":"2021-10-30","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1500.0000","disbursementDate":"2021-10-30","installments":6,"every":1,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": [
+      {"from":"2021-10-30","due":"2021-11-30"},
+      {"from":"2021-11-30","due":"2021-12-30"},
+      {"from":"2021-12-30","due":"2022-01-30"},
+      {"from":"2022-01-30","due":"2022-02-28"},
+      {"from":"2022-02-28","due":"2022-03-30"},
+      {"from":"2022-03-30","due":"2022-04-30"}
+    ]
+  } ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "cal-0223",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000008715 (= the faithful job)",
+  "rules": ["CAL-01","CAL-05","CAL-07"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000008715","scheduleStart":"1977-05-31","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"434787243.1000","disbursementDate":"1977-05-31","installments":11,"every":8,"frequency":"MONTHS","annualRatePercent":"11.820000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1977-05-31","due":"1978-01-31"},
+      {"from":"1978-01-31","due":"1978-09-30"},
+      {"from":"1978-09-30","due":"1979-05-31"},
+      {"from":"1979-05-31","due":"1980-01-31"},
+      {"from":"1980-01-31","due":"1980-09-30"},
+      {"from":"1980-09-30","due":"1981-05-31"},
+      {"from":"1981-05-31","due":"1982-01-31"},
+      {"from":"1982-01-31","due":"1982-09-30"},
+      {"from":"1982-09-30","due":"1983-05-31"},
+      {"from":"1983-05-31","due":"1984-01-31"},
+      {"from":"1984-01-31","due":"1984-09-30"}
+    ]
+  } ]
+}

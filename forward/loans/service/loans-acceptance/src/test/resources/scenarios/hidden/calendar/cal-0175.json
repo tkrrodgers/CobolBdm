@@ -1,0 +1,24 @@
+{
+  "id": "cal-0175",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000003498 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000003498","scheduleStart":"1969-04-21","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"3348064.8360","disbursementDate":"1969-04-28","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"23.490000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":13,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1969-04-21","due":"1969-05-21"},
+      {"from":"1969-05-21","due":"1969-06-21"},
+      {"from":"1969-06-21","due":"1969-07-21"},
+      {"from":"1969-07-21","due":"1969-08-21"},
+      {"from":"1969-08-21","due":"1969-09-21"},
+      {"from":"1969-09-21","due":"1969-10-21"},
+      {"from":"1969-10-21","due":"1969-11-21"},
+      {"from":"1969-11-21","due":"1969-12-21"},
+      {"from":"1969-12-21","due":"1970-01-21"},
+      {"from":"1970-01-21","due":"1970-02-21"},
+      {"from":"1970-02-21","due":"1970-03-21"},
+      {"from":"1970-03-21","due":"1970-05-21"}
+    ]
+  } ]
+}

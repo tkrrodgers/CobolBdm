@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0123",
+  "slice": "disclosure",
+  "origin": "corpus envelope-1-p09-half_up, loan 0000000000000197: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-07"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000197","scheduleStart":"2074-08-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"13158189.7000","disbursementDate":"2075-09-04","installments":4,"every":1,"frequency":"MONTHS","annualRatePercent":"44.990000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"HALF_UP"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000197","reason":"DISBURSEMENT_OUTSIDE_TERM","field":null}
+  } ]
+}

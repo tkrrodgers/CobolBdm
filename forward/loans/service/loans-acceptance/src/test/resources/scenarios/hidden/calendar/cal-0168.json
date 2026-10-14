@@ -1,0 +1,42 @@
+{
+  "id": "cal-0168",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000002943 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-08"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000002943","scheduleStart":"2004-01-29","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"1.0000","disbursementDate":"2004-02-13","installments":30,"every":1,"frequency":"MONTHS","annualRatePercent":"12.700600000","downPaymentPercent":"5.112900000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2004-01-29","due":"2004-02-29"},
+      {"from":"2004-02-29","due":"2004-03-29"},
+      {"from":"2004-03-29","due":"2004-04-29"},
+      {"from":"2004-04-29","due":"2004-05-29"},
+      {"from":"2004-05-29","due":"2004-06-29"},
+      {"from":"2004-06-29","due":"2004-07-29"},
+      {"from":"2004-07-29","due":"2004-08-29"},
+      {"from":"2004-08-29","due":"2004-09-29"},
+      {"from":"2004-09-29","due":"2004-10-29"},
+      {"from":"2004-10-29","due":"2004-11-29"},
+      {"from":"2004-11-29","due":"2004-12-29"},
+      {"from":"2004-12-29","due":"2005-01-29"},
+      {"from":"2005-01-29","due":"2005-02-28"},
+      {"from":"2005-02-28","due":"2005-03-28"},
+      {"from":"2005-03-28","due":"2005-04-28"},
+      {"from":"2005-04-28","due":"2005-05-28"},
+      {"from":"2005-05-28","due":"2005-06-28"},
+      {"from":"2005-06-28","due":"2005-07-28"},
+      {"from":"2005-07-28","due":"2005-08-28"},
+      {"from":"2005-08-28","due":"2005-09-28"},
+      {"from":"2005-09-28","due":"2005-10-28"},
+      {"from":"2005-10-28","due":"2005-11-28"},
+      {"from":"2005-11-28","due":"2005-12-28"},
+      {"from":"2005-12-28","due":"2006-01-28"},
+      {"from":"2006-01-28","due":"2006-02-28"},
+      {"from":"2006-02-28","due":"2006-03-28"},
+      {"from":"2006-03-28","due":"2006-04-28"},
+      {"from":"2006-04-28","due":"2006-05-28"},
+      {"from":"2006-05-28","due":"2006-06-28"},
+      {"from":"2006-06-28","due":"2006-07-28"}
+    ]
+  } ]
+}

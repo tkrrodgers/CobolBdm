@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0033",
+  "slice": "disclosure",
+  "origin": "corpus envelope-1-p06-half_down, loan 0000000000000044: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-02","DISC-04","DISC-05","DISC-08","DISC-09"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000044","scheduleStart":"2001-11-29","currency":{"code":"CLF","decimalPlaces":4,"roundingMultiple":null},"principal":"100244.3750","disbursementDate":"2001-12-04","installments":32,"every":1,"frequency":"MONTHS","annualRatePercent":"30.420000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":33,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"HALF_DOWN"}},
+    "expected": {"@type":"Disclosed","disclosure":{"amountFinanced":"100244.3750","financeCharge":"48304.1660","totalOfPayments":"148548.5410","annualPercentageRate":"31.44"}}
+  } ]
+}

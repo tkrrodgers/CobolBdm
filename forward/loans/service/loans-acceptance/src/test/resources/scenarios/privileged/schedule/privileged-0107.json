@@ -1,0 +1,18 @@
+{
+  "id": "privileged-0107",
+  "slice": "schedule",
+  "origin": "privileged principal-p12-half_even, loan 0300000000000062: oracle A' D-2 without the legacy envelope (clean room, FnHarness --forward-limits): privileged, decision D-6",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-11","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0300000000000062","scheduleStart":"2100-02-28","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"2263732197.5100","disbursementDate":"2100-02-28","installments":3,"every":3,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0300000000000062","currencyCode":"USD","decimalPlaces":2,"termDays":273,
+      "totals":{"disbursed":"2263732197.51","principal":"2263732197.51","interest":"108163905.30","fee":"0.00","penalty":"0.00","repayment":"2371896102.81","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2100-02-28","due":"2100-02-28","amount":"2263732197.51","balanceAfter":"2263732197.51"},
+        {"@type":"InstallmentLine","number":1,"from":"2100-02-28","due":"2100-05-28","principal":"736969130.66","interest":"53662903.61","fee":"0.00","penalty":"0.00","totalDue":"790632034.27","balanceAfter":"1526763066.85","remainingDue":"1581264068.54"},
+        {"@type":"InstallmentLine","number":2,"from":"2100-05-28","due":"2100-08-28","principal":"754439352.39","interest":"36192681.88","fee":"0.00","penalty":"0.00","totalDue":"790632034.27","balanceAfter":"772323714.46","remainingDue":"790632034.27"},
+        {"@type":"InstallmentLine","number":3,"from":"2100-08-28","due":"2100-11-28","principal":"772323714.46","interest":"18308319.81","fee":"0.00","penalty":"0.00","totalDue":"790632034.27","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

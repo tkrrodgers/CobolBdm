@@ -1,0 +1,18 @@
+{
+  "id": "amz-0076",
+  "slice": "schedule",
+  "origin": "corpus edge-p03-ceiling, loan 0000000000000001: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-12","AMZ-13","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000001","scheduleStart":"2023-01-28","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"15000.0000","disbursementDate":"2023-01-28","installments":3,"every":1,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000001","currencyCode":"USD","decimalPlaces":2,"termDays":90,
+      "totals":{"disbursed":"15000.00","principal":"15000.00","interest":"242.40","fee":"0.00","penalty":"0.00","repayment":"15242.40","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2023-01-28","due":"2023-01-28","amount":"15000.00","balanceAfter":"15000.00"},
+        {"@type":"InstallmentLine","number":1,"from":"2023-01-28","due":"2023-02-28","principal":"4959.80","interest":"121.00","fee":"0.00","penalty":"0.00","totalDue":"5080.80","balanceAfter":"10040.20","remainingDue":"10161.60"},
+        {"@type":"InstallmentLine","number":2,"from":"2023-02-28","due":"2023-03-28","principal":"5000.10","interest":"80.70","fee":"0.00","penalty":"0.00","totalDue":"5080.80","balanceAfter":"5040.10","remainingDue":"5080.80"},
+        {"@type":"InstallmentLine","number":3,"from":"2023-03-28","due":"2023-04-28","principal":"5040.10","interest":"40.70","fee":"0.00","penalty":"0.00","totalDue":"5080.80","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

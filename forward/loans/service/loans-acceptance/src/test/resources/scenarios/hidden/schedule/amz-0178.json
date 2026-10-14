@@ -1,0 +1,21 @@
+{
+  "id": "amz-0178",
+  "slice": "schedule",
+  "origin": "corpus envelope-2-p12-down, loan 0000000000000152: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-11","AMZ-12","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000152","scheduleStart":"2005-04-06","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"15.3000","disbursementDate":"2005-04-06","installments":6,"every":7,"frequency":"DAYS","annualRatePercent":"75.010000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":49,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000152","currencyCode":"EUR","decimalPlaces":2,"termDays":49,
+      "totals":{"disbursed":"15.30","principal":"15.30","interest":"0.79","fee":"0.00","penalty":"0.00","repayment":"16.09","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2005-04-06","due":"2005-04-06","amount":"15.30","balanceAfter":"15.30"},
+        {"@type":"InstallmentLine","number":1,"from":"2005-04-06","due":"2005-04-13","principal":"2.46","interest":"0.22","fee":"0.00","penalty":"0.00","totalDue":"2.68","balanceAfter":"12.84","remainingDue":"13.41"},
+        {"@type":"InstallmentLine","number":2,"from":"2005-04-13","due":"2005-04-20","principal":"2.50","interest":"0.18","fee":"0.00","penalty":"0.00","totalDue":"2.68","balanceAfter":"10.34","remainingDue":"10.73"},
+        {"@type":"InstallmentLine","number":3,"from":"2005-04-20","due":"2005-04-27","principal":"2.54","interest":"0.14","fee":"0.00","penalty":"0.00","totalDue":"2.68","balanceAfter":"7.80","remainingDue":"8.05"},
+        {"@type":"InstallmentLine","number":4,"from":"2005-04-27","due":"2005-05-04","principal":"2.57","interest":"0.11","fee":"0.00","penalty":"0.00","totalDue":"2.68","balanceAfter":"5.23","remainingDue":"5.37"},
+        {"@type":"InstallmentLine","number":5,"from":"2005-05-04","due":"2005-05-11","principal":"2.61","interest":"0.07","fee":"0.00","penalty":"0.00","totalDue":"2.68","balanceAfter":"2.62","remainingDue":"2.69"},
+        {"@type":"InstallmentLine","number":6,"from":"2005-05-11","due":"2005-05-25","principal":"2.62","interest":"0.07","fee":"0.00","penalty":"0.00","totalDue":"2.69","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

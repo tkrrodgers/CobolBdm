@@ -1,0 +1,37 @@
+{
+  "id": "cal-0137",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000000660 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-08"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000660","scheduleStart":"1921-04-30","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"213722.1960","disbursementDate":"1921-05-24","installments":25,"every":1,"frequency":"MONTHS","annualRatePercent":"93.210000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1921-04-30","due":"1921-05-30"},
+      {"from":"1921-05-30","due":"1921-06-30"},
+      {"from":"1921-06-30","due":"1921-07-30"},
+      {"from":"1921-07-30","due":"1921-08-30"},
+      {"from":"1921-08-30","due":"1921-09-30"},
+      {"from":"1921-09-30","due":"1921-10-30"},
+      {"from":"1921-10-30","due":"1921-11-30"},
+      {"from":"1921-11-30","due":"1921-12-30"},
+      {"from":"1921-12-30","due":"1922-01-30"},
+      {"from":"1922-01-30","due":"1922-02-28"},
+      {"from":"1922-02-28","due":"1922-03-28"},
+      {"from":"1922-03-28","due":"1922-04-28"},
+      {"from":"1922-04-28","due":"1922-05-28"},
+      {"from":"1922-05-28","due":"1922-06-28"},
+      {"from":"1922-06-28","due":"1922-07-28"},
+      {"from":"1922-07-28","due":"1922-08-28"},
+      {"from":"1922-08-28","due":"1922-09-28"},
+      {"from":"1922-09-28","due":"1922-10-28"},
+      {"from":"1922-10-28","due":"1922-11-28"},
+      {"from":"1922-11-28","due":"1922-12-28"},
+      {"from":"1922-12-28","due":"1923-01-28"},
+      {"from":"1923-01-28","due":"1923-02-28"},
+      {"from":"1923-02-28","due":"1923-03-28"},
+      {"from":"1923-03-28","due":"1923-04-28"},
+      {"from":"1923-04-28","due":"1923-05-28"}
+    ]
+  } ]
+}

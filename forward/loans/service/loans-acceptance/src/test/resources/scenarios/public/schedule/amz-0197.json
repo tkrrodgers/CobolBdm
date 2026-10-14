@@ -1,0 +1,17 @@
+{
+  "id": "amz-0197",
+  "slice": "schedule",
+  "origin": "corpus envelope-2-p12-half_even, loan 0000000000000072: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-02","PLAN-01","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000072","scheduleStart":"2134-08-31","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"2.0400","disbursementDate":"2134-08-31","installments":1,"every":2,"frequency":"WEEKS","annualRatePercent":"44.040000000","downPaymentPercent":"70.760000000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000072","currencyCode":"ZAR","decimalPlaces":1,"termDays":14,
+      "totals":{"disbursed":"2.0","principal":"2.0","interest":"0.0","fee":"0.0","penalty":"0.0","repayment":"2.0","outstanding":"0.0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2134-08-31","due":"2134-08-31","amount":"2.0","balanceAfter":"2.0"},
+        {"@type":"DownPaymentLine","number":1,"from":"2134-08-31","due":"2134-08-31","principal":"1.4","totalDue":"1.4","balanceAfter":"0.6","remainingDue":"0.6"},
+        {"@type":"InstallmentLine","number":2,"from":"2134-08-31","due":"2134-09-14","principal":"0.6","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.6","balanceAfter":"0.0","remainingDue":"0.0"}
+      ]}}
+  } ]
+}

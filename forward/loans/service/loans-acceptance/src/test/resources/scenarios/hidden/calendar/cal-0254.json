@@ -1,0 +1,13 @@
+{
+  "id": "cal-0254",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-1-p06-down-0000000000001614 (= the faithful job)",
+  "rules": ["CAL-01","CAL-06"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000001614","scheduleStart":"2071-03-11","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"35.5100","disbursementDate":"2071-03-11","installments":1,"every":3,"frequency":"YEARS","annualRatePercent":"22.330000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"DOWN"}},
+    "expected": [
+      {"from":"2071-03-11","due":"2074-03-11"}
+    ]
+  } ]
+}

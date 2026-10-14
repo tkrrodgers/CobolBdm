@@ -1,0 +1,24 @@
+{
+  "id": "amz-0123",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p06-down, loan 0000000000000163: oracle A' D-2 (clean room): decision D-2 fixes a legacy defect; A differs",
+  "rules": ["AMZ-01","AMZ-02","AMZ-12","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000163","scheduleStart":"1962-06-25","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"1.3020","disbursementDate":"1962-06-25","installments":8,"every":1,"frequency":"MONTHS","annualRatePercent":"42.370000000","downPaymentPercent":"51.093500000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":9,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000163","currencyCode":"JPY","decimalPlaces":0,"termDays":273,
+      "totals":{"disbursed":"1","principal":"1","interest":"0","fee":"0","penalty":"0","repayment":"1","outstanding":"0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1962-06-25","due":"1962-06-25","amount":"1","balanceAfter":"1"},
+        {"@type":"DownPaymentLine","number":1,"from":"1962-06-25","due":"1962-06-25","principal":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":2,"from":"1962-06-25","due":"1962-07-25","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":3,"from":"1962-07-25","due":"1962-08-25","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":4,"from":"1962-08-25","due":"1962-09-25","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":5,"from":"1962-09-25","due":"1962-10-25","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":6,"from":"1962-10-25","due":"1962-11-25","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":7,"from":"1962-11-25","due":"1962-12-25","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":8,"from":"1962-12-25","due":"1963-01-25","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":9,"from":"1963-01-25","due":"1963-03-25","principal":"1","interest":"0","fee":"0","penalty":"0","totalDue":"1","balanceAfter":"0","remainingDue":"0"}
+      ]}}
+  } ]
+}

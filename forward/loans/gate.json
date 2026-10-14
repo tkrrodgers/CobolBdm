@@ -1,0 +1,78 @@
+﻿{
+    "schema":  "mlcpu.loans-gate.v1",
+    "checked":  "2026-10-14T14:16:29.8766775-07:00",
+    "pass":  true,
+    "reference":  {
+                      "architectureTests":  {
+                                                "total":  11,
+                                                "failed":  0
+                                            },
+                      "scenarios":  {
+                                        "total":  1489,
+                                        "failed":  0
+                                    }
+                  },
+    "mutation":  {
+                     "threshold":  85,
+                     "perModule":  {
+                                       "loans-calendar":  {
+                                                              "mutants":  12,
+                                                              "killed":  11,
+                                                              "scorePercent":  91.7
+                                                          },
+                                       "loans-rates":  {
+                                                           "mutants":  52,
+                                                           "killed":  48,
+                                                           "scorePercent":  92.3
+                                                       },
+                                       "loans-terms":  {
+                                                           "mutants":  74,
+                                                           "killed":  66,
+                                                           "scorePercent":  89.2
+                                                       },
+                                       "loans-schedule":  {
+                                                              "mutants":  253,
+                                                              "killed":  221,
+                                                              "scorePercent":  87.4
+                                                          },
+                                       "loans-disclosure":  {
+                                                                "mutants":  117,
+                                                                "killed":  102,
+                                                                "scorePercent":  87.2
+                                                            },
+                                       "loans-application":  {
+                                                                 "mutants":  84,
+                                                                 "killed":  80,
+                                                                 "scorePercent":  95.2
+                                                             }
+                                   }
+                 },
+    "traceability":  {
+                         "rules":  80,
+                         "untraced":  [
+
+                                      ],
+                         "withoutPublicScenario":  [
+
+                                                   ],
+                         "mutantsUnkilled":  [
+
+                                             ]
+                     },
+    "leaks":  {
+                  "hits":  0,
+                  "line":  "14:14:41 leak check of package loans: 0 hit(s) (782 names in the dictionary)"
+              },
+    "crossCheck":  {
+                       "run":  true,
+                       "summary":  "TOTAL 136530 loans, 0 differ, 104.8 s",
+                       "differ":  0
+                   },
+    "aPrime":  "JavaToCOBOL docs/APRIME.md: A\u0027 differs from A on exactly the 896 D-2 loans of 147,904",
+    "scenarios":  {
+                      "total":  1489,
+                      "public":  273,
+                      "privileged":  115,
+                      "hidden":  1101
+                  }
+}

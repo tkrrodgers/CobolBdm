@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mlcpu.slice-design.v1",
+  "title": "@SERVICE@ slice design (protocol step 1b)",
+  "type": "object",
+  "required": ["schema", "slice", "classes", "ruleTrace", "notes"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "mlcpu.slice-design.v1" },
+    "slice": { "enum": "@CONTEXTS@" },
+    "classes": {
+      "type": "array",
+      "description": "Every class of the slice: in its context module, and the application classes the slice's use cases need.",
+      "items": {
+        "type": "object",
+        "required": ["name", "module", "kind", "responsibility", "fields", "methods"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "description": "Fully qualified name; simple names are unique across the service." },
+          "module": { "enum": "@MODULES@" },
+          "kind": { "enum": ["record", "class", "interface", "enum"] },
+          "responsibility": { "type": "string" },
+          "fields": { "type": "array", "items": { "type": "string" }, "description": "\"Type name\" per field or record component." },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["signature", "purpose"],
+              "additionalProperties": false,
+              "properties": {
+                "signature": { "type": "string", "description": "Java signature, for example \"List<Period> periods(ScheduleRequest request)\"." },
+                "purpose": { "type": "string" },
+                "rules": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ruleTrace": {
+      "type": "array",
+      "description": "Every rule of the slice exactly once, to a class and method of this design.",
+      "items": {
+        "type": "object",
+        "required": ["ruleId", "class", "method"],
+        "additionalProperties": false,
+        "properties": { "ruleId": { "type": "string" }, "class": { "type": "string" }, "method": { "type": "string" }, "note": { "type": "string" } }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" }, "description": "Anything an implementer must know: numeric details, ordering, edge cases." }
+  }
+}

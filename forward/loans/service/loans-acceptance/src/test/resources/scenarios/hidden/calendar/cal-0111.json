@@ -1,0 +1,21 @@
+{
+  "id": "cal-0111",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000000019 (= the faithful job)",
+  "rules": ["CAL-01","CAL-05","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000019","scheduleStart":"2045-11-01","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"227353351.6800","disbursementDate":"2045-11-01","installments":9,"every":12,"frequency":"MONTHS","annualRatePercent":"82.110000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_364","fixedLength":98,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2045-11-01","due":"2046-11-01"},
+      {"from":"2046-11-01","due":"2047-11-01"},
+      {"from":"2047-11-01","due":"2048-11-01"},
+      {"from":"2048-11-01","due":"2049-11-01"},
+      {"from":"2049-11-01","due":"2050-11-01"},
+      {"from":"2050-11-01","due":"2051-11-01"},
+      {"from":"2051-11-01","due":"2052-11-01"},
+      {"from":"2052-11-01","due":"2053-11-01"},
+      {"from":"2053-11-01","due":"2054-01-01"}
+    ]
+  } ]
+}

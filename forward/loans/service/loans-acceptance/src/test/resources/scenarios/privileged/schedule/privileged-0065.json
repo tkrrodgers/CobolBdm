@@ -1,0 +1,18 @@
+{
+  "id": "privileged-0065",
+  "slice": "schedule",
+  "origin": "privileged precision-p13-half_up, loan 1000000000000031: oracle A' D-2 without the legacy envelope (clean room, FnHarness --forward-limits): privileged, decision D-6",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","AMZ-13","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"1000000000000031","scheduleStart":"2023-01-29","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"15000.0000","disbursementDate":"2023-01-29","installments":3,"every":12,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":13,"roundingMode":"HALF_UP"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"1000000000000031","currencyCode":"USD","decimalPlaces":2,"termDays":1096,
+      "totals":{"disbursed":"15000.00","principal":"15000.00","interest":"2889.20","fee":"0.00","penalty":"0.00","repayment":"17889.20","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2023-01-29","due":"2023-01-29","amount":"15000.00","balanceAfter":"15000.00"},
+        {"@type":"InstallmentLine","number":1,"from":"2023-01-29","due":"2024-01-29","principal":"4560.22","interest":"1402.85","fee":"0.00","penalty":"0.00","totalDue":"5963.07","balanceAfter":"10439.78","remainingDue":"11926.13"},
+        {"@type":"InstallmentLine","number":2,"from":"2024-01-29","due":"2025-01-29","principal":"4986.71","interest":"976.36","fee":"0.00","penalty":"0.00","totalDue":"5963.07","balanceAfter":"5453.07","remainingDue":"5963.06"},
+        {"@type":"InstallmentLine","number":3,"from":"2025-01-29","due":"2026-01-29","principal":"5453.07","interest":"509.99","fee":"0.00","penalty":"0.00","totalDue":"5963.06","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "cal-0287",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000008184 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-06"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000008184","scheduleStart":"2100-02-01","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"32777.3000","disbursementDate":"2101-03-02","installments":27,"every":3,"frequency":"YEARS","annualRatePercent":"14.720000000","downPaymentPercent":"8.201800000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2100-02-01","due":"2103-02-01"},
+      {"from":"2103-02-01","due":"2106-02-01"},
+      {"from":"2106-02-01","due":"2109-02-01"},
+      {"from":"2109-02-01","due":"2112-02-01"},
+      {"from":"2112-02-01","due":"2115-02-01"},
+      {"from":"2115-02-01","due":"2118-02-01"},
+      {"from":"2118-02-01","due":"2121-02-01"},
+      {"from":"2121-02-01","due":"2124-02-01"},
+      {"from":"2124-02-01","due":"2127-02-01"},
+      {"from":"2127-02-01","due":"2130-02-01"},
+      {"from":"2130-02-01","due":"2133-02-01"},
+      {"from":"2133-02-01","due":"2136-02-01"},
+      {"from":"2136-02-01","due":"2139-02-01"},
+      {"from":"2139-02-01","due":"2142-02-01"},
+      {"from":"2142-02-01","due":"2145-02-01"},
+      {"from":"2145-02-01","due":"2148-02-01"},
+      {"from":"2148-02-01","due":"2151-02-01"},
+      {"from":"2151-02-01","due":"2154-02-01"},
+      {"from":"2154-02-01","due":"2157-02-01"},
+      {"from":"2157-02-01","due":"2160-02-01"},
+      {"from":"2160-02-01","due":"2163-02-01"},
+      {"from":"2163-02-01","due":"2166-02-01"},
+      {"from":"2166-02-01","due":"2169-02-01"},
+      {"from":"2169-02-01","due":"2172-02-01"},
+      {"from":"2172-02-01","due":"2175-02-01"},
+      {"from":"2175-02-01","due":"2178-02-01"},
+      {"from":"2178-02-01","due":"2181-02-01"}
+    ]
+  } ]
+}

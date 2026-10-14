@@ -1,0 +1,23 @@
+{
+  "id": "srv-0056",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000271; expected values: the reference over the in-memory ports (decimal places above the ledger's)",
+  "rules": ["SRV-05","SRV-10"],
+  "given": {"today":"2070-10-29","baseCurrency":"KWD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0580","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000271","scheduleStart":"2070-10-29","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"99.3100","disbursementDate":"2070-10-29","installments":2,"every":7,"frequency":"MONTHS","annualRatePercent":"57.220000000","downPaymentPercent":"33.646900000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"BookingRejected","externalId":"E-0580","reason":"CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER","scheduleReason":null,"field":null}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0580","paymentMethodId":"PM-1"},
+     "expected": {"@type":"ServicingRejected","reference":"LN-E-0580","reason":"UNKNOWN_LOAN"}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-9999","paid":true},
+     "expected": {"@type":"ServicingRejected","reference":"INV-9999","reason":"UNKNOWN_INVOICE"}}
+  ],
+  "state": {
+    "today" : "2070-10-29",
+    "loans" : [ ],
+    "payments" : [ ],
+    "invoices" : [ ],
+    "accounts" : [ ],
+    "transactions" : [ ]
+  }
+}

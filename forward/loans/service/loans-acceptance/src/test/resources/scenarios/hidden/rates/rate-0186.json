@@ -1,0 +1,11 @@
+{
+  "id": "rate-0186",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, edge-p09-ceiling (loans 0000000000000551 to 0000000000000575), CALL 13 (function P)",
+  "rules": ["RATE-01","RATE-03","RATE-05"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"2199-12-31","period":{"from":"2199-12-31","due":"2200-12-31"},"from":"2199-12-31","to":"2199-12-31","annualRatePercent":"9.482200000","frequency":"MONTHS","every":12,"monthDays":"ACTUAL","yearDays":"DAYS_365"},"calculation":{"precision":9,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Factors","installment":"0.000000000","interest":"0.094822000"}
+  } ]
+}

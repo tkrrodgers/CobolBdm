@@ -1,0 +1,24 @@
+{
+  "id": "cal-0164",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000002509 (= the faithful job)",
+  "rules": ["CAL-01","CAL-07"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000002509","scheduleStart":"1932-06-29","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"8158.0000","disbursementDate":"1932-06-29","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"99.330000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1932-06-29","due":"1932-07-29"},
+      {"from":"1932-07-29","due":"1932-08-29"},
+      {"from":"1932-08-29","due":"1932-09-29"},
+      {"from":"1932-09-29","due":"1932-10-29"},
+      {"from":"1932-10-29","due":"1932-11-29"},
+      {"from":"1932-11-29","due":"1932-12-29"},
+      {"from":"1932-12-29","due":"1933-01-29"},
+      {"from":"1933-01-29","due":"1933-02-28"},
+      {"from":"1933-02-28","due":"1933-03-29"},
+      {"from":"1933-03-29","due":"1933-04-29"},
+      {"from":"1933-04-29","due":"1933-05-29"},
+      {"from":"1933-05-29","due":"1933-06-29"}
+    ]
+  } ]
+}

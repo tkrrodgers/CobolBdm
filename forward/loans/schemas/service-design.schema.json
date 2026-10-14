@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mlcpu.service-design.v1",
+  "title": "@SERVICE@ architecture design (protocol step 1a)",
+  "type": "object",
+  "required": ["schema", "summary", "modules", "domainModel", "useCases", "ruleTrace", "decisions", "risks"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "mlcpu.service-design.v1" },
+    "summary": { "type": "string", "description": "The architecture in a few sentences." },
+    "modules": {
+      "type": "array",
+      "description": "Exactly the @N_MODULES@ implementation modules: @MODULE_LIST@.",
+      "items": {
+        "type": "object",
+        "required": ["module", "responsibility", "dependsOn", "packages"],
+        "additionalProperties": false,
+        "properties": {
+          "module": { "enum": "@MODULES@" },
+          "responsibility": { "type": "string" },
+          "dependsOn": { "type": "array", "items": { "type": "string" }, "description": "Other modules this one depends on (@API_MODULE@ and the modules RULES.md allows)." },
+          "packages": { "type": "array", "items": { "type": "string" }, "description": "Java packages, each the module's root package or below it." }
+        }
+      }
+    },
+    "domainModel": {
+      "type": "array",
+      "description": "One entry per bounded context: @CONTEXT_LIST@.",
+      "items": {
+        "type": "object",
+        "required": ["context", "aggregates", "valueObjects", "domainServices", "policies"],
+        "additionalProperties": false,
+        "properties": {
+          "context": { "enum": "@CONTEXTS@" },
+          "aggregates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "root", "invariants"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "root": { "type": "string", "description": "Fully qualified class of the aggregate root." },
+                "invariants": { "type": "array", "items": { "type": "string" } },
+                "members": { "type": "array", "items": { "type": "string" }, "description": "Entities and value objects inside the aggregate." }
+              }
+            }
+          },
+          "valueObjects": {
+            "type": "array",
+            "items": { "type": "object", "required": ["name", "purpose"], "additionalProperties": false,
+                       "properties": { "name": { "type": "string" }, "purpose": { "type": "string" } } }
+          },
+          "domainServices": {
+            "type": "array",
+            "items": { "type": "object", "required": ["name", "responsibility"], "additionalProperties": false,
+                       "properties": { "name": { "type": "string" }, "responsibility": { "type": "string" } } }
+          },
+          "policies": {
+            "type": "array",
+            "description": "Named business rules or calculations.",
+            "items": { "type": "object", "required": ["name", "rule"], "additionalProperties": false,
+                       "properties": { "name": { "type": "string" }, "rule": { "type": "string" } } }
+          }
+        }
+      }
+    },
+    "useCases": {
+      "type": "array",
+      "description": "One entry per @SERVICE_INTERFACE@ method: @METHOD_LIST@.",
+      "items": {
+        "type": "object",
+        "required": ["method", "class", "flow", "idempotency", "consistency"],
+        "additionalProperties": false,
+        "properties": {
+          "method": { "enum": "@METHODS@" },
+          "class": { "type": "string", "description": "Fully qualified application class that handles it." },
+          "flow": { "type": "array", "items": { "type": "string" }, "description": "The steps, naming the classes and methods involved." },
+          "idempotency": { "type": "string" },
+          "consistency": { "type": "string", "description": "What happens on a rejection or an exception (what is written, when)." }
+        }
+      }
+    },
+    "ruleTrace": {
+      "type": "array",
+      "description": "Every rule id of the digests and of SPEC.md (@RULE_PREFIXES@) exactly once.",
+      "items": {
+        "type": "object",
+        "required": ["ruleId", "module", "class", "method"],
+        "additionalProperties": false,
+        "properties": {
+          "ruleId": { "type": "string" },
+          "module": { "enum": "@MODULES@" },
+          "class": { "type": "string", "description": "Fully qualified class." },
+          "method": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": { "type": "object", "required": ["id", "decision", "rationale"], "additionalProperties": false,
+                 "properties": { "id": { "type": "string" }, "decision": { "type": "string" }, "rationale": { "type": "string" } } }
+    },
+    "risks": {
+      "type": "array",
+      "items": { "type": "object", "required": ["risk", "mitigation"], "additionalProperties": false,
+                 "properties": { "risk": { "type": "string" }, "mitigation": { "type": "string" } } }
+    }
+  }
+}

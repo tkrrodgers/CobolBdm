@@ -1,0 +1,40 @@
+{
+  "id": "cal-0075",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000005302 (= the faithful job)",
+  "rules": ["CAL-01","CAL-04"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000005302","scheduleStart":"2050-09-15","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"2.0000","disbursementDate":"2050-09-15","installments":28,"every":1,"frequency":"WEEKS","annualRatePercent":"8.807441404","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2050-09-15","due":"2050-09-22"},
+      {"from":"2050-09-22","due":"2050-09-29"},
+      {"from":"2050-09-29","due":"2050-10-06"},
+      {"from":"2050-10-06","due":"2050-10-13"},
+      {"from":"2050-10-13","due":"2050-10-20"},
+      {"from":"2050-10-20","due":"2050-10-27"},
+      {"from":"2050-10-27","due":"2050-11-03"},
+      {"from":"2050-11-03","due":"2050-11-10"},
+      {"from":"2050-11-10","due":"2050-11-17"},
+      {"from":"2050-11-17","due":"2050-11-24"},
+      {"from":"2050-11-24","due":"2050-12-01"},
+      {"from":"2050-12-01","due":"2050-12-08"},
+      {"from":"2050-12-08","due":"2050-12-15"},
+      {"from":"2050-12-15","due":"2050-12-22"},
+      {"from":"2050-12-22","due":"2050-12-29"},
+      {"from":"2050-12-29","due":"2051-01-05"},
+      {"from":"2051-01-05","due":"2051-01-12"},
+      {"from":"2051-01-12","due":"2051-01-19"},
+      {"from":"2051-01-19","due":"2051-01-26"},
+      {"from":"2051-01-26","due":"2051-02-02"},
+      {"from":"2051-02-02","due":"2051-02-09"},
+      {"from":"2051-02-09","due":"2051-02-16"},
+      {"from":"2051-02-16","due":"2051-02-23"},
+      {"from":"2051-02-23","due":"2051-03-02"},
+      {"from":"2051-03-02","due":"2051-03-09"},
+      {"from":"2051-03-09","due":"2051-03-16"},
+      {"from":"2051-03-16","due":"2051-03-23"},
+      {"from":"2051-03-23","due":"2051-03-30"}
+    ]
+  } ]
+}

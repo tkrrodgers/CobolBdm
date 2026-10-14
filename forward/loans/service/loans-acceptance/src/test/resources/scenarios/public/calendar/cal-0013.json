@@ -1,0 +1,23 @@
+{
+  "id": "cal-0013",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-1-p06-ceiling-0000000000000881 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-03"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000881","scheduleStart":"2039-12-29","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"10446.7830","disbursementDate":"2040-01-05","installments":11,"every":14,"frequency":"DAYS","annualRatePercent":"59.350000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2039-12-29","due":"2040-01-12"},
+      {"from":"2040-01-12","due":"2040-01-26"},
+      {"from":"2040-01-26","due":"2040-02-09"},
+      {"from":"2040-02-09","due":"2040-02-23"},
+      {"from":"2040-02-23","due":"2040-03-08"},
+      {"from":"2040-03-08","due":"2040-03-22"},
+      {"from":"2040-03-22","due":"2040-04-05"},
+      {"from":"2040-04-05","due":"2040-04-19"},
+      {"from":"2040-04-19","due":"2040-05-03"},
+      {"from":"2040-05-03","due":"2040-05-17"},
+      {"from":"2040-05-17","due":"2040-05-31"}
+    ]
+  } ]
+}

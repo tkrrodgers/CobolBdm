@@ -1,0 +1,284 @@
+{
+  "id": "srv-0012",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000661; expected values: the reference over the in-memory ports",
+  "rules": ["SRV-06","SRV-07","SRV-08"],
+  "given": {"today":"1966-08-05","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0557","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000661","scheduleStart":"1966-04-29","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"243679969.6930","disbursementDate":"1966-08-05","installments":9,"every":48,"frequency":"WEEKS","annualRatePercent":"71.490000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0557","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "billDue", "input": {"asOf":"2066-08-05"},
+     "expected": {"asOf":"2066-08-05","billed":[]}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0557","paymentMethodId":"PM-7"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0557","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "today", "input": "1974-08-10",
+     "expected": "1974-08-10"},
+    {"call": "billDue", "input": {"asOf":"1974-08-10"},
+     "expected": {"asOf":"1974-08-10","billed":[{"loanId":"LN-E-0557","number":1,"invoiceId":"INV-0001","principal":"32944600","interest":"113594000"},{"loanId":"LN-E-0557","number":2,"invoiceId":"INV-0002","principal":"7852600","interest":"138686000"},{"loanId":"LN-E-0557","number":3,"invoiceId":"INV-0003","principal":"13020600","interest":"133518000"},{"loanId":"LN-E-0557","number":4,"invoiceId":"INV-0004","principal":"21588600","interest":"124950000"},{"loanId":"LN-E-0557","number":5,"invoiceId":"INV-0005","principal":"35796600","interest":"110742000"},{"loanId":"LN-E-0557","number":6,"invoiceId":"INV-0006","principal":"59355300","interest":"87183300"},{"loanId":"LN-E-0557","number":7,"invoiceId":"INV-0007","principal":"73121670","interest":"48121600"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0557","number":1,"accountTransactionId":"TRN-0002","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0003","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0557","number":3,"accountTransactionId":"TRN-0003","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0557","number":5,"accountTransactionId":"TRN-0004","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0007","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0557","number":7,"accountTransactionId":"TRN-0005","paidOff":false}}
+  ],
+  "state": {
+    "today" : "1974-08-10",
+    "loans" : [ {
+      "loanId" : "LN-E-0557",
+      "externalId" : "E-0557",
+      "accountId" : "ACC-0001",
+      "status" : "ACTIVE",
+      "bookedOn" : "1966-08-05",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "1967-03-31",
+        "principal" : "32944600",
+        "interest" : "113594000",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "1974-08-10",
+        "collectionTransactionId" : "TRN-0002"
+      }, {
+        "number" : 2,
+        "due" : "1968-03-01",
+        "principal" : "7852600",
+        "interest" : "138686000",
+        "invoiceId" : "INV-0002",
+        "billedOn" : "1974-08-10",
+        "collectionTransactionId" : null
+      }, {
+        "number" : 3,
+        "due" : "1969-01-31",
+        "principal" : "13020600",
+        "interest" : "133518000",
+        "invoiceId" : "INV-0003",
+        "billedOn" : "1974-08-10",
+        "collectionTransactionId" : "TRN-0003"
+      }, {
+        "number" : 4,
+        "due" : "1970-01-02",
+        "principal" : "21588600",
+        "interest" : "124950000",
+        "invoiceId" : "INV-0004",
+        "billedOn" : "1974-08-10",
+        "collectionTransactionId" : null
+      }, {
+        "number" : 5,
+        "due" : "1970-12-04",
+        "principal" : "35796600",
+        "interest" : "110742000",
+        "invoiceId" : "INV-0005",
+        "billedOn" : "1974-08-10",
+        "collectionTransactionId" : "TRN-0004"
+      }, {
+        "number" : 6,
+        "due" : "1971-11-05",
+        "principal" : "59355300",
+        "interest" : "87183300",
+        "invoiceId" : "INV-0006",
+        "billedOn" : "1974-08-10",
+        "collectionTransactionId" : null
+      }, {
+        "number" : 7,
+        "due" : "1972-10-06",
+        "principal" : "73121670",
+        "interest" : "48121600",
+        "invoiceId" : "INV-0007",
+        "billedOn" : "1974-08-10",
+        "collectionTransactionId" : "TRN-0005"
+      }, {
+        "number" : 8,
+        "due" : "1973-09-07",
+        "principal" : "0",
+        "interest" : "0",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 9,
+        "due" : "1974-08-09",
+        "principal" : "0",
+        "interest" : "0",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0557",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-7",
+        "currencyCode" : "JPY",
+        "amount" : "243679970",
+        "date" : "1966-08-05"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0557",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1967-03-31",
+        "principal" : "32944600",
+        "interest" : "113594000"
+      }
+    }, {
+      "invoiceId" : "INV-0002",
+      "invoice" : {
+        "loanId" : "LN-E-0557",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 2,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1968-03-01",
+        "principal" : "7852600",
+        "interest" : "138686000"
+      }
+    }, {
+      "invoiceId" : "INV-0003",
+      "invoice" : {
+        "loanId" : "LN-E-0557",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 3,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1969-01-31",
+        "principal" : "13020600",
+        "interest" : "133518000"
+      }
+    }, {
+      "invoiceId" : "INV-0004",
+      "invoice" : {
+        "loanId" : "LN-E-0557",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 4,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1970-01-02",
+        "principal" : "21588600",
+        "interest" : "124950000"
+      }
+    }, {
+      "invoiceId" : "INV-0005",
+      "invoice" : {
+        "loanId" : "LN-E-0557",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 5,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1970-12-04",
+        "principal" : "35796600",
+        "interest" : "110742000"
+      }
+    }, {
+      "invoiceId" : "INV-0006",
+      "invoice" : {
+        "loanId" : "LN-E-0557",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 6,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1971-11-05",
+        "principal" : "59355300",
+        "interest" : "87183300"
+      }
+    }, {
+      "invoiceId" : "INV-0007",
+      "invoice" : {
+        "loanId" : "LN-E-0557",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 7,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1972-10-06",
+        "principal" : "73121670",
+        "interest" : "48121600"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0557",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "JPY"
+      },
+      "balance" : "-88796500"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "243679970",
+        "date" : "1966-08-05",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0002",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "32944600",
+        "date" : "1974-08-10",
+        "paymentId" : null,
+        "invoiceId" : "INV-0001"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0003",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "13020600",
+        "date" : "1974-08-10",
+        "paymentId" : null,
+        "invoiceId" : "INV-0003"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0004",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "35796600",
+        "date" : "1974-08-10",
+        "paymentId" : null,
+        "invoiceId" : "INV-0005"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0005",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "73121670",
+        "date" : "1974-08-10",
+        "paymentId" : null,
+        "invoiceId" : "INV-0007"
+      },
+      "cancelled" : false
+    } ]
+  }
+}

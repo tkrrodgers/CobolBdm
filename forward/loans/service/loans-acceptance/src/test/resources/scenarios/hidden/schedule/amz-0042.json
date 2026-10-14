@@ -1,0 +1,11 @@
+{
+  "id": "amz-0042",
+  "slice": "schedule",
+  "origin": "corpus envelope-2-p12-up, loan 0000000000007543: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-02","AMZ-03","PLAN-05"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000007543","scheduleStart":"2171-02-24","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"25482.7000","disbursementDate":"2171-02-24","installments":11,"every":3,"frequency":"YEARS","annualRatePercent":"96.970500000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":true,"calculation":{"precision":12,"roundingMode":"UP"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000007543","reason":"PERIOD_NOT_SUPPORTED_WITH_THIRTY_DAY_MONTHS","field":null}
+  } ]
+}

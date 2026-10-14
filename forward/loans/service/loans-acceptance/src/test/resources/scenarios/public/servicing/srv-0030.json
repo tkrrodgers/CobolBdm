@@ -1,0 +1,291 @@
+{
+  "id": "srv-0030",
+  "slice": "servicing",
+  "origin": "the S5 loan edge-p03-ceiling-0000000000000643; expected values: the reference over the in-memory ports",
+  "rules": ["IDEM-03","SRV-04","SRV-08"],
+  "given": {"today":"2024-01-12","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0616","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000643","scheduleStart":"2024-01-15","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-15","installments":6,"every":2,"frequency":"WEEKS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0616","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0616","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0616","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "today", "input": "2024-01-29",
+     "expected": "2024-01-29"},
+    {"call": "billDue", "input": {"asOf":"2024-01-29"},
+     "expected": {"asOf":"2024-01-29","billed":[{"loanId":"LN-E-0616","number":1,"invoiceId":"INV-0001","principal":"164.59","interest":"5.02"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0616","number":1,"accountTransactionId":"TRN-0002","paidOff":false}},
+    {"call": "today", "input": "2024-02-12",
+     "expected": "2024-02-12"},
+    {"call": "billDue", "input": {"asOf":"2024-02-12"},
+     "expected": {"asOf":"2024-02-12","billed":[{"loanId":"LN-E-0616","number":2,"invoiceId":"INV-0002","principal":"165.42","interest":"4.19"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0002","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0616","number":2,"accountTransactionId":"TRN-0003","paidOff":false}},
+    {"call": "today", "input": "2024-02-26",
+     "expected": "2024-02-26"},
+    {"call": "billDue", "input": {"asOf":"2024-02-26"},
+     "expected": {"asOf":"2024-02-26","billed":[{"loanId":"LN-E-0616","number":3,"invoiceId":"INV-0003","principal":"166.25","interest":"3.36"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0003","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0616","number":3,"accountTransactionId":"TRN-0004","paidOff":false}},
+    {"call": "today", "input": "2024-03-11",
+     "expected": "2024-03-11"},
+    {"call": "billDue", "input": {"asOf":"2024-03-11"},
+     "expected": {"asOf":"2024-03-11","billed":[{"loanId":"LN-E-0616","number":4,"invoiceId":"INV-0004","principal":"167.09","interest":"2.52"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0004","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0616","number":4,"accountTransactionId":"TRN-0005","paidOff":false}},
+    {"call": "today", "input": "2024-03-25",
+     "expected": "2024-03-25"},
+    {"call": "billDue", "input": {"asOf":"2024-03-25"},
+     "expected": {"asOf":"2024-03-25","billed":[{"loanId":"LN-E-0616","number":5,"invoiceId":"INV-0005","principal":"167.91","interest":"1.70"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0616","number":5,"accountTransactionId":"TRN-0006","paidOff":false}},
+    {"call": "today", "input": "2024-04-08",
+     "expected": "2024-04-08"},
+    {"call": "billDue", "input": {"asOf":"2024-04-08"},
+     "expected": {"asOf":"2024-04-08","billed":[{"loanId":"LN-E-0616","number":6,"invoiceId":"INV-0006","principal":"168.74","interest":"0.85"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0006","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0616","number":6,"accountTransactionId":"TRN-0007","paidOff":true}}
+  ],
+  "state": {
+    "today" : "2024-04-08",
+    "loans" : [ {
+      "loanId" : "LN-E-0616",
+      "externalId" : "E-0616",
+      "accountId" : "ACC-0001",
+      "status" : "PAID_OFF",
+      "bookedOn" : "2024-01-12",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "2024-01-29",
+        "principal" : "164.59",
+        "interest" : "5.02",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "2024-01-29",
+        "collectionTransactionId" : "TRN-0002"
+      }, {
+        "number" : 2,
+        "due" : "2024-02-12",
+        "principal" : "165.42",
+        "interest" : "4.19",
+        "invoiceId" : "INV-0002",
+        "billedOn" : "2024-02-12",
+        "collectionTransactionId" : "TRN-0003"
+      }, {
+        "number" : 3,
+        "due" : "2024-02-26",
+        "principal" : "166.25",
+        "interest" : "3.36",
+        "invoiceId" : "INV-0003",
+        "billedOn" : "2024-02-26",
+        "collectionTransactionId" : "TRN-0004"
+      }, {
+        "number" : 4,
+        "due" : "2024-03-11",
+        "principal" : "167.09",
+        "interest" : "2.52",
+        "invoiceId" : "INV-0004",
+        "billedOn" : "2024-03-11",
+        "collectionTransactionId" : "TRN-0005"
+      }, {
+        "number" : 5,
+        "due" : "2024-03-25",
+        "principal" : "167.91",
+        "interest" : "1.70",
+        "invoiceId" : "INV-0005",
+        "billedOn" : "2024-03-25",
+        "collectionTransactionId" : "TRN-0006"
+      }, {
+        "number" : 6,
+        "due" : "2024-04-08",
+        "principal" : "168.74",
+        "interest" : "0.85",
+        "invoiceId" : "INV-0006",
+        "billedOn" : "2024-04-08",
+        "collectionTransactionId" : "TRN-0007"
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0616",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-1",
+        "currencyCode" : "USD",
+        "amount" : "1000.00",
+        "date" : "2024-01-15"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0616",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "USD",
+        "invoiceDate" : "2024-01-29",
+        "principal" : "164.59",
+        "interest" : "5.02"
+      }
+    }, {
+      "invoiceId" : "INV-0002",
+      "invoice" : {
+        "loanId" : "LN-E-0616",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 2,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "USD",
+        "invoiceDate" : "2024-02-12",
+        "principal" : "165.42",
+        "interest" : "4.19"
+      }
+    }, {
+      "invoiceId" : "INV-0003",
+      "invoice" : {
+        "loanId" : "LN-E-0616",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 3,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "USD",
+        "invoiceDate" : "2024-02-26",
+        "principal" : "166.25",
+        "interest" : "3.36"
+      }
+    }, {
+      "invoiceId" : "INV-0004",
+      "invoice" : {
+        "loanId" : "LN-E-0616",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 4,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "USD",
+        "invoiceDate" : "2024-03-11",
+        "principal" : "167.09",
+        "interest" : "2.52"
+      }
+    }, {
+      "invoiceId" : "INV-0005",
+      "invoice" : {
+        "loanId" : "LN-E-0616",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 5,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "USD",
+        "invoiceDate" : "2024-03-25",
+        "principal" : "167.91",
+        "interest" : "1.70"
+      }
+    }, {
+      "invoiceId" : "INV-0006",
+      "invoice" : {
+        "loanId" : "LN-E-0616",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 6,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "USD",
+        "invoiceDate" : "2024-04-08",
+        "principal" : "168.74",
+        "interest" : "0.85"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0616",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "USD"
+      },
+      "balance" : "0.00"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "1000.00",
+        "date" : "2024-01-15",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0002",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "164.59",
+        "date" : "2024-01-29",
+        "paymentId" : null,
+        "invoiceId" : "INV-0001"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0003",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "165.42",
+        "date" : "2024-02-12",
+        "paymentId" : null,
+        "invoiceId" : "INV-0002"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0004",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "166.25",
+        "date" : "2024-02-26",
+        "paymentId" : null,
+        "invoiceId" : "INV-0003"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0005",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "167.09",
+        "date" : "2024-03-11",
+        "paymentId" : null,
+        "invoiceId" : "INV-0004"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0006",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "167.91",
+        "date" : "2024-03-25",
+        "paymentId" : null,
+        "invoiceId" : "INV-0005"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0007",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "168.74",
+        "date" : "2024-04-08",
+        "paymentId" : null,
+        "invoiceId" : "INV-0006"
+      },
+      "cancelled" : false
+    } ]
+  }
+}

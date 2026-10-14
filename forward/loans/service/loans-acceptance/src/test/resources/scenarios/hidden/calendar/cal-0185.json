@@ -1,0 +1,38 @@
+{
+  "id": "cal-0185",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000004500 (= the faithful job)",
+  "rules": ["CAL-01","CAL-07"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000004500","scheduleStart":"2159-04-29","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"288856515.6210","disbursementDate":"2159-04-29","installments":26,"every":1,"frequency":"MONTHS","annualRatePercent":"48.650000000","downPaymentPercent":"21.977600000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2159-04-29","due":"2159-05-29"},
+      {"from":"2159-05-29","due":"2159-06-29"},
+      {"from":"2159-06-29","due":"2159-07-29"},
+      {"from":"2159-07-29","due":"2159-08-29"},
+      {"from":"2159-08-29","due":"2159-09-29"},
+      {"from":"2159-09-29","due":"2159-10-29"},
+      {"from":"2159-10-29","due":"2159-11-29"},
+      {"from":"2159-11-29","due":"2159-12-29"},
+      {"from":"2159-12-29","due":"2160-01-29"},
+      {"from":"2160-01-29","due":"2160-02-29"},
+      {"from":"2160-02-29","due":"2160-03-29"},
+      {"from":"2160-03-29","due":"2160-04-29"},
+      {"from":"2160-04-29","due":"2160-05-29"},
+      {"from":"2160-05-29","due":"2160-06-29"},
+      {"from":"2160-06-29","due":"2160-07-29"},
+      {"from":"2160-07-29","due":"2160-08-29"},
+      {"from":"2160-08-29","due":"2160-09-29"},
+      {"from":"2160-09-29","due":"2160-10-29"},
+      {"from":"2160-10-29","due":"2160-11-29"},
+      {"from":"2160-11-29","due":"2160-12-29"},
+      {"from":"2160-12-29","due":"2161-01-29"},
+      {"from":"2161-01-29","due":"2161-02-28"},
+      {"from":"2161-02-28","due":"2161-03-29"},
+      {"from":"2161-03-29","due":"2161-04-29"},
+      {"from":"2161-04-29","due":"2161-05-29"},
+      {"from":"2161-05-29","due":"2161-06-29"}
+    ]
+  } ]
+}

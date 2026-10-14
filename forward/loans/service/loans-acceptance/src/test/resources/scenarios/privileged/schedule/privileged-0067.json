@@ -1,0 +1,18 @@
+{
+  "id": "privileged-0067",
+  "slice": "schedule",
+  "origin": "privileged precision-p16-half_even, loan 1100000000000003: oracle A' D-2 without the legacy envelope (clean room, FnHarness --forward-limits): privileged, decision D-6",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-12","AMZ-13","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"1100000000000003","scheduleStart":"2024-01-31","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"15000.0000","disbursementDate":"2024-01-31","installments":3,"every":1,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":16,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"1100000000000003","currencyCode":"USD","decimalPlaces":2,"termDays":90,
+      "totals":{"disbursed":"15000.00","principal":"15000.00","interest":"232.46","fee":"0.00","penalty":"0.00","repayment":"15232.46","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2024-01-31","due":"2024-01-31","amount":"15000.00","balanceAfter":"15000.00"},
+        {"@type":"InstallmentLine","number":1,"from":"2024-01-31","due":"2024-02-29","principal":"4964.79","interest":"112.70","fee":"0.00","penalty":"0.00","totalDue":"5077.49","balanceAfter":"10035.21","remainingDue":"10154.97"},
+        {"@type":"InstallmentLine","number":2,"from":"2024-02-29","due":"2024-03-31","principal":"4996.89","interest":"80.60","fee":"0.00","penalty":"0.00","totalDue":"5077.49","balanceAfter":"5038.32","remainingDue":"5077.48"},
+        {"@type":"InstallmentLine","number":3,"from":"2024-03-31","due":"2024-04-30","principal":"5038.32","interest":"39.16","fee":"0.00","penalty":"0.00","totalDue":"5077.48","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

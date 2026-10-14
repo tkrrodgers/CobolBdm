@@ -1,0 +1,33 @@
+{
+  "id": "amz-0157",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p12-floor, loan 0000000000000096: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000096","scheduleStart":"2081-07-22","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"443.1000","disbursementDate":"2081-08-01","installments":18,"every":183,"frequency":"DAYS","annualRatePercent":"98.480000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"FLOOR"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000096","currencyCode":"ZAR","decimalPlaces":1,"termDays":3294,
+      "totals":{"disbursed":"443.1","principal":"443.1","interest":"1733.1","fee":"0.0","penalty":"0.0","repayment":"2176.2","outstanding":"0.0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2081-08-01","due":"2081-08-01","amount":"443.1","balanceAfter":"443.1"},
+        {"@type":"InstallmentLine","number":1,"from":"2081-07-22","due":"2082-01-21","principal":"12.0","interest":"206.8","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"431.1","remainingDue":"1957.4"},
+        {"@type":"InstallmentLine","number":2,"from":"2082-01-21","due":"2082-07-23","principal":"6.0","interest":"212.8","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"425.1","remainingDue":"1738.6"},
+        {"@type":"InstallmentLine","number":3,"from":"2082-07-23","due":"2083-01-22","principal":"9.0","interest":"209.8","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"416.1","remainingDue":"1519.8"},
+        {"@type":"InstallmentLine","number":4,"from":"2083-01-22","due":"2083-07-24","principal":"13.4","interest":"205.4","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"402.7","remainingDue":"1301.0"},
+        {"@type":"InstallmentLine","number":5,"from":"2083-07-24","due":"2084-01-23","principal":"20.1","interest":"198.7","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"382.6","remainingDue":"1082.2"},
+        {"@type":"InstallmentLine","number":6,"from":"2084-01-23","due":"2084-07-24","principal":"30.5","interest":"188.3","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"352.1","remainingDue":"863.4"},
+        {"@type":"InstallmentLine","number":7,"from":"2084-07-24","due":"2085-01-23","principal":"45.4","interest":"173.4","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"306.7","remainingDue":"644.6"},
+        {"@type":"InstallmentLine","number":8,"from":"2085-01-23","due":"2085-07-25","principal":"67.4","interest":"151.4","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"239.3","remainingDue":"425.8"},
+        {"@type":"InstallmentLine","number":9,"from":"2085-07-25","due":"2086-01-24","principal":"100.7","interest":"118.1","fee":"0.0","penalty":"0.0","totalDue":"218.8","balanceAfter":"138.6","remainingDue":"207.0"},
+        {"@type":"InstallmentLine","number":10,"from":"2086-01-24","due":"2086-07-26","principal":"138.6","interest":"68.4","fee":"0.0","penalty":"0.0","totalDue":"207.0","balanceAfter":"0.0","remainingDue":"0.0"},
+        {"@type":"InstallmentLine","number":11,"from":"2086-07-26","due":"2087-01-25","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"0.0"},
+        {"@type":"InstallmentLine","number":12,"from":"2087-01-25","due":"2087-07-27","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"0.0"},
+        {"@type":"InstallmentLine","number":13,"from":"2087-07-27","due":"2088-01-26","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"0.0"},
+        {"@type":"InstallmentLine","number":14,"from":"2088-01-26","due":"2088-07-27","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"0.0"},
+        {"@type":"InstallmentLine","number":15,"from":"2088-07-27","due":"2089-01-26","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"0.0"},
+        {"@type":"InstallmentLine","number":16,"from":"2089-01-26","due":"2089-07-28","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"0.0"},
+        {"@type":"InstallmentLine","number":17,"from":"2089-07-28","due":"2090-01-27","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"0.0"},
+        {"@type":"InstallmentLine","number":18,"from":"2090-01-27","due":"2090-07-29","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"0.0"}
+      ]}}
+  } ]
+}

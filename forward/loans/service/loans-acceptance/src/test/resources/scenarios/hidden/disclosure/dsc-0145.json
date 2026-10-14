@@ -1,0 +1,16 @@
+{
+  "id": "dsc-0145",
+  "slice": "disclosure",
+  "origin": "corpus mini-p03-ceiling, loan 0000000000000729: the faithful job's report (FNRP0100), = the pool's schedule",
+  "rules": ["RPT-01","RPT-02","RPT-03","RPT-04"],
+  "steps": [ {
+    "call": "document",
+    "input": {"loanId":"0000000000000729","scheduleStart":"2023-12-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2023-12-01","installments":2,"every":30,"frequency":"DAYS","annualRatePercent":"18.750000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Documented","document":{"loanId":"0000000000000729","currencyCode":"USD","decimalPlaces":2,"termDays":60,"periods":3,"totalPrincipal":"1000.00","totalInterest":"24.17","totalRepayment":"1024.17","totalDisbursed":"1000.00",
+      "lines":[
+        {"type":"DISBURSEMENT","number":0,"from":"2023-12-01","due":"2023-12-01","principal":"1000.00","interest":"0.00","totalDue":"0.00","outstanding":"1000.00"},
+        {"type":"INSTALLMENT","number":1,"from":"2023-12-01","due":"2023-12-31","principal":"495.99","interest":"16.10","totalDue":"512.09","outstanding":"504.01"},
+        {"type":"INSTALLMENT","number":2,"from":"2023-12-31","due":"2024-01-30","principal":"504.01","interest":"8.07","totalDue":"512.08","outstanding":"0.00"}
+      ]}}
+  } ]
+}

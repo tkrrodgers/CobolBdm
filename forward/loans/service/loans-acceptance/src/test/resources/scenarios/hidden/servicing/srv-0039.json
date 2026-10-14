@@ -1,0 +1,130 @@
+{
+  "id": "srv-0039",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-2-p12-ceiling-0000000000001916; expected values: the reference over the in-memory ports with a rate of 7 decimal places",
+  "rules": ["SRV-02","SRV-03","SRV-05","SRV-10"],
+  "given": {"today":"2126-11-24","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0480-R","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001916","scheduleStart":"2126-11-24","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"6075.8165","disbursementDate":"2126-11-24","installments":5,"every":199,"frequency":"DAYS","annualRatePercent":"9.300000100","downPaymentPercent":"18.365500000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"BookingRejected","externalId":"E-0480-R","reason":"RATE_PRECISION_UNSUPPORTED_BY_LEDGER","scheduleReason":null,"field":null}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0480-R","paymentMethodId":"PM-1"},
+     "expected": {"@type":"ServicingRejected","reference":"LN-E-0480-R","reason":"UNKNOWN_LOAN"}},
+    {"call": "book", "input": {"externalId":"E-0480-R","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001916","scheduleStart":"2126-11-24","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"6075.8165","disbursementDate":"2126-11-24","installments":5,"every":199,"frequency":"DAYS","annualRatePercent":"9.300000000","downPaymentPercent":"18.365500000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0480-R","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0480-R","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0480-R","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":"INV-0001"}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-9999","paid":true},
+     "expected": {"@type":"ServicingRejected","reference":"INV-9999","reason":"UNKNOWN_INVOICE"}}
+  ],
+  "state": {
+    "today" : "2126-11-24",
+    "loans" : [ {
+      "loanId" : "LN-E-0480-R",
+      "externalId" : "E-0480-R",
+      "accountId" : "ACC-0001",
+      "status" : "ACTIVE",
+      "bookedOn" : "2126-11-24",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "2126-11-24",
+        "principal" : "1115.86",
+        "interest" : "0.00",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "2126-11-24",
+        "collectionTransactionId" : null
+      }, {
+        "number" : 2,
+        "due" : "2127-06-11",
+        "principal" : "896.36",
+        "interest" : "251.50",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 3,
+        "due" : "2127-12-27",
+        "principal" : "941.81",
+        "interest" : "206.05",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 4,
+        "due" : "2128-07-13",
+        "principal" : "989.57",
+        "interest" : "158.29",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 5,
+        "due" : "2129-01-28",
+        "principal" : "1039.74",
+        "interest" : "108.12",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 6,
+        "due" : "2129-08-15",
+        "principal" : "1092.48",
+        "interest" : "55.40",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0480-R",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-1",
+        "currencyCode" : "EUR",
+        "amount" : "6075.82",
+        "date" : "2126-11-24"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0480-R",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2126-11-24",
+        "principal" : "1115.86",
+        "interest" : "0.00"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0480-R",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "EUR"
+      },
+      "balance" : "-6075.82"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "6075.82",
+        "date" : "2126-11-24",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    } ]
+  }
+}

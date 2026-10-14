@@ -1,0 +1,25 @@
+{
+  "id": "amz-0155",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p12-down, loan 0000000000000199: oracle A' D-2 (clean room): decision D-2 fixes a legacy defect; A differs",
+  "rules": ["AMZ-01","AMZ-12","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000199","scheduleStart":"1975-01-06","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"1.6490","disbursementDate":"1975-01-09","installments":10,"every":1,"frequency":"MONTHS","annualRatePercent":"97.430000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000199","currencyCode":"JPY","decimalPlaces":0,"termDays":304,
+      "totals":{"disbursed":"1","principal":"1","interest":"0","fee":"0","penalty":"0","repayment":"1","outstanding":"0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1975-01-09","due":"1975-01-09","amount":"1","balanceAfter":"1"},
+        {"@type":"InstallmentLine","number":1,"from":"1975-01-06","due":"1975-02-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":2,"from":"1975-02-06","due":"1975-03-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":3,"from":"1975-03-06","due":"1975-04-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":4,"from":"1975-04-06","due":"1975-05-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":5,"from":"1975-05-06","due":"1975-06-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":6,"from":"1975-06-06","due":"1975-07-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":7,"from":"1975-07-06","due":"1975-08-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":8,"from":"1975-08-06","due":"1975-09-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":9,"from":"1975-09-06","due":"1975-10-06","principal":"0","interest":"0","fee":"0","penalty":"0","totalDue":"0","balanceAfter":"1","remainingDue":"1"},
+        {"@type":"InstallmentLine","number":10,"from":"1975-10-06","due":"1975-11-06","principal":"1","interest":"0","fee":"0","penalty":"0","totalDue":"1","balanceAfter":"0","remainingDue":"0"}
+      ]}}
+  } ]
+}

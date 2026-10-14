@@ -1,0 +1,30 @@
+{
+  "id": "cal-0140",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-1-p06-ceiling-0000000000000798 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000798","scheduleStart":"1994-02-06","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"4242.7500","disbursementDate":"1994-11-08","installments":18,"every":1,"frequency":"MONTHS","annualRatePercent":"0.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1994-02-06","due":"1994-03-06"},
+      {"from":"1994-03-06","due":"1994-04-06"},
+      {"from":"1994-04-06","due":"1994-05-06"},
+      {"from":"1994-05-06","due":"1994-06-06"},
+      {"from":"1994-06-06","due":"1994-07-06"},
+      {"from":"1994-07-06","due":"1994-08-06"},
+      {"from":"1994-08-06","due":"1994-09-06"},
+      {"from":"1994-09-06","due":"1994-10-06"},
+      {"from":"1994-10-06","due":"1994-11-06"},
+      {"from":"1994-11-06","due":"1994-12-06"},
+      {"from":"1994-12-06","due":"1995-01-06"},
+      {"from":"1995-01-06","due":"1995-02-06"},
+      {"from":"1995-02-06","due":"1995-03-06"},
+      {"from":"1995-03-06","due":"1995-04-06"},
+      {"from":"1995-04-06","due":"1995-05-06"},
+      {"from":"1995-05-06","due":"1995-06-06"},
+      {"from":"1995-06-06","due":"1995-07-06"},
+      {"from":"1995-07-06","due":"1995-08-06"}
+    ]
+  } ]
+}

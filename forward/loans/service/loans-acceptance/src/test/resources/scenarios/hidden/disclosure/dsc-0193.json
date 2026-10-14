@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0193",
+  "slice": "disclosure",
+  "origin": "corpus sample-p06-floor, loan 0000000000001103: the schedule's rejection (RPT-05), oracle A (clean room), = the faithful job",
+  "rules": ["RPT-05"],
+  "steps": [ {
+    "call": "document",
+    "input": {"loanId":"0000000000001103","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-01","installments":1,"every":2,"frequency":"WEEKS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":2,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"FLOOR"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000001103","reason":"SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT","field":null}
+  } ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "cal-0277",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000005696 (= the faithful job)",
+  "rules": ["CAL-01","CAL-06","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000005696","scheduleStart":"2187-08-31","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"102.5830","disbursementDate":"2187-08-31","installments":4,"every":2,"frequency":"YEARS","annualRatePercent":"17.855900000","downPaymentPercent":"13.545900000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":9,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2187-08-31","due":"2189-08-31"},
+      {"from":"2189-08-31","due":"2191-08-31"},
+      {"from":"2191-08-31","due":"2193-08-31"},
+      {"from":"2193-08-31","due":"2196-08-31"}
+    ]
+  } ]
+}

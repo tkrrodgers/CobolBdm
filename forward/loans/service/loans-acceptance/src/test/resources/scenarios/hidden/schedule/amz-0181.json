@@ -1,0 +1,25 @@
+{
+  "id": "amz-0181",
+  "slice": "schedule",
+  "origin": "corpus envelope-2-p12-down, loan 0000000000000191: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-06","AMZ-08","AMZ-12","PLAN-01","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000191","scheduleStart":"1936-02-16","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"142.2600","disbursementDate":"1936-02-16","installments":9,"every":1,"frequency":"MONTHS","annualRatePercent":"0.000000000","downPaymentPercent":"7.904500000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000191","currencyCode":"USD","decimalPlaces":2,"termDays":274,
+      "totals":{"disbursed":"142.26","principal":"142.26","interest":"0.00","fee":"0.00","penalty":"0.00","repayment":"142.26","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1936-02-16","due":"1936-02-16","amount":"142.26","balanceAfter":"142.26"},
+        {"@type":"DownPaymentLine","number":1,"from":"1936-02-16","due":"1936-02-16","principal":"11.24","totalDue":"11.24","balanceAfter":"131.02","remainingDue":"131.02"},
+        {"@type":"InstallmentLine","number":2,"from":"1936-02-16","due":"1936-03-16","principal":"14.55","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.55","balanceAfter":"116.47","remainingDue":"116.47"},
+        {"@type":"InstallmentLine","number":3,"from":"1936-03-16","due":"1936-04-16","principal":"14.55","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.55","balanceAfter":"101.92","remainingDue":"101.92"},
+        {"@type":"InstallmentLine","number":4,"from":"1936-04-16","due":"1936-05-16","principal":"14.55","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.55","balanceAfter":"87.37","remainingDue":"87.37"},
+        {"@type":"InstallmentLine","number":5,"from":"1936-05-16","due":"1936-06-16","principal":"14.55","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.55","balanceAfter":"72.82","remainingDue":"72.82"},
+        {"@type":"InstallmentLine","number":6,"from":"1936-06-16","due":"1936-07-16","principal":"14.55","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.55","balanceAfter":"58.27","remainingDue":"58.27"},
+        {"@type":"InstallmentLine","number":7,"from":"1936-07-16","due":"1936-08-16","principal":"14.55","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.55","balanceAfter":"43.72","remainingDue":"43.72"},
+        {"@type":"InstallmentLine","number":8,"from":"1936-08-16","due":"1936-09-16","principal":"14.55","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.55","balanceAfter":"29.17","remainingDue":"29.17"},
+        {"@type":"InstallmentLine","number":9,"from":"1936-09-16","due":"1936-10-16","principal":"14.55","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.55","balanceAfter":"14.62","remainingDue":"14.62"},
+        {"@type":"InstallmentLine","number":10,"from":"1936-10-16","due":"1936-11-16","principal":"14.62","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"14.62","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

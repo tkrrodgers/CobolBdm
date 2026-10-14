@@ -1,0 +1,17 @@
+{
+  "id": "amz-0131",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p06-half_even, loan 0000000000000046: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-02","AMZ-05","AMZ-06","AMZ-12","PLAN-01","PLAN-02","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000046","scheduleStart":"1975-04-18","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"32443.0080","disbursementDate":"1975-04-18","installments":1,"every":1,"frequency":"MONTHS","annualRatePercent":"97.460000000","downPaymentPercent":"21.480000000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000046","currencyCode":"INR","decimalPlaces":2,"termDays":30,
+      "totals":{"disbursed":"32443.01","principal":"32443.01","interest":"2040.59","fee":"0.00","penalty":"0.00","repayment":"34483.60","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1975-04-18","due":"1975-04-18","amount":"32443.01","balanceAfter":"32443.01"},
+        {"@type":"DownPaymentLine","number":1,"from":"1975-04-18","due":"1975-04-18","principal":"6968.76","totalDue":"6968.76","balanceAfter":"25474.25","remainingDue":"27514.84"},
+        {"@type":"InstallmentLine","number":2,"from":"1975-04-18","due":"1975-05-18","principal":"25474.25","interest":"2040.59","fee":"0.00","penalty":"0.00","totalDue":"27514.84","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

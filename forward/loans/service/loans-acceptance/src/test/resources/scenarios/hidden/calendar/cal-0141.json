@@ -1,0 +1,30 @@
+{
+  "id": "cal-0141",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-1-p06-ceiling-0000000000000838 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000838","scheduleStart":"1915-07-07","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"3984264.0000","disbursementDate":"1915-08-01","installments":18,"every":1,"frequency":"MONTHS","annualRatePercent":"79.550000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":19,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1915-07-07","due":"1915-08-07"},
+      {"from":"1915-08-07","due":"1915-09-07"},
+      {"from":"1915-09-07","due":"1915-10-07"},
+      {"from":"1915-10-07","due":"1915-11-07"},
+      {"from":"1915-11-07","due":"1915-12-07"},
+      {"from":"1915-12-07","due":"1916-01-07"},
+      {"from":"1916-01-07","due":"1916-02-07"},
+      {"from":"1916-02-07","due":"1916-03-07"},
+      {"from":"1916-03-07","due":"1916-04-07"},
+      {"from":"1916-04-07","due":"1916-05-07"},
+      {"from":"1916-05-07","due":"1916-06-07"},
+      {"from":"1916-06-07","due":"1916-07-07"},
+      {"from":"1916-07-07","due":"1916-08-07"},
+      {"from":"1916-08-07","due":"1916-09-07"},
+      {"from":"1916-09-07","due":"1916-10-07"},
+      {"from":"1916-10-07","due":"1916-11-07"},
+      {"from":"1916-11-07","due":"1916-12-07"},
+      {"from":"1916-12-07","due":"1917-02-07"}
+    ]
+  } ]
+}

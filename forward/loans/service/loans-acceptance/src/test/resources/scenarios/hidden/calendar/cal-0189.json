@@ -1,0 +1,23 @@
+{
+  "id": "cal-0189",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000004874 (= the faithful job)",
+  "rules": ["CAL-01"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000004874","scheduleStart":"2103-06-29","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"12219.9800","disbursementDate":"2103-06-29","installments":11,"every":1,"frequency":"MONTHS","annualRatePercent":"20.020000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2103-06-29","due":"2103-07-29"},
+      {"from":"2103-07-29","due":"2103-08-29"},
+      {"from":"2103-08-29","due":"2103-09-29"},
+      {"from":"2103-09-29","due":"2103-10-29"},
+      {"from":"2103-10-29","due":"2103-11-29"},
+      {"from":"2103-11-29","due":"2103-12-29"},
+      {"from":"2103-12-29","due":"2104-01-29"},
+      {"from":"2104-01-29","due":"2104-02-29"},
+      {"from":"2104-02-29","due":"2104-03-29"},
+      {"from":"2104-03-29","due":"2104-04-29"},
+      {"from":"2104-04-29","due":"2104-05-29"}
+    ]
+  } ]
+}

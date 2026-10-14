@@ -1,0 +1,26 @@
+{
+  "id": "cal-0166",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000002804 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-08"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000002804","scheduleStart":"1901-08-29","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"5.5000","disbursementDate":"1901-09-02","installments":14,"every":1,"frequency":"MONTHS","annualRatePercent":"12.030000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1901-08-29","due":"1901-09-29"},
+      {"from":"1901-09-29","due":"1901-10-29"},
+      {"from":"1901-10-29","due":"1901-11-29"},
+      {"from":"1901-11-29","due":"1901-12-29"},
+      {"from":"1901-12-29","due":"1902-01-29"},
+      {"from":"1902-01-29","due":"1902-02-28"},
+      {"from":"1902-02-28","due":"1902-03-28"},
+      {"from":"1902-03-28","due":"1902-04-28"},
+      {"from":"1902-04-28","due":"1902-05-28"},
+      {"from":"1902-05-28","due":"1902-06-28"},
+      {"from":"1902-06-28","due":"1902-07-28"},
+      {"from":"1902-07-28","due":"1902-08-28"},
+      {"from":"1902-08-28","due":"1902-09-28"},
+      {"from":"1902-09-28","due":"1902-10-28"}
+    ]
+  } ]
+}

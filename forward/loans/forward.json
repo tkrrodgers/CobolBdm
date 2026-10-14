@@ -1,0 +1,238 @@
+{
+  "schema": "mlcpu.forward-package.v1",
+  "name": "loans",
+  "serviceName": "Loans Service",
+  "service": {
+    "dir": "service",
+    "apiModule": "loans-api",
+    "apiPackage": "com.mlcpu.loans.api",
+    "apiSourceRoot": "loans-api/src/main/java",
+    "architectureModule": "loans-architecture",
+    "acceptanceModule": "loans-acceptance",
+    "sliceProperty": "loansSlices",
+    "inMemoryPorts": "loans-acceptance/src/memory/java/com/mlcpu/loans/acceptance/memory/InMemoryPorts.java",
+    "scenarioRoot": "loans-acceptance/src/test/resources/scenarios"
+  },
+  "application": {
+    "module": "loans-application",
+    "package": "com.mlcpu.loans.application",
+    "entryClass": "LoansApplication",
+    "entrySignature": "public static ScheduleService quotes()",
+    "serviceInterface": "LoansApplication"
+  },
+  "dependencies": {
+    "context": [
+      "loans-api",
+      "loans-kernel"
+    ],
+    "application": [
+      "loans-api",
+      "loans-kernel",
+      "@contexts"
+    ]
+  },
+  "rulePatterns": [
+    "\\| ((?:MNY|DATE|CAL|RATE|TRM|AMZ|PLAN|RPT|DISC|SRV|IDEM)-\\d\\d) \\|"
+  ],
+  "modules": [
+    {
+      "module": "loans-kernel",
+      "package": "com.mlcpu.loans.kernel"
+    },
+    {
+      "module": "loans-calendar",
+      "package": "com.mlcpu.loans.calendar"
+    },
+    {
+      "module": "loans-rates",
+      "package": "com.mlcpu.loans.rates"
+    },
+    {
+      "module": "loans-terms",
+      "package": "com.mlcpu.loans.terms"
+    },
+    {
+      "module": "loans-schedule",
+      "package": "com.mlcpu.loans.schedule"
+    },
+    {
+      "module": "loans-disclosure",
+      "package": "com.mlcpu.loans.disclosure"
+    },
+    {
+      "module": "loans-application",
+      "package": "com.mlcpu.loans.application"
+    }
+  ],
+  "slices": [
+    {
+      "name": "kernel",
+      "module": "loans-kernel",
+      "package": "com.mlcpu.loans.kernel",
+      "digests": [
+        "kernel"
+      ],
+      "packets": [
+        "FNDKRND",
+        "FNDKDFO",
+        "FNDTKRN",
+        "FNMY0100"
+      ],
+      "rulePrefixes": [
+        "MNY-",
+        "DATE-"
+      ],
+      "methods": []
+    },
+    {
+      "name": "calendar",
+      "module": "loans-calendar",
+      "package": "com.mlcpu.loans.calendar",
+      "digests": [
+        "calendar"
+      ],
+      "packets": [
+        "FNDG0100"
+      ],
+      "rulePrefixes": [
+        "CAL-"
+      ],
+      "methods": [
+        "dueDates"
+      ],
+      "entry": "public static DueDates dueDates()",
+      "implements": "com.mlcpu.loans.api.spi.DueDates"
+    },
+    {
+      "name": "rates",
+      "module": "loans-rates",
+      "package": "com.mlcpu.loans.rates",
+      "digests": [
+        "rates"
+      ],
+      "packets": [
+        "FNEM0300"
+      ],
+      "rulePrefixes": [
+        "RATE-"
+      ],
+      "methods": [
+        "rateFactors"
+      ],
+      "entry": "public static RateFactors rateFactors()",
+      "implements": "com.mlcpu.loans.api.spi.RateFactors"
+    },
+    {
+      "name": "terms",
+      "module": "loans-terms",
+      "package": "com.mlcpu.loans.terms",
+      "digests": [
+        "terms"
+      ],
+      "packets": [
+        "FNLS0200",
+        "FNLS0100"
+      ],
+      "rulePrefixes": [
+        "TRM-"
+      ],
+      "methods": [
+        "quotes"
+      ],
+      "entry": "public static ScheduleService quotes()"
+    },
+    {
+      "name": "schedule",
+      "module": "loans-schedule",
+      "package": "com.mlcpu.loans.schedule",
+      "digests": [
+        "schedule"
+      ],
+      "packets": [
+        "FNEM0100",
+        "FNEM0200",
+        "FNEM0400",
+        "FNEM0500",
+        "FNEM0600",
+        "FNEM0700",
+        "FNEM0800",
+        "FNEM0900",
+        "FNLS0300",
+        "FNLS0100"
+      ],
+      "rulePrefixes": [
+        "AMZ-",
+        "PLAN-"
+      ],
+      "methods": [
+        "quotes"
+      ],
+      "entry": "public static ScheduleService quotes()"
+    },
+    {
+      "name": "disclosure",
+      "module": "loans-disclosure",
+      "package": "com.mlcpu.loans.disclosure",
+      "digests": [
+        "disclosure"
+      ],
+      "packets": [
+        "FNRP0100"
+      ],
+      "rulePrefixes": [
+        "RPT-",
+        "DISC-"
+      ],
+      "methods": [
+        "quotes"
+      ],
+      "entry": "public static ScheduleService quotes()"
+    },
+    {
+      "name": "servicing",
+      "module": "loans-application",
+      "package": "com.mlcpu.loans.application",
+      "digests": [
+        "servicing"
+      ],
+      "packets": [],
+      "rulePrefixes": [
+        "SRV-",
+        "IDEM-"
+      ],
+      "methods": [
+        "create"
+      ],
+      "entry": "public static LoanServicing create(LoansPorts ports)",
+      "apiPackages": [
+        "com.mlcpu.loans.api.servicing",
+        "com.mlcpu.loans.api.ports"
+      ],
+      "ports": true
+    }
+  ],
+  "useCaseMethods": [
+    "dueDates",
+    "rateFactors",
+    "quotes",
+    "create"
+  ],
+  "leakDictionary": "sme/leak-dictionary.tsv",
+  "javaLevel": 17,
+  "walks": "walks",
+  "scenarioFormat": "the scenario format: steps, each a call with its input and its expected result; a servicing scenario also has a \"given\" (the in-memory ports' starting point) and a \"state\" (the ports' state after the steps)",
+  "testing": [
+    "# How the service is tested",
+    "Each acceptance scenario calls an entry point of LoansApplication (SPEC.md section 2) with each step's input and compares",
+    "the result, in canonical JSON, with the expected one, field by field. The call \"periods\" is",
+    "LoansApplication.dueDates().periods(request); \"factors\" is LoansApplication.rateFactors().factors(query, calculation);",
+    "\"schedule\", \"document\" and \"disclose\" are the methods of LoansApplication.quotes(). Canonical JSON: a record is an object",
+    "with its components in declaration order (an implementation of a sealed interface also carries \"@type\", its simple name),",
+    "dates are \"yyyy-mm-dd\", BigDecimal is a string compared by value and scale (\"12.30\" is not \"12.3\"), enums are by name, an",
+    "absent nullable value is null, lists are arrays in order. About 20% of the scenarios are public: you see their failures in",
+    "The servicing calls \"book\", \"disburse\", \"billDue\" and \"invoicePaid\" are the methods of LoansApplication.create(ports),",
+    "over in-memory ports made from the scenario's \"given\" (one set per scenario; the call \"today\" sets their clock); after the",
+    "steps the ports' state is compared with the scenario's \"state\" in the same canonical JSON.",
+    "full. The others are hidden: you see how many pass."
+  ]
+}

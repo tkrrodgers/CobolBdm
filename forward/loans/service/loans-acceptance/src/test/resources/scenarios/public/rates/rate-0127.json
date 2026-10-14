@@ -1,0 +1,11 @@
+{
+  "id": "rate-0127",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, edge-p06-down (loans 0000000000000551 to 0000000000000575), CALL 65 (function P)",
+  "rules": ["RATE-01","RATE-09"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"1900-01-31","period":{"from":"1900-06-30","due":"1900-07-31"},"from":"1900-06-30","to":"1900-07-31","annualRatePercent":"9.482200000","frequency":"MONTHS","every":1,"monthDays":"ACTUAL","yearDays":"ACTUAL"},"calculation":{"precision":6,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Factors","installment":"0.008053","interest":"0.008053"}
+  } ]
+}

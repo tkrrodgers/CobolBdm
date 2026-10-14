@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0039",
+  "slice": "disclosure",
+  "origin": "corpus envelope-1-p09-down, loan 0000000000000087: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-01","DISC-02","DISC-03","DISC-05"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000087","scheduleStart":"1921-12-14","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"14924.6000","disbursementDate":"1921-12-14","installments":27,"every":7,"frequency":"DAYS","annualRatePercent":"69.140000000","downPaymentPercent":"40.915200000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Disclosed","disclosure":{"amountFinanced":"8818.18","financeCharge":"1730.07","totalOfPayments":"10548.25","annualPercentageRate":"68.95"}}
+  } ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "amz-0202",
+  "slice": "schedule",
+  "origin": "corpus envelope-2-p12-half_even, loan 0000000000000164: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-05","AMZ-06","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000164","scheduleStart":"1994-09-29","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"1.2500","disbursementDate":"1994-10-18","installments":1,"every":1,"frequency":"YEARS","annualRatePercent":"11.490000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000164","currencyCode":"ZAR","decimalPlaces":1,"termDays":365,
+      "totals":{"disbursed":"1.2","principal":"1.2","interest":"0.1","fee":"0.0","penalty":"0.0","repayment":"1.3","outstanding":"0.0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1994-10-18","due":"1994-10-18","amount":"1.2","balanceAfter":"1.2"},
+        {"@type":"InstallmentLine","number":1,"from":"1994-09-29","due":"1995-09-29","principal":"1.2","interest":"0.1","fee":"0.0","penalty":"0.0","totalDue":"1.3","balanceAfter":"0.0","remainingDue":"0.0"}
+      ]}}
+  } ]
+}

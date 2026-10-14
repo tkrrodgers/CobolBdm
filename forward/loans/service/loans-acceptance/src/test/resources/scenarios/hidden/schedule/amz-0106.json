@@ -1,0 +1,19 @@
+{
+  "id": "amz-0106",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p06-ceiling, loan 0000000000000075: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","AMZ-13","PLAN-01","PLAN-02","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000075","scheduleStart":"1961-06-28","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"34030877.2000","disbursementDate":"1961-07-10","installments":3,"every":17,"frequency":"WEEKS","annualRatePercent":"52.130000000","downPaymentPercent":"12.120100000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000075","currencyCode":"JPY","decimalPlaces":0,"termDays":357,
+      "totals":{"disbursed":"34030878","principal":"34030878","interest":"10101400","fee":"0","penalty":"0","repayment":"44132278","outstanding":"0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1961-07-10","due":"1961-07-10","amount":"34030878","balanceAfter":"34030878"},
+        {"@type":"DownPaymentLine","number":1,"from":"1961-07-10","due":"1961-07-10","principal":"4124580","totalDue":"4124580","balanceAfter":"29906298","remainingDue":"40007698"},
+        {"@type":"InstallmentLine","number":2,"from":"1961-06-28","due":"1961-10-25","principal":"8764180","interest":"4570360","fee":"0","penalty":"0","totalDue":"13334540","balanceAfter":"21142118","remainingDue":"26673158"},
+        {"@type":"InstallmentLine","number":3,"from":"1961-10-25","due":"1962-02-21","principal":"9741210","interest":"3593330","fee":"0","penalty":"0","totalDue":"13334540","balanceAfter":"11400908","remainingDue":"13338618"},
+        {"@type":"InstallmentLine","number":4,"from":"1962-02-21","due":"1962-06-20","principal":"11400908","interest":"1937710","fee":"0","penalty":"0","totalDue":"13338618","balanceAfter":"0","remainingDue":"0"}
+      ]}}
+  } ]
+}

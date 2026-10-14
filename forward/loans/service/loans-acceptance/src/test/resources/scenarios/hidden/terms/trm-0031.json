@@ -1,0 +1,11 @@
+{
+  "id": "trm-0031",
+  "slice": "terms",
+  "origin": "corpus rejects-p12-half_even, loan 0000000000000030: the legacy envelope reject RJENV080 (oracle A, = the faithful job)",
+  "rules": ["TRM-09"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000030","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-01","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":"100.500000000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000030","reason":"OUT_OF_RANGE","field":"downPaymentPercent"}
+  } ]
+}

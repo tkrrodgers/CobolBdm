@@ -1,0 +1,101 @@
+{
+  "id": "srv-0033",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000296; expected values: the reference over the in-memory ports",
+  "rules": ["SRV-04","SRV-08"],
+  "given": {"today":"2189-08-23","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0656","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000296","scheduleStart":"2189-08-26","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"10322.7124","disbursementDate":"2189-08-26","installments":1,"every":5,"frequency":"YEARS","annualRatePercent":"34.310000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0656","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0656","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0656","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "today", "input": "2194-08-26",
+     "expected": "2194-08-26"},
+    {"call": "billDue", "input": {"asOf":"2194-08-26"},
+     "expected": {"asOf":"2194-08-26","billed":[{"loanId":"LN-E-0656","number":1,"invoiceId":"INV-0001","principal":"10322.8","interest":"17718.7"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0656","number":1,"accountTransactionId":"TRN-0002","paidOff":true}}
+  ],
+  "state": {
+    "today" : "2194-08-26",
+    "loans" : [ {
+      "loanId" : "LN-E-0656",
+      "externalId" : "E-0656",
+      "accountId" : "ACC-0001",
+      "status" : "PAID_OFF",
+      "bookedOn" : "2189-08-23",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "2194-08-26",
+        "principal" : "10322.8",
+        "interest" : "17718.7",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "2194-08-26",
+        "collectionTransactionId" : "TRN-0002"
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0656",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-1",
+        "currencyCode" : "ZAR",
+        "amount" : "10322.8",
+        "date" : "2189-08-26"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0656",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "ZAR",
+        "invoiceDate" : "2194-08-26",
+        "principal" : "10322.8",
+        "interest" : "17718.7"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0656",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "ZAR"
+      },
+      "balance" : "0.0"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "10322.8",
+        "date" : "2189-08-26",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0002",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "10322.8",
+        "date" : "2194-08-26",
+        "paymentId" : null,
+        "invoiceId" : "INV-0001"
+      },
+      "cancelled" : false
+    } ]
+  }
+}

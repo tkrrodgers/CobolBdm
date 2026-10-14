@@ -1,0 +1,20 @@
+{
+  "id": "dsc-0153",
+  "slice": "disclosure",
+  "origin": "corpus mini-p09-half_down, loan 0000000000001182: the faithful job's report (FNRP0100), = the pool's schedule",
+  "rules": ["RPT-01","RPT-02","RPT-04"],
+  "steps": [ {
+    "call": "document",
+    "input": {"loanId":"0000000000001182","scheduleStart":"2024-01-01","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"0.4999","disbursementDate":"2024-01-01","installments":6,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"HALF_DOWN"}},
+    "expected": {"@type":"Documented","document":{"loanId":"0000000000001182","currencyCode":"INR","decimalPlaces":2,"termDays":182,"periods":7,"totalPrincipal":"0.50","totalInterest":"0.01","totalRepayment":"0.51","totalDisbursed":"0.50",
+      "lines":[
+        {"type":"DISBURSEMENT","number":0,"from":"2024-01-01","due":"2024-01-01","principal":"0.50","interest":"0.00","totalDue":"0.00","outstanding":"0.50"},
+        {"type":"INSTALLMENT","number":1,"from":"2024-01-01","due":"2024-02-01","principal":"0.08","interest":"0.01","totalDue":"0.09","outstanding":"0.42"},
+        {"type":"INSTALLMENT","number":2,"from":"2024-02-01","due":"2024-03-01","principal":"0.09","interest":"0.00","totalDue":"0.09","outstanding":"0.33"},
+        {"type":"INSTALLMENT","number":3,"from":"2024-03-01","due":"2024-04-01","principal":"0.09","interest":"0.00","totalDue":"0.09","outstanding":"0.24"},
+        {"type":"INSTALLMENT","number":4,"from":"2024-04-01","due":"2024-05-01","principal":"0.09","interest":"0.00","totalDue":"0.09","outstanding":"0.15"},
+        {"type":"INSTALLMENT","number":5,"from":"2024-05-01","due":"2024-06-01","principal":"0.09","interest":"0.00","totalDue":"0.09","outstanding":"0.06"},
+        {"type":"INSTALLMENT","number":6,"from":"2024-06-01","due":"2024-07-01","principal":"0.06","interest":"0.00","totalDue":"0.06","outstanding":"0.00"}
+      ]}}
+  } ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "privileged-0075",
+  "slice": "schedule",
+  "origin": "privileged precision-p20-down, loan 1200000000000019: oracle A' D-2 without the legacy envelope (clean room, FnHarness --forward-limits): privileged, decision D-6",
+  "rules": ["AMZ-02","AMZ-05","AMZ-09"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"1200000000000019","scheduleStart":"2024-01-01","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"0.0001","disbursementDate":"2024-01-01","installments":6,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":20,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Rejected","loanId":"1200000000000019","reason":"DOWN_PAYMENT_COVERS_PRINCIPAL","field":null}
+  } ]
+}

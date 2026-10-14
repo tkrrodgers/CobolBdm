@@ -1,0 +1,289 @@
+{
+  "id": "srv-0001",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000057; expected values: the reference over the in-memory ports",
+  "rules": ["SRV-06","SRV-08"],
+  "given": {"today":"1972-02-28","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0477","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000057","scheduleStart":"1972-02-28","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"105836.4000","disbursementDate":"1972-02-28","installments":8,"every":87,"frequency":"DAYS","annualRatePercent":"1.459900000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0477","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "billDue", "input": {"asOf":"2072-02-28"},
+     "expected": {"asOf":"2072-02-28","billed":[]}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0477","paymentMethodId":"PM-7"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0477","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "today", "input": "1974-01-25",
+     "expected": "1974-01-25"},
+    {"call": "billDue", "input": {"asOf":"1974-01-25"},
+     "expected": {"asOf":"1974-01-25","billed":[{"loanId":"LN-E-0477","number":1,"invoiceId":"INV-0001","principal":"13067.01","interest":"373.50"},{"loanId":"LN-E-0477","number":2,"invoiceId":"INV-0002","principal":"13113.12","interest":"327.39"},{"loanId":"LN-E-0477","number":3,"invoiceId":"INV-0003","principal":"13159.40","interest":"281.11"},{"loanId":"LN-E-0477","number":4,"invoiceId":"INV-0004","principal":"13205.84","interest":"234.67"},{"loanId":"LN-E-0477","number":5,"invoiceId":"INV-0005","principal":"13252.44","interest":"188.07"},{"loanId":"LN-E-0477","number":6,"invoiceId":"INV-0006","principal":"13299.21","interest":"141.30"},{"loanId":"LN-E-0477","number":7,"invoiceId":"INV-0007","principal":"13346.14","interest":"94.37"},{"loanId":"LN-E-0477","number":8,"invoiceId":"INV-0008","principal":"13393.24","interest":"47.27"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0477","number":1,"accountTransactionId":"TRN-0002","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0003","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0477","number":3,"accountTransactionId":"TRN-0003","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0477","number":5,"accountTransactionId":"TRN-0004","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0007","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0477","number":7,"accountTransactionId":"TRN-0005","paidOff":false}}
+  ],
+  "state": {
+    "today" : "1974-01-25",
+    "loans" : [ {
+      "loanId" : "LN-E-0477",
+      "externalId" : "E-0477",
+      "accountId" : "ACC-0001",
+      "status" : "ACTIVE",
+      "bookedOn" : "1972-02-28",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "1972-05-25",
+        "principal" : "13067.01",
+        "interest" : "373.50",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "1974-01-25",
+        "collectionTransactionId" : "TRN-0002"
+      }, {
+        "number" : 2,
+        "due" : "1972-08-20",
+        "principal" : "13113.12",
+        "interest" : "327.39",
+        "invoiceId" : "INV-0002",
+        "billedOn" : "1974-01-25",
+        "collectionTransactionId" : null
+      }, {
+        "number" : 3,
+        "due" : "1972-11-15",
+        "principal" : "13159.40",
+        "interest" : "281.11",
+        "invoiceId" : "INV-0003",
+        "billedOn" : "1974-01-25",
+        "collectionTransactionId" : "TRN-0003"
+      }, {
+        "number" : 4,
+        "due" : "1973-02-10",
+        "principal" : "13205.84",
+        "interest" : "234.67",
+        "invoiceId" : "INV-0004",
+        "billedOn" : "1974-01-25",
+        "collectionTransactionId" : null
+      }, {
+        "number" : 5,
+        "due" : "1973-05-08",
+        "principal" : "13252.44",
+        "interest" : "188.07",
+        "invoiceId" : "INV-0005",
+        "billedOn" : "1974-01-25",
+        "collectionTransactionId" : "TRN-0004"
+      }, {
+        "number" : 6,
+        "due" : "1973-08-03",
+        "principal" : "13299.21",
+        "interest" : "141.30",
+        "invoiceId" : "INV-0006",
+        "billedOn" : "1974-01-25",
+        "collectionTransactionId" : null
+      }, {
+        "number" : 7,
+        "due" : "1973-10-29",
+        "principal" : "13346.14",
+        "interest" : "94.37",
+        "invoiceId" : "INV-0007",
+        "billedOn" : "1974-01-25",
+        "collectionTransactionId" : "TRN-0005"
+      }, {
+        "number" : 8,
+        "due" : "1974-01-24",
+        "principal" : "13393.24",
+        "interest" : "47.27",
+        "invoiceId" : "INV-0008",
+        "billedOn" : "1974-01-25",
+        "collectionTransactionId" : null
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-7",
+        "currencyCode" : "EUR",
+        "amount" : "105836.40",
+        "date" : "1972-02-28"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "1972-05-25",
+        "principal" : "13067.01",
+        "interest" : "373.50"
+      }
+    }, {
+      "invoiceId" : "INV-0002",
+      "invoice" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 2,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "1972-08-20",
+        "principal" : "13113.12",
+        "interest" : "327.39"
+      }
+    }, {
+      "invoiceId" : "INV-0003",
+      "invoice" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 3,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "1972-11-15",
+        "principal" : "13159.40",
+        "interest" : "281.11"
+      }
+    }, {
+      "invoiceId" : "INV-0004",
+      "invoice" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 4,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "1973-02-10",
+        "principal" : "13205.84",
+        "interest" : "234.67"
+      }
+    }, {
+      "invoiceId" : "INV-0005",
+      "invoice" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 5,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "1973-05-08",
+        "principal" : "13252.44",
+        "interest" : "188.07"
+      }
+    }, {
+      "invoiceId" : "INV-0006",
+      "invoice" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 6,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "1973-08-03",
+        "principal" : "13299.21",
+        "interest" : "141.30"
+      }
+    }, {
+      "invoiceId" : "INV-0007",
+      "invoice" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 7,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "1973-10-29",
+        "principal" : "13346.14",
+        "interest" : "94.37"
+      }
+    }, {
+      "invoiceId" : "INV-0008",
+      "invoice" : {
+        "loanId" : "LN-E-0477",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 8,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "1974-01-24",
+        "principal" : "13393.24",
+        "interest" : "47.27"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0477",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "EUR"
+      },
+      "balance" : "-53011.41"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "105836.40",
+        "date" : "1972-02-28",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0002",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "13067.01",
+        "date" : "1974-01-25",
+        "paymentId" : null,
+        "invoiceId" : "INV-0001"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0003",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "13159.40",
+        "date" : "1974-01-25",
+        "paymentId" : null,
+        "invoiceId" : "INV-0003"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0004",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "13252.44",
+        "date" : "1974-01-25",
+        "paymentId" : null,
+        "invoiceId" : "INV-0005"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0005",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "13346.14",
+        "date" : "1974-01-25",
+        "paymentId" : null,
+        "invoiceId" : "INV-0007"
+      },
+      "cancelled" : false
+    } ]
+  }
+}

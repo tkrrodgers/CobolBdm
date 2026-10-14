@@ -1,0 +1,60 @@
+{
+  "schema": "mlcpu.forward-package.v1",
+  "name": "cas",
+  "serviceName": "Customer Account Service",
+  "service": {
+    "dir": "service",
+    "apiModule": "cas-api",
+    "apiPackage": "com.mlcpu.cas.api",
+    "apiSourceRoot": "cas-api/src/main/java",
+    "architectureModule": "cas-architecture",
+    "acceptanceModule": "cas-acceptance",
+    "sliceProperty": "casSlices",
+    "inMemoryPorts": "cas-acceptance/src/test/java/com/mlcpu/cas/acceptance/InMemoryPorts.java",
+    "scenarioRoot": "cas-acceptance/src/test/resources/scenarios",
+    "smeDir": "cas-acceptance/src/test/java/com/mlcpu/cas/acceptance/sme"
+  },
+  "application": {
+    "module": "cas-application",
+    "package": "com.mlcpu.cas.application",
+    "entryClass": "CasApplication",
+    "entrySignature": "public static CustomerAccountService create(CasPorts ports)",
+    "serviceInterface": "CustomerAccountService"
+  },
+  "dependencies": {
+    "context": ["cas-api"],
+    "application": ["cas-api", "@contexts"]
+  },
+  "rulePatterns": [
+    "\\| ((?:POST|INT|RPT|CUST|UPD|AVG)-\\d\\d) \\|",
+    "\\*\\*((?:STMT|IDEM)-\\d\\d):\\*\\*"
+  ],
+  "modules": [
+    { "module": "cas-accounts", "package": "com.mlcpu.cas.accounts" },
+    { "module": "cas-customers", "package": "com.mlcpu.cas.customers" },
+    { "module": "cas-reporting", "package": "com.mlcpu.cas.reporting" },
+    { "module": "cas-statements", "package": "com.mlcpu.cas.statements" },
+    { "module": "cas-application", "package": "com.mlcpu.cas.application" }
+  ],
+  "slices": [
+    { "name": "accounts", "module": "cas-accounts", "package": "com.mlcpu.cas.accounts", "digests": ["CBTRN02C", "CBACT04C"],
+      "packets": ["CBTRN02C", "CBACT04C"], "rulePrefixes": ["POST-", "INT-", "IDEM-"], "methods": ["postTransaction", "postBatch", "accrueInterest"] },
+    { "name": "customers", "module": "cas-customers", "package": "com.mlcpu.cas.customers", "digests": ["SAM1", "SAM2"],
+      "packets": ["SAM1", "SAM2"], "rulePrefixes": ["CUST-", "UPD-", "AVG-"], "methods": ["applyCustomerChanges"] },
+    { "name": "reporting", "module": "cas-reporting", "package": "com.mlcpu.cas.reporting", "digests": ["CBTRN03C"],
+      "packets": ["CBTRN03C"], "rulePrefixes": ["RPT-"], "methods": ["transactionReport"] },
+    { "name": "statements", "module": "cas-statements", "package": "com.mlcpu.cas.statements", "digests": [],
+      "packets": [], "rulePrefixes": ["STMT-"], "methods": ["customerStatement"] }
+  ],
+  "useCaseMethods": ["postTransaction", "postBatch", "accrueInterest", "applyCustomerChanges", "transactionReport", "customerStatement"],
+  "testing": [
+    "# How the service is tested",
+    "Each acceptance scenario loads an initial state into in-memory adapters of the ports (below), builds the service with",
+    "CasApplication.create(ports), and runs its steps in order: before each step the clock is set to the step's time, then the",
+    "command or query is called and its result (or the ReferenceDataMissing it throws, with \"what\" and \"key\") is compared with",
+    "the expected one, field by field. At the end, the stores the scenario names (accounts, categoryBalances, ledger,",
+    "rejections, customers) are compared in the order the ports list them. Values compare exactly: BigDecimal by value and",
+    "scale (\"12.30\" is not \"12.3\"), timestamps to the microsecond. About 20% of the scenarios are public: you see their",
+    "failures in full. The others are hidden: you see how many pass."
+  ]
+}

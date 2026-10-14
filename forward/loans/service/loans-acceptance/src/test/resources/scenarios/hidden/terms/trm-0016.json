@@ -1,0 +1,11 @@
+{
+  "id": "trm-0016",
+  "slice": "terms",
+  "origin": "corpus envelope-2-p12-ceiling, loan 0000000000004118: the legacy envelope reject RJENV040 (oracle A, = the faithful job)",
+  "rules": ["TRM-05"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000004118","scheduleStart":"1935-07-15","currency":{"code":"XAU","decimalPlaces":5,"roundingMultiple":null},"principal":"41536.9200","disbursementDate":"1935-07-15","installments":12,"every":3,"frequency":"YEARS","annualRatePercent":"85.740000000","downPaymentPercent":"5.082100000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000004118","reason":"OUT_OF_RANGE","field":"currency.decimalPlaces"}
+  } ]
+}

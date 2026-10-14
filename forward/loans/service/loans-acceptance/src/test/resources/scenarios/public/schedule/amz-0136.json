@@ -1,0 +1,20 @@
+{
+  "id": "amz-0136",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p09-down, loan 0000000000000070: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000070","scheduleStart":"2099-04-25","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"6.0000","disbursementDate":"2099-05-17","installments":5,"every":11,"frequency":"MONTHS","annualRatePercent":"73.110000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000070","currencyCode":"ZAR","decimalPlaces":1,"termDays":1674,
+      "totals":{"disbursed":"6.0","principal":"6.0","interest":"13.7","fee":"0.0","penalty":"0.0","repayment":"19.7","outstanding":"0.0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2099-05-17","due":"2099-05-17","amount":"6.0","balanceAfter":"6.0"},
+        {"@type":"InstallmentLine","number":1,"from":"2099-04-25","due":"2100-03-25","principal":"0.6","interest":"3.7","fee":"0.0","penalty":"0.0","totalDue":"4.3","balanceAfter":"5.4","remainingDue":"15.4"},
+        {"@type":"InstallmentLine","number":2,"from":"2100-03-25","due":"2101-02-25","principal":"0.7","interest":"3.6","fee":"0.0","penalty":"0.0","totalDue":"4.3","balanceAfter":"4.7","remainingDue":"11.1"},
+        {"@type":"InstallmentLine","number":3,"from":"2101-02-25","due":"2102-01-25","principal":"1.2","interest":"3.1","fee":"0.0","penalty":"0.0","totalDue":"4.3","balanceAfter":"3.5","remainingDue":"6.8"},
+        {"@type":"InstallmentLine","number":4,"from":"2102-01-25","due":"2102-12-25","principal":"2.0","interest":"2.3","fee":"0.0","penalty":"0.0","totalDue":"4.3","balanceAfter":"1.5","remainingDue":"2.5"},
+        {"@type":"InstallmentLine","number":5,"from":"2102-12-25","due":"2103-11-25","principal":"1.5","interest":"1.0","fee":"0.0","penalty":"0.0","totalDue":"2.5","balanceAfter":"0.0","remainingDue":"0.0"}
+      ]}}
+  } ]
+}

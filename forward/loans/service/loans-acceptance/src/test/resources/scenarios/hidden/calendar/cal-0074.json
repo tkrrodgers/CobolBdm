@@ -1,0 +1,22 @@
+{
+  "id": "cal-0074",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000005048 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-04"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000005048","scheduleStart":"2118-09-08","currency":{"code":"CLF","decimalPlaces":4,"roundingMultiple":null},"principal":"16.0000","disbursementDate":"2118-09-12","installments":10,"every":2,"frequency":"WEEKS","annualRatePercent":"45.340000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2118-09-08","due":"2118-09-22"},
+      {"from":"2118-09-22","due":"2118-10-06"},
+      {"from":"2118-10-06","due":"2118-10-20"},
+      {"from":"2118-10-20","due":"2118-11-03"},
+      {"from":"2118-11-03","due":"2118-11-17"},
+      {"from":"2118-11-17","due":"2118-12-01"},
+      {"from":"2118-12-01","due":"2118-12-15"},
+      {"from":"2118-12-15","due":"2118-12-29"},
+      {"from":"2118-12-29","due":"2119-01-12"},
+      {"from":"2119-01-12","due":"2119-01-26"}
+    ]
+  } ]
+}

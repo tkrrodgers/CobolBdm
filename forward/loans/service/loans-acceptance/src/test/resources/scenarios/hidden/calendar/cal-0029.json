@@ -1,0 +1,38 @@
+{
+  "id": "cal-0029",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000003392 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-03"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000003392","scheduleStart":"2171-07-29","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"407122.5000","disbursementDate":"2171-11-21","installments":26,"every":30,"frequency":"DAYS","annualRatePercent":"18.940000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2171-07-29","due":"2171-08-28"},
+      {"from":"2171-08-28","due":"2171-09-27"},
+      {"from":"2171-09-27","due":"2171-10-27"},
+      {"from":"2171-10-27","due":"2171-11-26"},
+      {"from":"2171-11-26","due":"2171-12-26"},
+      {"from":"2171-12-26","due":"2172-01-25"},
+      {"from":"2172-01-25","due":"2172-02-24"},
+      {"from":"2172-02-24","due":"2172-03-25"},
+      {"from":"2172-03-25","due":"2172-04-24"},
+      {"from":"2172-04-24","due":"2172-05-24"},
+      {"from":"2172-05-24","due":"2172-06-23"},
+      {"from":"2172-06-23","due":"2172-07-23"},
+      {"from":"2172-07-23","due":"2172-08-22"},
+      {"from":"2172-08-22","due":"2172-09-21"},
+      {"from":"2172-09-21","due":"2172-10-21"},
+      {"from":"2172-10-21","due":"2172-11-20"},
+      {"from":"2172-11-20","due":"2172-12-20"},
+      {"from":"2172-12-20","due":"2173-01-19"},
+      {"from":"2173-01-19","due":"2173-02-18"},
+      {"from":"2173-02-18","due":"2173-03-20"},
+      {"from":"2173-03-20","due":"2173-04-19"},
+      {"from":"2173-04-19","due":"2173-05-19"},
+      {"from":"2173-05-19","due":"2173-06-18"},
+      {"from":"2173-06-18","due":"2173-07-18"},
+      {"from":"2173-07-18","due":"2173-08-17"},
+      {"from":"2173-08-17","due":"2173-09-16"}
+    ]
+  } ]
+}

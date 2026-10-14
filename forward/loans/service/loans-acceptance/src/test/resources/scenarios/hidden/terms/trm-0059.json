@@ -1,0 +1,11 @@
+{
+  "id": "trm-0059",
+  "slice": "terms",
+  "origin": "SME probe (decision D-6): rounding multiple and down payment without a percentage (multiple first)",
+  "rules": ["TRM-11"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000001","scheduleStart":"2023-01-28","currency":{"code":"XOF","decimalPlaces":0,"roundingMultiple":5},"principal":"1000","disbursementDate":"2023-01-28","installments":3,"every":1,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000001","reason":"ROUNDING_MULTIPLE_NOT_OFFERED","field":null}
+  } ]
+}

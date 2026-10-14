@@ -1,0 +1,11 @@
+{
+  "id": "rate-0171",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, scenario mini-p06-down, CALL 6 (function P)",
+  "rules": ["RATE-01","RATE-05","RATE-09"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"2024-01-15","period":{"from":"2024-01-15","due":"2024-02-15"},"from":"2024-01-28","to":"2024-02-15","annualRatePercent":"12.000000000","frequency":"MONTHS","every":1,"monthDays":"ACTUAL","yearDays":"DAYS_365"},"calculation":{"precision":6,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Factors","installment":"0.005917","interest":"0.005917"}
+  } ]
+}

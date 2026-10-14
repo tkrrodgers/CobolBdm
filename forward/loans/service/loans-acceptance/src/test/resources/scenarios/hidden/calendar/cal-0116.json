@@ -1,0 +1,15 @@
+{
+  "id": "cal-0116",
+  "slice": "calendar",
+  "origin": "FNDG0100 CALL trace, scenario base, CALL 30 (loan 0000000000000030); the same periods as oracle A's schedule of that loan",
+  "rules": ["CAL-01","CAL-05"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000030","scheduleStart":"2024-06-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-06-01","installments":3,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": [
+      {"from":"2024-06-01","due":"2024-07-01"},
+      {"from":"2024-07-01","due":"2024-08-01"},
+      {"from":"2024-08-01","due":"2024-09-01"}
+    ]
+  } ]
+}

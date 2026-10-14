@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0013",
+  "slice": "disclosure",
+  "origin": "corpus envelope-1-p06-ceiling, loan 0000000000000025: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-02","DISC-05"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000025","scheduleStart":"2052-05-02","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"20199.9010","disbursementDate":"2052-05-02","installments":35,"every":286,"frequency":"DAYS","annualRatePercent":"19.980000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Disclosed","disclosure":{"amountFinanced":"20199.901","financeCharge":"90999.035","totalOfPayments":"111198.936","annualPercentageRate":"19.96"}}
+  } ]
+}

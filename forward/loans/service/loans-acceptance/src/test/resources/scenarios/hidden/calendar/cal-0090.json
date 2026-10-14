@@ -1,0 +1,19 @@
+{
+  "id": "cal-0090",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000008331 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-04"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000008331","scheduleStart":"2010-01-21","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"93.1510","disbursementDate":"2010-01-31","installments":7,"every":8,"frequency":"WEEKS","annualRatePercent":"92.280000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2010-01-21","due":"2010-03-18"},
+      {"from":"2010-03-18","due":"2010-05-13"},
+      {"from":"2010-05-13","due":"2010-07-08"},
+      {"from":"2010-07-08","due":"2010-09-02"},
+      {"from":"2010-09-02","due":"2010-10-28"},
+      {"from":"2010-10-28","due":"2010-12-23"},
+      {"from":"2010-12-23","due":"2011-02-17"}
+    ]
+  } ]
+}

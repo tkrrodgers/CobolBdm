@@ -1,0 +1,21 @@
+{
+  "id": "cal-0238",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-1-p06-ceiling-0000000000000476 (= the faithful job)",
+  "rules": ["CAL-01","CAL-06"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000476","scheduleStart":"2151-02-04","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"77007609.8300","disbursementDate":"2151-02-04","installments":9,"every":1,"frequency":"YEARS","annualRatePercent":"38.950000000","downPaymentPercent":"55.632400000","downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2151-02-04","due":"2152-02-04"},
+      {"from":"2152-02-04","due":"2153-02-04"},
+      {"from":"2153-02-04","due":"2154-02-04"},
+      {"from":"2154-02-04","due":"2155-02-04"},
+      {"from":"2155-02-04","due":"2156-02-04"},
+      {"from":"2156-02-04","due":"2157-02-04"},
+      {"from":"2157-02-04","due":"2158-02-04"},
+      {"from":"2158-02-04","due":"2159-02-04"},
+      {"from":"2159-02-04","due":"2160-02-04"}
+    ]
+  } ]
+}

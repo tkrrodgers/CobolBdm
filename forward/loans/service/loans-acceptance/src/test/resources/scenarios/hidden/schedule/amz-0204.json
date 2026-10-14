@@ -1,0 +1,23 @@
+{
+  "id": "amz-0204",
+  "slice": "schedule",
+  "origin": "corpus envelope-2-p12-half_up, loan 0000000000000085: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","AMZ-13","PLAN-01","PLAN-02","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000085","scheduleStart":"1907-03-27","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"441.1000","disbursementDate":"1907-03-27","installments":7,"every":4,"frequency":"WEEKS","annualRatePercent":"96.210000000","downPaymentPercent":"62.677700000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_UP"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000085","currencyCode":"INR","decimalPlaces":2,"termDays":196,
+      "totals":{"disbursed":"441.10","principal":"441.10","interest":"52.82","fee":"0.00","penalty":"0.00","repayment":"493.92","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1907-03-27","due":"1907-03-27","amount":"441.10","balanceAfter":"441.10"},
+        {"@type":"DownPaymentLine","number":1,"from":"1907-03-27","due":"1907-03-27","principal":"276.47","totalDue":"276.47","balanceAfter":"164.63","remainingDue":"217.45"},
+        {"@type":"InstallmentLine","number":2,"from":"1907-03-27","due":"1907-04-24","principal":"18.75","interest":"12.32","fee":"0.00","penalty":"0.00","totalDue":"31.07","balanceAfter":"145.88","remainingDue":"186.38"},
+        {"@type":"InstallmentLine","number":3,"from":"1907-04-24","due":"1907-05-22","principal":"20.15","interest":"10.92","fee":"0.00","penalty":"0.00","totalDue":"31.07","balanceAfter":"125.73","remainingDue":"155.31"},
+        {"@type":"InstallmentLine","number":4,"from":"1907-05-22","due":"1907-06-19","principal":"21.66","interest":"9.41","fee":"0.00","penalty":"0.00","totalDue":"31.07","balanceAfter":"104.07","remainingDue":"124.24"},
+        {"@type":"InstallmentLine","number":5,"from":"1907-06-19","due":"1907-07-17","principal":"23.28","interest":"7.79","fee":"0.00","penalty":"0.00","totalDue":"31.07","balanceAfter":"80.79","remainingDue":"93.17"},
+        {"@type":"InstallmentLine","number":6,"from":"1907-07-17","due":"1907-08-14","principal":"25.02","interest":"6.05","fee":"0.00","penalty":"0.00","totalDue":"31.07","balanceAfter":"55.77","remainingDue":"62.10"},
+        {"@type":"InstallmentLine","number":7,"from":"1907-08-14","due":"1907-09-11","principal":"26.90","interest":"4.17","fee":"0.00","penalty":"0.00","totalDue":"31.07","balanceAfter":"28.87","remainingDue":"31.03"},
+        {"@type":"InstallmentLine","number":8,"from":"1907-09-11","due":"1907-10-09","principal":"28.87","interest":"2.16","fee":"0.00","penalty":"0.00","totalDue":"31.03","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

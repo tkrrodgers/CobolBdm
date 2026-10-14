@@ -1,0 +1,24 @@
+{
+  "id": "cal-0021",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan edge-p03-ceiling-0000000000001098 (= the faithful job)",
+  "rules": ["CAL-01","CAL-03","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000001098","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-01","installments":12,"every":30,"frequency":"DAYS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":390,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2024-01-01","due":"2024-01-31"},
+      {"from":"2024-01-31","due":"2024-03-01"},
+      {"from":"2024-03-01","due":"2024-03-31"},
+      {"from":"2024-03-31","due":"2024-04-30"},
+      {"from":"2024-04-30","due":"2024-05-30"},
+      {"from":"2024-05-30","due":"2024-06-29"},
+      {"from":"2024-06-29","due":"2024-07-29"},
+      {"from":"2024-07-29","due":"2024-08-28"},
+      {"from":"2024-08-28","due":"2024-09-27"},
+      {"from":"2024-09-27","due":"2024-10-27"},
+      {"from":"2024-10-27","due":"2024-11-26"},
+      {"from":"2024-11-26","due":"2025-01-25"}
+    ]
+  } ]
+}

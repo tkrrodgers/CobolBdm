@@ -1,0 +1,18 @@
+{
+  "id": "amz-0109",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p06-ceiling, loan 0000000000000084: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-11","PLAN-01","PLAN-02","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000084","scheduleStart":"2135-11-29","currency":{"code":"CLF","decimalPlaces":4,"roundingMultiple":null},"principal":"4.0100","disbursementDate":"2135-11-29","installments":2,"every":149,"frequency":"DAYS","annualRatePercent":"88.100000000","downPaymentPercent":"15.082100000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000084","currencyCode":"CLF","decimalPlaces":4,"termDays":298,
+      "totals":{"disbursed":"4.0100","principal":"4.0100","interest":"1.9258","fee":"0.0000","penalty":"0.0000","repayment":"5.9358","outstanding":"0.0000"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2135-11-29","due":"2135-11-29","amount":"4.0100","balanceAfter":"4.0100"},
+        {"@type":"DownPaymentLine","number":1,"from":"2135-11-29","due":"2135-11-29","principal":"0.6048","totalDue":"0.6048","balanceAfter":"3.4052","remainingDue":"5.3310"},
+        {"@type":"InstallmentLine","number":2,"from":"2135-11-29","due":"2136-04-26","principal":"1.4434","interest":"1.2221","fee":"0.0000","penalty":"0.0000","totalDue":"2.6655","balanceAfter":"1.9618","remainingDue":"2.6655"},
+        {"@type":"InstallmentLine","number":3,"from":"2136-04-26","due":"2136-09-22","principal":"1.9618","interest":"0.7037","fee":"0.0000","penalty":"0.0000","totalDue":"2.6655","balanceAfter":"0.0000","remainingDue":"0.0000"}
+      ]}}
+  } ]
+}

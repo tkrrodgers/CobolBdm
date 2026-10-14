@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0098",
+  "slice": "disclosure",
+  "origin": "SME probe (DISC-08, DISC-09): monthly from the 31st: months back from month-ends; the disclosure is the reference's, checked independently",
+  "rules": ["DISC-02","DISC-05"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"PROBE","scheduleStart":"2024-01-31","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-31","installments":4,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Disclosed","disclosure":{"amountFinanced":"1000.00","financeCharge":"24.72","totalOfPayments":"1024.72","annualPercentageRate":"11.81"}}
+  } ]
+}

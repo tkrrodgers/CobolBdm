@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mlcpu.design-review.v1",
+  "title": "A rubric review of one anonymized architecture design",
+  "type": "object",
+  "required": ["schema", "design", "scores", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "mlcpu.design-review.v1" },
+    "design": { "type": "string", "description": "The design's label, as given." },
+    "scores": {
+      "type": "object",
+      "required": ["C1", "C2", "C3", "C4", "C5", "C6"],
+      "additionalProperties": false,
+      "properties": {
+        "C1": { "$ref": "#/$defs/score" }, "C2": { "$ref": "#/$defs/score" }, "C3": { "$ref": "#/$defs/score" },
+        "C4": { "$ref": "#/$defs/score" }, "C5": { "$ref": "#/$defs/score" }, "C6": { "$ref": "#/$defs/score" }
+      }
+    },
+    "summary": { "type": "string" }
+  },
+  "$defs": {
+    "score": {
+      "type": "object",
+      "required": ["score", "justification"],
+      "additionalProperties": false,
+      "properties": { "score": { "type": "integer", "minimum": 1, "maximum": 5 }, "justification": { "type": "string" } }
+    }
+  }
+}

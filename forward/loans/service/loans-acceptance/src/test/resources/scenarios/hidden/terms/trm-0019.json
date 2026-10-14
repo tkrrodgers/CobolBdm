@@ -1,0 +1,11 @@
+{
+  "id": "trm-0019",
+  "slice": "terms",
+  "origin": "SME probe (decision D-6): 5 decimal places and rate -1% (decimal places first)",
+  "rules": ["TRM-05"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000001","scheduleStart":"2023-01-28","currency":{"code":"XAU","decimalPlaces":5,"roundingMultiple":null},"principal":"15000.0000","disbursementDate":"2023-01-28","installments":3,"every":1,"frequency":"MONTHS","annualRatePercent":"-1","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000001","reason":"OUT_OF_RANGE","field":"currency.decimalPlaces"}
+  } ]
+}

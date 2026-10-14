@@ -1,0 +1,21 @@
+{
+  "id": "cal-0292",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000009151 (= the faithful job)",
+  "rules": ["CAL-01","CAL-06"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000009151","scheduleStart":"1981-08-16","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"19762.7000","disbursementDate":"1981-08-16","installments":9,"every":4,"frequency":"YEARS","annualRatePercent":"73.640000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1981-08-16","due":"1985-08-16"},
+      {"from":"1985-08-16","due":"1989-08-16"},
+      {"from":"1989-08-16","due":"1993-08-16"},
+      {"from":"1993-08-16","due":"1997-08-16"},
+      {"from":"1997-08-16","due":"2001-08-16"},
+      {"from":"2001-08-16","due":"2005-08-16"},
+      {"from":"2005-08-16","due":"2009-08-16"},
+      {"from":"2009-08-16","due":"2013-08-16"},
+      {"from":"2013-08-16","due":"2017-08-16"}
+    ]
+  } ]
+}

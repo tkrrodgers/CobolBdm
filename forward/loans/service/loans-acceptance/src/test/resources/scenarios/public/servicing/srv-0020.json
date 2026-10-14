@@ -1,0 +1,443 @@
+{
+  "id": "srv-0020",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000600; expected values: the reference over the in-memory ports",
+  "rules": ["IDEM-03","SRV-04","SRV-08"],
+  "given": {"today":"2009-10-27","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0484","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000600","scheduleStart":"2009-10-30","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"1.6000","disbursementDate":"2009-10-30","installments":10,"every":1,"frequency":"MONTHS","annualRatePercent":"59.855600000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0484","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0484","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0484","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "today", "input": "2009-11-30",
+     "expected": "2009-11-30"},
+    {"call": "billDue", "input": {"asOf":"2009-11-30"},
+     "expected": {"asOf":"2009-11-30","billed":[{"loanId":"LN-E-0484","number":1,"invoiceId":"INV-0001","principal":"0.12","interest":"0.09"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":1,"accountTransactionId":"TRN-0002","paidOff":false}},
+    {"call": "today", "input": "2009-12-30",
+     "expected": "2009-12-30"},
+    {"call": "billDue", "input": {"asOf":"2009-12-30"},
+     "expected": {"asOf":"2009-12-30","billed":[{"loanId":"LN-E-0484","number":2,"invoiceId":"INV-0002","principal":"0.13","interest":"0.08"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0002","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":2,"accountTransactionId":"TRN-0003","paidOff":false}},
+    {"call": "today", "input": "2010-01-30",
+     "expected": "2010-01-30"},
+    {"call": "billDue", "input": {"asOf":"2010-01-30"},
+     "expected": {"asOf":"2010-01-30","billed":[{"loanId":"LN-E-0484","number":3,"invoiceId":"INV-0003","principal":"0.14","interest":"0.07"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0003","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":3,"accountTransactionId":"TRN-0004","paidOff":false}},
+    {"call": "today", "input": "2010-02-28",
+     "expected": "2010-02-28"},
+    {"call": "billDue", "input": {"asOf":"2010-02-28"},
+     "expected": {"asOf":"2010-02-28","billed":[{"loanId":"LN-E-0484","number":4,"invoiceId":"INV-0004","principal":"0.15","interest":"0.06"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0004","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":4,"accountTransactionId":"TRN-0005","paidOff":false}},
+    {"call": "today", "input": "2010-03-30",
+     "expected": "2010-03-30"},
+    {"call": "billDue", "input": {"asOf":"2010-03-30"},
+     "expected": {"asOf":"2010-03-30","billed":[{"loanId":"LN-E-0484","number":5,"invoiceId":"INV-0005","principal":"0.15","interest":"0.06"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":5,"accountTransactionId":"TRN-0006","paidOff":false}},
+    {"call": "today", "input": "2010-04-30",
+     "expected": "2010-04-30"},
+    {"call": "billDue", "input": {"asOf":"2010-04-30"},
+     "expected": {"asOf":"2010-04-30","billed":[{"loanId":"LN-E-0484","number":6,"invoiceId":"INV-0006","principal":"0.16","interest":"0.05"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0006","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":6,"accountTransactionId":"TRN-0007","paidOff":false}},
+    {"call": "today", "input": "2010-05-30",
+     "expected": "2010-05-30"},
+    {"call": "billDue", "input": {"asOf":"2010-05-30"},
+     "expected": {"asOf":"2010-05-30","billed":[{"loanId":"LN-E-0484","number":7,"invoiceId":"INV-0007","principal":"0.17","interest":"0.04"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0007","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":7,"accountTransactionId":"TRN-0008","paidOff":false}},
+    {"call": "today", "input": "2010-06-30",
+     "expected": "2010-06-30"},
+    {"call": "billDue", "input": {"asOf":"2010-06-30"},
+     "expected": {"asOf":"2010-06-30","billed":[{"loanId":"LN-E-0484","number":8,"invoiceId":"INV-0008","principal":"0.18","interest":"0.03"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0008","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":8,"accountTransactionId":"TRN-0009","paidOff":false}},
+    {"call": "today", "input": "2010-07-30",
+     "expected": "2010-07-30"},
+    {"call": "billDue", "input": {"asOf":"2010-07-30"},
+     "expected": {"asOf":"2010-07-30","billed":[{"loanId":"LN-E-0484","number":9,"invoiceId":"INV-0009","principal":"0.19","interest":"0.02"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0009","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":9,"accountTransactionId":"TRN-0010","paidOff":false}},
+    {"call": "today", "input": "2010-08-30",
+     "expected": "2010-08-30"},
+    {"call": "billDue", "input": {"asOf":"2010-08-30"},
+     "expected": {"asOf":"2010-08-30","billed":[{"loanId":"LN-E-0484","number":10,"invoiceId":"INV-0010","principal":"0.21","interest":"0.02"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0010","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0484","number":10,"accountTransactionId":"TRN-0011","paidOff":true}}
+  ],
+  "state": {
+    "today" : "2010-08-30",
+    "loans" : [ {
+      "loanId" : "LN-E-0484",
+      "externalId" : "E-0484",
+      "accountId" : "ACC-0001",
+      "status" : "PAID_OFF",
+      "bookedOn" : "2009-10-27",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "2009-11-30",
+        "principal" : "0.12",
+        "interest" : "0.09",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "2009-11-30",
+        "collectionTransactionId" : "TRN-0002"
+      }, {
+        "number" : 2,
+        "due" : "2009-12-30",
+        "principal" : "0.13",
+        "interest" : "0.08",
+        "invoiceId" : "INV-0002",
+        "billedOn" : "2009-12-30",
+        "collectionTransactionId" : "TRN-0003"
+      }, {
+        "number" : 3,
+        "due" : "2010-01-30",
+        "principal" : "0.14",
+        "interest" : "0.07",
+        "invoiceId" : "INV-0003",
+        "billedOn" : "2010-01-30",
+        "collectionTransactionId" : "TRN-0004"
+      }, {
+        "number" : 4,
+        "due" : "2010-02-28",
+        "principal" : "0.15",
+        "interest" : "0.06",
+        "invoiceId" : "INV-0004",
+        "billedOn" : "2010-02-28",
+        "collectionTransactionId" : "TRN-0005"
+      }, {
+        "number" : 5,
+        "due" : "2010-03-30",
+        "principal" : "0.15",
+        "interest" : "0.06",
+        "invoiceId" : "INV-0005",
+        "billedOn" : "2010-03-30",
+        "collectionTransactionId" : "TRN-0006"
+      }, {
+        "number" : 6,
+        "due" : "2010-04-30",
+        "principal" : "0.16",
+        "interest" : "0.05",
+        "invoiceId" : "INV-0006",
+        "billedOn" : "2010-04-30",
+        "collectionTransactionId" : "TRN-0007"
+      }, {
+        "number" : 7,
+        "due" : "2010-05-30",
+        "principal" : "0.17",
+        "interest" : "0.04",
+        "invoiceId" : "INV-0007",
+        "billedOn" : "2010-05-30",
+        "collectionTransactionId" : "TRN-0008"
+      }, {
+        "number" : 8,
+        "due" : "2010-06-30",
+        "principal" : "0.18",
+        "interest" : "0.03",
+        "invoiceId" : "INV-0008",
+        "billedOn" : "2010-06-30",
+        "collectionTransactionId" : "TRN-0009"
+      }, {
+        "number" : 9,
+        "due" : "2010-07-30",
+        "principal" : "0.19",
+        "interest" : "0.02",
+        "invoiceId" : "INV-0009",
+        "billedOn" : "2010-07-30",
+        "collectionTransactionId" : "TRN-0010"
+      }, {
+        "number" : 10,
+        "due" : "2010-08-30",
+        "principal" : "0.21",
+        "interest" : "0.02",
+        "invoiceId" : "INV-0010",
+        "billedOn" : "2010-08-30",
+        "collectionTransactionId" : "TRN-0011"
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-1",
+        "currencyCode" : "EUR",
+        "amount" : "1.60",
+        "date" : "2009-10-30"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2009-11-30",
+        "principal" : "0.12",
+        "interest" : "0.09"
+      }
+    }, {
+      "invoiceId" : "INV-0002",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 2,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2009-12-30",
+        "principal" : "0.13",
+        "interest" : "0.08"
+      }
+    }, {
+      "invoiceId" : "INV-0003",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 3,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2010-01-30",
+        "principal" : "0.14",
+        "interest" : "0.07"
+      }
+    }, {
+      "invoiceId" : "INV-0004",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 4,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2010-02-28",
+        "principal" : "0.15",
+        "interest" : "0.06"
+      }
+    }, {
+      "invoiceId" : "INV-0005",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 5,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2010-03-30",
+        "principal" : "0.15",
+        "interest" : "0.06"
+      }
+    }, {
+      "invoiceId" : "INV-0006",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 6,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2010-04-30",
+        "principal" : "0.16",
+        "interest" : "0.05"
+      }
+    }, {
+      "invoiceId" : "INV-0007",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 7,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2010-05-30",
+        "principal" : "0.17",
+        "interest" : "0.04"
+      }
+    }, {
+      "invoiceId" : "INV-0008",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 8,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2010-06-30",
+        "principal" : "0.18",
+        "interest" : "0.03"
+      }
+    }, {
+      "invoiceId" : "INV-0009",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 9,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2010-07-30",
+        "principal" : "0.19",
+        "interest" : "0.02"
+      }
+    }, {
+      "invoiceId" : "INV-0010",
+      "invoice" : {
+        "loanId" : "LN-E-0484",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 10,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2010-08-30",
+        "principal" : "0.21",
+        "interest" : "0.02"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0484",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "EUR"
+      },
+      "balance" : "0.00"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "1.60",
+        "date" : "2009-10-30",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0002",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.12",
+        "date" : "2009-11-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0001"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0003",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.13",
+        "date" : "2009-12-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0002"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0004",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.14",
+        "date" : "2010-01-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0003"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0005",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.15",
+        "date" : "2010-02-28",
+        "paymentId" : null,
+        "invoiceId" : "INV-0004"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0006",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.15",
+        "date" : "2010-03-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0005"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0007",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.16",
+        "date" : "2010-04-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0006"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0008",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.17",
+        "date" : "2010-05-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0007"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0009",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.18",
+        "date" : "2010-06-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0008"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0010",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.19",
+        "date" : "2010-07-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0009"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0011",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "0.21",
+        "date" : "2010-08-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0010"
+      },
+      "cancelled" : false
+    } ]
+  }
+}

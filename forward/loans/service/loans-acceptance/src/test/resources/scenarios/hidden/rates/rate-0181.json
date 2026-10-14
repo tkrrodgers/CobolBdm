@@ -1,0 +1,11 @@
+{
+  "id": "rate-0181",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, scenario base, CALL 77 (function P)",
+  "rules": ["RATE-01","RATE-02","RATE-03","RATE-05","RATE-09"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"2024-10-31","period":{"from":"2024-10-31","due":"2024-11-30"},"from":"2024-10-31","to":"2024-10-31","annualRatePercent":"9.990000000","frequency":"MONTHS","every":1,"monthDays":"ACTUAL","yearDays":"ACTUAL"},"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Factors","installment":"0.000000000000","interest":"0.008188524590"}
+  } ]
+}

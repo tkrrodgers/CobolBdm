@@ -1,0 +1,11 @@
+{
+  "id": "trm-0038",
+  "slice": "terms",
+  "origin": "SME probe (decision D-6): fixed length 0 and rounding multiple (fixed length first)",
+  "rules": [],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000001","scheduleStart":"2023-01-28","currency":{"code":"XOF","decimalPlaces":0,"roundingMultiple":5},"principal":"1000","disbursementDate":"2023-01-28","installments":3,"every":1,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":0,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000001","reason":"OUT_OF_RANGE","field":"fixedLength"}
+  } ]
+}

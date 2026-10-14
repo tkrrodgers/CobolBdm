@@ -1,0 +1,24 @@
+{
+  "id": "cal-0150",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000001225 (= the faithful job)",
+  "rules": ["CAL-01","CAL-05","CAL-07","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000001225","scheduleStart":"1979-11-30","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"1997474.4064","disbursementDate":"1979-11-30","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"65.870000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":13,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1979-11-30","due":"1979-12-30"},
+      {"from":"1979-12-30","due":"1980-01-30"},
+      {"from":"1980-01-30","due":"1980-02-29"},
+      {"from":"1980-02-29","due":"1980-03-30"},
+      {"from":"1980-03-30","due":"1980-04-30"},
+      {"from":"1980-04-30","due":"1980-05-30"},
+      {"from":"1980-05-30","due":"1980-06-30"},
+      {"from":"1980-06-30","due":"1980-07-30"},
+      {"from":"1980-07-30","due":"1980-08-30"},
+      {"from":"1980-08-30","due":"1980-09-30"},
+      {"from":"1980-09-30","due":"1980-10-30"},
+      {"from":"1980-10-30","due":"1980-12-30"}
+    ]
+  } ]
+}

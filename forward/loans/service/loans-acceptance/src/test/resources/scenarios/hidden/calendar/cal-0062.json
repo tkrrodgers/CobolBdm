@@ -1,0 +1,23 @@
+{
+  "id": "cal-0062",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-1-p06-ceiling-0000000000001859 (= the faithful job)",
+  "rules": ["CAL-01","CAL-04","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000001859","scheduleStart":"1919-05-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1681931.0000","disbursementDate":"1919-05-01","installments":11,"every":4,"frequency":"WEEKS","annualRatePercent":"23.730000000","downPaymentPercent":"4.163100000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":47,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1919-05-01","due":"1919-05-29"},
+      {"from":"1919-05-29","due":"1919-06-26"},
+      {"from":"1919-06-26","due":"1919-07-24"},
+      {"from":"1919-07-24","due":"1919-08-21"},
+      {"from":"1919-08-21","due":"1919-09-18"},
+      {"from":"1919-09-18","due":"1919-10-16"},
+      {"from":"1919-10-16","due":"1919-11-13"},
+      {"from":"1919-11-13","due":"1919-12-11"},
+      {"from":"1919-12-11","due":"1920-01-08"},
+      {"from":"1920-01-08","due":"1920-02-05"},
+      {"from":"1920-02-05","due":"1920-03-25"}
+    ]
+  } ]
+}

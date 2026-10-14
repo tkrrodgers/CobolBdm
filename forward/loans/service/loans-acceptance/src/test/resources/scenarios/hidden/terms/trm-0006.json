@@ -1,0 +1,11 @@
+{
+  "id": "trm-0006",
+  "slice": "terms",
+  "origin": "corpus envelope-1-p12-half_up, loan 0000000000001515: oracle A (clean room), = the faithful job",
+  "rules": ["TRM-12"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000001515","scheduleStart":"2189-08-04","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"46.0000","disbursementDate":"2189-08-21","installments":11,"every":5,"frequency":"YEARS","annualRatePercent":"33.774100000","downPaymentPercent":null,"downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_UP"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000001515","reason":"DOWN_PAYMENT_PERCENT_MISSING","field":null}
+  } ]
+}

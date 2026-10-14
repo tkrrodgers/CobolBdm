@@ -1,0 +1,22 @@
+{
+  "id": "cal-0171",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000003141 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-08"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000003141","scheduleStart":"2032-06-29","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"633.1000","disbursementDate":"2032-07-14","installments":10,"every":1,"frequency":"MONTHS","annualRatePercent":"59.970000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2032-06-29","due":"2032-07-29"},
+      {"from":"2032-07-29","due":"2032-08-29"},
+      {"from":"2032-08-29","due":"2032-09-29"},
+      {"from":"2032-09-29","due":"2032-10-29"},
+      {"from":"2032-10-29","due":"2032-11-29"},
+      {"from":"2032-11-29","due":"2032-12-29"},
+      {"from":"2032-12-29","due":"2033-01-29"},
+      {"from":"2033-01-29","due":"2033-02-28"},
+      {"from":"2033-02-28","due":"2033-03-28"},
+      {"from":"2033-03-28","due":"2033-04-28"}
+    ]
+  } ]
+}

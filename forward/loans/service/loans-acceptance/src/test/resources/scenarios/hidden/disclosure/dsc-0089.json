@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0089",
+  "slice": "disclosure",
+  "origin": "SME probe (DISC-08, DISC-09): every 365 days: 365 days, 1 a year; the disclosure is the reference's, checked independently",
+  "rules": ["DISC-02","DISC-04","DISC-05"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"PROBE","scheduleStart":"2024-01-15","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-15","installments":3,"every":365,"frequency":"DAYS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Disclosed","disclosure":{"amountFinanced":"1000.00","financeCharge":"248.69","totalOfPayments":"1248.69","annualPercentageRate":"11.98"}}
+  } ]
+}

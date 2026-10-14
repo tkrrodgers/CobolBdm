@@ -1,0 +1,24 @@
+{
+  "id": "cal-0146",
+  "slice": "calendar",
+  "origin": "FNDG0100 CALL trace, scenario mini-p03-down, CALL 6 (loan 0000000000001047); the same periods as oracle A's schedule of that loan",
+  "rules": ["CAL-01","CAL-02","CAL-05"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000001047","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"12345.6789","disbursementDate":"2024-01-11","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":"0.000000000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"DOWN"}},
+    "expected": [
+      {"from":"2024-01-01","due":"2024-02-01"},
+      {"from":"2024-02-01","due":"2024-03-01"},
+      {"from":"2024-03-01","due":"2024-04-01"},
+      {"from":"2024-04-01","due":"2024-05-01"},
+      {"from":"2024-05-01","due":"2024-06-01"},
+      {"from":"2024-06-01","due":"2024-07-01"},
+      {"from":"2024-07-01","due":"2024-08-01"},
+      {"from":"2024-08-01","due":"2024-09-01"},
+      {"from":"2024-09-01","due":"2024-10-01"},
+      {"from":"2024-10-01","due":"2024-11-01"},
+      {"from":"2024-11-01","due":"2024-12-01"},
+      {"from":"2024-12-01","due":"2025-01-01"}
+    ]
+  } ]
+}

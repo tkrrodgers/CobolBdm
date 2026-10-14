@@ -1,0 +1,14 @@
+{
+  "id": "cal-0251",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan edge-p03-ceiling-0000000000001159 (= the faithful job)",
+  "rules": ["CAL-01","CAL-06","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000001159","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-01","installments":2,"every":1,"frequency":"YEARS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":3,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2024-01-01","due":"2025-01-01"},
+      {"from":"2025-01-01","due":"2027-01-01"}
+    ]
+  } ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "cal-0226",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000009247 (= the faithful job)",
+  "rules": ["CAL-01"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000009247","scheduleStart":"1995-03-30","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"870190427.6100","disbursementDate":"1995-03-30","installments":7,"every":1,"frequency":"MONTHS","annualRatePercent":"77.730000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1995-03-30","due":"1995-04-30"},
+      {"from":"1995-04-30","due":"1995-05-30"},
+      {"from":"1995-05-30","due":"1995-06-30"},
+      {"from":"1995-06-30","due":"1995-07-30"},
+      {"from":"1995-07-30","due":"1995-08-30"},
+      {"from":"1995-08-30","due":"1995-09-30"},
+      {"from":"1995-09-30","due":"1995-10-30"}
+    ]
+  } ]
+}

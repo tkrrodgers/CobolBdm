@@ -1,0 +1,42 @@
+{
+  "id": "cal-0190",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000004963 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000004963","scheduleStart":"1906-09-28","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1990861.7000","disbursementDate":"1907-05-15","installments":30,"every":8,"frequency":"MONTHS","annualRatePercent":"43.038800000","downPaymentPercent":"35.945400000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":236,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1906-09-28","due":"1907-05-28"},
+      {"from":"1907-05-28","due":"1908-01-28"},
+      {"from":"1908-01-28","due":"1908-09-28"},
+      {"from":"1908-09-28","due":"1909-05-28"},
+      {"from":"1909-05-28","due":"1910-01-28"},
+      {"from":"1910-01-28","due":"1910-09-28"},
+      {"from":"1910-09-28","due":"1911-05-28"},
+      {"from":"1911-05-28","due":"1912-01-28"},
+      {"from":"1912-01-28","due":"1912-09-28"},
+      {"from":"1912-09-28","due":"1913-05-28"},
+      {"from":"1913-05-28","due":"1914-01-28"},
+      {"from":"1914-01-28","due":"1914-09-28"},
+      {"from":"1914-09-28","due":"1915-05-28"},
+      {"from":"1915-05-28","due":"1916-01-28"},
+      {"from":"1916-01-28","due":"1916-09-28"},
+      {"from":"1916-09-28","due":"1917-05-28"},
+      {"from":"1917-05-28","due":"1918-01-28"},
+      {"from":"1918-01-28","due":"1918-09-28"},
+      {"from":"1918-09-28","due":"1919-05-28"},
+      {"from":"1919-05-28","due":"1920-01-28"},
+      {"from":"1920-01-28","due":"1920-09-28"},
+      {"from":"1920-09-28","due":"1921-05-28"},
+      {"from":"1921-05-28","due":"1922-01-28"},
+      {"from":"1922-01-28","due":"1922-09-28"},
+      {"from":"1922-09-28","due":"1923-05-28"},
+      {"from":"1923-05-28","due":"1924-01-28"},
+      {"from":"1924-01-28","due":"1924-09-28"},
+      {"from":"1924-09-28","due":"1925-05-28"},
+      {"from":"1925-05-28","due":"1926-01-28"},
+      {"from":"1926-01-28","due":"1926-05-28"}
+    ]
+  } ]
+}

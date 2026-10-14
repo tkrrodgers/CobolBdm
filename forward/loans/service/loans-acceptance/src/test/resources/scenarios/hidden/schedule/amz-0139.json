@@ -1,0 +1,17 @@
+{
+  "id": "amz-0139",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p09-floor, loan 0000000000000165: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-02","AMZ-05","AMZ-06","PLAN-01","PLAN-02","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000165","scheduleStart":"1915-02-17","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"27569.5300","disbursementDate":"1915-02-17","installments":1,"every":1,"frequency":"YEARS","annualRatePercent":"51.850000000","downPaymentPercent":"92.545000000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"FLOOR"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000165","currencyCode":"JPY","decimalPlaces":0,"termDays":365,
+      "totals":{"disbursed":"27569","principal":"27569","interest":"1066","fee":"0","penalty":"0","repayment":"28635","outstanding":"0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1915-02-17","due":"1915-02-17","amount":"27569","balanceAfter":"27569"},
+        {"@type":"DownPaymentLine","number":1,"from":"1915-02-17","due":"1915-02-17","principal":"25513","totalDue":"25513","balanceAfter":"2056","remainingDue":"3122"},
+        {"@type":"InstallmentLine","number":2,"from":"1915-02-17","due":"1916-02-17","principal":"2056","interest":"1066","fee":"0","penalty":"0","totalDue":"3122","balanceAfter":"0","remainingDue":"0"}
+      ]}}
+  } ]
+}

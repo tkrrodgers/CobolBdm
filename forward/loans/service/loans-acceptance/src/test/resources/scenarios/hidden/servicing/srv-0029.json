@@ -1,0 +1,159 @@
+{
+  "id": "srv-0029",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-down-0000000000001501; expected values: the reference over the in-memory ports",
+  "rules": ["IDEM-03","SRV-03","SRV-04","SRV-07"],
+  "given": {"today":"1989-05-08","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0560","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001501","scheduleStart":"1989-05-11","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"3.5000","disbursementDate":"1989-05-11","installments":3,"every":2,"frequency":"WEEKS","annualRatePercent":"12.910000000","downPaymentPercent":"75.719500000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"DOWN"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0560","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0560","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0560","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":"INV-0001"}},
+    {"call": "today", "input": "1989-05-25",
+     "expected": "1989-05-25"},
+    {"call": "billDue", "input": {"asOf":"1989-05-25"},
+     "expected": {"asOf":"1989-05-25","billed":[]}},
+    {"call": "today", "input": "1989-06-08",
+     "expected": "1989-06-08"},
+    {"call": "billDue", "input": {"asOf":"1989-06-08"},
+     "expected": {"asOf":"1989-06-08","billed":[]}},
+    {"call": "today", "input": "1989-06-22",
+     "expected": "1989-06-22"},
+    {"call": "billDue", "input": {"asOf":"1989-06-22"},
+     "expected": {"asOf":"1989-06-22","billed":[{"loanId":"LN-E-0560","number":4,"invoiceId":"INV-0002","principal":"1","interest":"0"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0002","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0560","number":4,"accountTransactionId":"TRN-0002","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0560","number":1,"accountTransactionId":"TRN-0003","paidOff":true}}
+  ],
+  "state": {
+    "today" : "1989-06-22",
+    "loans" : [ {
+      "loanId" : "LN-E-0560",
+      "externalId" : "E-0560",
+      "accountId" : "ACC-0001",
+      "status" : "PAID_OFF",
+      "bookedOn" : "1989-05-08",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "1989-05-11",
+        "principal" : "2",
+        "interest" : "0",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "1989-05-11",
+        "collectionTransactionId" : "TRN-0003"
+      }, {
+        "number" : 2,
+        "due" : "1989-05-25",
+        "principal" : "0",
+        "interest" : "0",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 3,
+        "due" : "1989-06-08",
+        "principal" : "0",
+        "interest" : "0",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 4,
+        "due" : "1989-06-22",
+        "principal" : "1",
+        "interest" : "0",
+        "invoiceId" : "INV-0002",
+        "billedOn" : "1989-06-22",
+        "collectionTransactionId" : "TRN-0002"
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0560",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-1",
+        "currencyCode" : "JPY",
+        "amount" : "3",
+        "date" : "1989-05-11"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0560",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1989-05-11",
+        "principal" : "2",
+        "interest" : "0"
+      }
+    }, {
+      "invoiceId" : "INV-0002",
+      "invoice" : {
+        "loanId" : "LN-E-0560",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 4,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "1989-06-22",
+        "principal" : "1",
+        "interest" : "0"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0560",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "JPY"
+      },
+      "balance" : "0"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "3",
+        "date" : "1989-05-11",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0002",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "1",
+        "date" : "1989-06-22",
+        "paymentId" : null,
+        "invoiceId" : "INV-0002"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0003",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "2",
+        "date" : "1989-06-22",
+        "paymentId" : null,
+        "invoiceId" : "INV-0001"
+      },
+      "cancelled" : false
+    } ]
+  }
+}

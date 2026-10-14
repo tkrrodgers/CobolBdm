@@ -1,0 +1,11 @@
+{
+  "id": "rate-0138",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, scenario base, CALL 25 (function P)",
+  "rules": ["RATE-01","RATE-04","RATE-09"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"2023-12-12","period":{"from":"2023-12-12","due":"2024-01-12"},"from":"2023-12-12","to":"2024-01-12","annualRatePercent":"9.482200000","frequency":"MONTHS","every":1,"monthDays":"ACTUAL","yearDays":"ACTUAL"},"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Factors","installment":"0.008044857759","interest":"0.008044857759"}
+  } ]
+}

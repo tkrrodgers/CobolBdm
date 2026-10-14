@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0100",
+  "slice": "disclosure",
+  "origin": "SME probe (DISC-08, DISC-09): one payment 13 months out: a year, t = 1, f = 1/12; the disclosure is the reference's, checked independently",
+  "rules": ["DISC-02","DISC-04","DISC-05"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"PROBE","scheduleStart":"2024-01-15","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-15","installments":1,"every":13,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Disclosed","disclosure":{"amountFinanced":"1000.00","financeCharge":"130.21","totalOfPayments":"1130.21","annualPercentageRate":"11.91"}}
+  } ]
+}

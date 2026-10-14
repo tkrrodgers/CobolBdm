@@ -1,0 +1,17 @@
+{
+  "id": "amz-0097",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p06-ceiling, loan 0000000000000002: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","AMZ-13","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000002","scheduleStart":"2011-12-30","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"412812.4958","disbursementDate":"2012-01-12","installments":2,"every":19,"frequency":"WEEKS","annualRatePercent":"68.390000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000002","currencyCode":"ZAR","decimalPlaces":1,"termDays":266,
+      "totals":{"disbursed":"412812.5","principal":"412812.5","interest":"150968.8","fee":"0.0","penalty":"0.0","repayment":"563781.3","outstanding":"0.0"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2012-01-12","due":"2012-01-12","amount":"412812.5","balanceAfter":"412812.5"},
+        {"@type":"InstallmentLine","number":1,"from":"2011-12-30","due":"2012-05-11","principal":"187769.6","interest":"94108.2","fee":"0.0","penalty":"0.0","totalDue":"281877.8","balanceAfter":"225042.9","remainingDue":"281903.5"},
+        {"@type":"InstallmentLine","number":2,"from":"2012-05-11","due":"2012-09-21","principal":"225042.9","interest":"56860.6","fee":"0.0","penalty":"0.0","totalDue":"281903.5","balanceAfter":"0.0","remainingDue":"0.0"}
+      ]}}
+  } ]
+}

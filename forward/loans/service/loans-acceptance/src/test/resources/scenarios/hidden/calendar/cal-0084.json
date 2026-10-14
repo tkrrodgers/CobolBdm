@@ -1,0 +1,34 @@
+{
+  "id": "cal-0084",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000006725 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-04","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000006725","scheduleStart":"1977-01-14","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"19801967.4500","disbursementDate":"1977-01-24","installments":22,"every":2,"frequency":"WEEKS","annualRatePercent":"0.100000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":46,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1977-01-14","due":"1977-01-28"},
+      {"from":"1977-01-28","due":"1977-02-11"},
+      {"from":"1977-02-11","due":"1977-02-25"},
+      {"from":"1977-02-25","due":"1977-03-11"},
+      {"from":"1977-03-11","due":"1977-03-25"},
+      {"from":"1977-03-25","due":"1977-04-08"},
+      {"from":"1977-04-08","due":"1977-04-22"},
+      {"from":"1977-04-22","due":"1977-05-06"},
+      {"from":"1977-05-06","due":"1977-05-20"},
+      {"from":"1977-05-20","due":"1977-06-03"},
+      {"from":"1977-06-03","due":"1977-06-17"},
+      {"from":"1977-06-17","due":"1977-07-01"},
+      {"from":"1977-07-01","due":"1977-07-15"},
+      {"from":"1977-07-15","due":"1977-07-29"},
+      {"from":"1977-07-29","due":"1977-08-12"},
+      {"from":"1977-08-12","due":"1977-08-26"},
+      {"from":"1977-08-26","due":"1977-09-09"},
+      {"from":"1977-09-09","due":"1977-09-23"},
+      {"from":"1977-09-23","due":"1977-10-07"},
+      {"from":"1977-10-07","due":"1977-10-21"},
+      {"from":"1977-10-21","due":"1977-11-04"},
+      {"from":"1977-11-04","due":"1977-12-02"}
+    ]
+  } ]
+}

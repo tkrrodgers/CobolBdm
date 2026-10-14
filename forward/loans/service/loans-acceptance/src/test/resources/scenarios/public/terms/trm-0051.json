@@ -1,0 +1,11 @@
+{
+  "id": "trm-0051",
+  "slice": "terms",
+  "origin": "corpus rejects-p12-half_even, loan 0000000000000028: the legacy envelope reject RJENV070 (oracle A, = the faithful job)",
+  "rules": [],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000028","scheduleStart":"1899-12-31","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"1899-12-31","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000028","reason":"OUT_OF_RANGE","field":"scheduleStart"}
+  } ]
+}

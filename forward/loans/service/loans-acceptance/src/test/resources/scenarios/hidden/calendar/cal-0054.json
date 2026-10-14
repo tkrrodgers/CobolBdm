@@ -1,0 +1,24 @@
+{
+  "id": "cal-0054",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-1-p06-ceiling-0000000000000359 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-04"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000359","scheduleStart":"1989-02-06","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"72.8640","disbursementDate":"1989-04-07","installments":12,"every":19,"frequency":"WEEKS","annualRatePercent":"29.220000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1989-02-06","due":"1989-06-19"},
+      {"from":"1989-06-19","due":"1989-10-30"},
+      {"from":"1989-10-30","due":"1990-03-12"},
+      {"from":"1990-03-12","due":"1990-07-23"},
+      {"from":"1990-07-23","due":"1990-12-03"},
+      {"from":"1990-12-03","due":"1991-04-15"},
+      {"from":"1991-04-15","due":"1991-08-26"},
+      {"from":"1991-08-26","due":"1992-01-06"},
+      {"from":"1992-01-06","due":"1992-05-18"},
+      {"from":"1992-05-18","due":"1992-09-28"},
+      {"from":"1992-09-28","due":"1993-02-08"},
+      {"from":"1993-02-08","due":"1993-06-21"}
+    ]
+  } ]
+}

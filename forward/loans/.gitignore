@@ -1,0 +1,7 @@
+# Built by sme/tools/build_schedule_pool.py from the corpus and the clean-room oracles A and A' (1.3 GB); never committed.
+sme/pool/
+service/**/build/
+service/.gradle/
+sme/build/
+sme/.gradle/
+__pycache__/

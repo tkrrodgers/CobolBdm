@@ -1,0 +1,23 @@
+{
+  "id": "srv-0037",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000019; expected values: the reference over the in-memory ports (decimal places above the ledger's)",
+  "rules": ["SRV-05","SRV-10"],
+  "given": {"today":"1977-11-21","baseCurrency":"CLF","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0444","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000019","scheduleStart":"1977-11-01","currency":{"code":"CLF","decimalPlaces":4,"roundingMultiple":null},"principal":"1254159.4740","disbursementDate":"1977-11-21","installments":2,"every":204,"frequency":"DAYS","annualRatePercent":"33.630000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"BookingRejected","externalId":"E-0444","reason":"CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER","scheduleReason":null,"field":null}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0444","paymentMethodId":"PM-1"},
+     "expected": {"@type":"ServicingRejected","reference":"LN-E-0444","reason":"UNKNOWN_LOAN"}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-9999","paid":true},
+     "expected": {"@type":"ServicingRejected","reference":"INV-9999","reason":"UNKNOWN_INVOICE"}}
+  ],
+  "state": {
+    "today" : "1977-11-21",
+    "loans" : [ ],
+    "payments" : [ ],
+    "invoices" : [ ],
+    "accounts" : [ ],
+    "transactions" : [ ]
+  }
+}

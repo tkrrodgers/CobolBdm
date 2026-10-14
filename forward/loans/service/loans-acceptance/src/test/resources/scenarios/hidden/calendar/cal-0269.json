@@ -1,0 +1,39 @@
+{
+  "id": "cal-0269",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000003838 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-06"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000003838","scheduleStart":"2132-11-06","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"123295104.0000","disbursementDate":"2133-02-01","installments":27,"every":5,"frequency":"YEARS","annualRatePercent":"14.170000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2132-11-06","due":"2137-11-06"},
+      {"from":"2137-11-06","due":"2142-11-06"},
+      {"from":"2142-11-06","due":"2147-11-06"},
+      {"from":"2147-11-06","due":"2152-11-06"},
+      {"from":"2152-11-06","due":"2157-11-06"},
+      {"from":"2157-11-06","due":"2162-11-06"},
+      {"from":"2162-11-06","due":"2167-11-06"},
+      {"from":"2167-11-06","due":"2172-11-06"},
+      {"from":"2172-11-06","due":"2177-11-06"},
+      {"from":"2177-11-06","due":"2182-11-06"},
+      {"from":"2182-11-06","due":"2187-11-06"},
+      {"from":"2187-11-06","due":"2192-11-06"},
+      {"from":"2192-11-06","due":"2197-11-06"},
+      {"from":"2197-11-06","due":"2202-11-06"},
+      {"from":"2202-11-06","due":"2207-11-06"},
+      {"from":"2207-11-06","due":"2212-11-06"},
+      {"from":"2212-11-06","due":"2217-11-06"},
+      {"from":"2217-11-06","due":"2222-11-06"},
+      {"from":"2222-11-06","due":"2227-11-06"},
+      {"from":"2227-11-06","due":"2232-11-06"},
+      {"from":"2232-11-06","due":"2237-11-06"},
+      {"from":"2237-11-06","due":"2242-11-06"},
+      {"from":"2242-11-06","due":"2247-11-06"},
+      {"from":"2247-11-06","due":"2252-11-06"},
+      {"from":"2252-11-06","due":"2257-11-06"},
+      {"from":"2257-11-06","due":"2262-11-06"},
+      {"from":"2262-11-06","due":"2267-11-06"}
+    ]
+  } ]
+}

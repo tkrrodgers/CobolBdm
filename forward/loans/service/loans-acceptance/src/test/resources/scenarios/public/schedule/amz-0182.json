@@ -1,0 +1,43 @@
+{
+  "id": "amz-0182",
+  "slice": "schedule",
+  "origin": "corpus envelope-2-p12-floor, loan 0000000000000014: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-11","AMZ-12","AMZ-13","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000014","scheduleStart":"1946-04-22","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"10.4970","disbursementDate":"1946-04-22","installments":28,"every":215,"frequency":"DAYS","annualRatePercent":"96.550000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"FLOOR"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000014","currencyCode":"KWD","decimalPlaces":3,"termDays":6020,
+      "totals":{"disbursed":"10.497","principal":"10.497","interest":"36.516","fee":"0.000","penalty":"0.000","repayment":"47.013","outstanding":"0.000"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1946-04-22","due":"1946-04-22","amount":"10.497","balanceAfter":"10.497"},
+        {"@type":"InstallmentLine","number":1,"from":"1946-04-22","due":"1946-11-23","principal":"0.211","interest":"6.052","fee":"0.000","penalty":"0.000","totalDue":"6.263","balanceAfter":"10.286","remainingDue":"40.750"},
+        {"@type":"InstallmentLine","number":2,"from":"1946-11-23","due":"1947-06-26","principal":"0.332","interest":"5.931","fee":"0.000","penalty":"0.000","totalDue":"6.263","balanceAfter":"9.954","remainingDue":"34.487"},
+        {"@type":"InstallmentLine","number":3,"from":"1947-06-26","due":"1948-01-27","principal":"0.524","interest":"5.739","fee":"0.000","penalty":"0.000","totalDue":"6.263","balanceAfter":"9.430","remainingDue":"28.224"},
+        {"@type":"InstallmentLine","number":4,"from":"1948-01-27","due":"1948-08-29","principal":"0.826","interest":"5.437","fee":"0.000","penalty":"0.000","totalDue":"6.263","balanceAfter":"8.604","remainingDue":"21.961"},
+        {"@type":"InstallmentLine","number":5,"from":"1948-08-29","due":"1949-04-01","principal":"1.302","interest":"4.961","fee":"0.000","penalty":"0.000","totalDue":"6.263","balanceAfter":"7.302","remainingDue":"15.698"},
+        {"@type":"InstallmentLine","number":6,"from":"1949-04-01","due":"1949-11-02","principal":"2.053","interest":"4.210","fee":"0.000","penalty":"0.000","totalDue":"6.263","balanceAfter":"5.249","remainingDue":"9.435"},
+        {"@type":"InstallmentLine","number":7,"from":"1949-11-02","due":"1950-06-05","principal":"3.237","interest":"3.026","fee":"0.000","penalty":"0.000","totalDue":"6.263","balanceAfter":"2.012","remainingDue":"3.172"},
+        {"@type":"InstallmentLine","number":8,"from":"1950-06-05","due":"1951-01-06","principal":"2.012","interest":"1.160","fee":"0.000","penalty":"0.000","totalDue":"3.172","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":9,"from":"1951-01-06","due":"1951-08-09","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":10,"from":"1951-08-09","due":"1952-03-11","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":11,"from":"1952-03-11","due":"1952-10-12","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":12,"from":"1952-10-12","due":"1953-05-15","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":13,"from":"1953-05-15","due":"1953-12-16","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":14,"from":"1953-12-16","due":"1954-07-19","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":15,"from":"1954-07-19","due":"1955-02-19","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":16,"from":"1955-02-19","due":"1955-09-22","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":17,"from":"1955-09-22","due":"1956-04-24","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":18,"from":"1956-04-24","due":"1956-11-25","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":19,"from":"1956-11-25","due":"1957-06-28","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":20,"from":"1957-06-28","due":"1958-01-29","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":21,"from":"1958-01-29","due":"1958-09-01","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":22,"from":"1958-09-01","due":"1959-04-04","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":23,"from":"1959-04-04","due":"1959-11-05","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":24,"from":"1959-11-05","due":"1960-06-07","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":25,"from":"1960-06-07","due":"1961-01-08","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":26,"from":"1961-01-08","due":"1961-08-11","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":27,"from":"1961-08-11","due":"1962-03-14","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"},
+        {"@type":"InstallmentLine","number":28,"from":"1962-03-14","due":"1962-10-15","principal":"0.000","interest":"0.000","fee":"0.000","penalty":"0.000","totalDue":"0.000","balanceAfter":"0.000","remainingDue":"0.000"}
+      ]}}
+  } ]
+}

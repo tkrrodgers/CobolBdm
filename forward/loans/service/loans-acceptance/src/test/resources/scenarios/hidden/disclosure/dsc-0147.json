@@ -1,0 +1,26 @@
+{
+  "id": "dsc-0147",
+  "slice": "disclosure",
+  "origin": "corpus mini-p03-down, loan 0000000000000984: the faithful job's report (FNRP0100), = the pool's schedule",
+  "rules": ["RPT-01","RPT-02"],
+  "steps": [ {
+    "call": "document",
+    "input": {"loanId":"0000000000000984","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-01","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"0.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Documented","document":{"loanId":"0000000000000984","currencyCode":"USD","decimalPlaces":2,"termDays":366,"periods":13,"totalPrincipal":"1000.00","totalInterest":"0.00","totalRepayment":"1000.00","totalDisbursed":"1000.00",
+      "lines":[
+        {"type":"DISBURSEMENT","number":0,"from":"2024-01-01","due":"2024-01-01","principal":"1000.00","interest":"0.00","totalDue":"0.00","outstanding":"1000.00"},
+        {"type":"INSTALLMENT","number":1,"from":"2024-01-01","due":"2024-02-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"916.67"},
+        {"type":"INSTALLMENT","number":2,"from":"2024-02-01","due":"2024-03-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"833.34"},
+        {"type":"INSTALLMENT","number":3,"from":"2024-03-01","due":"2024-04-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"750.01"},
+        {"type":"INSTALLMENT","number":4,"from":"2024-04-01","due":"2024-05-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"666.68"},
+        {"type":"INSTALLMENT","number":5,"from":"2024-05-01","due":"2024-06-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"583.35"},
+        {"type":"INSTALLMENT","number":6,"from":"2024-06-01","due":"2024-07-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"500.02"},
+        {"type":"INSTALLMENT","number":7,"from":"2024-07-01","due":"2024-08-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"416.69"},
+        {"type":"INSTALLMENT","number":8,"from":"2024-08-01","due":"2024-09-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"333.36"},
+        {"type":"INSTALLMENT","number":9,"from":"2024-09-01","due":"2024-10-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"250.03"},
+        {"type":"INSTALLMENT","number":10,"from":"2024-10-01","due":"2024-11-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"166.70"},
+        {"type":"INSTALLMENT","number":11,"from":"2024-11-01","due":"2024-12-01","principal":"83.33","interest":"0.00","totalDue":"83.33","outstanding":"83.37"},
+        {"type":"INSTALLMENT","number":12,"from":"2024-12-01","due":"2025-01-01","principal":"83.37","interest":"0.00","totalDue":"83.37","outstanding":"0.00"}
+      ]}}
+  } ]
+}

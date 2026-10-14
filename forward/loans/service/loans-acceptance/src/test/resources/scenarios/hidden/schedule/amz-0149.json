@@ -1,0 +1,26 @@
+{
+  "id": "amz-0149",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p09-up, loan 0000000000000144: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-05","AMZ-06","AMZ-08","AMZ-12","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000144","scheduleStart":"2000-10-30","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"122.0000","disbursementDate":"2000-11-22","installments":11,"every":15,"frequency":"DAYS","annualRatePercent":"38.180000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"UP"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000144","currencyCode":"ZAR","decimalPlaces":1,"termDays":165,
+      "totals":{"disbursed":"122.0","principal":"122.0","interest":"9.9","fee":"0.0","penalty":"0.0","repayment":"131.9","outstanding":"0.0"},
+      "lines":[
+        {"@type":"InstallmentLine","number":1,"from":"2000-10-30","due":"2000-11-14","principal":"0.0","interest":"0.0","fee":"0.0","penalty":"0.0","totalDue":"0.0","balanceAfter":"0.0","remainingDue":"131.9"},
+        {"@type":"DisbursementLine","from":"2000-11-22","due":"2000-11-22","amount":"122.0","balanceAfter":"122.0"},
+        {"@type":"InstallmentLine","number":2,"from":"2000-11-14","due":"2000-11-29","principal":"12.4","interest":"0.9","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"109.6","remainingDue":"118.6"},
+        {"@type":"InstallmentLine","number":3,"from":"2000-11-29","due":"2000-12-14","principal":"11.5","interest":"1.8","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"98.1","remainingDue":"105.3"},
+        {"@type":"InstallmentLine","number":4,"from":"2000-12-14","due":"2000-12-29","principal":"11.7","interest":"1.6","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"86.4","remainingDue":"92.0"},
+        {"@type":"InstallmentLine","number":5,"from":"2000-12-29","due":"2001-01-13","principal":"11.9","interest":"1.4","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"74.5","remainingDue":"78.7"},
+        {"@type":"InstallmentLine","number":6,"from":"2001-01-13","due":"2001-01-28","principal":"12.1","interest":"1.2","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"62.4","remainingDue":"65.4"},
+        {"@type":"InstallmentLine","number":7,"from":"2001-01-28","due":"2001-02-12","principal":"12.3","interest":"1.0","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"50.1","remainingDue":"52.1"},
+        {"@type":"InstallmentLine","number":8,"from":"2001-02-12","due":"2001-02-27","principal":"12.5","interest":"0.8","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"37.6","remainingDue":"38.8"},
+        {"@type":"InstallmentLine","number":9,"from":"2001-02-27","due":"2001-03-14","principal":"12.7","interest":"0.6","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"24.9","remainingDue":"25.5"},
+        {"@type":"InstallmentLine","number":10,"from":"2001-03-14","due":"2001-03-29","principal":"12.9","interest":"0.4","fee":"0.0","penalty":"0.0","totalDue":"13.3","balanceAfter":"12.0","remainingDue":"12.2"},
+        {"@type":"InstallmentLine","number":11,"from":"2001-03-29","due":"2001-04-13","principal":"12.0","interest":"0.2","fee":"0.0","penalty":"0.0","totalDue":"12.2","balanceAfter":"0.0","remainingDue":"0.0"}
+      ]}}
+  } ]
+}

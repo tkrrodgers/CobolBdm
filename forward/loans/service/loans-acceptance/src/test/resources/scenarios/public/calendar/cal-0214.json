@@ -1,0 +1,24 @@
+{
+  "id": "cal-0214",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000008149 (= the faithful job)",
+  "rules": ["CAL-01","CAL-05","CAL-07"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000008149","scheduleStart":"1937-01-31","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"827994.5000","disbursementDate":"1937-01-31","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"43.200000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1937-01-31","due":"1937-02-28"},
+      {"from":"1937-02-28","due":"1937-03-31"},
+      {"from":"1937-03-31","due":"1937-04-30"},
+      {"from":"1937-04-30","due":"1937-05-31"},
+      {"from":"1937-05-31","due":"1937-06-30"},
+      {"from":"1937-06-30","due":"1937-07-31"},
+      {"from":"1937-07-31","due":"1937-08-31"},
+      {"from":"1937-08-31","due":"1937-09-30"},
+      {"from":"1937-09-30","due":"1937-10-31"},
+      {"from":"1937-10-31","due":"1937-11-30"},
+      {"from":"1937-11-30","due":"1937-12-31"},
+      {"from":"1937-12-31","due":"1938-01-31"}
+    ]
+  } ]
+}

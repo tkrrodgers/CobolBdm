@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0124",
+  "slice": "disclosure",
+  "origin": "corpus envelope-2-p12-half_even, loan 0000000000000058: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-07"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000058","scheduleStart":"2166-05-05","currency":{"code":"CLF","decimalPlaces":4,"roundingMultiple":null},"principal":"157.1100","disbursementDate":"2166-03-19","installments":7,"every":2,"frequency":"YEARS","annualRatePercent":"54.970000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000058","reason":"DISBURSEMENT_OUTSIDE_TERM","field":null}
+  } ]
+}

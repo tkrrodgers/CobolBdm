@@ -1,0 +1,18 @@
+{
+  "id": "amz-0164",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p12-up, loan 0000000000000100: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-05","AMZ-06","AMZ-08","AMZ-12","AMZ-13","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000100","scheduleStart":"1997-12-08","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"2381.6900","disbursementDate":"1997-12-12","installments":3,"every":1,"frequency":"WEEKS","annualRatePercent":"8.320000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"UP"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000100","currencyCode":"USD","decimalPlaces":2,"termDays":21,
+      "totals":{"disbursed":"2381.69","principal":"2381.69","interest":"5.52","fee":"0.00","penalty":"0.00","repayment":"2387.21","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1997-12-12","due":"1997-12-12","amount":"2381.69","balanceAfter":"2381.69"},
+        {"@type":"InstallmentLine","number":1,"from":"1997-12-08","due":"1997-12-15","principal":"794.08","interest":"1.66","fee":"0.00","penalty":"0.00","totalDue":"795.74","balanceAfter":"1587.61","remainingDue":"1591.47"},
+        {"@type":"InstallmentLine","number":2,"from":"1997-12-15","due":"1997-12-22","principal":"793.17","interest":"2.57","fee":"0.00","penalty":"0.00","totalDue":"795.74","balanceAfter":"794.44","remainingDue":"795.73"},
+        {"@type":"InstallmentLine","number":3,"from":"1997-12-22","due":"1997-12-29","principal":"794.44","interest":"1.29","fee":"0.00","penalty":"0.00","totalDue":"795.73","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "srv-0036",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-2-p12-ceiling-0000000000008507; expected values: the reference over the in-memory ports",
+  "rules": ["SRV-01","SRV-05","SRV-10"],
+  "given": {"today":"2144-03-05","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0297","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000008507","scheduleStart":"2144-03-05","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"4.0000","disbursementDate":"2144-03-05","installments":3,"every":3,"frequency":"YEARS","annualRatePercent":"19.930000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":true,"calculation":{"precision":12,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"BookingRejected","externalId":"E-0297","reason":"SCHEDULE_REJECTED","scheduleReason":"FULL_TERM_TRANCHE_NOT_OFFERED","field":null}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0297","paymentMethodId":"PM-1"},
+     "expected": {"@type":"ServicingRejected","reference":"LN-E-0297","reason":"UNKNOWN_LOAN"}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-9999","paid":true},
+     "expected": {"@type":"ServicingRejected","reference":"INV-9999","reason":"UNKNOWN_INVOICE"}}
+  ],
+  "state": {
+    "today" : "2144-03-05",
+    "loans" : [ ],
+    "payments" : [ ],
+    "invoices" : [ ],
+    "accounts" : [ ],
+    "transactions" : [ ]
+  }
+}

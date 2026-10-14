@@ -1,0 +1,20 @@
+{
+  "id": "privileged-0085",
+  "slice": "schedule",
+  "origin": "privileged precision-p25-ceiling, loan 1300000000000025: oracle A' D-2 without the legacy envelope (clean room, FnHarness --forward-limits): privileged, decision D-6",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-12","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"1300000000000025","scheduleStart":"2024-12-31","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-12-31","installments":5,"every":30,"frequency":"DAYS","annualRatePercent":"18.750000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":25,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"1300000000000025","currencyCode":"USD","decimalPlaces":2,"termDays":150,
+      "totals":{"disbursed":"1000.00","principal":"1000.00","interest":"46.73","fee":"0.00","penalty":"0.00","repayment":"1046.73","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2024-12-31","due":"2024-12-31","amount":"1000.00","balanceAfter":"1000.00"},
+        {"@type":"InstallmentLine","number":1,"from":"2024-12-31","due":"2025-01-30","principal":"193.93","interest":"15.42","fee":"0.00","penalty":"0.00","totalDue":"209.35","balanceAfter":"806.07","remainingDue":"837.38"},
+        {"@type":"InstallmentLine","number":2,"from":"2025-01-30","due":"2025-03-01","principal":"196.92","interest":"12.43","fee":"0.00","penalty":"0.00","totalDue":"209.35","balanceAfter":"609.15","remainingDue":"628.03"},
+        {"@type":"InstallmentLine","number":3,"from":"2025-03-01","due":"2025-03-31","principal":"199.96","interest":"9.39","fee":"0.00","penalty":"0.00","totalDue":"209.35","balanceAfter":"409.19","remainingDue":"418.68"},
+        {"@type":"InstallmentLine","number":4,"from":"2025-03-31","due":"2025-04-30","principal":"203.04","interest":"6.31","fee":"0.00","penalty":"0.00","totalDue":"209.35","balanceAfter":"206.15","remainingDue":"209.33"},
+        {"@type":"InstallmentLine","number":5,"from":"2025-04-30","due":"2025-05-30","principal":"206.15","interest":"3.18","fee":"0.00","penalty":"0.00","totalDue":"209.33","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

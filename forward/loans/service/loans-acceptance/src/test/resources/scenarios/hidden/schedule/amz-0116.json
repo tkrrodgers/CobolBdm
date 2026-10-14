@@ -1,0 +1,21 @@
+{
+  "id": "amz-0116",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p06-ceiling, loan 0000000000000190: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","PLAN-01","PLAN-02","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000190","scheduleStart":"1983-05-05","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"4.0000","disbursementDate":"1983-05-05","installments":5,"every":2,"frequency":"WEEKS","annualRatePercent":"39.280000000","downPaymentPercent":"75.387000000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000190","currencyCode":"INR","decimalPlaces":2,"termDays":70,
+      "totals":{"disbursed":"4.00","principal":"4.00","interest":"0.07","fee":"0.00","penalty":"0.00","repayment":"4.07","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1983-05-05","due":"1983-05-05","amount":"4.00","balanceAfter":"4.00"},
+        {"@type":"DownPaymentLine","number":1,"from":"1983-05-05","due":"1983-05-05","principal":"3.02","totalDue":"3.02","balanceAfter":"0.98","remainingDue":"1.05"},
+        {"@type":"InstallmentLine","number":2,"from":"1983-05-05","due":"1983-05-19","principal":"0.19","interest":"0.02","fee":"0.00","penalty":"0.00","totalDue":"0.21","balanceAfter":"0.79","remainingDue":"0.84"},
+        {"@type":"InstallmentLine","number":3,"from":"1983-05-19","due":"1983-06-02","principal":"0.19","interest":"0.02","fee":"0.00","penalty":"0.00","totalDue":"0.21","balanceAfter":"0.60","remainingDue":"0.63"},
+        {"@type":"InstallmentLine","number":4,"from":"1983-06-02","due":"1983-06-16","principal":"0.20","interest":"0.01","fee":"0.00","penalty":"0.00","totalDue":"0.21","balanceAfter":"0.40","remainingDue":"0.42"},
+        {"@type":"InstallmentLine","number":5,"from":"1983-06-16","due":"1983-06-30","principal":"0.20","interest":"0.01","fee":"0.00","penalty":"0.00","totalDue":"0.21","balanceAfter":"0.20","remainingDue":"0.21"},
+        {"@type":"InstallmentLine","number":6,"from":"1983-06-30","due":"1983-07-14","principal":"0.20","interest":"0.01","fee":"0.00","penalty":"0.00","totalDue":"0.21","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

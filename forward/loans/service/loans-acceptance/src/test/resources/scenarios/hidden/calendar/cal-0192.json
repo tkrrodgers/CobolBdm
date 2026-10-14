@@ -1,0 +1,29 @@
+{
+  "id": "cal-0192",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000005376 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-08"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000005376","scheduleStart":"1968-04-30","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"199.5850","disbursementDate":"1968-11-08","installments":17,"every":11,"frequency":"MONTHS","annualRatePercent":"20.330000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"1968-04-30","due":"1969-03-30"},
+      {"from":"1969-03-30","due":"1970-02-28"},
+      {"from":"1970-02-28","due":"1971-01-28"},
+      {"from":"1971-01-28","due":"1971-12-28"},
+      {"from":"1971-12-28","due":"1972-11-28"},
+      {"from":"1972-11-28","due":"1973-10-28"},
+      {"from":"1973-10-28","due":"1974-09-28"},
+      {"from":"1974-09-28","due":"1975-08-28"},
+      {"from":"1975-08-28","due":"1976-07-28"},
+      {"from":"1976-07-28","due":"1977-06-28"},
+      {"from":"1977-06-28","due":"1978-05-28"},
+      {"from":"1978-05-28","due":"1979-04-28"},
+      {"from":"1979-04-28","due":"1980-03-28"},
+      {"from":"1980-03-28","due":"1981-02-28"},
+      {"from":"1981-02-28","due":"1982-01-28"},
+      {"from":"1982-01-28","due":"1982-12-28"},
+      {"from":"1982-12-28","due":"1983-11-28"}
+    ]
+  } ]
+}

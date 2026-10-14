@@ -1,0 +1,11 @@
+{
+  "id": "rate-0433",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, edge-p12-half_even (loans 0000000000000976 to 0000000000001000), CALL 1 (function P), rejected",
+  "rules": ["RATE-10"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"2024-01-01","period":{"from":"2024-01-01","due":"2029-01-01"},"from":"2024-01-01","to":"2024-01-01","annualRatePercent":"12.000000000","frequency":"YEARS","every":5,"monthDays":"THIRTY","yearDays":"DAYS_360"},"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"RateRejected","reason":"PERIOD_NOT_SUPPORTED_WITH_THIRTY_DAY_MONTHS"}
+  } ]
+}

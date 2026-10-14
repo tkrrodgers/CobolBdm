@@ -1,0 +1,25 @@
+{
+  "id": "cal-0101",
+  "slice": "calendar",
+  "origin": "FNDG0100 CALL trace, scenario mini-p03-half_down, CALL 1 (loan 0000000000000006); the same periods as oracle A's schedule of that loan",
+  "rules": ["CAL-01","CAL-05"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000006","scheduleStart":"2023-01-28","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"15000.0000","disbursementDate":"2023-01-28","installments":13,"every":1,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"HALF_DOWN"}},
+    "expected": [
+      {"from":"2023-01-28","due":"2023-02-28"},
+      {"from":"2023-02-28","due":"2023-03-28"},
+      {"from":"2023-03-28","due":"2023-04-28"},
+      {"from":"2023-04-28","due":"2023-05-28"},
+      {"from":"2023-05-28","due":"2023-06-28"},
+      {"from":"2023-06-28","due":"2023-07-28"},
+      {"from":"2023-07-28","due":"2023-08-28"},
+      {"from":"2023-08-28","due":"2023-09-28"},
+      {"from":"2023-09-28","due":"2023-10-28"},
+      {"from":"2023-10-28","due":"2023-11-28"},
+      {"from":"2023-11-28","due":"2023-12-28"},
+      {"from":"2023-12-28","due":"2024-01-28"},
+      {"from":"2024-01-28","due":"2024-02-28"}
+    ]
+  } ]
+}

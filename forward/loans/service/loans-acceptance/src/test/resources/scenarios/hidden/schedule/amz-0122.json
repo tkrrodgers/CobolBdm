@@ -1,0 +1,24 @@
+{
+  "id": "amz-0122",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p06-down, loan 0000000000000078: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-06","AMZ-08","AMZ-12","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000078","scheduleStart":"2157-09-18","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"18.3550","disbursementDate":"2157-09-18","installments":9,"every":1,"frequency":"MONTHS","annualRatePercent":"0.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000078","currencyCode":"USD","decimalPlaces":2,"termDays":273,
+      "totals":{"disbursed":"18.35","principal":"18.35","interest":"0.00","fee":"0.00","penalty":"0.00","repayment":"18.35","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2157-09-18","due":"2157-09-18","amount":"18.35","balanceAfter":"18.35"},
+        {"@type":"InstallmentLine","number":1,"from":"2157-09-18","due":"2157-10-18","principal":"2.03","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.03","balanceAfter":"16.32","remainingDue":"16.32"},
+        {"@type":"InstallmentLine","number":2,"from":"2157-10-18","due":"2157-11-18","principal":"2.03","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.03","balanceAfter":"14.29","remainingDue":"14.29"},
+        {"@type":"InstallmentLine","number":3,"from":"2157-11-18","due":"2157-12-18","principal":"2.03","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.03","balanceAfter":"12.26","remainingDue":"12.26"},
+        {"@type":"InstallmentLine","number":4,"from":"2157-12-18","due":"2158-01-18","principal":"2.03","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.03","balanceAfter":"10.23","remainingDue":"10.23"},
+        {"@type":"InstallmentLine","number":5,"from":"2158-01-18","due":"2158-02-18","principal":"2.03","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.03","balanceAfter":"8.20","remainingDue":"8.20"},
+        {"@type":"InstallmentLine","number":6,"from":"2158-02-18","due":"2158-03-18","principal":"2.03","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.03","balanceAfter":"6.17","remainingDue":"6.17"},
+        {"@type":"InstallmentLine","number":7,"from":"2158-03-18","due":"2158-04-18","principal":"2.03","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.03","balanceAfter":"4.14","remainingDue":"4.14"},
+        {"@type":"InstallmentLine","number":8,"from":"2158-04-18","due":"2158-05-18","principal":"2.03","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.03","balanceAfter":"2.11","remainingDue":"2.11"},
+        {"@type":"InstallmentLine","number":9,"from":"2158-05-18","due":"2158-06-18","principal":"2.11","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"2.11","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "amz-0256",
+  "slice": "schedule",
+  "origin": "corpus sample-p06-up, loan 0000000000000698: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-08","AMZ-11","AMZ-12","AMZ-13","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000698","scheduleStart":"2024-01-15","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-02-14","installments":6,"every":30,"frequency":"DAYS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"UP"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000698","currencyCode":"USD","decimalPlaces":2,"termDays":180,
+      "totals":{"disbursed":"1000.00","principal":"1000.00","interest":"29.72","fee":"0.00","penalty":"0.00","repayment":"1029.72","outstanding":"0.00"},
+      "lines":[
+        {"@type":"InstallmentLine","number":1,"from":"2024-01-15","due":"2024-02-14","principal":"0.00","interest":"0.00","fee":"0.00","penalty":"0.00","totalDue":"0.00","balanceAfter":"0.00","remainingDue":"1029.72"},
+        {"@type":"DisbursementLine","from":"2024-02-14","due":"2024-02-14","amount":"1000.00","balanceAfter":"1000.00"},
+        {"@type":"InstallmentLine","number":2,"from":"2024-02-14","due":"2024-03-15","principal":"196.10","interest":"9.84","fee":"0.00","penalty":"0.00","totalDue":"205.94","balanceAfter":"803.90","remainingDue":"823.78"},
+        {"@type":"InstallmentLine","number":3,"from":"2024-03-15","due":"2024-04-14","principal":"198.03","interest":"7.91","fee":"0.00","penalty":"0.00","totalDue":"205.94","balanceAfter":"605.87","remainingDue":"617.84"},
+        {"@type":"InstallmentLine","number":4,"from":"2024-04-14","due":"2024-05-14","principal":"199.98","interest":"5.96","fee":"0.00","penalty":"0.00","totalDue":"205.94","balanceAfter":"405.89","remainingDue":"411.90"},
+        {"@type":"InstallmentLine","number":5,"from":"2024-05-14","due":"2024-06-13","principal":"201.94","interest":"4.00","fee":"0.00","penalty":"0.00","totalDue":"205.94","balanceAfter":"203.95","remainingDue":"205.96"},
+        {"@type":"InstallmentLine","number":6,"from":"2024-06-13","due":"2024-07-13","principal":"203.95","interest":"2.01","fee":"0.00","penalty":"0.00","totalDue":"205.96","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

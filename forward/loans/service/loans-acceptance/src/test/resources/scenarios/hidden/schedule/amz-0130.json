@@ -1,0 +1,18 @@
+{
+  "id": "amz-0130",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p06-half_even, loan 0000000000000039: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","AMZ-13","PLAN-01","PLAN-02","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000039","scheduleStart":"2120-11-21","currency":{"code":"CLF","decimalPlaces":4,"roundingMultiple":null},"principal":"3048819.2786","disbursementDate":"2120-11-21","installments":2,"every":1,"frequency":"MONTHS","annualRatePercent":"73.950000000","downPaymentPercent":"51.378700000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000039","currencyCode":"CLF","decimalPlaces":4,"termDays":61,
+      "totals":{"disbursed":"3048819.2786","principal":"3048819.2786","interest":"138392.5000","fee":"0.0000","penalty":"0.0000","repayment":"3187211.7786","outstanding":"0.0000"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2120-11-21","due":"2120-11-21","amount":"3048819.2786","balanceAfter":"3048819.2786"},
+        {"@type":"DownPaymentLine","number":1,"from":"2120-11-21","due":"2120-11-21","principal":"1566440.0000","totalDue":"1566440.0000","balanceAfter":"1482379.2786","remainingDue":"1620771.7786"},
+        {"@type":"InstallmentLine","number":2,"from":"2120-11-21","due":"2120-12-21","principal":"719034.3893","interest":"91351.5000","fee":"0.0000","penalty":"0.0000","totalDue":"810385.8893","balanceAfter":"763344.8893","remainingDue":"810385.8893"},
+        {"@type":"InstallmentLine","number":3,"from":"2120-12-21","due":"2121-01-21","principal":"763344.8893","interest":"47041.0000","fee":"0.0000","penalty":"0.0000","totalDue":"810385.8893","balanceAfter":"0.0000","remainingDue":"0.0000"}
+      ]}}
+  } ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "amz-0153",
+  "slice": "schedule",
+  "origin": "corpus envelope-1-p12-ceiling, loan 0000000000000080: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000080","scheduleStart":"1988-04-26","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"3043.4470","disbursementDate":"1988-04-26","installments":5,"every":50,"frequency":"WEEKS","annualRatePercent":"36.030000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000080","currencyCode":"USD","decimalPlaces":2,"termDays":1750,
+      "totals":{"disbursed":"3043.45","principal":"3043.45","interest":"3767.58","fee":"0.00","penalty":"0.00","repayment":"6811.03","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1988-04-26","due":"1988-04-26","amount":"3043.45","balanceAfter":"3043.45"},
+        {"@type":"InstallmentLine","number":1,"from":"1988-04-26","due":"1989-04-11","principal":"307.83","interest":"1054.38","fee":"0.00","penalty":"0.00","totalDue":"1362.21","balanceAfter":"2735.62","remainingDue":"5448.82"},
+        {"@type":"InstallmentLine","number":2,"from":"1989-04-11","due":"1990-03-27","principal":"414.47","interest":"947.74","fee":"0.00","penalty":"0.00","totalDue":"1362.21","balanceAfter":"2321.15","remainingDue":"4086.61"},
+        {"@type":"InstallmentLine","number":3,"from":"1990-03-27","due":"1991-03-12","principal":"558.06","interest":"804.15","fee":"0.00","penalty":"0.00","totalDue":"1362.21","balanceAfter":"1763.09","remainingDue":"2724.40"},
+        {"@type":"InstallmentLine","number":4,"from":"1991-03-12","due":"1992-02-25","principal":"751.40","interest":"610.81","fee":"0.00","penalty":"0.00","totalDue":"1362.21","balanceAfter":"1011.69","remainingDue":"1362.19"},
+        {"@type":"InstallmentLine","number":5,"from":"1992-02-25","due":"1993-02-09","principal":"1011.69","interest":"350.50","fee":"0.00","penalty":"0.00","totalDue":"1362.19","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

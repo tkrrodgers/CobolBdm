@@ -1,0 +1,21 @@
+{
+  "id": "amz-0193",
+  "slice": "schedule",
+  "origin": "corpus envelope-2-p12-half_down, loan 0000000000000144: oracle A (clean room), = the faithful job",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-12","PLAN-01","PLAN-02","PLAN-03","PLAN-04"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0000000000000144","scheduleStart":"1901-04-07","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"69.4800","disbursementDate":"1901-04-07","installments":5,"every":1,"frequency":"MONTHS","annualRatePercent":"4.590000000","downPaymentPercent":"45.775800000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_DOWN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0000000000000144","currencyCode":"USD","decimalPlaces":2,"termDays":153,
+      "totals":{"disbursed":"69.48","principal":"69.48","interest":"0.44","fee":"0.00","penalty":"0.00","repayment":"69.92","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"1901-04-07","due":"1901-04-07","amount":"69.48","balanceAfter":"69.48"},
+        {"@type":"DownPaymentLine","number":1,"from":"1901-04-07","due":"1901-04-07","principal":"31.81","totalDue":"31.81","balanceAfter":"37.67","remainingDue":"38.11"},
+        {"@type":"InstallmentLine","number":2,"from":"1901-04-07","due":"1901-05-07","principal":"7.48","interest":"0.14","fee":"0.00","penalty":"0.00","totalDue":"7.62","balanceAfter":"30.19","remainingDue":"30.49"},
+        {"@type":"InstallmentLine","number":3,"from":"1901-05-07","due":"1901-06-07","principal":"7.50","interest":"0.12","fee":"0.00","penalty":"0.00","totalDue":"7.62","balanceAfter":"22.69","remainingDue":"22.87"},
+        {"@type":"InstallmentLine","number":4,"from":"1901-06-07","due":"1901-07-07","principal":"7.53","interest":"0.09","fee":"0.00","penalty":"0.00","totalDue":"7.62","balanceAfter":"15.16","remainingDue":"15.25"},
+        {"@type":"InstallmentLine","number":5,"from":"1901-07-07","due":"1901-08-07","principal":"7.56","interest":"0.06","fee":"0.00","penalty":"0.00","totalDue":"7.62","balanceAfter":"7.60","remainingDue":"7.63"},
+        {"@type":"InstallmentLine","number":6,"from":"1901-08-07","due":"1901-09-07","principal":"7.60","interest":"0.03","fee":"0.00","penalty":"0.00","totalDue":"7.63","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

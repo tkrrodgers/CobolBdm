@@ -1,0 +1,262 @@
+{
+  "id": "srv-0077",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000030; expected values: the reference over the in-memory ports",
+  "rules": ["IDEM-04","SRV-06","SRV-08","SRV-09"],
+  "given": {"today":"2159-12-18","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0483","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000030","scheduleStart":"2159-12-18","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"81665.4064","disbursementDate":"2159-12-18","installments":5,"every":1,"frequency":"MONTHS","annualRatePercent":"3.880000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":6,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0483","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0483","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0483","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "today", "input": "2160-06-18",
+     "expected": "2160-06-18"},
+    {"call": "billDue", "input": {"asOf":"2160-06-18"},
+     "expected": {"asOf":"2160-06-18","billed":[{"loanId":"LN-E-0483","number":1,"invoiceId":"INV-0001","principal":"16232.69","interest":"272.93"},{"loanId":"LN-E-0483","number":2,"invoiceId":"INV-0002","principal":"16286.94","interest":"218.68"},{"loanId":"LN-E-0483","number":3,"invoiceId":"INV-0003","principal":"16351.98","interest":"153.64"},{"loanId":"LN-E-0483","number":4,"invoiceId":"INV-0004","principal":"16396.02","interest":"109.60"},{"loanId":"LN-E-0483","number":5,"invoiceId":"INV-0005","principal":"16397.78","interest":"107.82"}]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0483","number":1,"accountTransactionId":"TRN-0002","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0002","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0483","number":2,"accountTransactionId":"TRN-0003","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0003","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0483","number":3,"accountTransactionId":"TRN-0004","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0004","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0483","number":4,"accountTransactionId":"TRN-0005","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0483","number":5,"accountTransactionId":"TRN-0006","paidOff":true}},
+    {"call": "today", "input": "2160-06-23",
+     "expected": "2160-06-23"},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":false},
+     "expected": {"@type":"CollectionCancelled","loanId":"LN-E-0483","number":5,"accountTransactionId":"TRN-0006"}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":false},
+     "expected": {"@type":"CollectionUnchanged","loanId":"LN-E-0483","number":5}},
+    {"call": "today", "input": "2160-06-27",
+     "expected": "2160-06-27"},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0483","number":5,"accountTransactionId":"TRN-0007","paidOff":true}},
+    {"call": "today", "input": "2160-06-30",
+     "expected": "2160-06-30"},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0005","paid":false},
+     "expected": {"@type":"CollectionCancelled","loanId":"LN-E-0483","number":5,"accountTransactionId":"TRN-0007"}}
+  ],
+  "state": {
+    "today" : "2160-06-30",
+    "loans" : [ {
+      "loanId" : "LN-E-0483",
+      "externalId" : "E-0483",
+      "accountId" : "ACC-0001",
+      "status" : "ACTIVE",
+      "bookedOn" : "2159-12-18",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "2160-01-18",
+        "principal" : "16232.69",
+        "interest" : "272.93",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "2160-06-18",
+        "collectionTransactionId" : "TRN-0002"
+      }, {
+        "number" : 2,
+        "due" : "2160-02-18",
+        "principal" : "16286.94",
+        "interest" : "218.68",
+        "invoiceId" : "INV-0002",
+        "billedOn" : "2160-06-18",
+        "collectionTransactionId" : "TRN-0003"
+      }, {
+        "number" : 3,
+        "due" : "2160-03-18",
+        "principal" : "16351.98",
+        "interest" : "153.64",
+        "invoiceId" : "INV-0003",
+        "billedOn" : "2160-06-18",
+        "collectionTransactionId" : "TRN-0004"
+      }, {
+        "number" : 4,
+        "due" : "2160-04-18",
+        "principal" : "16396.02",
+        "interest" : "109.60",
+        "invoiceId" : "INV-0004",
+        "billedOn" : "2160-06-18",
+        "collectionTransactionId" : "TRN-0005"
+      }, {
+        "number" : 5,
+        "due" : "2160-06-18",
+        "principal" : "16397.78",
+        "interest" : "107.82",
+        "invoiceId" : "INV-0005",
+        "billedOn" : "2160-06-18",
+        "collectionTransactionId" : null
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0483",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-1",
+        "currencyCode" : "EUR",
+        "amount" : "81665.41",
+        "date" : "2159-12-18"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0483",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2160-01-18",
+        "principal" : "16232.69",
+        "interest" : "272.93"
+      }
+    }, {
+      "invoiceId" : "INV-0002",
+      "invoice" : {
+        "loanId" : "LN-E-0483",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 2,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2160-02-18",
+        "principal" : "16286.94",
+        "interest" : "218.68"
+      }
+    }, {
+      "invoiceId" : "INV-0003",
+      "invoice" : {
+        "loanId" : "LN-E-0483",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 3,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2160-03-18",
+        "principal" : "16351.98",
+        "interest" : "153.64"
+      }
+    }, {
+      "invoiceId" : "INV-0004",
+      "invoice" : {
+        "loanId" : "LN-E-0483",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 4,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2160-04-18",
+        "principal" : "16396.02",
+        "interest" : "109.60"
+      }
+    }, {
+      "invoiceId" : "INV-0005",
+      "invoice" : {
+        "loanId" : "LN-E-0483",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 5,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "EUR",
+        "invoiceDate" : "2160-06-18",
+        "principal" : "16397.78",
+        "interest" : "107.82"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0483",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "EUR"
+      },
+      "balance" : "-16397.78"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "81665.41",
+        "date" : "2159-12-18",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0002",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "16232.69",
+        "date" : "2160-06-18",
+        "paymentId" : null,
+        "invoiceId" : "INV-0001"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0003",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "16286.94",
+        "date" : "2160-06-18",
+        "paymentId" : null,
+        "invoiceId" : "INV-0002"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0004",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "16351.98",
+        "date" : "2160-06-18",
+        "paymentId" : null,
+        "invoiceId" : "INV-0003"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0005",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "16396.02",
+        "date" : "2160-06-18",
+        "paymentId" : null,
+        "invoiceId" : "INV-0004"
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0006",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "16397.78",
+        "date" : "2160-06-18",
+        "paymentId" : null,
+        "invoiceId" : "INV-0005"
+      },
+      "cancelled" : true
+    }, {
+      "transactionId" : "TRN-0007",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "16397.78",
+        "date" : "2160-06-27",
+        "paymentId" : null,
+        "invoiceId" : "INV-0005"
+      },
+      "cancelled" : true
+    } ]
+  }
+}

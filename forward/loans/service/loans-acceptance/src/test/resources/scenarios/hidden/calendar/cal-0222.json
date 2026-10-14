@@ -1,0 +1,37 @@
+{
+  "id": "cal-0222",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000008651 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-05","CAL-07"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000008651","scheduleStart":"2100-08-30","currency":{"code":"CLF","decimalPlaces":4,"roundingMultiple":null},"principal":"229935.6000","disbursementDate":"2101-01-29","installments":25,"every":2,"frequency":"MONTHS","annualRatePercent":"25.390000000","downPaymentPercent":"74.836000000","downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2100-08-30","due":"2100-10-29"},
+      {"from":"2100-10-29","due":"2100-12-29"},
+      {"from":"2100-12-29","due":"2101-02-28"},
+      {"from":"2101-02-28","due":"2101-04-29"},
+      {"from":"2101-04-29","due":"2101-06-29"},
+      {"from":"2101-06-29","due":"2101-08-29"},
+      {"from":"2101-08-29","due":"2101-10-29"},
+      {"from":"2101-10-29","due":"2101-12-29"},
+      {"from":"2101-12-29","due":"2102-02-28"},
+      {"from":"2102-02-28","due":"2102-04-29"},
+      {"from":"2102-04-29","due":"2102-06-29"},
+      {"from":"2102-06-29","due":"2102-08-29"},
+      {"from":"2102-08-29","due":"2102-10-29"},
+      {"from":"2102-10-29","due":"2102-12-29"},
+      {"from":"2102-12-29","due":"2103-02-28"},
+      {"from":"2103-02-28","due":"2103-04-29"},
+      {"from":"2103-04-29","due":"2103-06-29"},
+      {"from":"2103-06-29","due":"2103-08-29"},
+      {"from":"2103-08-29","due":"2103-10-29"},
+      {"from":"2103-10-29","due":"2103-12-29"},
+      {"from":"2103-12-29","due":"2104-02-29"},
+      {"from":"2104-02-29","due":"2104-04-29"},
+      {"from":"2104-04-29","due":"2104-06-29"},
+      {"from":"2104-06-29","due":"2104-08-29"},
+      {"from":"2104-08-29","due":"2104-10-29"}
+    ]
+  } ]
+}

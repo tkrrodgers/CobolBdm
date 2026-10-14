@@ -1,0 +1,11 @@
+{
+  "id": "dsc-0126",
+  "slice": "disclosure",
+  "origin": "corpus envelope-1-p12-half_down, loan 0000000000000163: the schedule as the S5 pool's; the disclosure is the reference's (no legacy oracle), checked independently",
+  "rules": ["DISC-07"],
+  "steps": [ {
+    "call": "disclose",
+    "input": {"loanId":"0000000000000163","scheduleStart":"1962-06-25","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"1.3020","disbursementDate":"1962-06-25","installments":8,"every":1,"frequency":"MONTHS","annualRatePercent":"42.370000000","downPaymentPercent":"51.093500000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_365","fixedLength":9,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_DOWN"}},
+    "expected": {"@type":"Rejected","loanId":"0000000000000163","reason":"DOWN_PAYMENT_COVERS_PRINCIPAL","field":null}
+  } ]
+}

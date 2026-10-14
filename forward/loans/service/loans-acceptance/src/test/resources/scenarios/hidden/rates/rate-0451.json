@@ -1,0 +1,11 @@
+{
+  "id": "rate-0451",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, edge-p09-ceiling (loans 0000000000000876 to 0000000000000900), CALL 25 (function P), rejected",
+  "rules": ["RATE-10"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"2024-12-31","period":{"from":"2024-12-31","due":"2026-12-31"},"from":"2024-12-31","to":"2024-12-31","annualRatePercent":"18.750000000","frequency":"YEARS","every":2,"monthDays":"THIRTY","yearDays":"ACTUAL"},"calculation":{"precision":9,"roundingMode":"CEILING"}},
+    "expected": {"@type":"RateRejected","reason":"PERIOD_NOT_SUPPORTED_WITH_THIRTY_DAY_MONTHS"}
+  } ]
+}

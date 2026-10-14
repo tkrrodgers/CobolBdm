@@ -1,0 +1,127 @@
+{
+  "id": "srv-0066",
+  "slice": "servicing",
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000334; expected values: the reference over the in-memory ports",
+  "rules": ["IDEM-01","IDEM-02","IDEM-03","IDEM-04","SRV-08"],
+  "given": {"today":"2139-09-16","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "steps": [
+    {"call": "book", "input": {"externalId":"E-0554","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000334","scheduleStart":"2139-09-16","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"18.0000","disbursementDate":"2139-09-16","installments":3,"every":2,"frequency":"WEEKS","annualRatePercent":"55.824700000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0554","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "book", "input": {"externalId":"E-0554","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000334","scheduleStart":"2139-09-16","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"19.0000","disbursementDate":"2139-09-16","installments":3,"every":2,"frequency":"WEEKS","annualRatePercent":"55.824700000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0554","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0554","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0554","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0554","paymentMethodId":"PM-2"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0554","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "today", "input": "2139-09-30",
+     "expected": "2139-09-30"},
+    {"call": "billDue", "input": {"asOf":"2139-09-30"},
+     "expected": {"asOf":"2139-09-30","billed":[{"loanId":"LN-E-0554","number":1,"invoiceId":"INV-0001","principal":"6","interest":"1"}]}},
+    {"call": "billDue", "input": {"asOf":"2139-09-30"},
+     "expected": {"asOf":"2139-09-30","billed":[]}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":false},
+     "expected": {"@type":"CollectionUnchanged","loanId":"LN-E-0554","number":1}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"PrincipalCollected","loanId":"LN-E-0554","number":1,"accountTransactionId":"TRN-0002","paidOff":false}},
+    {"call": "invoicePaid", "input": {"invoiceId":"INV-0001","paid":true},
+     "expected": {"@type":"CollectionUnchanged","loanId":"LN-E-0554","number":1}}
+  ],
+  "state": {
+    "today" : "2139-09-30",
+    "loans" : [ {
+      "loanId" : "LN-E-0554",
+      "externalId" : "E-0554",
+      "accountId" : "ACC-0001",
+      "status" : "ACTIVE",
+      "bookedOn" : "2139-09-16",
+      "scheduleVersion" : 1,
+      "lines" : [ {
+        "number" : 1,
+        "due" : "2139-09-30",
+        "principal" : "6",
+        "interest" : "1",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "2139-09-30",
+        "collectionTransactionId" : "TRN-0002"
+      }, {
+        "number" : 2,
+        "due" : "2139-10-14",
+        "principal" : "6",
+        "interest" : "1",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 3,
+        "due" : "2139-10-28",
+        "principal" : "6",
+        "interest" : "1",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      } ],
+      "disbursementPaymentId" : "PAY-0001",
+      "disbursementTransactionId" : "TRN-0001"
+    } ],
+    "payments" : [ {
+      "paymentId" : "PAY-0001",
+      "payment" : {
+        "loanId" : "LN-E-0554",
+        "loanProductId" : "PRODUCT-1",
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "paymentMethodId" : "PM-1",
+        "currencyCode" : "JPY",
+        "amount" : "18",
+        "date" : "2139-09-16"
+      }
+    } ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0554",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "JPY",
+        "invoiceDate" : "2139-09-30",
+        "principal" : "6",
+        "interest" : "1"
+      }
+    } ],
+    "accounts" : [ {
+      "accountId" : "ACC-0001",
+      "account" : {
+        "loanId" : "LN-E-0554",
+        "ownerPartyId" : "BORROWER-1",
+        "organizationPartyId" : "ORG-1",
+        "currencyCode" : "JPY"
+      },
+      "balance" : "-12"
+    } ],
+    "transactions" : [ {
+      "transactionId" : "TRN-0001",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "WITHDRAWAL",
+        "amount" : "18",
+        "date" : "2139-09-16",
+        "paymentId" : "PAY-0001",
+        "invoiceId" : null
+      },
+      "cancelled" : false
+    }, {
+      "transactionId" : "TRN-0002",
+      "transaction" : {
+        "accountId" : "ACC-0001",
+        "type" : "DEPOSIT",
+        "amount" : "6",
+        "date" : "2139-09-30",
+        "paymentId" : null,
+        "invoiceId" : "INV-0001"
+      },
+      "cancelled" : false
+    } ]
+  }
+}

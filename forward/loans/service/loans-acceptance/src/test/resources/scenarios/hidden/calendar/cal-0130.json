@@ -1,0 +1,25 @@
+{
+  "id": "cal-0130",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan edge-p03-ceiling-0000000000000509 (= the faithful job)",
+  "rules": ["CAL-01","CAL-05","CAL-07"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000000509","scheduleStart":"2000-02-29","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"15000.0000","disbursementDate":"2000-02-29","installments":13,"every":6,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2000-02-29","due":"2000-08-29"},
+      {"from":"2000-08-29","due":"2001-02-28"},
+      {"from":"2001-02-28","due":"2001-08-29"},
+      {"from":"2001-08-29","due":"2002-02-28"},
+      {"from":"2002-02-28","due":"2002-08-29"},
+      {"from":"2002-08-29","due":"2003-02-28"},
+      {"from":"2003-02-28","due":"2003-08-29"},
+      {"from":"2003-08-29","due":"2004-02-29"},
+      {"from":"2004-02-29","due":"2004-08-29"},
+      {"from":"2004-08-29","due":"2005-02-28"},
+      {"from":"2005-02-28","due":"2005-08-29"},
+      {"from":"2005-08-29","due":"2006-02-28"},
+      {"from":"2006-02-28","due":"2006-08-29"}
+    ]
+  } ]
+}

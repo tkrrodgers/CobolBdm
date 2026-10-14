@@ -1,0 +1,18 @@
+{
+  "id": "privileged-0096",
+  "slice": "schedule",
+  "origin": "privileged principal-p12-half_even, loan 0300000000000002: oracle A' D-2 without the legacy envelope (clean room, FnHarness --forward-limits): privileged, decision D-6",
+  "rules": ["AMZ-01","AMZ-02","AMZ-05","AMZ-06","AMZ-08","AMZ-11","AMZ-12","AMZ-13","PLAN-02","PLAN-03"],
+  "steps": [ {
+    "call": "schedule",
+    "input": {"loanId":"0300000000000002","scheduleStart":"2000-02-29","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"587328413513.5600","disbursementDate":"2000-02-29","installments":3,"every":12,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Scheduled","schedule":{"loanId":"0300000000000002","currencyCode":"USD","decimalPlaces":2,"termDays":1095,
+      "totals":{"disbursed":"587328413513.56","principal":"587328413513.56","interest":"114742188463.90","fee":"0.00","penalty":"0.00","repayment":"702070601977.46","outstanding":"0.00"},
+      "lines":[
+        {"@type":"DisbursementLine","from":"2000-02-29","due":"2000-02-29","amount":"587328413513.56","balanceAfter":"587328413513.56"},
+        {"@type":"InstallmentLine","number":1,"from":"2000-02-29","due":"2001-02-28","principal":"178331879166.39","interest":"55691654826.10","fee":"0.00","penalty":"0.00","totalDue":"234023533992.49","balanceAfter":"408996534347.17","remainingDue":"468047067984.97"},
+        {"@type":"InstallmentLine","number":2,"from":"2001-02-28","due":"2002-02-28","principal":"195241664612.69","interest":"38781869379.80","fee":"0.00","penalty":"0.00","totalDue":"234023533992.49","balanceAfter":"213754869734.48","remainingDue":"234023533992.48"},
+        {"@type":"InstallmentLine","number":3,"from":"2002-02-28","due":"2003-02-28","principal":"213754869734.48","interest":"20268664258.00","fee":"0.00","penalty":"0.00","totalDue":"234023533992.48","balanceAfter":"0.00","remainingDue":"0.00"}
+      ]}}
+  } ]
+}

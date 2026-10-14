@@ -1,0 +1,36 @@
+{
+  "id": "cal-0077",
+  "slice": "calendar",
+  "origin": "the installment lines of oracle A's schedule of loan envelope-2-p12-ceiling-0000000000005430 (= the faithful job)",
+  "rules": ["CAL-01","CAL-02","CAL-04","CAL-09"],
+  "steps": [ {
+    "call": "periods",
+    "input": {"loanId":"0000000000005430","scheduleStart":"2028-05-11","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"2850672.3000","disbursementDate":"2028-09-18","installments":24,"every":4,"frequency":"WEEKS","annualRatePercent":"68.290000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":95,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}},
+    "expected": [
+      {"from":"2028-05-11","due":"2028-06-08"},
+      {"from":"2028-06-08","due":"2028-07-06"},
+      {"from":"2028-07-06","due":"2028-08-03"},
+      {"from":"2028-08-03","due":"2028-08-31"},
+      {"from":"2028-08-31","due":"2028-09-28"},
+      {"from":"2028-09-28","due":"2028-10-26"},
+      {"from":"2028-10-26","due":"2028-11-23"},
+      {"from":"2028-11-23","due":"2028-12-21"},
+      {"from":"2028-12-21","due":"2029-01-18"},
+      {"from":"2029-01-18","due":"2029-02-15"},
+      {"from":"2029-02-15","due":"2029-03-15"},
+      {"from":"2029-03-15","due":"2029-04-12"},
+      {"from":"2029-04-12","due":"2029-05-10"},
+      {"from":"2029-05-10","due":"2029-06-07"},
+      {"from":"2029-06-07","due":"2029-07-05"},
+      {"from":"2029-07-05","due":"2029-08-02"},
+      {"from":"2029-08-02","due":"2029-08-30"},
+      {"from":"2029-08-30","due":"2029-09-27"},
+      {"from":"2029-09-27","due":"2029-10-25"},
+      {"from":"2029-10-25","due":"2029-11-22"},
+      {"from":"2029-11-22","due":"2029-12-20"},
+      {"from":"2029-12-20","due":"2030-01-17"},
+      {"from":"2030-01-17","due":"2030-02-14"},
+      {"from":"2030-02-14","due":"2030-03-07"}
+    ]
+  } ]
+}
