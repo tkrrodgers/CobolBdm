@@ -1,0 +1,89 @@
+package {{ model.plugin.javaPackage }};
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Map;
+
+/** Reads a service context's attributes as the API's types; a required attribute that is missing names itself. */
+public final class {{ model.plugin.resourceName }}Context {
+
+    private {{ model.plugin.resourceName }}Context() {
+    }
+
+    public static String string(Map<String, ? extends Object> context, String name) {
+        Object value = context.get(name);
+        return value == null ? null : value.toString();
+    }
+
+    public static BigDecimal decimal(Map<String, ? extends Object> context, String name) {
+        Object value = context.get(name);
+        if (value == null || value instanceof BigDecimal) {
+            return (BigDecimal) value;
+        }
+        return new BigDecimal(value.toString());
+    }
+
+    public static Integer integer(Map<String, ? extends Object> context, String name) {
+        Object value = context.get(name);
+        if (value == null) {
+            return null;
+        }
+        return value instanceof Number number ? Integer.valueOf(number.intValue()) : Integer.valueOf(value.toString());
+    }
+
+    public static int intValue(Map<String, ? extends Object> context, String name) {
+        Integer value = integer(context, name);
+        if (value == null) {
+            throw new IllegalArgumentException("missing " + name);
+        }
+        return value;
+    }
+
+    public static Long longObject(Map<String, ? extends Object> context, String name) {
+        Object value = context.get(name);
+        if (value == null) {
+            return null;
+        }
+        return value instanceof Number number ? Long.valueOf(number.longValue()) : Long.valueOf(value.toString());
+    }
+
+    public static long longValue(Map<String, ? extends Object> context, String name) {
+        Long value = longObject(context, name);
+        if (value == null) {
+            throw new IllegalArgumentException("missing " + name);
+        }
+        return value;
+    }
+
+    public static Boolean bool(Map<String, ? extends Object> context, String name) {
+        Object value = context.get(name);
+        if (value == null || value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        String text = value.toString();
+        return "Y".equalsIgnoreCase(text) || "true".equalsIgnoreCase(text);
+    }
+
+    public static boolean boolValue(Map<String, ? extends Object> context, String name) {
+        Boolean value = bool(context, name);
+        if (value == null) {
+            throw new IllegalArgumentException("missing " + name);
+        }
+        return value;
+    }
+
+    public static LocalDate date(Map<String, ? extends Object> context, String name) {
+        Object value = context.get(name);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof java.util.Date date) {
+            return {{ model.plugin.resourceName }}Values.localDate(date);
+        }
+        return LocalDate.parse(value.toString().substring(0, Math.min(10, value.toString().length())));
+    }
+
+    public static <E extends Enum<E>> E enumValue(Map<String, ? extends Object> context, String name, Class<E> type) {
+        return {{ model.plugin.resourceName }}Enums.of(type, string(context, name), name);
+    }
+}

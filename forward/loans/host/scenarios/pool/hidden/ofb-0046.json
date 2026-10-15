@@ -1,0 +1,46 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0046",
+  "origin" : "the S5 loan envelope-2-p12-ceiling-0000000000001301, moved -28 years into OFBiz's dated window; expected values: the reference over in-memory ports with the demo ledger (the ledger refuses the currency)",
+  "rules" : [ "D-11", "OFB-02" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2023-10-20",
+    "params" : {
+      "externalId" : "E-ofb-0046",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000001301",
+      "scheduleStart" : "2023-10-10",
+      "currencyCode" : "KWD",
+      "currencyDecimalPlaces" : "3",
+      "principal" : "10528788.1780",
+      "disbursementDate" : "2023-10-20",
+      "installments" : "3",
+      "every" : "10",
+      "frequencyEnumId" : "LOAN_FREQ_WEEKS",
+      "annualRatePercent" : "1.009000000",
+      "downPaymentPercent" : "28.048500000",
+      "downPaymentEnabled" : true,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_360",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "12",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2023-10-20"
+    },
+    "expect" : {
+      "outcome" : "BookingRejected",
+      "result" : {
+        "@type" : "BookingRejected",
+        "externalId" : "E-ofb-0046",
+        "reason" : "CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER",
+        "scheduleReason" : null,
+        "field" : null
+      }
+    }
+  } ],
+  "checks" : [ ]
+}

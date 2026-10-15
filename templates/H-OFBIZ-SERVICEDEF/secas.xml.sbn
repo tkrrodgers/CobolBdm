@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service-eca xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="{{ profile.host.secaDtd }}">
+{{~ for e in model.seca ~}}
+    <eca service="{{ e.service }}" event="{{ e.event }}">
+        <action service="{{ e.action }}" mode="sync"/>
+    </eca>
+{{~ end ~}}
+</service-eca>

@@ -21,7 +21,9 @@ public sealed class ProjectDefinition
     public List<ExcludedProgram> Excluded { get; set; } = [];
     public OracleDefinition Oracle { get; set; } = new();
     public PublishDefinition Publish { get; set; } = new();
-    public GemmaState Gemma { get; set; } = new();
+    public ModelRunState Gemma { get; set; } = new();
+    /// <summary>Muse Glimmer's runs on this project (the same steps as Gemma's, in muse/).</summary>
+    public ModelRunState Muse { get; set; } = new();
     /// <summary>Expected outputs from outside the pipeline (the original application, a mainframe capture); null = none.</summary>
     public ReferenceDefinition? Reference { get; set; }
     public List<string> Notes { get; set; } = [];
@@ -187,7 +189,8 @@ public sealed class TestRecord
     public string Implementation { get; set; } = "legacy";
 }
 
-public sealed class GemmaState
+/// <summary>A local model's work on a project: its valid designs, its assembled service and that service's last test.</summary>
+public sealed class ModelRunState
 {
     public List<string> Designed { get; set; } = [];
     public string? ServicePath { get; set; }

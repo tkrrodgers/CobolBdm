@@ -1,0 +1,15 @@
+{
+  "id": "mig-0199",
+  "slice": "migration",
+  "origin": "legacy book sample-p09-down, loan 0000000000001043",
+  "rules": ["MIG-02","MIG-04","MIG-05"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000104320240101USD+000000000100000002024010100010001MONTHS    +100000000000N01365N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC09DOWN                                                                        ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"LegacyTerms","terms":{"loanId":"0000000000001043","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-01","installments":1,"every":1,"frequency":"MONTHS","annualRatePercent":"100.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":9,"roundingMode":"DOWN"}}}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000104320240101USD+000000000100000002024010100010001MONTHS    +100000000000N01365N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC09DOWN                                                                        ","currency":"USD02N00000US Dollar                    ","schedule":["0000000000001043H0000USD020000310002+00000000010000000+00000000010000000+00000000000849300+00000000000000000+00000000000000000+00000000010849300+00000000000000000                                      ","0000000000001043D000100002024010120240101+00000000010000000+00000000000000000+00000000000000000+00000000000000000+00000000000000000+00000000010000000+00000000000000000                                 ","0000000000001043R000200012024010120240201+00000000010000000+00000000000849300+00000000000000000+00000000000000000+00000000010849300+00000000000000000+00000000000000000                                 "],"reject":null},
+    "expected": {"loanId":"0000000000001043","outcome":"MATCH","decision":null,"field":null,"legacyValue":null,"serviceValue":null,"legacyCode":null,"serviceRejection":null}
+  } ]
+}

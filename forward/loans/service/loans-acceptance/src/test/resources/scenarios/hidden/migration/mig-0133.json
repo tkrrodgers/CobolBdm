@@ -1,0 +1,15 @@
+{
+  "id": "mig-0133",
+  "slice": "migration",
+  "origin": "legacy book sample-p03-down, loan 0000000000000968",
+  "rules": ["MIG-02","MIG-03","MIG-04","MIG-05"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000096820240101USD+000000000100000002024010100010012MONTHS    +012000000000N01364N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC03DOWN                                                                        ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"LegacyTerms","terms":{"loanId":"0000000000000968","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-01","installments":1,"every":12,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"DOWN"}}}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000096820240101USD+000000000100000002024010100010012MONTHS    +012000000000N01364N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC03DOWN                                                                        ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000968RJTNNT04S12                     SINGLE INSTALLMENT AFTER LATE DISBURSEMENT NOT OFFERED                  "},
+    "expected": {"loanId":"0000000000000968","outcome":"LEGACY_REJECT","decision":null,"field":null,"legacyValue":null,"serviceValue":null,"legacyCode":"RJTNNT04","serviceRejection":"SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT"}
+  } ]
+}

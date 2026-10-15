@@ -1,0 +1,15 @@
+{
+  "id": "mig-0100",
+  "slice": "migration",
+  "origin": "legacy book rejects-p12-half_even, loan 0000000000000011",
+  "rules": [],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000001120240101USD+000000000100000002024010100120001MONTHS    +012000000000N30360N+000000000000N000000000N00000N                    declining_balance NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"Unrepresentable","loanId":"0000000000000011","field":"RQ-INTEREST-METHOD","value":"declining_balance"}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000001120240101USD+000000000100000002024010100120001MONTHS    +012000000000N30360N+000000000000N000000000N00000N                    declining_balance NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000011RJENV001ENVELOPE                REQUEST RECORD FORMAT INVALID                                           "},
+    "expected": {"loanId":"0000000000000011","outcome":"EXPLAINED","decision":"D-5","field":"RQ-INTEREST-METHOD","legacyValue":null,"serviceValue":null,"legacyCode":"RJENV001","serviceRejection":null}
+  } ]
+}

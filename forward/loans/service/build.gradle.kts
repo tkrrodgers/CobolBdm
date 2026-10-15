@@ -2,7 +2,7 @@
 // loans-api, loans-architecture and loans-acceptance are the SME's; the other modules are the implementation under test.
 // Java 21 toolchain, bytecode for 17: OFBiz compiles at 17 (rule A-10).
 val kernel = ":loans-kernel"
-val contexts = listOf(":loans-calendar", ":loans-rates", ":loans-terms", ":loans-schedule", ":loans-disclosure")
+val contexts = listOf(":loans-calendar", ":loans-rates", ":loans-terms", ":loans-schedule", ":loans-disclosure", ":loans-migration")
 
 subprojects {
     apply(plugin = "java")
@@ -32,6 +32,9 @@ findProperty("implDir")?.let { dir ->
         the<SourceSetContainer>().named("main") { java.setSrcDirs(listOf(rootProject.file("$dir/${project.name}/src/main/java"))) }
     }
 }
+
+// The legacy records and their decoders are generated from the estate's copybooks (C-LEGACY-LAYOUT, forward/loans/legacy).
+project(":loans-api") { the<SourceSetContainer>().named("main") { java.srcDir("src/generated/java") } }
 
 project(kernel) { dependencies { "implementation"(project(":loans-api")) } }
 for (c in contexts) project(c) {

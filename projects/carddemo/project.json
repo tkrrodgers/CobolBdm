@@ -495,6 +495,7 @@
       }
     ],
     "scenarios": [],
+    "scenarioJobs": {},
     "jobChecks": [
       {
         "job": "POSTTRAN",
@@ -555,7 +556,9 @@
       "scenarios": [
         "base"
       ],
-      "problems": []
+      "problems": [],
+      "referenceOutputs": 0,
+      "referenceMatch": 0
     }
   },
   "publish": {
@@ -570,17 +573,20 @@
       "CBTRN03C"
     ],
     "capabilitiesRoot": "capabilities/carddemo",
+    "acceptanceScenarios": [],
     "last": {
       "path": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\carddemo\\publish\\carddemo-normalized-spring",
-      "at": "2026-10-09T19:11:20",
+      "at": "2026-10-14T17:14:39",
       "programs": 3,
       "capabilities": 3,
       "lastTest": {
-        "at": "2026-10-09T19:11:57",
-        "tests": 116,
+        "at": "2026-10-14T17:14:56",
+        "tests": 122,
         "failed": 0,
         "outputs": 11,
         "match": 11,
+        "referenceOutputs": 0,
+        "referenceMatch": 0,
         "implementation": "legacy"
       }
     }
@@ -593,11 +599,31 @@
     ],
     "servicePath": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\carddemo\\gemma\\service\\carddemo-normalized-spring",
     "lastTest": {
-      "at": "2026-10-09T22:15:06",
-      "tests": 116,
+      "at": "2026-10-14T20:50:46",
+      "tests": 122,
       "failed": 0,
       "outputs": 11,
       "match": 11,
+      "referenceOutputs": 0,
+      "referenceMatch": 0,
+      "implementation": "normalized"
+    }
+  },
+  "muse": {
+    "designed": [
+      "CBTRN02C",
+      "CBACT04C",
+      "CBTRN03C"
+    ],
+    "servicePath": "C:\\Users\\Tomrodgers\\Source\\CobolBdm\\projects\\carddemo\\muse\\service\\carddemo-normalized-spring",
+    "lastTest": {
+      "at": "2026-10-14T20:20:27",
+      "tests": 122,
+      "failed": 0,
+      "outputs": 11,
+      "match": 11,
+      "referenceOutputs": 0,
+      "referenceMatch": 0,
       "implementation": "normalized"
     }
   },

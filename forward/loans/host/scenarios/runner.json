@@ -1,0 +1,7 @@
+{
+  "schema": "mlcpu.ofbiz-scenario-runner.v1",
+  "userLogin": "admin",
+  "isolate": [
+    { "entity": "Loan", "field": "statusId", "from": ["LOAN_BOOKED", "LOAN_ACTIVE"], "to": "LOAN_TEST_RETIRED" }
+  ]
+}

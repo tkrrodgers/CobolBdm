@@ -1,0 +1,15 @@
+{
+  "id": "mig-0029",
+  "slice": "migration",
+  "origin": "SME probe: 1,500 installments: the legacy envelope (RJENV020) and the service's limit both reject it",
+  "rules": ["MIG-02","MIG-04","MIG-07"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000000520230128USD+000000001500000002023012815000001MONTHS    +009482200000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"LegacyTerms","terms":{"loanId":"0000000000000005","scheduleStart":"2023-01-28","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"15000.0000","disbursementDate":"2023-01-28","installments":1500,"every":1,"frequency":"MONTHS","annualRatePercent":"9.482200000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}}}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000000520230128USD+000000001500000002023012815000001MONTHS    +009482200000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000005RJENV020PROBE                   an SME probe                                                            "},
+    "expected": {"loanId":"0000000000000005","outcome":"LEGACY_REJECT","decision":null,"field":null,"legacyValue":null,"serviceValue":null,"legacyCode":"RJENV020","serviceRejection":"OUT_OF_RANGE"}
+  } ]
+}

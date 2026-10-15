@@ -1,0 +1,615 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-m001",
+  "origin" : "the legacy book sample-p12-half_even migrated; expected values: the reference's reconciliation, booking over in-memory ports with the host ledger",
+  "rules" : [ "LEG-02", "LEG-03", "LEG-04", "LEG-05" ],
+  "steps" : [ {
+    "service" : "migrateLegacyLoanBook",
+    "today" : "2026-09-01",
+    "params" : {
+      "migrationId" : "M-sample-p12-half_even",
+      "externalIdPrefix" : "Lm001-",
+      "bookDir" : "plugins/loans/testdef/scenarios/legacy/sample-p12-half_even",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "businessDate" : "2026-09-01"
+    },
+    "expect" : {
+      "outcome" : "MigrationRun",
+      "result" : {
+        "migrationId" : "M-sample-p12-half_even",
+        "loans" : 63,
+        "outcomes" : {
+          "EXPLAINED D-3" : 2,
+          "LEGACY_REJECT" : 10,
+          "MATCH" : 51
+        },
+        "booked" : 45,
+        "notBookable" : 6
+      }
+    }
+  } ],
+  "checks" : [ {
+    "entity" : "LoanLegacyRecon",
+    "where" : {
+      "migrationId" : "M-sample-p12-half_even"
+    },
+    "orderBy" : [ "legacyLoanId" ],
+    "fields" : [ "legacyLoanId", "outcome", "decision", "field", "legacyCode", "serviceRejection", "loanId", "bookingRejection" ],
+    "rows" : [ {
+      "legacyLoanId" : "0000000000000028",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000028",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000113",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000113",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000198",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000198",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000283",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000283",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000368",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000368",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000453",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000453",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000538",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000538",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000610",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000610",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000628",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT04",
+      "serviceRejection" : "SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000646",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000646",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000664",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000664",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000682",
+      "outcome" : "EXPLAINED",
+      "decision" : "D-3",
+      "field" : "outcome",
+      "legacyCode" : null,
+      "serviceRejection" : "DISBURSEMENT_OUTSIDE_TERM",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000700",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000700",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000718",
+      "outcome" : "EXPLAINED",
+      "decision" : "D-3",
+      "field" : "outcome",
+      "legacyCode" : null,
+      "serviceRejection" : "DISBURSEMENT_OUTSIDE_TERM",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000754",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000754",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000782",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000782",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000810",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000810",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000838",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000838",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000866",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000866",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000894",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000894",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000922",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJUNSP01",
+      "serviceRejection" : "PERIOD_NOT_SUPPORTED_WITH_THIRTY_DAY_MONTHS",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000930",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000930",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000938",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000938",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000946",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000946",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000954",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000954",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000962",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000962",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000970",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000970",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000978",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000978",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000983",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000000983",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000000992",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : null,
+      "bookingRejection" : "RATE_PRECISION_UNSUPPORTED_BY_LEDGER"
+    }, {
+      "legacyLoanId" : "0000000000001001",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001001",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001010",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001010",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001019",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001019",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001028",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : null,
+      "bookingRejection" : "RATE_PRECISION_UNSUPPORTED_BY_LEDGER"
+    }, {
+      "legacyLoanId" : "0000000000001037",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001037",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001048",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001048",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001053",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001053",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001058",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001058",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001063",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : null,
+      "bookingRejection" : "CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER"
+    }, {
+      "legacyLoanId" : "0000000000001068",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : null,
+      "bookingRejection" : "CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER"
+    }, {
+      "legacyLoanId" : "0000000000001073",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001073",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001078",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT05",
+      "serviceRejection" : "DOWN_PAYMENT_COVERS_PRINCIPAL",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001087",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001087",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001098",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001098",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001109",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001109",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001120",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001120",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001131",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001131",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001142",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001142",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001153",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001153",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001165",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT05",
+      "serviceRejection" : "DOWN_PAYMENT_COVERS_PRINCIPAL",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001170",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001170",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001175",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT05",
+      "serviceRejection" : "DOWN_PAYMENT_COVERS_PRINCIPAL",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001180",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001180",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001185",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001185",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001190",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : null,
+      "bookingRejection" : "CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER"
+    }, {
+      "legacyLoanId" : "0000000000001195",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : null,
+      "bookingRejection" : "CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER"
+    }, {
+      "legacyLoanId" : "0000000000001199",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT04",
+      "serviceRejection" : "SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001200",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT04",
+      "serviceRejection" : "SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001201",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT04",
+      "serviceRejection" : "SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001202",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001202",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001203",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT04",
+      "serviceRejection" : "SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT",
+      "loanId" : null,
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001204",
+      "outcome" : "MATCH",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : null,
+      "serviceRejection" : null,
+      "loanId" : "LN-Lm001-0000000000001204",
+      "bookingRejection" : null
+    }, {
+      "legacyLoanId" : "0000000000001205",
+      "outcome" : "LEGACY_REJECT",
+      "decision" : null,
+      "field" : null,
+      "legacyCode" : "RJTNNT04",
+      "serviceRejection" : "SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT",
+      "loanId" : null,
+      "bookingRejection" : null
+    } ]
+  }, {
+    "entity" : "LoanLegacyLine",
+    "where" : {
+      "migrationId" : "M-sample-p12-half_even"
+    },
+    "count" : 1292
+  } ]
+}

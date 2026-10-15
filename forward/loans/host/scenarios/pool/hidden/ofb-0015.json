@@ -1,0 +1,45 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0015",
+  "origin" : "the S5 loan envelope-2-p12-ceiling-0000000000000640; expected values: the reference over in-memory ports with the demo ledger (the ledger refuses the currency)",
+  "rules" : [ "D-11", "OFB-02" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2011-11-05",
+    "params" : {
+      "externalId" : "E-ofb-0015",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000640",
+      "scheduleStart" : "2011-11-05",
+      "currencyCode" : "CLF",
+      "currencyDecimalPlaces" : "4",
+      "principal" : "4471.0700",
+      "disbursementDate" : "2011-11-05",
+      "installments" : "4",
+      "every" : "2",
+      "frequencyEnumId" : "LOAN_FREQ_YEARS",
+      "annualRatePercent" : "32.500000000",
+      "downPaymentEnabled" : false,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_364",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "12",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2011-11-05"
+    },
+    "expect" : {
+      "outcome" : "BookingRejected",
+      "result" : {
+        "@type" : "BookingRejected",
+        "externalId" : "E-ofb-0015",
+        "reason" : "CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER",
+        "scheduleReason" : null,
+        "field" : null
+      }
+    }
+  } ],
+  "checks" : [ ]
+}

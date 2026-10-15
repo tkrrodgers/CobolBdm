@@ -1,5 +1,6 @@
 package com.mlcpu.carddemo.platform.records;
 
+import com.mlcpu.rt.OpenDatasets;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -22,6 +23,8 @@ public final class IndexedDataset implements AutoCloseable {
     private boolean changed;
 
     private IndexedDataset(Path path, int lrecl, int keyOffset, int keyLength) {
+
+        OpenDatasets.opened(this);
         this.path = path;
         this.lrecl = lrecl;
         this.keyOffset = keyOffset;
@@ -97,6 +100,7 @@ public final class IndexedDataset implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
+        OpenDatasets.closed(this);
         if (!changed) return;
         byte[] all = new byte[records.size() * lrecl];
         int i = 0;

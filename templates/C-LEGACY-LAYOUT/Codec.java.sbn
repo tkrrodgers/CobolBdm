@@ -1,0 +1,294 @@
+package {{ model.package }};
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * {{ model.title }}. Each decoder takes one record's characters (the dataset's bytes in {@link #CHARSET}, exactly the record's
+ * length) and returns its Java record; a record that does not decode throws {@link LegacyRecordException}. Layouts: {{ model.layouts }}.
+ */
+public final class {{ model.codec }} {
+
+    /** The datasets' character set: one byte per character. */
+    public static final Charset CHARSET = StandardCharsets.ISO_8859_1;
+{{~ for r in model.records ~}}
+{{~ if !r.parent ~}}
+
+    /** The length of a {{ r.layout }} record. */
+    public static final int {{ x.upper_snake r.decoder }}_LENGTH = {{ r.length }};
+{{~ end ~}}
+{{~ end ~}}
+
+    private {{ model.codec }}() {
+    }
+
+    /** The records of a fixed-length dataset (no separators between records). */
+    public static List<String> records(byte[] dataset, int length) {
+        if (dataset.length % length != 0) {
+            throw new IllegalArgumentException("a dataset of " + dataset.length + " bytes is not a whole number of " + length + "-byte records");
+        }
+        List<String> out = new ArrayList<>(dataset.length / length);
+        for (int i = 0; i < dataset.length; i += length) {
+            out.add(new String(dataset, i, length, CHARSET));
+        }
+        return out;
+    }
+
+    /** The records of a dataset image kept one record per line: each line cut or padded with spaces to the length. */
+    public static List<String> lines(String text, int length) {
+        List<String> out = new ArrayList<>();
+        for (String line : text.split("\n", -1)) {
+            String l = line.endsWith("\r") ? line.substring(0, line.length() - 1) : line;
+            if (l.isEmpty()) {
+                continue;
+            }
+            out.add(l.length() >= length ? l.substring(0, length) : l + " ".repeat(length - l.length()));
+        }
+        return out;
+    }
+{{~ for r in model.records ~}}
+{{~ if r.sealed ~}}
+
+    /** A {{ r.layout }} record as its variant, by {{ r.discriminator.cobol }}. */
+    public static {{ r.name }} {{ r.decoder }}(String r) {
+        length(r, {{ x.upper_snake r.decoder }}_LENGTH, "{{ r.layout }}");
+        String kind = r.substring({{ r.discriminator.offset }}, {{ r.discriminator.offset + r.discriminator.length }});
+        switch (kind) {
+{{~ for c in r.discriminator.cases ~}}
+{{~ for v in c.values ~}}
+            case "{{ v }}":
+{{~ end ~}}
+                return {{ x.camel (c.record | string.replace 'Legacy' '') }}(r);
+{{~ end ~}}
+            default:
+                throw new LegacyRecordException("{{ r.layout }}", "{{ r.discriminator.cobol }}", {{ r.discriminator.offset }}, kind, "not a record type of the layout");
+        }
+    }
+{{~ else ~}}
+
+    /** A {{ r.layout }} record{{ if r.parent }} of the variant {{ r.name }}{{ end }}. */
+    public static {{ r.name }} {{ r.decoder }}(String r) {
+{{~ if r.parent ~}}
+{{~ for p in model.records ~}}
+{{~ if p.name == r.parent ~}}
+        length(r, {{ x.upper_snake p.decoder }}_LENGTH, "{{ r.layout }}");
+{{~ for c in p.discriminator.cases ~}}
+{{~ if c.record == r.name ~}}
+        String kind = r.substring({{ p.discriminator.offset }}, {{ p.discriminator.offset + p.discriminator.length }});
+        if (!{{ for v in c.values }}"{{ v }}".equals(kind){{ if !for.last }} && !{{ end }}{{ end }}) {
+            throw new LegacyRecordException("{{ r.layout }}", "{{ p.discriminator.cobol }}", {{ p.discriminator.offset }}, kind, "not a record type of {{ r.name }}");
+        }
+{{~ end ~}}
+{{~ end ~}}
+{{~ end ~}}
+{{~ end ~}}
+{{~ else ~}}
+        length(r, {{ x.upper_snake r.decoder }}_LENGTH, "{{ r.layout }}");
+{{~ end ~}}
+{{~ for c in r.constants ~}}
+        constant(r, "{{ r.layout }}", "{{ c.cobol }}", {{ c.offset }}, {{ c.length }}, "{{ c.value }}");
+{{~ end ~}}
+        String layout = "{{ r.layout }}";
+        return new {{ r.name }}(
+{{~ for f in r.fields ~}}
+{{~ if f.decode == 'signedDecimal' || f.decode == 'unsignedDecimal' ~}}
+                {{ f.decode }}(r, layout, "{{ f.cobol }}", {{ f.offset }}, {{ f.length }}, {{ f.scale }}){{ if !for.last }},{{ end }}
+{{~ else ~}}
+                {{ f.decode }}(r, layout, "{{ f.cobol }}", {{ f.offset }}, {{ f.length }}){{ if !for.last }},{{ end }}
+{{~ end ~}}
+{{~ end ~}}
+        );
+    }
+{{~ end ~}}
+{{~ end ~}}
+{{~ for r in model.records ~}}
+{{~ if !r.sealed ~}}
+{{~ len = r.decoder ~}}
+{{~ for p in model.records ~}}
+{{~ if p.name == r.parent ~}}
+{{~ len = p.decoder ~}}
+{{~ end ~}}
+{{~ end ~}}
+
+    /** A {{ r.layout }} record from a {{ r.name }}: the inverse of {{ r.decoder }} (bytes no field covers are spaces). */
+    public static String encode({{ r.name }} x) {
+        char[] c = new char[{{ x.upper_snake len }}_LENGTH];
+        java.util.Arrays.fill(c, ' ');
+        String layout = "{{ r.layout }}";
+{{~ for k in r.constants ~}}
+        put(c, layout, "{{ k.cobol }}", {{ k.offset }}, {{ k.length }}, "{{ k.value }}");
+{{~ end ~}}
+{{~ for f in r.fields ~}}
+{{~ if f.decode == 'signedDecimal' || f.decode == 'unsignedDecimal' ~}}
+        {{ f.decode }}Out(c, layout, "{{ f.cobol }}", {{ f.offset }}, {{ f.length }}, x.{{ f.name }}(), {{ f.scale }});
+{{~ else ~}}
+        {{ f.decode }}Out(c, layout, "{{ f.cobol }}", {{ f.offset }}, {{ f.length }}, x.{{ f.name }}());
+{{~ end ~}}
+{{~ end ~}}
+        return new String(c);
+    }
+{{~ end ~}}
+{{~ end ~}}
+
+    private static void put(char[] c, String layout, String field, int offset, int length, String s) {
+        if (s.length() != length) {
+            throw new LegacyRecordException(layout, field, offset, s, "does not fit " + length + " characters");
+        }
+        s.getChars(0, length, c, offset);
+    }
+
+    private static void textOut(char[] c, String layout, String field, int offset, int length, String v) {
+        String s = v == null ? "" : v;
+        if (s.length() > length) {
+            throw new LegacyRecordException(layout, field, offset, s, "longer than " + length + " characters");
+        }
+        put(c, layout, field, offset, length, s + " ".repeat(length - s.length()));
+    }
+
+    private static void idOut(char[] c, String layout, String field, int offset, int length, String v) {
+        put(c, layout, field, offset, length, v);
+    }
+
+    private static void flagOut(char[] c, String layout, String field, int offset, int length, boolean v) {
+        put(c, layout, field, offset, length, v ? "Y" : "N");
+    }
+
+    private static void dateOut(char[] c, String layout, String field, int offset, int length, LocalDate v) {
+        put(c, layout, field, offset, length, v == null ? "00000000" : String.format("%04d%02d%02d", v.getYear(), v.getMonthValue(), v.getDayOfMonth()));
+    }
+
+    private static String zeros(String layout, String field, int offset, int length, BigInteger v) {
+        String digits = v.abs().toString();
+        if (digits.length() > length) {
+            throw new LegacyRecordException(layout, field, offset, v.toString(), "more than " + length + " digits");
+        }
+        return "0".repeat(length - digits.length()) + digits;
+    }
+
+    private static void unsignedIntOut(char[] c, String layout, String field, int offset, int length, int v) {
+        unsignedDecimalOut(c, layout, field, offset, length, BigDecimal.valueOf(v), 0);
+    }
+
+    private static void unsignedLongOut(char[] c, String layout, String field, int offset, int length, long v) {
+        unsignedDecimalOut(c, layout, field, offset, length, BigDecimal.valueOf(v), 0);
+    }
+
+    private static void signedIntOut(char[] c, String layout, String field, int offset, int length, int v) {
+        signedDecimalOut(c, layout, field, offset, length, BigDecimal.valueOf(v), 0);
+    }
+
+    private static void signedLongOut(char[] c, String layout, String field, int offset, int length, long v) {
+        signedDecimalOut(c, layout, field, offset, length, BigDecimal.valueOf(v), 0);
+    }
+
+    private static void signedDecimalOut(char[] c, String layout, String field, int offset, int length, BigDecimal v, int scale) {
+        BigInteger unscaled = exact(layout, field, offset, v, scale);
+        put(c, layout, field, offset, length, (unscaled.signum() < 0 ? "-" : "+") + zeros(layout, field, offset, length - 1, unscaled));
+    }
+
+    private static void unsignedDecimalOut(char[] c, String layout, String field, int offset, int length, BigDecimal v, int scale) {
+        BigInteger unscaled = exact(layout, field, offset, v, scale);
+        if (unscaled.signum() < 0) {
+            throw new LegacyRecordException(layout, field, offset, v.toPlainString(), "negative in an unsigned field");
+        }
+        put(c, layout, field, offset, length, zeros(layout, field, offset, length, unscaled));
+    }
+
+    private static BigInteger exact(String layout, String field, int offset, BigDecimal v, int scale) {
+        try {
+            return v.setScale(scale, java.math.RoundingMode.UNNECESSARY).unscaledValue();
+        } catch (ArithmeticException e) {
+            throw new LegacyRecordException(layout, field, offset, v.toPlainString(), "not exact at " + scale + " decimal places");
+        }
+    }
+
+    private static void length(String r, int length, String layout) {
+        if (r.length() != length) {
+            throw new LegacyRecordException(layout, "(record)", 0, String.valueOf(r.length()), "a record of " + length + " characters expected");
+        }
+    }
+
+    private static void constant(String r, String layout, String field, int offset, int length, String value) {
+        String s = r.substring(offset, offset + length);
+        if (!s.equals(value)) {
+            throw new LegacyRecordException(layout, field, offset, s, "the record type is not " + value);
+        }
+    }
+
+    private static String text(String r, String layout, String field, int offset, int length) {
+        return r.substring(offset, offset + length).stripTrailing();
+    }
+
+    private static String id(String r, String layout, String field, int offset, int length) {
+        return digits(r, layout, field, offset, length);
+    }
+
+    private static boolean flag(String r, String layout, String field, int offset, int length) {
+        char c = r.charAt(offset);
+        if (c != 'Y' && c != 'N') {
+            throw new LegacyRecordException(layout, field, offset, String.valueOf(c), "not Y or N");
+        }
+        return c == 'Y';
+    }
+
+    private static String digits(String r, String layout, String field, int offset, int length) {
+        String s = r.substring(offset, offset + length);
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) < '0' || s.charAt(i) > '9') {
+                throw new LegacyRecordException(layout, field, offset, s, "not digits");
+            }
+        }
+        return s;
+    }
+
+    private static int unsignedInt(String r, String layout, String field, int offset, int length) {
+        return Integer.parseInt(digits(r, layout, field, offset, length));
+    }
+
+    private static long unsignedLong(String r, String layout, String field, int offset, int length) {
+        return Long.parseLong(digits(r, layout, field, offset, length));
+    }
+
+    private static BigInteger signedDigits(String r, String layout, String field, int offset, int length) {
+        char sign = r.charAt(offset);
+        if (sign != '+' && sign != '-') {
+            throw new LegacyRecordException(layout, field, offset, r.substring(offset, offset + length), "no leading sign");
+        }
+        BigInteger v = new BigInteger(digits(r, layout, field, offset + 1, length - 1));
+        return sign == '-' ? v.negate() : v;
+    }
+
+    private static int signedInt(String r, String layout, String field, int offset, int length) {
+        return signedDigits(r, layout, field, offset, length).intValueExact();
+    }
+
+    private static long signedLong(String r, String layout, String field, int offset, int length) {
+        return signedDigits(r, layout, field, offset, length).longValueExact();
+    }
+
+    private static BigDecimal signedDecimal(String r, String layout, String field, int offset, int length, int scale) {
+        return new BigDecimal(signedDigits(r, layout, field, offset, length), scale);
+    }
+
+    private static BigDecimal unsignedDecimal(String r, String layout, String field, int offset, int length, int scale) {
+        return new BigDecimal(new BigInteger(digits(r, layout, field, offset, length)), scale);
+    }
+
+    private static LocalDate date(String r, String layout, String field, int offset, int length) {
+        String s = digits(r, layout, field, offset, length);
+        if ("00000000".equals(s)) {
+            return null;
+        }
+        try {
+            return LocalDate.of(Integer.parseInt(s.substring(0, 4)), Integer.parseInt(s.substring(4, 6)), Integer.parseInt(s.substring(6, 8)));
+        } catch (DateTimeException e) {
+            throw new LegacyRecordException(layout, field, offset, s, "not a date");
+        }
+    }
+}

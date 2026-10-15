@@ -1,0 +1,6 @@
+# The template catalog (GemmaJavaTemplates.md §5): one folder per template with its manifest and Scriban files. A bundle is a set
+# selected together; the rule selector (arm RL) still evaluates each template's selectWhen against the model and the profile.
+version: 2026.10.1
+bundles:
+  H-OFBIZ: [H-OFBIZ-COMPONENT, H-OFBIZ-ENTITYMODEL, H-OFBIZ-SERVICEDEF, H-OFBIZ-DATA, H-OFBIZ-SERVICES, H-OFBIZ-PORTS, H-OFBIZ-MIGRATION, H-OFBIZ-TESTS]
+  C-LEGACY: [C-LEGACY-LAYOUT]

@@ -1,0 +1,552 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0025",
+  "origin" : "the S5 loan envelope-1-p06-ceiling-0000000000000632; expected values: the reference over in-memory ports with the demo ledger",
+  "rules" : [ "OFB-05", "OFB-07", "OFB-08", "OFB-10" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2025-11-14",
+    "params" : {
+      "externalId" : "E-ofb-0025",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000632",
+      "scheduleStart" : "2025-11-14",
+      "currencyCode" : "INR",
+      "currencyDecimalPlaces" : "2",
+      "currencyRoundingMultiple" : "10",
+      "principal" : "3.3000",
+      "disbursementDate" : "2025-11-14",
+      "installments" : "4",
+      "every" : "15",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "81.070000000",
+      "downPaymentEnabled" : false,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_360",
+      "fixedLength" : "55",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2025-11-14"
+    },
+    "expect" : {
+      "outcome" : "Booked",
+      "result" : {
+        "@type" : "Booked",
+        "loanId" : "LN-E-ofb-0025",
+        "accountId" : "*",
+        "scheduleVersion" : 1
+      }
+    },
+    "bind" : {
+      "acc1" : "result.accountId"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2025-11-14",
+    "params" : {
+      "asOf" : "2125-11-14",
+      "businessDate" : "2025-11-14"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2125-11-14",
+        "billed" : [ ]
+      }
+    }
+  }, {
+    "service" : "disburseLoan",
+    "today" : "2025-11-14",
+    "params" : {
+      "loanId" : "LN-E-ofb-0025",
+      "paymentMethodId" : "SC_CHECKING",
+      "businessDate" : "2025-11-14"
+    },
+    "expect" : {
+      "outcome" : "Disbursed",
+      "result" : {
+        "@type" : "Disbursed",
+        "loanId" : "LN-E-ofb-0025",
+        "paymentId" : "*",
+        "accountTransactionId" : "*",
+        "downPaymentInvoiceId" : null
+      }
+    },
+    "bind" : {
+      "pay1" : "result.paymentId",
+      "trn1" : "result.accountTransactionId"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2026-01-09",
+    "params" : {
+      "asOf" : "2026-01-09",
+      "businessDate" : "2026-01-09"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2026-01-09",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0025",
+          "number" : 1,
+          "invoiceId" : "*",
+          "principal" : "0.78",
+          "interest" : "0.12"
+        }, {
+          "loanId" : "LN-E-ofb-0025",
+          "number" : 2,
+          "invoiceId" : "*",
+          "principal" : "0.81",
+          "interest" : "0.09"
+        }, {
+          "loanId" : "LN-E-ofb-0025",
+          "number" : 3,
+          "invoiceId" : "*",
+          "principal" : "0.84",
+          "interest" : "0.06"
+        }, {
+          "loanId" : "LN-E-ofb-0025",
+          "number" : 4,
+          "invoiceId" : "*",
+          "principal" : "0.87",
+          "interest" : "0.02"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv1" : "result.billed.0.invoiceId",
+      "inv2" : "result.billed.1.invoiceId",
+      "inv3" : "result.billed.2.invoiceId",
+      "inv4" : "result.billed.3.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2026-01-09",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "0.90",
+      "currencyUomId" : "INR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2026-01-09 00:00:00.0"
+    },
+    "bind" : {
+      "rcv1" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2026-01-09",
+    "params" : {
+      "paymentId" : "$rcv1",
+      "invoiceId" : "$inv1",
+      "amountApplied" : "0.90"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2026-01-09",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "0.90",
+      "currencyUomId" : "INR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2026-01-09 00:00:00.0"
+    },
+    "bind" : {
+      "rcv2" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2026-01-09",
+    "params" : {
+      "paymentId" : "$rcv2",
+      "invoiceId" : "$inv3",
+      "amountApplied" : "0.90"
+    }
+  } ],
+  "checks" : [ {
+    "entity" : "Loan",
+    "where" : {
+      "loanId" : "LN-E-ofb-0025"
+    },
+    "fields" : [ "externalId", "statusId", "accountId", "disbursementPaymentId", "disbursementTransactionId" ],
+    "rows" : [ {
+      "externalId" : "E-ofb-0025",
+      "statusId" : "LOAN_ACTIVE",
+      "accountId" : "$acc1",
+      "disbursementPaymentId" : "$pay1",
+      "disbursementTransactionId" : "$trn1"
+    } ]
+  }, {
+    "entity" : "LoanServicingLine",
+    "where" : {
+      "loanId" : "LN-E-ofb-0025"
+    },
+    "orderBy" : [ "lineSeqId" ],
+    "fields" : [ "lineNumber", "dueDate", "principal", "interest", "invoiceId", "billedOn", "collectionTransactionId" ],
+    "rows" : [ {
+      "lineNumber" : 1,
+      "dueDate" : "2025-11-29",
+      "principal" : "0.78",
+      "interest" : "0.12",
+      "invoiceId" : "$inv1",
+      "billedOn" : "2026-01-09",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 2,
+      "dueDate" : "2025-12-14",
+      "principal" : "0.81",
+      "interest" : "0.09",
+      "invoiceId" : "$inv2",
+      "billedOn" : "2026-01-09",
+      "collectionTransactionId" : null
+    }, {
+      "lineNumber" : 3,
+      "dueDate" : "2025-12-29",
+      "principal" : "0.84",
+      "interest" : "0.06",
+      "invoiceId" : "$inv3",
+      "billedOn" : "2026-01-09",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 4,
+      "dueDate" : "2026-01-08",
+      "principal" : "0.87",
+      "interest" : "0.02",
+      "invoiceId" : "$inv4",
+      "billedOn" : "2026-01-09",
+      "collectionTransactionId" : null
+    } ]
+  }, {
+    "entity" : "FinAccount",
+    "where" : {
+      "finAccountId" : "$acc1"
+    },
+    "fields" : [ "finAccountTypeId", "statusId", "ownerPartyId", "organizationPartyId", "currencyUomId", "actualBalance" ],
+    "rows" : [ {
+      "finAccountTypeId" : "LOAN_ACCOUNT",
+      "statusId" : "FNACT_ACTIVE",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "currencyUomId" : "INR",
+      "actualBalance" : "-1.68"
+    } ]
+  }, {
+    "entity" : "FinAccountTrans",
+    "where" : {
+      "finAccountId" : "$acc1"
+    },
+    "orderBy" : [ "finAccountTransId" ],
+    "fields" : [ "finAccountTransTypeId", "amount", "transactionDate", "statusId", "paymentId" ],
+    "rows" : [ {
+      "finAccountTransTypeId" : "WITHDRAWAL",
+      "amount" : "3.30",
+      "transactionDate" : "2025-11-14",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : "$pay1"
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "0.78",
+      "transactionDate" : "2026-01-09",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "0.84",
+      "transactionDate" : "2026-01-09",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv1"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2025-11-29",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "INR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv1"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "0.78",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "0.12",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv1",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "0.78",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "0.12",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "0.90",
+      "origCurrencyUomId" : "INR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv2"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_READY",
+      "invoiceDate" : "2025-12-14",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "INR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv2"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "0.81",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "0.09",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv2",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "0.81",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "0.09",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "0.90",
+      "origCurrencyUomId" : "INR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv3"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2025-12-29",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "INR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv3"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "0.84",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "0.06",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv3",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "0.84",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "0.06",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "0.90",
+      "origCurrencyUomId" : "INR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv4"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_READY",
+      "invoiceDate" : "2026-01-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "INR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv4"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "0.87",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "0.02",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv4",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "0.87",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "0.02",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "0.89",
+      "origCurrencyUomId" : "INR"
+    } ]
+  }, {
+    "entity" : "Payment",
+    "where" : {
+      "paymentId" : "$pay1"
+    },
+    "fields" : [ "paymentTypeId", "paymentMethodId", "statusId", "amount", "currencyUomId", "overrideGlAccountId", "partyIdFrom", "partyIdTo", "effectiveDate" ],
+    "rows" : [ {
+      "paymentTypeId" : "DISBURSEMENT",
+      "paymentMethodId" : "SC_CHECKING",
+      "statusId" : "PMNT_SENT",
+      "amount" : "3.30",
+      "currencyUomId" : "INR",
+      "overrideGlAccountId" : "124000",
+      "partyIdFrom" : "Company",
+      "partyIdTo" : "LOAN_BORROWER_1",
+      "effectiveDate" : "2025-11-14"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "paymentId" : "$pay1",
+          "acctgTransTypeId" : "OUTGOING_PAYMENT"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "111100",
+      "debitCreditFlag" : "C",
+      "origAmount" : "3.30",
+      "origCurrencyUomId" : "INR"
+    }, {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "3.30",
+      "origCurrencyUomId" : "INR"
+    } ]
+  } ]
+}

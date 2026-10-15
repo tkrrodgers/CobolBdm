@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="{{ profile.host.servicesDtd }}">
+    <description>{{ x.xml model.service.title }} services</description>
+    <vendor>mlcpu</vendor>
+    <version>1.0</version>
+{{~ for s in model.services ~}}
+
+    <service name="{{ s.name }}" engine="java" auth="true"
+            location="{{ model.plugin.javaPackage }}.{{ model.plugin.resourceName }}Services" invoke="{{ s.name }}">
+        <description>{{ x.xml s.description }}</description>
+        <permission-service service-name="{{ model.plugin.permissionService }}" main-action="{{ s.action }}"/>
+{{~ for i in s.inputs ~}}
+        <attribute name="{{ i.name }}" type="{{ i.type }}" mode="IN" optional="{{ i.optional }}"/>
+{{~ end ~}}
+        <attribute name="businessDate" type="java.sql.Date" mode="IN" optional="true"/>
+        <attribute name="outcome" type="String" mode="OUT" optional="false"/>
+        <attribute name="result" type="Map" mode="OUT" optional="false"/>
+    </service>
+{{~ end ~}}
+</services>

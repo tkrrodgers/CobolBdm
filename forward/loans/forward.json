@@ -32,7 +32,7 @@
     ]
   },
   "rulePatterns": [
-    "\\| ((?:MNY|DATE|CAL|RATE|TRM|AMZ|PLAN|RPT|DISC|SRV|IDEM)-\\d\\d) \\|"
+    "\\| ((?:MNY|DATE|CAL|RATE|TRM|AMZ|PLAN|RPT|DISC|SRV|IDEM|MIG)-\\d\\d) \\|"
   ],
   "modules": [
     {
@@ -58,6 +58,10 @@
     {
       "module": "loans-disclosure",
       "package": "com.mlcpu.loans.disclosure"
+    },
+    {
+      "module": "loans-migration",
+      "package": "com.mlcpu.loans.migration"
     },
     {
       "module": "loans-application",
@@ -209,13 +213,35 @@
         "com.mlcpu.loans.api.ports"
       ],
       "ports": true
+    },
+    {
+      "name": "migration",
+      "module": "loans-migration",
+      "package": "com.mlcpu.loans.migration",
+      "digests": [
+        "migration"
+      ],
+      "packets": [],
+      "rulePrefixes": [
+        "MIG-"
+      ],
+      "methods": [
+        "migration"
+      ],
+      "entry": "public static LegacyMigration migration()",
+      "implements": "com.mlcpu.loans.api.migration.LegacyMigration",
+      "apiPackages": [
+        "com.mlcpu.loans.api.migration",
+        "com.mlcpu.loans.api.legacy"
+      ]
     }
   ],
   "useCaseMethods": [
     "dueDates",
     "rateFactors",
     "quotes",
-    "create"
+    "create",
+    "migration"
   ],
   "leakDictionary": "sme/leak-dictionary.tsv",
   "javaLevel": 17,
@@ -230,9 +256,62 @@
     "with its components in declaration order (an implementation of a sealed interface also carries \"@type\", its simple name),",
     "dates are \"yyyy-mm-dd\", BigDecimal is a string compared by value and scale (\"12.30\" is not \"12.3\"), enums are by name, an",
     "absent nullable value is null, lists are arrays in order. About 20% of the scenarios are public: you see their failures in",
+    "full. The others are hidden: you see how many pass.",
     "The servicing calls \"book\", \"disburse\", \"billDue\" and \"invoicePaid\" are the methods of LoansApplication.create(ports),",
     "over in-memory ports made from the scenario's \"given\" (one set per scenario; the call \"today\" sets their clock); after the",
     "steps the ports' state is compared with the scenario's \"state\" in the same canonical JSON.",
-    "full. The others are hidden: you see how many pass."
-  ]
+    "The migration calls \"legacyTerms\" and \"reconcile\" are the methods terms and reconcile of LoansApplication.migration(); their input",
+    "is the legacy loan as its records ({\"request\", \"runControl\", \"currency\", \"schedule\", \"reject\"}, each record the characters of",
+    "the legacy dataset's record, \"currency\" and \"reject\" null when absent), decoded by the generated LegacyCodec into a LegacyLoan."
+  ],
+  "pools": {
+    "about": "The engine's scenario pools (FE 7.2 to 7.4): the SME's generators, each a main class of the SME project run in its folder (jvm: its JVM options; ${repo} and ${FCG} as in host.generators), in this order; pipeline.sh pools runs them",
+    "sme": "sme",
+    "generators": [
+      {"main": "com.mlcpu.loans.sme.CalendarPool", "args": ["pool/calendar/candidates.jsonl", "../service/loans-acceptance/src/test/resources/scenarios", "../scenarios.json", "reports/calendar-pool.md", "12"]},
+      {"main": "com.mlcpu.loans.sme.RatesPool", "args": ["../service/loans-acceptance/src/test/resources/scenarios", "../scenarios.json", "reports/rates-pool.md", "2", "pool/rates/candidates.jsonl", "pool/rates/candidates-edge-p12.jsonl", "pool/rates/candidates-edge-more.jsonl", "pool/rates/candidates-kit.jsonl", "pool/rates/candidates-probes.jsonl", "pool/rates/candidates-probes-rate05.jsonl"]},
+      {"main": "com.mlcpu.loans.sme.TermsPool", "args": ["pool/schedule", "pool/terms/envelope.jsonl", "../service/loans-acceptance/src/test/resources/scenarios", "../scenarios.json", "reports/terms-pool.md", "6"]},
+      {"main": "com.mlcpu.loans.sme.SchedulePool", "args": ["pool/schedule", "../service/loans-acceptance/src/test/resources/scenarios", "../scenarios.json", "reports/schedule-pool.md", "3", "150", "60"]},
+      {"main": "com.mlcpu.loans.sme.DisclosurePool", "jvm": ["-Djava.util.concurrent.ForkJoinPool.common.parallelism=16"], "args": ["pool/disclosure/document-candidates.jsonl", "pool/schedule", "../service/loans-acceptance/src/test/resources/scenarios", "../scenarios.json", "reports/disclosure-pool.md", "pool/disclosure/disclose-candidates.jsonl", "3", "150", "60"]},
+      {"main": "com.mlcpu.loans.sme.ServicingPool", "args": ["pool/schedule", "../service/loans-acceptance/src/test/resources/scenarios", "../scenarios.json", "reports/servicing-pool.md"]},
+      {"main": "com.mlcpu.loans.sme.PrivilegedPool", "args": ["pool/privileged", "../service/loans-acceptance/src/test/resources/scenarios", "../scenarios.json", "reports/privileged-pool.md", "2"]},
+      {"main": "com.mlcpu.loans.sme.MigrationPool", "args": ["legacy-books.json", "${repo}", "${FCG}", "pool/schedule/pool.json", "../service/loans-acceptance/src/test/resources/scenarios", "../scenarios.json", "reports/migration-pool.md"]}
+    ]
+  },
+  "host": {
+    "name": "OFBiz",
+    "script": "../../tools/forward/ofbiz-host.sh",
+    "profile": "environments/ofbiz-plugin.yaml",
+    "bundle": "H-OFBIZ",
+    "sme": "sme",
+    "generators": [
+      { "main": "com.mlcpu.loans.sme.OfbizPool", "args": ["pool/schedule", "../host/service-model.json", "../host/scenarios/pool", "1"] },
+      { "main": "com.mlcpu.loans.sme.OfbizMigrationPool", "args": ["legacy-books.json", "${repo}", "${FCG}", "../host/scenarios",
+        "plugins/loans/testdef/scenarios", "sample-p12-half_even", "rejects-p12-half_even"] }
+    ],
+    "digests": ["host/digests/ofbiz.md"],
+    "facade": "host/ofbiz-facade.md",
+    "context": ["LoansPortContext"],
+    "scenarios": { "public": ["host/scenarios/smoke", "host/scenarios/pool/public"], "hidden": ["host/scenarios/pool/hidden", "host/scenarios/migration"] },
+    "examples": ["ofb-r001", "ofb-0017"],
+    "javaLevel": 17,
+    "timeoutMinutes": 20,
+    "testing": [
+      "The service runs inside Apache OFBiz (the pinned release) as the plugin \"loans\" (plugins/loans). The plugin is generated from",
+      "the service model: its entities (Loan, LoanScheduleLine, LoanServicingLine, LoanProduct), its services (quoteLoanSchedule,",
+      "discloseLoan, bookLoan, disburseLoan, billDueLoanInstallments, recordLoanInvoiceStatus, ...), their SECA on setInvoiceStatus,",
+      "and the Java behind them: each service builds the API command from its context, calls the service's engine (the jars in",
+      "lib/) through LoansApplication.create(ports) with the ports the generated LoansPortsFactory builds, and returns the outcome.",
+      "The engine reaches OFBiz only through those ports. Ids, LoanBook and Clock are generated; Ledger, Billing and",
+      "FinancialAccounts are the holes: they put the loan into OFBiz's own accounting (payments, invoices, financial accounts),",
+      "which then posts it to the general ledger. Each scenario runs the plugin's services in OFBiz (on OFBiz's demo data and",
+      "the plugin's) and compares the rows OFBiz holds afterwards. About 30% of the scenarios are public: you see their failures",
+      "in full. The others are hidden: you see how many pass."
+    ],
+    "contract": [
+      "OFBiz's checkstyle, 0 violations: lines of at most 150 characters; 4-space indentation, no tabs; braces on every if, else,",
+      "  for and while; final classes; private fields; @Override on interface methods; no unused or star imports; an operator that",
+      "  wraps a line starts the next one; one statement and one variable declaration per line; a newline at the end of the file."
+    ]
+  }
 }

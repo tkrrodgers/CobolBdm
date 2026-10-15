@@ -1,0 +1,49 @@
+{{~ R = model.plugin.resourceName ~}}
+package {{ model.plugin.javaPackage }};
+
+{{~ for i in (model.enums | array.map "fqn" | array.uniq | array.sort) ~}}
+import {{ i }};
+{{~ end ~}}
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * The host ids of the API's constants (Enumeration and StatusItem ids, seed data), one to one (OFB-03): an id that names no
+ * constant of the expected type is an error naming the field.
+ */
+public final class {{ R }}Enums {
+
+    private static final Map<Enum<?>, String> IDS = new HashMap<>();
+    private static final Map<String, Enum<?>> CONSTANTS = new HashMap<>();
+
+    static {
+{{~ for e in model.enums ~}}
+{{~ for c in e.constants ~}}
+        put({{ e.name }}.{{ c.name }}, "{{ c.id }}");
+{{~ end ~}}
+{{~ end ~}}
+    }
+
+    private {{ R }}Enums() {
+    }
+
+    private static void put(Enum<?> constant, String id) {
+        IDS.put(constant, id);
+        CONSTANTS.put(id, constant);
+    }
+
+    public static String id(Enum<?> value) {
+        return value == null ? null : IDS.get(value);
+    }
+
+    public static <E extends Enum<E>> E of(Class<E> type, String id, String field) {
+        if (id == null) {
+            return null;
+        }
+        Enum<?> constant = CONSTANTS.get(id);
+        if (constant == null || constant.getDeclaringClass() != type) {
+            throw new IllegalArgumentException("unknown " + field + ": " + id);
+        }
+        return type.cast(constant);
+    }
+}

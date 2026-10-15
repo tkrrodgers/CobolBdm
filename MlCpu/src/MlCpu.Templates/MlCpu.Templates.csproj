@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MlCpu.Templates</RootNamespace>
+    <AssemblyName>MlCpu.Templates</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Scriban" Version="7.5.0" />
+    <PackageReference Include="YamlDotNet" Version="18.1.0" />
+  </ItemGroup>
+</Project>

@@ -2,7 +2,7 @@
   "id": "srv-0004",
   "slice": "servicing",
   "origin": "the S5 loan envelope-1-p06-down-0000000000000565; expected values: the reference over the in-memory ports",
-  "rules": ["IDEM-03","SRV-03","SRV-06","SRV-07","SRV-08"],
+  "rules": ["IDEM-03","SRV-03","SRV-06","SRV-07","SRV-08","SRV-11"],
   "given": {"today":"2061-10-31","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
     {"call": "book", "input": {"externalId":"E-0497","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000565","scheduleStart":"2061-06-06","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"27.1900","disbursementDate":"2061-10-31","installments":9,"every":34,"frequency":"WEEKS","annualRatePercent":"86.610000000","downPaymentPercent":"88.043300000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":302,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"DOWN"}}},
@@ -25,6 +25,7 @@
     "loans" : [ {
       "loanId" : "LN-E-0497",
       "externalId" : "E-0497",
+      "termsLoanId" : "LN-E-0497",
       "accountId" : "ACC-0001",
       "status" : "ACTIVE",
       "bookedOn" : "2061-10-31",

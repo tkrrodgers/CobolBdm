@@ -1,0 +1,28 @@
+schema: mlcpu.template-manifest.v1
+id: C-LEGACY-LAYOUT
+version: 1.2.0
+family: contract
+tier: contract
+priority: 10
+summary: The legacy records as Java (one record per layout, a sealed interface per discriminated REDEFINES), their decoders from the fixed-length datasets and their encoders (the exact inverse).
+selectWhen: "model.schema == 'mlcpu.legacy-model.v1'"
+card: |
+  Copybook to Java (GemmaJavaTemplates.md 3.4): text is a String without trailing spaces, identifiers stay strings, yyyymmdd
+  dates are LocalDate (all zeros: null), flags are Y or N (anything else does not decode), digits with a scale a BigDecimal at that scale (SIGN LEADING SEPARATE),
+  other digits an int or a long. A record that does not decode (a wrong constant, a non-digit in a number, a bad date) throws
+  LegacyRecordException naming the field: the migration reports it, never guesses.
+outputs:
+  - forEach: model.records
+    where: "!item.sealed"
+    path: "java/{{ x.package_path model.package }}/{{ item.name }}.java"
+    template: Record.java.sbn
+  - forEach: model.records
+    where: "item.sealed"
+    path: "java/{{ x.package_path model.package }}/{{ item.name }}.java"
+    template: Sealed.java.sbn
+  - { path: "java/{{ x.package_path model.package }}/{{ model.codec }}.java", template: Codec.java.sbn }
+  - { path: "java/{{ x.package_path model.package }}/LegacyRecordException.java", template: RecordException.java.sbn }
+  - forEach: model.fromTerms
+    path: "java/{{ x.package_path model.package }}/{{ item.class }}.java"
+    template: FromTerms.java.sbn
+holes: []

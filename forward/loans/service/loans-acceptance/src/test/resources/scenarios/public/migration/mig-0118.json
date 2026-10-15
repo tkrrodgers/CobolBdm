@@ -1,0 +1,15 @@
+{
+  "id": "mig-0118",
+  "slice": "migration",
+  "origin": "legacy book rejects-p12-half_even, loan 0000000000000036",
+  "rules": [],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000003620240101USD+000000000100000002024010100120001          +012000000000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"Unrepresentable","loanId":"0000000000000036","field":"RQ-FREQ-TYPE","value":""}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000003620240101USD+000000000100000002024010100120001          +012000000000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000036RJFREQ01S09                     REPAYMENT FREQUENCY TYPE NOT RECOGNISED                                 "},
+    "expected": {"loanId":"0000000000000036","outcome":"EXPLAINED","decision":"D-5","field":"RQ-FREQ-TYPE","legacyValue":null,"serviceValue":null,"legacyCode":"RJFREQ01","serviceRejection":null}
+  } ]
+}

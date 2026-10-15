@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ofbiz-component name="{{ model.plugin.id }}"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="{{ profile.host.componentDtd }}">
+    <resource-loader name="main" type="component"/>
+    <classpath type="dir" location="config"/>
+    <entity-resource type="model" reader-name="main" loader="main" location="entitydef/entitymodel.xml"/>
+    <entity-resource type="data" reader-name="seed" loader="main" location="data/{{ model.plugin.resourceName }}TypeData.xml"/>
+    <entity-resource type="data" reader-name="demo" loader="main" location="data/{{ model.plugin.resourceName }}DemoData.xml"/>
+    <service-resource type="model" loader="main" location="servicedef/services.xml"/>
+    <service-resource type="eca" loader="main" location="servicedef/secas.xml"/>
+{{~ if model.migration ~}}
+    <service-resource type="model" loader="main" location="servicedef/migration.xml"/>
+{{~ end ~}}
+    <test-suite loader="main" location="testdef/{{ model.plugin.resourceName }}Tests.xml"/>
+</ofbiz-component>

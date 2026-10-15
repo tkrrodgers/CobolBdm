@@ -105,6 +105,7 @@ public final class JobEngine {
             outcome = "ABEND:" + a.code;
             rc = 16;
         } finally {
+            OpenDatasets.closeAll(); // datasets a CALLed normalized program left open
             DisplaySink.set(prev);
         }
         return new ProgramRun(rc, List.copyOf(cap.lines()), outcome);
@@ -230,6 +231,7 @@ public final class JobEngine {
                 sink.write("RUNTIME ERROR " + e, true);
                 return new StepResult(s.id(), s.program(), 20, "normalized " + e);
             } finally {
+                OpenDatasets.closeAll(); // implicit CLOSE of what the step left open, as for the faithful program
                 sink.flush();
                 DisplaySink.set(prev);
             }
@@ -291,6 +293,7 @@ public final class JobEngine {
                 sink.write("RUNTIME ERROR " + e.getMessage(), true);
                 return new StepResult(s.id(), s.program(), 20, e.getMessage());
             } finally {
+                OpenDatasets.closeAll(); // datasets a CALLed normalized program left open
                 sink.flush();
                 DisplaySink.set(prev);
             }

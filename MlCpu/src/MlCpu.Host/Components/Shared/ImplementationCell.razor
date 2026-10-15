@@ -1,0 +1,15 @@
+@* One program's implementation result on a model's page: scenarios passed, best attempt, minutes, debug turns. *@
+@{
+    var s = Status;
+}
+@if (!s.Implemented) { <span class="muted">—</span> }
+else if (!s.Compiled) { <span class="bad">does not compile (@s.Attempts attempts)</span> }
+else
+{
+    <span class="@(s.TestsTotal > 0 && s.TestsPassed == s.TestsTotal ? "ok" : "bad")">@s.TestsPassed/@s.TestsTotal scenarios</span>
+    <span class="muted"> attempt @s.BestAttempt of @s.Attempts@(s.Minutes is { } m ? $", {m:N1} min" : "")@(s.DebugTurns > 0 ? $", {s.DebugTurns} debug turn(s)" : "")@(s.AstOutline ? ", with AST outline" : "")</span>
+}
+
+@code {
+    [Parameter, EditorRequired] public GemmaProgramStatus Status { get; set; } = default!;
+}

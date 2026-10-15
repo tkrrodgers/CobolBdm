@@ -1,0 +1,14 @@
+schema: mlcpu.template-manifest.v1
+id: H-OFBIZ-COMPONENT
+version: 1.0.1
+family: host
+tier: runtime
+priority: 10
+summary: The OFBiz plugin component (ofbiz-component.xml) and its Gradle file; the engine's jars sit in lib/.
+selectWhen: "profile.host.kind == 'ofbiz'"
+card: |
+  OFBiz plugin component: declares the entity model, seed and demo data, services, SECAs and the test suite. No web app.
+outputs:
+  - { path: "ofbiz-component.xml", template: ofbiz-component.xml.sbn }
+  - { path: "build.gradle", template: build.gradle.sbn }
+holes: []

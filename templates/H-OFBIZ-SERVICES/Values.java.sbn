@@ -1,0 +1,72 @@
+package {{ model.plugin.javaPackage }};
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Conversions between the API's values and OFBiz's: dates (java.sql.Date), indicators (Y, N), whole numbers (Long), and the
+ * positions of line rows. Enumeration and status ids are in the generated enums table.
+ */
+public final class {{ model.plugin.resourceName }}Values {
+
+    private {{ model.plugin.resourceName }}Values() {
+    }
+
+    public static java.sql.Date sqlDate(LocalDate date) {
+        return date == null ? null : java.sql.Date.valueOf(date);
+    }
+
+    public static LocalDate localDate(java.util.Date date) {
+        if (date == null) {
+            return null;
+        }
+        if (date instanceof java.sql.Date sqlDate) {
+            return sqlDate.toLocalDate();
+        }
+        return new java.sql.Date(date.getTime()).toLocalDate();
+    }
+
+    public static String indicator(Boolean value) {
+        if (value == null) {
+            return null;
+        }
+        return value ? "Y" : "N";
+    }
+
+    public static boolean flag(String indicator) {
+        return "Y".equals(indicator);
+    }
+
+    public static Boolean flagOrNull(String indicator) {
+        return indicator == null ? null : "Y".equals(indicator);
+    }
+
+    public static Long toLong(Integer value) {
+        return value == null ? null : Long.valueOf(value.longValue());
+    }
+
+    public static Integer integer(Long value) {
+        return value == null ? null : Integer.valueOf(value.intValue());
+    }
+
+    public static int intValue(Long value) {
+        return value == null ? 0 : value.intValue();
+    }
+
+    public static long longValue(Long value) {
+        return value == null ? 0L : value.longValue();
+    }
+
+    /** The position of a line row (00001, 00002, ...): its order in the record's list. */
+    public static String seq(int position) {
+        return String.format("%05d", position);
+    }
+
+    /** A child list read from its rows, by the path of the list in the record. */
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> list(Map<String, List<?>> children, String path) {
+        List<?> list = children.get(path);
+        return list == null ? List.of() : List.copyOf((List<T>) list);
+    }
+}

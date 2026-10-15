@@ -1,0 +1,459 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0050",
+  "origin" : "the S5 loan envelope-1-p06-ceiling-0000000000000726, moved 56 years into OFBiz's dated window; expected values: the reference over in-memory ports with the demo ledger",
+  "rules" : [ "IDEM-01", "OFB-02", "OFB-08" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2015-03-25",
+    "params" : {
+      "externalId" : "E-ofb-0050",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000726",
+      "scheduleStart" : "2015-03-25",
+      "currencyCode" : "USD",
+      "currencyDecimalPlaces" : "2",
+      "principal" : "87297.0000",
+      "disbursementDate" : "2015-03-25",
+      "installments" : "7",
+      "every" : "30",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "83.840000000",
+      "downPaymentPercent" : "4.976000000",
+      "downPaymentEnabled" : true,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_364",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2015-03-25"
+    },
+    "expect" : {
+      "outcome" : "Booked",
+      "result" : {
+        "@type" : "Booked",
+        "loanId" : "LN-E-ofb-0050",
+        "accountId" : "*",
+        "scheduleVersion" : 1
+      }
+    },
+    "bind" : {
+      "acc1" : "result.accountId"
+    }
+  }, {
+    "service" : "bookLoan",
+    "today" : "2015-03-25",
+    "params" : {
+      "externalId" : "E-ofb-0050",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000726",
+      "scheduleStart" : "2015-03-25",
+      "currencyCode" : "USD",
+      "currencyDecimalPlaces" : "2",
+      "principal" : "87298.0000",
+      "disbursementDate" : "2015-03-25",
+      "installments" : "7",
+      "every" : "30",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "83.840000000",
+      "downPaymentPercent" : "4.976000000",
+      "downPaymentEnabled" : true,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_364",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2015-03-25"
+    },
+    "expect" : {
+      "outcome" : "Booked",
+      "result" : {
+        "@type" : "Booked",
+        "loanId" : "LN-E-ofb-0050",
+        "accountId" : "$acc1",
+        "scheduleVersion" : 1
+      }
+    }
+  }, {
+    "service" : "disburseLoan",
+    "today" : "2015-03-25",
+    "params" : {
+      "loanId" : "LN-E-ofb-0050",
+      "paymentMethodId" : "SC_CHECKING",
+      "businessDate" : "2015-03-25"
+    },
+    "expect" : {
+      "outcome" : "Disbursed",
+      "result" : {
+        "@type" : "Disbursed",
+        "loanId" : "LN-E-ofb-0050",
+        "paymentId" : "*",
+        "accountTransactionId" : "*",
+        "downPaymentInvoiceId" : "*"
+      }
+    },
+    "bind" : {
+      "pay1" : "result.paymentId",
+      "trn1" : "result.accountTransactionId",
+      "inv1" : "result.downPaymentInvoiceId"
+    }
+  }, {
+    "service" : "disburseLoan",
+    "today" : "2015-03-25",
+    "params" : {
+      "loanId" : "LN-E-ofb-0050",
+      "paymentMethodId" : "SC_CHECKING",
+      "businessDate" : "2015-03-25"
+    },
+    "expect" : {
+      "outcome" : "Disbursed",
+      "result" : {
+        "@type" : "Disbursed",
+        "loanId" : "LN-E-ofb-0050",
+        "paymentId" : "$pay1",
+        "accountTransactionId" : "$trn1",
+        "downPaymentInvoiceId" : "$inv1"
+      }
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2015-04-24",
+    "params" : {
+      "asOf" : "2015-04-24",
+      "businessDate" : "2015-04-24"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2015-04-24",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0050",
+          "number" : 2,
+          "invoiceId" : "*",
+          "principal" : "9611.93",
+          "interest" : "5731.98"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv2" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2015-04-24",
+    "params" : {
+      "asOf" : "2015-04-24",
+      "businessDate" : "2015-04-24"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2015-04-24",
+        "billed" : [ ]
+      }
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2015-04-24",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "15343.91",
+      "currencyUomId" : "USD",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2015-04-24 00:00:00.0"
+    },
+    "bind" : {
+      "rcv1" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2015-04-24",
+    "params" : {
+      "paymentId" : "$rcv1",
+      "invoiceId" : "$inv2",
+      "amountApplied" : "15343.91"
+    }
+  } ],
+  "checks" : [ {
+    "entity" : "Loan",
+    "where" : {
+      "loanId" : "LN-E-ofb-0050"
+    },
+    "fields" : [ "externalId", "statusId", "accountId", "disbursementPaymentId", "disbursementTransactionId" ],
+    "rows" : [ {
+      "externalId" : "E-ofb-0050",
+      "statusId" : "LOAN_ACTIVE",
+      "accountId" : "$acc1",
+      "disbursementPaymentId" : "$pay1",
+      "disbursementTransactionId" : "$trn1"
+    } ]
+  }, {
+    "entity" : "LoanServicingLine",
+    "where" : {
+      "loanId" : "LN-E-ofb-0050"
+    },
+    "orderBy" : [ "lineSeqId" ],
+    "fields" : [ "lineNumber", "dueDate", "principal", "interest", "invoiceId", "billedOn", "collectionTransactionId" ],
+    "rows" : [ {
+      "lineNumber" : 1,
+      "dueDate" : "2015-03-25",
+      "principal" : "4343.90",
+      "interest" : "0.00",
+      "invoiceId" : "$inv1",
+      "billedOn" : "2015-03-25",
+      "collectionTransactionId" : null
+    }, {
+      "lineNumber" : 2,
+      "dueDate" : "2015-04-24",
+      "principal" : "9611.93",
+      "interest" : "5731.98",
+      "invoiceId" : "$inv2",
+      "billedOn" : "2015-04-24",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 3,
+      "dueDate" : "2015-05-24",
+      "principal" : "10276.10",
+      "interest" : "5067.81",
+      "invoiceId" : null,
+      "billedOn" : null,
+      "collectionTransactionId" : null
+    }, {
+      "lineNumber" : 4,
+      "dueDate" : "2015-06-23",
+      "principal" : "10986.17",
+      "interest" : "4357.74",
+      "invoiceId" : null,
+      "billedOn" : null,
+      "collectionTransactionId" : null
+    }, {
+      "lineNumber" : 5,
+      "dueDate" : "2015-07-23",
+      "principal" : "11745.29",
+      "interest" : "3598.62",
+      "invoiceId" : null,
+      "billedOn" : null,
+      "collectionTransactionId" : null
+    }, {
+      "lineNumber" : 6,
+      "dueDate" : "2015-08-22",
+      "principal" : "12556.88",
+      "interest" : "2787.03",
+      "invoiceId" : null,
+      "billedOn" : null,
+      "collectionTransactionId" : null
+    }, {
+      "lineNumber" : 7,
+      "dueDate" : "2015-09-21",
+      "principal" : "13424.55",
+      "interest" : "1919.36",
+      "invoiceId" : null,
+      "billedOn" : null,
+      "collectionTransactionId" : null
+    }, {
+      "lineNumber" : 8,
+      "dueDate" : "2015-10-21",
+      "principal" : "14352.18",
+      "interest" : "991.73",
+      "invoiceId" : null,
+      "billedOn" : null,
+      "collectionTransactionId" : null
+    } ]
+  }, {
+    "entity" : "FinAccount",
+    "where" : {
+      "finAccountId" : "$acc1"
+    },
+    "fields" : [ "finAccountTypeId", "statusId", "ownerPartyId", "organizationPartyId", "currencyUomId", "actualBalance" ],
+    "rows" : [ {
+      "finAccountTypeId" : "LOAN_ACCOUNT",
+      "statusId" : "FNACT_ACTIVE",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "currencyUomId" : "USD",
+      "actualBalance" : "-77685.07"
+    } ]
+  }, {
+    "entity" : "FinAccountTrans",
+    "where" : {
+      "finAccountId" : "$acc1"
+    },
+    "orderBy" : [ "finAccountTransId" ],
+    "fields" : [ "finAccountTransTypeId", "amount", "transactionDate", "statusId", "paymentId" ],
+    "rows" : [ {
+      "finAccountTransTypeId" : "WITHDRAWAL",
+      "amount" : "87297.00",
+      "transactionDate" : "2015-03-25",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : "$pay1"
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "9611.93",
+      "transactionDate" : "2015-04-24",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv1"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_READY",
+      "invoiceDate" : "2015-03-25",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "USD"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv1"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "4343.90",
+      "overrideGlAccountId" : "124000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv1",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "4343.90",
+      "origCurrencyUomId" : "USD"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "4343.90",
+      "origCurrencyUomId" : "USD"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv2"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2015-04-24",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "USD"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv2"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "9611.93",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "5731.98",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv2",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "9611.93",
+      "origCurrencyUomId" : "USD"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "5731.98",
+      "origCurrencyUomId" : "USD"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "15343.91",
+      "origCurrencyUomId" : "USD"
+    } ]
+  }, {
+    "entity" : "Payment",
+    "where" : {
+      "paymentId" : "$pay1"
+    },
+    "fields" : [ "paymentTypeId", "paymentMethodId", "statusId", "amount", "currencyUomId", "overrideGlAccountId", "partyIdFrom", "partyIdTo", "effectiveDate" ],
+    "rows" : [ {
+      "paymentTypeId" : "DISBURSEMENT",
+      "paymentMethodId" : "SC_CHECKING",
+      "statusId" : "PMNT_SENT",
+      "amount" : "87297.00",
+      "currencyUomId" : "USD",
+      "overrideGlAccountId" : "124000",
+      "partyIdFrom" : "Company",
+      "partyIdTo" : "LOAN_BORROWER_1",
+      "effectiveDate" : "2015-03-25"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "paymentId" : "$pay1",
+          "acctgTransTypeId" : "OUTGOING_PAYMENT"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "111100",
+      "debitCreditFlag" : "C",
+      "origAmount" : "87297.00",
+      "origCurrencyUomId" : "USD"
+    }, {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "87297.00",
+      "origCurrencyUomId" : "USD"
+    } ]
+  } ]
+}

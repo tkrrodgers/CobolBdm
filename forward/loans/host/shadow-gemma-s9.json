@@ -1,0 +1,147 @@
+{
+  "schema": "mlcpu.shadow-run.v1",
+  "checked": "2026-10-15T11:08:46-07:00",
+  "pass": false,
+  "days": 10,
+  "bookings": 5000,
+  "outcomes": {
+    "DIFF": 5,
+    "EXPLAINED D-2": 57,
+    "MATCH": 4934
+  },
+  "failedSteps": [
+    "step 1571 bookLoan: outcome expected Booked, got BookingRejected {@type=BookingRejected, externalId=SH-4-0000000000002807, reason=SCHEDULE_REJECTED, scheduleReason=SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT, field=null} step 1741 bookLoan: outcome expected Booked, got BookingRejected {@type=BookingRejected, externalId=SH-4-0000000000003105, reason=SCHEDULE_REJECTED, scheduleReason=SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT, field=null} step 1821 bookLoan: outcome expected Booked, got BookingRejected {@type=BookingRejected, externalId=SH-4-0000000000003246, reason=SCHEDULE_REJECTED, scheduleReason=SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT, field=null} step 3875 bookLoan: outcome expected Booked, got BookingRejected {@type=BookingRejected, externalId=SH-8-0000000000007022, reason=SCHEDULE_REJECTED, scheduleReason=SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT, field=null} check LoanLegacyRecon {migrationId=SHADOW-D04}: expected 500 row(s), got 497 check LoanLegacyRecon {migrationId=SHADOW-D04, outcome=DIFF}: expected 0 row(s), got 3 check LoanLegacyRecon {migrationId=SHADOW-D08}: expected 500 row(s), got 499 check LoanLegacyRecon {migrationId=SHADOW-D08, outcome=DIFF}: expected 0 row(s), got 2"
+  ],
+  "rows": [
+    {
+      "day": 1,
+      "date": "2026-09-01",
+      "cell": "p12-half_even",
+      "bookings": 500,
+      "reconciledLoans": 500,
+      "outcomes": {
+        "EXPLAINED D-2": 9,
+        "MATCH": 491
+      },
+      "drift": 0,
+      "reconciled": false
+    },
+    {
+      "day": 2,
+      "date": "2026-09-02",
+      "cell": "p09-half_up",
+      "bookings": 500,
+      "reconciledLoans": 500,
+      "outcomes": {
+        "EXPLAINED D-2": 4,
+        "MATCH": 496
+      },
+      "drift": 0,
+      "reconciled": false
+    },
+    {
+      "day": 3,
+      "date": "2026-09-03",
+      "cell": "p06-ceiling",
+      "bookings": 500,
+      "reconciledLoans": 500,
+      "outcomes": {
+        "MATCH": 500
+      },
+      "drift": 0,
+      "reconciled": false
+    },
+    {
+      "day": 4,
+      "date": "2026-09-04",
+      "cell": "p03-floor",
+      "bookings": 500,
+      "reconciledLoans": 497,
+      "outcomes": {
+        "DIFF": 3,
+        "EXPLAINED D-2": 7,
+        "MATCH": 487
+      },
+      "drift": 3,
+      "reconciled": false
+    },
+    {
+      "day": 5,
+      "date": "2026-09-05",
+      "cell": "p12-down",
+      "bookings": 500,
+      "reconciledLoans": 500,
+      "outcomes": {
+        "EXPLAINED D-2": 11,
+        "MATCH": 489
+      },
+      "drift": 0,
+      "reconciled": false
+    },
+    {
+      "day": 6,
+      "date": "2026-09-06",
+      "cell": "p09-up",
+      "bookings": 500,
+      "reconciledLoans": 500,
+      "outcomes": {
+        "MATCH": 500
+      },
+      "drift": 0,
+      "reconciled": false
+    },
+    {
+      "day": 7,
+      "date": "2026-09-07",
+      "cell": "p06-half_down",
+      "bookings": 500,
+      "reconciledLoans": 500,
+      "outcomes": {
+        "EXPLAINED D-2": 9,
+        "MATCH": 491
+      },
+      "drift": 0,
+      "reconciled": false
+    },
+    {
+      "day": 8,
+      "date": "2026-09-08",
+      "cell": "p03-half_even",
+      "bookings": 500,
+      "reconciledLoans": 499,
+      "outcomes": {
+        "DIFF": 2,
+        "EXPLAINED D-2": 11,
+        "MATCH": 486
+      },
+      "drift": 2,
+      "reconciled": false
+    },
+    {
+      "day": 9,
+      "date": "2026-09-09",
+      "cell": "p12-half_up",
+      "bookings": 500,
+      "reconciledLoans": 500,
+      "outcomes": {
+        "EXPLAINED D-2": 6,
+        "MATCH": 494
+      },
+      "drift": 0,
+      "reconciled": false
+    },
+    {
+      "day": 10,
+      "date": "2026-09-10",
+      "cell": "p09-ceiling",
+      "bookings": 500,
+      "reconciledLoans": 500,
+      "outcomes": {
+        "MATCH": 500
+      },
+      "drift": 0,
+      "reconciled": false
+    }
+  ],
+  "engine": "engine-gemma-s9 (before the RATE-05 repair)"
+}

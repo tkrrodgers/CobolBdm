@@ -9,11 +9,11 @@ plugins {
 repositories { mavenCentral() }
 
 val referenceModules = listOf("loans-kernel", "loans-calendar", "loans-rates", "loans-terms", "loans-schedule", "loans-disclosure",
-    "loans-application")
+    "loans-migration", "loans-application")
 
 sourceSets {
     main {
-        java.srcDirs(listOf("src/main/java", "../service/loans-api/src/main/java", "../service/loans-acceptance/src/memory/java")
+        java.srcDirs(listOf("src/main/java", "../service/loans-api/src/main/java", "../service/loans-api/src/generated/java", "../service/loans-acceptance/src/memory/java")
             + referenceModules.map { "../reference/$it/src/main/java" })
     }
 }

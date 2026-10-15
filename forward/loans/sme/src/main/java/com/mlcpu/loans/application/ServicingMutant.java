@@ -13,6 +13,7 @@ public enum ServicingMutant {
     SRV_08("the deposit is the principal and the interest"),
     SRV_09("a cancelled collection leaves the loan paid off"),
     SRV_10("an unknown invoice is reported as an unknown loan"),
+    SRV_11("the terms are saved with the command's loan id"),
     IDEM_01("booking again books again"),
     IDEM_02("disbursing again pays again"),
     IDEM_03("a billed line is billed again"),

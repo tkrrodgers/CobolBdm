@@ -7,7 +7,10 @@ namespace MlCpu.Host.Services.Workspace;
 /// </summary>
 public sealed class OracleService(ProjectService projects, GnuCobolOracle generic, ConfigService config)
 {
-    public async Task BuildAndRunAsync(string projectId, Operation op, CancellationToken ct, bool force = false, double from = 0, double to = 1)
+    /// <param name="only">Those scenarios (and base) alone, without changing the project's job checks or status: a run
+    /// for a caller that reads the outputs itself (the forward pipeline's shadow run, G11).</param>
+    public async Task BuildAndRunAsync(string projectId, Operation op, CancellationToken ct, bool force = false, double from = 0, double to = 1,
+        IReadOnlyList<string>? only = null)
     {
         var p = projects.Get(projectId) ?? throw new ArgumentException($"no project {projectId}");
         if (p.Oracle.Provider == "carddemo-script")
@@ -17,7 +20,7 @@ public sealed class OracleService(ProjectService projects, GnuCobolOracle generi
         }
         var (built, cached, problems) = await generic.BuildAsync(p, op, from, from + (to - from) * 0.4, force, ct);
         var scenarios = new List<string> { "base" };
-        scenarios.AddRange(p.Oracle.Scenarios.Where(s => s != "base"));
+        scenarios.AddRange((only ?? p.Oracle.Scenarios).Where(s => s != "base"));
         // Scenarios are independent (each has its own run directory and context), so after "base" they run in parallel:
         // a matrix of scenarios costs about one scenario's time per core group, not their sum.
         var perScenario = new List<JobCheck>[scenarios.Count];
@@ -31,6 +34,11 @@ public sealed class OracleService(ProjectService projects, GnuCobolOracle generi
                 op.Report(from + (to - from) * (0.4 + 0.6 * Interlocked.Increment(ref done) / scenarios.Count), $"{done}/{scenarios.Count} scenarios");
             });
         var checks = perScenario.SelectMany(x => x).ToList();
+        if (only is not null)
+        {
+            op.Info($"oracle (only {string.Join(", ", only)}): {checks.Count} job check(s), {checks.Sum(c => c.Outputs.Count)} outputs; the project's checks unchanged");
+            return;
+        }
         // The GnuCOBOL run against the reference oracle (A = B for an estate derived from another application).
         var dir = projects.Paths(p).Dir;
         var reference = checks.SelectMany(c => ReferenceOracle.Compare(p, dir, c, key =>

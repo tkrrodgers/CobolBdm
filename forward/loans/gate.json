@@ -1,6 +1,6 @@
 ﻿{
     "schema":  "mlcpu.loans-gate.v1",
-    "checked":  "2026-10-14T14:16:29.8766775-07:00",
+    "checked":  "2026-10-15T12:19:23.0439595-07:00",
     "pass":  true,
     "reference":  {
                       "architectureTests":  {
@@ -8,7 +8,7 @@
                                                 "failed":  0
                                             },
                       "scenarios":  {
-                                        "total":  1489,
+                                        "total":  1758,
                                         "failed":  0
                                     }
                   },
@@ -40,15 +40,20 @@
                                                                 "killed":  102,
                                                                 "scorePercent":  87.2
                                                             },
+                                       "loans-migration":  {
+                                                               "mutants":  109,
+                                                               "killed":  106,
+                                                               "scorePercent":  97.2
+                                                           },
                                        "loans-application":  {
-                                                                 "mutants":  84,
-                                                                 "killed":  80,
-                                                                 "scorePercent":  95.2
+                                                                 "mutants":  85,
+                                                                 "killed":  81,
+                                                                 "scorePercent":  95.3
                                                              }
                                    }
                  },
     "traceability":  {
-                         "rules":  80,
+                         "rules":  94,
                          "untraced":  [
 
                                       ],
@@ -61,18 +66,18 @@
                      },
     "leaks":  {
                   "hits":  0,
-                  "line":  "14:14:41 leak check of package loans: 0 hit(s) (782 names in the dictionary)"
+                  "line":  "12:17:28 leak check of package loans: 0 hit(s) (782 names in the dictionary)"
               },
     "crossCheck":  {
                        "run":  true,
-                       "summary":  "TOTAL 136530 loans, 0 differ, 104.8 s",
+                       "summary":  "TOTAL 136530 loans, 0 differ, 111.3 s",
                        "differ":  0
                    },
     "aPrime":  "JavaToCOBOL docs/APRIME.md: A\u0027 differs from A on exactly the 896 D-2 loans of 147,904",
     "scenarios":  {
-                      "total":  1489,
-                      "public":  273,
+                      "total":  1758,
+                      "public":  327,
                       "privileged":  115,
-                      "hidden":  1101
+                      "hidden":  1316
                   }
 }

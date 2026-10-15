@@ -1,0 +1,58 @@
+{
+  "schema": "mlcpu.generated-lock.v1",
+  "catalog": "2026.10.1",
+  "model": "sha256:b953b26817b2498ecdd24bedb0c6a74defa55fff53b6ec606369d27953079de3",
+  "profile": "sha256:a70c34e56b06cface072fb942f8df9b52072c757350fe2702046aabc4d07aea1",
+  "files": [
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyCodec.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "9b7f75c5f7a2380d227eb57aa04de1acdc38294f72375c7ca9bcbcbeaeea2c1c"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyCurrency.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "beee9946605e334fc8410e8f1bd343cfccbc6966d119b95b95ababe3d140ff2c"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyRecordException.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "24bc6def8c1520b50124d9f9eed1f2a415246355e327edd13857338be74db4aa"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyReject.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "86d026caec5ed81d20bf264efabcc0f132d1dbeeffd7ae915c4b56fb33fd78db"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyRequest.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "8a0c05a62f2199006371e3b9212a31daee2f28b25821ebbbb9ecbfe4415f065d"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyRunControl.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "d1dc739aac831c6eefe81d4e221f513128171a9e90c46e6847071651cfa3c35f"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyScheduleHeader.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "715602544cd2382fe890c5673364f868030250b837fa82a1f39930d735c8a141"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyScheduleLine.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "9bb88e8798be7a0e25774c940586021af6cb2e99629c4d334410ead2e23166b1"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyScheduleRecord.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "8592903b219ef4c99bc07be651c3e5f54ca15dc3757d040f28093afb9e300894"
+    },
+    {
+      "path": "java/com/mlcpu/loans/api/legacy/LegacyTermsCodec.java",
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "sha256": "e297c25d64d2820f0dbc7574d342f273fbf58788b1f2e55e8facded751e76240"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 package com.mlcpu.loans.application;
 
 import com.mlcpu.loans.api.ScheduleService;
+import com.mlcpu.loans.api.migration.LegacyMigration;
 import com.mlcpu.loans.api.ports.LoansPorts;
 import com.mlcpu.loans.api.servicing.LoanServicing;
 import com.mlcpu.loans.api.spi.DueDates;
@@ -8,6 +9,7 @@ import com.mlcpu.loans.api.spi.RateFactors;
 import com.mlcpu.loans.calendar.RepaymentCalendar;
 import com.mlcpu.loans.disclosure.CostOfCredit;
 import com.mlcpu.loans.disclosure.ScheduleDocuments;
+import com.mlcpu.loans.migration.Migration;
 import com.mlcpu.loans.rates.InterestFactors;
 import com.mlcpu.loans.schedule.Amortization;
 import com.mlcpu.loans.terms.TermsReview;
@@ -26,6 +28,11 @@ public final class LoansApplication {
     /** The servicing use cases over the ERP's ports: book, disburse, bill, collect. */
     public static LoanServicing create(LoansPorts ports) {
         return new Servicing(quotes(), ports);
+    }
+
+    /** The legacy loan book's migration: each legacy loan as terms, and its reconciliation with the service's own schedule. */
+    public static LegacyMigration migration() {
+        return new Migration(quotes());
     }
 
     /** The repayment calendar (SPI DueDates) the schedule uses. */

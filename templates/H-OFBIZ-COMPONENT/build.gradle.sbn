@@ -1,0 +1,7 @@
+/*
+ * The {{ model.service.title }} plugin. OFBiz's root build compiles src/main/java and src/test/java, and puts every jar in
+ * {{ profile.engine.lib }}/ on the classpath: the engine (the {{ model.service.name }} service's API, kernel, contexts and
+ * application, built with --release {{ profile.host.javaRelease }}) needs no declared dependency.
+ */
+dependencies {
+}

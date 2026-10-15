@@ -25,13 +25,16 @@ semantics.
 | Terms | `loans-terms`, `com.mlcpu.loans.terms` | The admissibility of loan terms, typed rejections, the down payment | TRM (`digests/terms.md`) |
 | Schedule | `loans-schedule`, `com.mlcpu.loans.schedule` | The amortization schedule: disbursement, the equal installment, the last installment, lines and totals | AMZ, PLAN (`digests/schedule.md`) |
 | Disclosure | `loans-disclosure`, `com.mlcpu.loans.disclosure` | The schedule document and the disclosure (new) | RPT, DISC |
+| Migration | `loans-migration`, `com.mlcpu.loans.migration` | The legacy loan book: each legacy loan as the service's terms, and its reconciliation with the legacy schedule or reject | LEG (`digests/migration.md`) |
 | Application | `loans-application`, `com.mlcpu.loans.application` | The entry points, the wiring of the contexts, and the servicing use cases over the ports | SRV, IDEM (`digests/servicing.md`) |
 
 **Given:** `loans-api` (`com.mlcpu.loans.api`) holds everything the contexts share with the outside world: the use-case
 interface `ScheduleService`, the request and its terms, the outcomes and typed rejections, the service provider interfaces
 (`com.mlcpu.loans.api.spi`), the servicing use cases `LoanServicing` with their commands and outcomes
-(`com.mlcpu.loans.api.servicing`) and the ports through which servicing reaches the ERP (`com.mlcpu.loans.api.ports`). It is
-fixed: implementations do not change it.
+(`com.mlcpu.loans.api.servicing`), the ports through which servicing reaches the ERP (`com.mlcpu.loans.api.ports`), the
+migration's use case `LegacyMigration` with its results (`com.mlcpu.loans.api.migration`) and the legacy records it reads
+(`com.mlcpu.loans.api.legacy`, generated from the legacy record layouts with their decoders). It is fixed: implementations do
+not change it.
 
 **The SPIs are the seams between contexts.** `DueDates` (the calendar) and `RateFactors` (the rates) are implemented by their
 contexts. The schedule context reaches the calendar and the rates only through them; the application passes the
@@ -46,6 +49,7 @@ scenarios call. Each slice adds the ones its scenarios use:
 | `public static RateFactors rateFactors()` | the rates' `RateFactors` | rates |
 | `public static ScheduleService quotes()` | the quote: terms, schedule, document, disclosure | terms, schedule, disclosure |
 | `public static LoanServicing create(LoansPorts ports)` | servicing over the ERP's ports: book, disburse, bill, collect | servicing |
+| `public static LegacyMigration migration()` | the legacy loan book: terms and reconciliation | migration |
 
 **Dependencies** (enforced, `RULES.md`):
 * a context module depends only on `loans-api`, `loans-kernel` and the JDK. Contexts do not call each other;
@@ -95,6 +99,10 @@ scenarios call. Each slice adds the ones its scenarios use:
   financed, the finance charge, the total of payments and the APR. The legacy system had none, so its expected values come from
   this service's reference implementation, checked by closed forms and by an independent implementation; the unit-period of a
   several-day interval is this service's extension of Appendix J.
+* **The legacy loan book's migration** (`digests/migration.md`, LEG): each loan of the legacy book (its request, the run's
+  calculation and currency, and the schedule or reject the legacy job wrote) as the service's terms, and its reconciliation: the
+  service recomputes the loan, and every difference from the legacy result is either explained by a decision below, named, or a
+  defect. The ERP side (storing the legacy schedule, booking, the reconciliation rows) is the plugin's.
 * **Servicing** (`digests/servicing.md`, SRV and IDEM): a loan booked (its schedule stored and an account opened), disbursed
   (the payment, the account's withdrawal, the down payment's invoice), billed as its installments fall due, and collected as
   its invoices are paid, every command idempotent. The ERP's ledger limits what can be booked (decisions D-11, D-12 below). The

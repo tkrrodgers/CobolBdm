@@ -1,0 +1,24 @@
+{
+  "schema": "mlcpu.host-mutants.v1",
+  "about": "One semantic mutant per host rule a hole carries (FE 9.1 OFB-02..07, D-11). Each is a literal edit of the SME's reference holes; the host gate requires the scenario pool to kill every one (ofbiz-host.sh mutants). A survivor means the pool cannot see that rule: add a scenario or a check, never delete the mutant.",
+  "reference": "host/reference/src/main/java/org/apache/ofbiz/loans",
+  "mutants": [
+    { "id": "m02-type", "rule": "OFB-02", "file": "OfbizFinancialAccounts.java", "find": "\"LOAN_ACCOUNT\"", "replace": "\"BANK_ACCOUNT\"" },
+    { "id": "m02-owner", "rule": "OFB-02", "file": "OfbizFinancialAccounts.java", "find": "in.put(\"ownerPartyId\", account.ownerPartyId());", "replace": "in.put(\"ownerPartyId\", account.organizationPartyId());" },
+    { "id": "m04-gl", "rule": "OFB-04", "file": "OfbizFinancialAccounts.java", "find": "in.put(\"statusId\", \"FINACT_TRNS_APPROVED\");", "replace": "in.put(\"statusId\", \"FINACT_TRNS_APPROVED\");\n        in.put(\"glAccountId\", \"111100\");" },
+    { "id": "m04-date", "rule": "OFB-04", "file": "OfbizFinancialAccounts.java", "find": "Timestamp.valueOf(transaction.date().atStartOfDay())", "replace": "Timestamp.valueOf(context.today().atStartOfDay())" },
+    { "id": "m04-payment", "rule": "OFB-04", "file": "OfbizFinancialAccounts.java", "find": "in.put(\"paymentId\", transaction.paymentId());", "replace": "in.put(\"comments\", \"payment \" + transaction.paymentId());" },
+    { "id": "m05-type", "rule": "OFB-05", "file": "OfbizBilling.java", "find": "\"SALES_INVOICE\"", "replace": "\"PURCHASE_INVOICE\"" },
+    { "id": "m05-ready", "rule": "OFB-05", "file": "OfbizBilling.java", "find": "call(\"setInvoiceStatus\", Map.of(\"invoiceId\", invoiceId, \"statusId\", \"INVOICE_READY\"));", "replace": "" },
+    { "id": "m05-override", "rule": "OFB-05", "file": "OfbizBilling.java", "find": "in.put(\"overrideGlAccountId\", glAccountId);", "replace": "" },
+    { "id": "m05-zero", "rule": "OFB-05", "file": "OfbizBilling.java", "find": "if (amount == null || amount.signum() == 0) {", "replace": "if (amount == null) {" },
+    { "id": "m05-date", "rule": "OFB-05", "file": "OfbizBilling.java", "find": "Timestamp.valueOf(invoice.invoiceDate().atStartOfDay())", "replace": "Timestamp.valueOf(context.today().atStartOfDay())" },
+    { "id": "m05-accounts", "rule": "OFB-05", "file": "OfbizBilling.java", "find": "invoice.principal(), product.getString(\"receivableGlAccountId\")", "replace": "invoice.principal(), product.getString(\"interestIncomeGlAccountId\")" },
+    { "id": "m06-override", "rule": "OFB-06", "file": "OfbizLedger.java", "find": "in.put(\"overrideGlAccountId\", product(payment.loanProductId()).getString(\"receivableGlAccountId\"));", "replace": "" },
+    { "id": "m06-sent", "rule": "OFB-06", "file": "OfbizLedger.java", "find": "call(\"setPaymentStatus\", Map.of(\"paymentId\", paymentId, \"statusId\", \"PMNT_SENT\"));", "replace": "" },
+    { "id": "m06-date", "rule": "OFB-06", "file": "OfbizLedger.java", "find": "Timestamp.valueOf(payment.date().atStartOfDay())", "replace": "Timestamp.valueOf(context.today().atStartOfDay())" },
+    { "id": "m07-cancel", "rule": "OFB-07", "file": "OfbizFinancialAccounts.java", "find": "call(\"setFinAccountTransStatus\", Map.of(\"finAccountTransId\", transactionId, \"statusId\", \"FINACT_TRNS_CANCELED\"));", "replace": "" },
+    { "id": "d11-any", "rule": "D-11", "file": "OfbizLedger.java", "find": "if (base.equals(currencyCode)) {", "replace": "if (base != null) {" },
+    { "id": "d11-base", "rule": "D-11", "file": "OfbizLedger.java", "find": "                    .filterByDate(Timestamp.valueOf(context.today().atStartOfDay())).queryFirst() != null;", "replace": "                    .filterByDate(Timestamp.valueOf(context.today().atStartOfDay())).queryFirst() == null;" }
+  ]
+}

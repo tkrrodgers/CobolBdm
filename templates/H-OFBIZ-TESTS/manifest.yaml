@@ -1,0 +1,19 @@
+schema: mlcpu.template-manifest.v1
+id: H-OFBIZ-TESTS
+version: 1.2.0
+family: host
+tier: tests
+priority: 70
+summary: The plugin's test suite - test data, and a scenario runner that drives the services and checks the entities, one JUnit test per JSON scenario.
+selectWhen: "profile.host.kind == 'ofbiz'"
+card: |
+  OFBiz scenario runner (mlcpu.ofbiz-scenario.v1): per scenario, isolate earlier state, load its rows, call services (with
+  bindings between steps), compare outcomes and canonical results, then compare entity rows field by field (decimals by value,
+  "*" for any value, "$name" for a bound one). A step may run an outside command ("run") or report its result to the log as a
+  JSON line ("report"): the test sandbox rolls the database back, so a run that needs both sides, or more than pass and fail,
+  keeps it in one run. Runs under 'ofbiz --test component=<plugin>'; results in the JUnit XML.
+outputs:
+  - { path: "testdef/{{ model.plugin.resourceName }}Tests.xml", template: Tests.xml.sbn }
+  - { path: "testdef/data/{{ model.plugin.resourceName }}TestsData.xml", template: TestsData.xml.sbn }
+  - { path: "src/test/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}ScenarioTests.java", template: ScenarioTests.java.sbn }
+holes: []

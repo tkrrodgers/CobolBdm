@@ -1,0 +1,31 @@
+{
+  "schema": "mlcpu.ofbiz-scenario.v1",
+  "id": "ofb-smoke-0001",
+  "rules": ["OFB-01", "OFB-02"],
+  "steps": [
+    { "service": "quoteLoanSchedule",
+      "params": { "loanId": "Q-1", "scheduleStart": "2026-01-15", "currencyCode": "USD", "currencyDecimalPlaces": 2, "principal": "12000",
+                  "disbursementDate": "2026-01-15", "installments": 12, "every": 1, "frequencyEnumId": "LOAN_FREQ_MONTHS",
+                  "annualRatePercent": "12", "downPaymentEnabled": false, "monthDaysEnumId": "LOAN_MDAYS_ACTUAL",
+                  "yearDaysEnumId": "LOAN_YDAYS_ACTUAL", "interestMethodEnumId": "LOAN_IM_DECLINING",
+                  "fullTermTranche": false, "calcPrecision": 12, "calcRoundingModeEnumId": "LOAN_RND_HALF_EVEN" },
+      "expect": { "outcome": "Scheduled" } },
+    { "service": "bookLoan",
+      "params": { "externalId": "SMOKE-1", "ownerPartyId": "LOAN_BORROWER_1", "organizationPartyId": "Company", "loanProductId": "LOAN_STD",
+                  "termsLoanId": "L-1", "scheduleStart": "2026-01-15", "currencyCode": "USD", "currencyDecimalPlaces": 2, "principal": "12000",
+                  "disbursementDate": "2026-01-15", "installments": 12, "every": 1, "frequencyEnumId": "LOAN_FREQ_MONTHS",
+                  "annualRatePercent": "12", "downPaymentEnabled": false, "monthDaysEnumId": "LOAN_MDAYS_ACTUAL",
+                  "yearDaysEnumId": "LOAN_YDAYS_ACTUAL", "interestMethodEnumId": "LOAN_IM_DECLINING",
+                  "fullTermTranche": false, "calcPrecision": 12, "calcRoundingModeEnumId": "LOAN_RND_HALF_EVEN",
+                  "businessDate": "2026-01-10" },
+      "expect": { "outcome": "Booked" },
+      "bind": { "loan": "result.loanId", "account": "result.accountId" } }
+  ],
+  "checks": [
+    { "entity": "Loan", "where": { "loanId": "$loan" }, "fields": ["externalId", "statusId", "accountId"],
+      "rows": [ { "externalId": "SMOKE-1", "statusId": "LOAN_BOOKED", "accountId": "$account" } ] },
+    { "entity": "FinAccount", "where": { "finAccountId": "$account" }, "fields": ["finAccountTypeId", "ownerPartyId", "organizationPartyId", "currencyUomId"],
+      "rows": [ { "finAccountTypeId": "LOAN_ACCOUNT", "ownerPartyId": "LOAN_BORROWER_1", "organizationPartyId": "Company", "currencyUomId": "USD" } ] },
+    { "entity": "LoanScheduleLine", "where": { "loanId": "$loan" }, "count": 13 }
+  ]
+}

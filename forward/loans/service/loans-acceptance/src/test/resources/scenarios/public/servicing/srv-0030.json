@@ -2,7 +2,7 @@
   "id": "srv-0030",
   "slice": "servicing",
   "origin": "the S5 loan edge-p03-ceiling-0000000000000643; expected values: the reference over the in-memory ports",
-  "rules": ["IDEM-03","SRV-04","SRV-08"],
+  "rules": ["IDEM-03","SRV-04","SRV-08","SRV-11"],
   "given": {"today":"2024-01-12","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
     {"call": "book", "input": {"externalId":"E-0616","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000643","scheduleStart":"2024-01-15","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-15","installments":6,"every":2,"frequency":"WEEKS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}}},
@@ -51,6 +51,7 @@
     "loans" : [ {
       "loanId" : "LN-E-0616",
       "externalId" : "E-0616",
+      "termsLoanId" : "LN-E-0616",
       "accountId" : "ACC-0001",
       "status" : "PAID_OFF",
       "bookedOn" : "2024-01-12",

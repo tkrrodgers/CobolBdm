@@ -1,0 +1,7 @@
+# A plain Java library (mlcpu.environment.v1): no host, the release the package compiles for. The contract templates
+# (C-LEGACY-LAYOUT) render into the service's API module with it.
+schema: mlcpu.environment.v1
+name: java-library
+host:
+  kind: none
+  javaRelease: 17

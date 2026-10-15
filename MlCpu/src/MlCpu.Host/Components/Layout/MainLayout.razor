@@ -3,6 +3,7 @@
 @inject ProjectService Projects
 @inject OperationService Ops
 @inject GemmaService Gemma
+@inject MuseService Muse
 @inject ForwardService Forward
 
 <div class="shell">
@@ -31,10 +32,26 @@
         {
             <span class="disabled" title="Run Gemma 4 Modernization (Design, then Publish design to service) first">View Gemma 4's Code<small>no Gemma code yet</small></span>
         }
+        @if (Projects.Active is { } pm && Muse.Published(pm))
+        {
+            <NavLink href="muse">Muse Glimmer Modernization</NavLink>
+        }
+        else
+        {
+            <span class="disabled" title="Publish the active project first (Conversion → Publish)">Muse Glimmer Modernization<small>publish the project first</small></span>
+        }
+        @if (Projects.Active is { } cm && Muse.HasCode(cm))
+        {
+            <NavLink href="muse-code">View Muse Glimmer's Code</NavLink>
+        }
+        else
+        {
+            <span class="disabled" title="Run Muse Glimmer Modernization (Design, then Publish design to service) first">View Muse Glimmer's Code<small>no Muse code yet</small></span>
+        }
         <div class="section">Knowledge</div>
         <NavLink href="knowledge">Knowledge Base</NavLink>
         <div class="section">Forward engineering</div>
-        @if (Forward.HasResults())
+        @if (Forward.HasResults() || Forward.HasLoans())
         {
             <NavLink href="forward">Forward Engineering</NavLink>
         }

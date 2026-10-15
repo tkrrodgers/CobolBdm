@@ -7,6 +7,12 @@ import com.mlcpu.loans.acceptance.memory.InMemoryPorts;
 import com.mlcpu.loans.api.Calculation;
 import com.mlcpu.loans.api.ScheduleRequest;
 import com.mlcpu.loans.api.ScheduleService;
+import com.mlcpu.loans.api.legacy.LegacyCodec;
+import com.mlcpu.loans.api.legacy.LegacyScheduleHeader;
+import com.mlcpu.loans.api.legacy.LegacyScheduleLine;
+import com.mlcpu.loans.api.legacy.LegacyScheduleRecord;
+import com.mlcpu.loans.api.migration.LegacyLoan;
+import com.mlcpu.loans.api.migration.LegacyMigration;
 import com.mlcpu.loans.api.ports.LoansPorts;
 import com.mlcpu.loans.api.servicing.BillDue;
 import com.mlcpu.loans.api.servicing.BookLoan;
@@ -30,6 +36,8 @@ import java.util.List;
  * <li>{@code periods}: {@code LoansApplication.dueDates().periods(ScheduleRequest)};</li>
  * <li>{@code factors}: {@code LoansApplication.rateFactors().factors(query, calculation)}, input {"query", "calculation"};</li>
  * <li>{@code schedule}, {@code document}, {@code disclose}: {@code LoansApplication.quotes()}, the ScheduleService method of that name;</li>
+ * <li>{@code legacyTerms}, {@code reconcile}: {@code LoansApplication.migration()}, the LegacyMigration method {@code terms} or
+ * {@code reconcile}, over a legacy loan given as its records (see {@link #legacyLoan});</li>
  * <li>{@code book}, {@code disburse}, {@code billDue}, {@code invoicePaid}: {@code LoansApplication.create(LoansPorts)}, the LoanServicing
  * method of that name, over in-memory ports made from the scenario's "given" ({@link InMemoryPorts}); {@code today} sets their clock.
  * After the steps, a scenario with a "state" compares the ports' state with it.</li>
@@ -55,6 +63,8 @@ public record Scenario(String id, String slice, String visibility, JsonNode json
                 case "schedule" -> ((ScheduleService) entry("quotes")).schedule(Json.to(input, ScheduleRequest.class));
                 case "document" -> ((ScheduleService) entry("quotes")).document(Json.to(input, ScheduleRequest.class));
                 case "disclose" -> ((ScheduleService) entry("quotes")).disclose(Json.to(input, ScheduleRequest.class));
+                case "legacyTerms" -> ((LegacyMigration) entry("migration")).terms(legacyLoan(input));
+                case "reconcile" -> ((LegacyMigration) entry("migration")).reconcile(legacyLoan(input));
                 default -> throw new IllegalArgumentException("unknown call " + call);
             };
             return Json.of(result);
@@ -67,6 +77,24 @@ public record Scenario(String id, String slice, String visibility, JsonNode json
         } catch (RuntimeException | StackOverflowError e) {
             return thrown(e);
         }
+    }
+
+    /**
+     * A legacy loan from its records as the legacy datasets hold them, decoded by the generated LegacyCodec: {"request",
+     * "runControl", "currency" (null when the currency file has none), "schedule" (the header and lines in dataset order; empty
+     * when rejected), "reject" (null when scheduled)}.
+     */
+    static LegacyLoan legacyLoan(JsonNode in) {
+        LegacyScheduleHeader header = null;
+        List<LegacyScheduleLine> lines = new ArrayList<>();
+        for (JsonNode r : in.path("schedule")) {
+            LegacyScheduleRecord x = LegacyCodec.scheduleRecord(r.asText());
+            if (x instanceof LegacyScheduleHeader h) header = h;
+            else lines.add((LegacyScheduleLine) x);
+        }
+        return new LegacyLoan(LegacyCodec.request(in.get("request").asText()), LegacyCodec.runControl(in.get("runControl").asText()),
+                in.path("currency").isTextual() ? LegacyCodec.currency(in.get("currency").asText()) : null, header, lines,
+                in.path("reject").isTextual() ? LegacyCodec.reject(in.get("reject").asText()) : null);
     }
 
     private static JsonNode thrown(Throwable e) {

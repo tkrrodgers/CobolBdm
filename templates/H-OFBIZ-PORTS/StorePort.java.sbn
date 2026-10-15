@@ -1,0 +1,264 @@
+{{~
+R = model.plugin.resourceName
+V = R + "Values"
+E = R + "Enums"
+for a in model.aggregates
+  if a.id == item.spec.aggregate
+    agg = a
+  end
+end
+codecs = []
+for c in model.codecs
+  if c.aggregate == agg.id
+    codecs = codecs | array.add c
+  end
+end
+
+func to_entity(f, expr)
+  if f.kind == "int"
+    if f.nullable
+      ret V + ".toLong(" + expr + ")"
+    end
+    ret "Long.valueOf(" + expr + ")"
+  else if f.kind == "boolean"
+    ret V + ".indicator(" + expr + ")"
+  else if f.kind == "date"
+    ret V + ".sqlDate(" + expr + ")"
+  else if f.kind == "enum"
+    ret E + ".id(" + expr + ")"
+  end
+  ret expr
+end
+
+func from_entity(f)
+  $c = "\"" + f.column + "\""
+  if f.codec
+    ret "read" + f.codec + "(v, children)"
+  else if f.child
+    ret V + ".<" + f.elementType + ">list(children, \"" + f.child + "\")"
+  else if f.kind == "string"
+    ret "v.getString(" + $c + ")"
+  else if f.kind == "decimal"
+    ret "v.getBigDecimal(" + $c + ")"
+  else if f.kind == "int"
+    if f.nullable
+      ret V + ".integer(v.getLong(" + $c + "))"
+    end
+    ret V + ".intValue(v.getLong(" + $c + "))"
+  else if f.kind == "long"
+    if f.nullable
+      ret "v.getLong(" + $c + ")"
+    end
+    ret V + ".longValue(v.getLong(" + $c + "))"
+  else if f.kind == "boolean"
+    if f.nullable
+      ret V + ".flagOrNull(v.getString(" + $c + "))"
+    end
+    ret V + ".flag(v.getString(" + $c + "))"
+  else if f.kind == "date"
+    ret V + ".localDate(v.getDate(" + $c + "))"
+  else if f.kind == "enum"
+    ret E + ".of(" + f.enum + ".class, v.getString(" + $c + "), " + $c + ")"
+  end
+  ret "null"
+end
+
+func param(m)
+  $p = m.params[0].name
+  if m.paramKind == "enum"
+    ret E + ".id(" + $p + ")"
+  else if m.paramKind == "date"
+    ret V + ".sqlDate(" + $p + ")"
+  end
+  ret $p
+end
+
+imports = agg.imports | array.concat item.imports | array.concat ["java.util.ArrayList", "java.util.HashMap", "java.util.List", "java.util.Map", "java.util.Optional"]
+imports = imports | array.uniq | array.sort
+~}}
+package {{ model.plugin.javaPackage }};
+
+{{~ for i in imports ~}}
+import {{ i }};
+{{~ end ~}}
+
+import org.apache.ofbiz.entity.Delegator;
+import org.apache.ofbiz.entity.GenericEntityException;
+import org.apache.ofbiz.entity.GenericValue;
+import org.apache.ofbiz.entity.util.EntityQuery;
+
+/**
+ * The {{ agg.record }} aggregate over OFBiz entities: the record flattened into {{ agg.entity }}, each list into its line entity
+ * ({{ for ch in agg.children }}{{ ch.entity }}{{ if !for.last }}, {{ end }}{{ end }}), keyed by {{ agg.key }} and the line's position. Saving replaces the lines.
+ */
+public final class {{ item.class }} implements {{ item.interface }} {
+
+    private final Delegator delegator;
+
+    public {{ item.class }}({{ R }}PortContext context) {
+        this.delegator = context.delegator();
+    }
+{{~ for m in item.methods ~}}
+
+    @Override
+{{~ if m.role == "byKey" ~}}
+    public Optional<{{ agg.record }}> {{ m.name }}(String {{ m.params[0].name }}) {
+        try {
+            GenericValue root = EntityQuery.use(delegator).from("{{ agg.entity }}").where("{{ agg.key }}", {{ m.params[0].name }}).queryOne();
+            return root == null ? Optional.empty() : Optional.of(load(root));
+        } catch (GenericEntityException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+{{~ else if m.role == "save" ~}}
+    public void {{ m.name }}({{ agg.record }} root) {
+        try {
+            GenericValue value = delegator.makeValue("{{ agg.entity }}");
+            write{{ agg.codec }}(value, root);
+            delegator.createOrStore(value);
+{{~ for ch in agg.children ~}}
+            delegator.removeByAnd("{{ ch.entity }}", Map.of("{{ agg.key }}", root.{{ agg.key }}()));
+            int {{ x.camel ch.method }}Position = 0;
+            for ({{ ch.elementType }} line : {{ x.camel ch.method }}Of(root)) {
+                {{ x.camel ch.method }}Position++;
+                GenericValue row = delegator.makeValue("{{ ch.entity }}");
+                row.set("{{ agg.key }}", root.{{ agg.key }}());
+                row.set("lineSeqId", {{ V }}.seq({{ x.camel ch.method }}Position));
+                write{{ ch.method }}Row(row, line);
+                delegator.create(row);
+            }
+{{~ end ~}}
+        } catch (GenericEntityException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+{{~ else if m.role == "byChild" ~}}
+    public {{ m.returns.simple }}<{{ agg.record }}> {{ m.name }}({{ m.params[0].type.simple }} {{ m.params[0].name }}) {
+        try {
+{{~ if m.many ~}}
+            List<{{ agg.record }}> found = new ArrayList<>();
+            List<String> keys = new ArrayList<>();
+            for (GenericValue row : EntityQuery.use(delegator).from("{{ m.finder.child }}").where("{{ m.finder.field }}", {{ param m }})
+                    .orderBy("{{ agg.key }}").queryList()) {
+                String key = row.getString("{{ agg.key }}");
+                if (!keys.contains(key)) {
+                    keys.add(key);
+                    find(key).ifPresent(found::add);
+                }
+            }
+            return found;
+{{~ else ~}}
+            GenericValue row = EntityQuery.use(delegator).from("{{ m.finder.child }}").where("{{ m.finder.field }}", {{ param m }})
+                    .orderBy("{{ agg.key }}").queryFirst();
+            return row == null ? Optional.empty() : find(row.getString("{{ agg.key }}"));
+{{~ end ~}}
+        } catch (GenericEntityException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+{{~ else if m.role == "byField" ~}}
+    public {{ m.returns.simple }}<{{ agg.record }}> {{ m.name }}({{ m.params[0].type.simple }} {{ m.params[0].name }}) {
+        try {
+            List<{{ agg.record }}> found = new ArrayList<>();
+            for (GenericValue root : EntityQuery.use(delegator).from("{{ agg.entity }}").where("{{ m.finder.field }}", {{ param m }})
+                    .orderBy("{{ agg.key }}").queryList()) {
+                found.add(load(root));
+            }
+{{~ if m.many ~}}
+            return found;
+{{~ else ~}}
+            return found.stream().findFirst();
+{{~ end ~}}
+        } catch (GenericEntityException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+{{~ end ~}}
+{{~ end ~}}
+
+    /** The aggregate of a root row: its lines read first, by position, then the record. */
+    private {{ agg.record }} load(GenericValue v) throws GenericEntityException {
+        Map<String, List<?>> children = new HashMap<>();
+{{~ for ch in agg.children ~}}
+        List<{{ ch.elementType }}> {{ x.camel ch.method }} = new ArrayList<>();
+        for (GenericValue row : EntityQuery.use(delegator).from("{{ ch.entity }}").where("{{ agg.key }}", v.get("{{ agg.key }}"))
+                .orderBy("lineSeqId").queryList()) {
+            {{ x.camel ch.method }}.add(read{{ ch.method }}Row(row));
+        }
+        children.put("{{ ch.path }}", {{ x.camel ch.method }});
+{{~ end ~}}
+        return read{{ agg.codec }}(v, children);
+    }
+{{~ for ch in agg.children ~}}
+{{~
+  $chain = "root"
+  $guard = ""
+  for a in ch.accessors
+    $chain = $chain + "." + a + "()"
+    if $guard == ""
+      $guard = $chain + " == null"
+    else
+      $guard = $guard + " || " + $chain + " == null"
+    end
+  end
+~}}
+
+    private static List<{{ ch.elementType }}> {{ x.camel ch.method }}Of({{ agg.record }} root) {
+        if ({{ $guard }}) {
+            return List.of();
+        }
+        return {{ $chain }};
+    }
+
+    private static void write{{ ch.method }}Row(GenericValue row, {{ ch.elementType }} line) {
+{{~ if ch.kind == "sealed" ~}}
+{{~ for var in ch.variants ~}}
+        if (line instanceof {{ var.record }} value) {
+            row.set("{{ ch.discriminator }}", "{{ var.value }}");
+            write{{ var.codec }}(row, value);
+            return;
+        }
+{{~ end ~}}
+        throw new IllegalStateException("{{ ch.entity }}: no row type for " + line);
+{{~ else ~}}
+        write{{ ch.codec }}(row, line);
+{{~ end ~}}
+    }
+
+    private static {{ ch.elementType }} read{{ ch.method }}Row(GenericValue row) {
+{{~ if ch.kind == "sealed" ~}}
+        String type = row.getString("{{ ch.discriminator }}");
+{{~ for var in ch.variants ~}}
+        if ("{{ var.value }}".equals(type)) {
+            return read{{ var.codec }}(row, Map.of());
+        }
+{{~ end ~}}
+        throw new IllegalStateException("{{ ch.entity }}: unknown {{ ch.discriminator }} " + type);
+{{~ else ~}}
+        return read{{ ch.codec }}(row, Map.of());
+{{~ end ~}}
+    }
+{{~ end ~}}
+{{~ for c in codecs ~}}
+
+    private static void write{{ c.name }}(GenericValue v, {{ c.record }} r) {
+        if (r == null) {
+            return;
+        }
+{{~ for f in c.fields ~}}
+{{~ if f.codec ~}}
+        write{{ f.codec }}(v, r.{{ f.name }}());
+{{~ else if f.stored ~}}
+        v.set("{{ f.column }}", {{ to_entity f ("r." + f.name + "()") }});
+{{~ end ~}}
+{{~ end ~}}
+    }
+
+    private static {{ c.record }} read{{ c.name }}(GenericValue v, Map<String, List<?>> children) {
+        return new {{ c.record }}(
+{{~ for f in c.fields ~}}
+                {{ from_entity f }}{{ if for.last }});{{ else }},{{ end }}
+{{~ end ~}}
+    }
+{{~ end ~}}
+}

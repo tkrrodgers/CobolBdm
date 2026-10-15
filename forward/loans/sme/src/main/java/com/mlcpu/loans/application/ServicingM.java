@@ -83,7 +83,7 @@ public final class ServicingM implements LoanServicing {
         }
         String accountId = ports.accounts().open(new LoanAccount(loanId, command.ownerPartyId(), command.organizationPartyId(), schedule.currencyCode()));
         ports.book().save(new LoanRecord(loanId, command.externalId(), command.ownerPartyId(), command.organizationPartyId(), command.loanProductId(),
-                accountId, terms, LoanStatus.BOOKED, ports.clock().today(), 1, schedule, linesToBill(schedule), null, null));
+                accountId, ServicingMutant.M.get() == ServicingMutant.SRV_11 ? command.terms() : terms, LoanStatus.BOOKED, ports.clock().today(), 1, schedule, linesToBill(schedule), null, null));
         return new Booked(loanId, accountId, 1);
     }
 

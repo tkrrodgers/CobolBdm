@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entitymodel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="{{ profile.host.entityDtd }}">
+    <title>{{ x.xml model.service.title }} entities</title>
+    <description>{{ x.xml model.service.description }}</description>
+    <version>1.0</version>
+{{~ for e in model.entities ~}}
+
+    <entity entity-name="{{ e.name }}" package-name="{{ model.plugin.javaPackage }}" title="{{ x.xml e.title }}">
+{{~ for c in e.columns ~}}
+        <field name="{{ c.name }}" type="{{ c.type }}"/>
+{{~ end ~}}
+{{~ for k in e.pk ~}}
+        <prim-key field="{{ k }}"/>
+{{~ end ~}}
+{{~ for r in e.relations ~}}
+        <relation type="{{ r.type }}"{{ if r.title }} title="{{ r.title }}"{{ end }} rel-entity-name="{{ r.entity }}" fk-name="{{ r.fkName }}">
+            <key-map field-name="{{ r.fields[0] }}"{{ if r.remote != r.fields[0] }} rel-field-name="{{ r.remote }}"{{ end }}/>
+        </relation>
+{{~ end ~}}
+{{~ for u in e.unique ~}}
+        <index name="{{ x.short ((x.upper_snake e.name) + '_' + (x.upper_snake u)) 18 }}" unique="true">
+            <index-field name="{{ u }}"/>
+        </index>
+{{~ end ~}}
+{{~ for i in e.indexes ~}}
+        <index name="{{ x.short ((x.upper_snake e.name) + '_' + (x.upper_snake i)) 18 }}">
+            <index-field name="{{ i }}"/>
+        </index>
+{{~ end ~}}
+    </entity>
+{{~ end ~}}
+</entitymodel>

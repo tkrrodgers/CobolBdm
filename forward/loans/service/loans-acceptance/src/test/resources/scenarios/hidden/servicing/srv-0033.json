@@ -2,7 +2,7 @@
   "id": "srv-0033",
   "slice": "servicing",
   "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000296; expected values: the reference over the in-memory ports",
-  "rules": ["SRV-04","SRV-08"],
+  "rules": ["SRV-04","SRV-08","SRV-11"],
   "given": {"today":"2189-08-23","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
     {"call": "book", "input": {"externalId":"E-0656","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000296","scheduleStart":"2189-08-26","currency":{"code":"ZAR","decimalPlaces":1,"roundingMultiple":null},"principal":"10322.7124","disbursementDate":"2189-08-26","installments":1,"every":5,"frequency":"YEARS","annualRatePercent":"34.310000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
@@ -21,6 +21,7 @@
     "loans" : [ {
       "loanId" : "LN-E-0656",
       "externalId" : "E-0656",
+      "termsLoanId" : "LN-E-0656",
       "accountId" : "ACC-0001",
       "status" : "PAID_OFF",
       "bookedOn" : "2189-08-23",

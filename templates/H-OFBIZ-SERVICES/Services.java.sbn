@@ -1,0 +1,110 @@
+{{~
+R = model.plugin.resourceName
+CTX = R + "Context"
+
+func read(p)
+  $n = "\"" + p.attribute + "\""
+  if p.kind == "string"
+    ret CTX + ".string(context, " + $n + ")"
+  else if p.kind == "decimal"
+    ret CTX + ".decimal(context, " + $n + ")"
+  else if p.kind == "int"
+    if p.nullable
+      ret CTX + ".integer(context, " + $n + ")"
+    end
+    ret CTX + ".intValue(context, " + $n + ")"
+  else if p.kind == "long"
+    if p.nullable
+      ret CTX + ".longObject(context, " + $n + ")"
+    end
+    ret CTX + ".longValue(context, " + $n + ")"
+  else if p.kind == "boolean"
+    if p.nullable
+      ret CTX + ".bool(context, " + $n + ")"
+    end
+    ret CTX + ".boolValue(context, " + $n + ")"
+  else if p.kind == "date"
+    ret CTX + ".date(context, " + $n + ")"
+  else if p.kind == "enum"
+    ret CTX + ".enumValue(context, " + $n + ", " + p.enum + ".class)"
+  end
+  ret "null"
+end
+
+func ctor(a, pad)
+  $text = "new " + a.record + "(\n"
+  for $p in a.parts
+    if $p.derived
+      $v = $p.derived
+    else if $p.record
+      $v = ctor($p.record, pad + "        ")
+    else
+      $v = read($p)
+    end
+    if for.last
+      $text = $text + pad + "        " + $v + ")"
+    else
+      $text = $text + pad + "        " + $v + ",\n"
+    end
+  end
+  ret $text
+end
+
+imports = []
+for s in model.services
+  imports = imports | array.concat s.imports
+end
+imports = imports | array.uniq | array.sort
+~}}
+package {{ model.plugin.javaPackage }};
+
+{{~ for i in imports ~}}
+import {{ i }};
+{{~ end ~}}
+import {{ model.api.application }};
+import java.util.Map;
+
+import org.apache.ofbiz.base.util.Debug;
+import org.apache.ofbiz.service.DispatchContext;
+import org.apache.ofbiz.service.ServiceUtil;
+
+/**
+ * The {{ model.service.title }} services (servicedef/services.xml): each builds its API command from the service context, calls
+ * the engine, and returns the outcome's type and its canonical map. A business rejection is a result; an invalid attribute is a
+ * service error naming it; any other failure is a service error, and OFBiz rolls the service's transaction back.
+ */
+public final class {{ R }}Services {
+
+    private static final String MODULE = {{ R }}Services.class.getName();
+
+    private {{ R }}Services() {
+    }
+{{~ for s in model.services ~}}
+
+    /**
+{{~ for line in (x.wrap s.description 110) ~}}
+     * {{ line }}
+{{~ end ~}}
+     * @param dctx the dispatch context
+     * @param context the service context
+     * @return the outcome and its canonical map, or an error
+     */
+    public static Map<String, Object> {{ s.name }}(DispatchContext dctx, Map<String, ? extends Object> context) {
+        try {
+            {{ s.command }} command = {{ ctor s.argument "            " }};
+{{~ if s.via == "quotes" ~}}
+            {{ s.interface }} engine = {{ x.simple model.api.application }}.{{ model.api.quotes }}();
+{{~ else ~}}
+            {{ s.interface }} engine = {{ x.simple model.api.application }}.{{ model.api.create }}({{ R }}PortsFactory.create(dctx, context));
+{{~ end ~}}
+            {{ s.returns }} outcome = engine.{{ s.method }}(command);
+            return {{ R }}Canon.result(outcome);
+        } catch (IllegalArgumentException e) {
+            return ServiceUtil.returnError(e.getMessage());
+        } catch (RuntimeException e) {
+            Debug.logError(e, "{{ s.name }} failed", MODULE);
+            return ServiceUtil.returnError("{{ s.name }}: " + e.getMessage());
+        }
+    }
+{{~ end ~}}
+}

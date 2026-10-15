@@ -4,6 +4,7 @@
 @inject JavaSidecarService Sidecar
 @inject GraphService Graphs
 @inject GemmaService Gemma
+@inject MuseService Muse
 
 <PageTitle>COBOL BDM</PageTitle>
 
@@ -25,6 +26,9 @@ proven byte for byte against GnuCOBOL running the original source. Gemma 4 then 
         <div class="card"><div class="muted">Gemma 4 service vs GnuCOBOL</div>
             <div class="n @(p.Gemma.LastTest is { } g && g.Match == g.Outputs && g.Failed == 0 ? "ok" : "bad")">@(p.Gemma.LastTest is { } g2 ? $"{g2.Match}/{g2.Outputs}" : "—")</div>
             <div class="muted">@(p.Gemma.LastTest is { } g3 ? $"tests {g3.Tests - g3.Failed}/{g3.Tests}" : Gemma.Published(p) ? "not run" : "publish first")</div></div>
+        <div class="card"><div class="muted">Muse Glimmer service vs GnuCOBOL</div>
+            <div class="n @(p.Muse.LastTest is { } u && u.Match == u.Outputs && u.Failed == 0 ? "ok" : "bad")">@(p.Muse.LastTest is { } u2 ? $"{u2.Match}/{u2.Outputs}" : "—")</div>
+            <div class="muted">@(p.Muse.LastTest is { } u3 ? $"tests {u3.Tests - u3.Failed}/{u3.Tests}" : Muse.Published(p) ? "not run" : "publish first")</div></div>
     }
 </div>
 
@@ -34,6 +38,7 @@ proven byte for byte against GnuCOBOL running the original source. Gemma 4 then 
     <li><a href="graphs">Graphs</a>: COBOL-85 AST, call graph, DDG (JSON) and the PDG (in memory); cytoscape views.</li>
     <li><a href="convert">Conversion</a>: transpile all programs, publish the normalized Spring estate with the capabilities layer, build &amp; test against GnuCOBOL.</li>
     <li><a href="gemma">Gemma 4 Modernization</a>: design, publish the design to a service, test it against GnuCOBOL.</li>
+    <li><a href="muse">Muse Glimmer Modernization</a>: the same steps with Muse Glimmer 30B, in debug mode; each page shows the other model's results beside its own.</li>
 </ol>
 
 @code {

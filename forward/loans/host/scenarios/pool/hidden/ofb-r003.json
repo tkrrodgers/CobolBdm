@@ -1,0 +1,45 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-r003",
+  "origin" : "an amount beyond the ledger's capacity",
+  "rules" : [ "D-11", "OFB-02" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2025-05-24",
+    "params" : {
+      "externalId" : "E-ofb-r003",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000036",
+      "scheduleStart" : "2025-05-24",
+      "currencyCode" : "EUR",
+      "currencyDecimalPlaces" : "2",
+      "principal" : "7820000000.0000",
+      "disbursementDate" : "2025-05-24",
+      "installments" : "1",
+      "every" : "69",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "15.140000000",
+      "downPaymentEnabled" : false,
+      "monthDaysEnumId" : "LOAN_MDAYS_THIRTY",
+      "yearDaysEnumId" : "LOAN_YDAYS_ACTUAL",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2025-05-24"
+    },
+    "expect" : {
+      "outcome" : "BookingRejected",
+      "result" : {
+        "@type" : "BookingRejected",
+        "externalId" : "E-ofb-r003",
+        "reason" : "SCHEDULE_REJECTED",
+        "scheduleReason" : "SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT",
+        "field" : null
+      }
+    }
+  } ],
+  "checks" : [ ]
+}

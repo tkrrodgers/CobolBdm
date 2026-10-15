@@ -1,0 +1,44 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-a001",
+  "rules" : [ "OFB-09" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "userLogin" : "DemoCustomer",
+    "params" : {
+      "externalId" : "E-ofb-a001",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000036",
+      "scheduleStart" : "2025-05-24",
+      "currencyCode" : "EUR",
+      "currencyDecimalPlaces" : "2",
+      "principal" : "3.9100",
+      "disbursementDate" : "2025-05-24",
+      "installments" : "1",
+      "every" : "69",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "15.140000000",
+      "downPaymentEnabled" : false,
+      "monthDaysEnumId" : "LOAN_MDAYS_THIRTY",
+      "yearDaysEnumId" : "LOAN_YDAYS_ACTUAL",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING"
+    },
+    "expect" : {
+      "success" : false
+    }
+  } ],
+  "checks" : [ {
+    "entity" : "Loan",
+    "where" : {
+      "externalId" : "E-ofb-a001"
+    },
+    "fields" : [ ],
+    "rows" : [ ],
+    "count" : 0
+  } ]
+}

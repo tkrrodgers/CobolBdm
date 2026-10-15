@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="{{ profile.host.servicesDtd }}">
+    <description>{{ x.xml model.service.title }}: the legacy loan book's migration</description>
+    <vendor>mlcpu</vendor>
+    <version>1.0</version>
+
+    <service name="{{ model.migration.service }}" engine="java" auth="true" transaction-timeout="7200"
+            location="{{ model.plugin.javaPackage }}.{{ model.plugin.resourceName }}Migration" invoke="{{ model.migration.service }}">
+        <description>{{ x.xml model.migration.description }}</description>
+        <permission-service service-name="{{ model.plugin.permissionService }}" main-action="{{ model.migration.action }}"/>
+        <attribute name="migrationId" type="String" mode="IN" optional="false"/>
+        <attribute name="bookDir" type="String" mode="IN" optional="false"/>
+        <attribute name="datasetPrefix" type="String" mode="IN" optional="true"/>
+        <attribute name="externalIdPrefix" type="String" mode="IN" optional="true"/>
+        <attribute name="mode" type="String" mode="IN" optional="true"/>
+        <attribute name="ownerPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="organizationPartyId" type="String" mode="IN" optional="false"/>
+        <attribute name="loanProductId" type="String" mode="IN" optional="false"/>
+        <attribute name="businessDate" type="java.sql.Date" mode="IN" optional="true"/>
+        <attribute name="outcome" type="String" mode="OUT" optional="false"/>
+        <attribute name="result" type="Map" mode="OUT" optional="false"/>
+    </service>
+
+    <service name="{{ model.migration.export.service }}" engine="java" auth="true"
+            location="{{ model.plugin.javaPackage }}.{{ model.plugin.resourceName }}Migration" invoke="{{ model.migration.export.service }}">
+        <description>{{ x.xml model.migration.export.description }}</description>
+        <permission-service service-name="{{ model.plugin.permissionService }}" main-action="VIEW"/>
+        <attribute name="{{ model.migration.export.dateField }}" type="java.sql.Date" mode="IN" optional="false"/>
+        <attribute name="outDir" type="String" mode="IN" optional="false"/>
+        <attribute name="currencyFile" type="String" mode="IN" optional="false"/>
+        <attribute name="outcome" type="String" mode="OUT" optional="false"/>
+        <attribute name="result" type="Map" mode="OUT" optional="false"/>
+    </service>
+</services>

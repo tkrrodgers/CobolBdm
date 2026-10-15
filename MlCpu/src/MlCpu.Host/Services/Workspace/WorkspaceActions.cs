@@ -2,13 +2,13 @@ namespace MlCpu.Host.Services.Workspace;
 
 /// <summary>
 /// Every long action of the UI and the headless API, started as a background <see cref="Operation"/> (one per project and
-/// kind at a time; Gemma's work queues on the GPU).
+/// kind at a time; the models' work queues on the GPU).
 /// </summary>
 public sealed class WorkspaceActions(OperationService ops, ProjectService projects, OnboardingService onboarding, OracleService oracle,
-    GraphService graphs, ConversionService conversion, GemmaService gemma, EstateService estate)
+    GraphService graphs, ConversionService conversion, EstateService estate)
 {
     public const string Onboard = "onboard", Oracle = "oracle", Graphs = "graphs", Transpile = "transpile", Publish = "publish",
-        Test = "test", GemmaDesign = "gemma-design", GemmaPublish = "gemma-publish", GemmaTest = "gemma-test";
+        Test = "test";
 
     public Operation StartOnboard(string name, string source, bool buildOracle, bool buildGraphs) =>
         ops.Start(OnboardingService.Slug(name), Onboard, $"Onboard {name}", async (op, ct) =>
@@ -20,9 +20,10 @@ public sealed class WorkspaceActions(OperationService ops, ProjectService projec
             estate.Reload();
         });
 
-    public Operation StartOracle(string projectId, bool force) =>
-        ops.Start(projectId, Oracle, force ? "Rebuild and run the GnuCOBOL oracle" : "Build (cached) and run the GnuCOBOL oracle",
-            (op, ct) => oracle.BuildAndRunAsync(projectId, op, ct, force));
+    public Operation StartOracle(string projectId, bool force, IReadOnlyList<string>? only = null) =>
+        ops.Start(projectId, Oracle, only is { Count: > 0 } ? $"Run the GnuCOBOL oracle on {string.Join(", ", only)}"
+                : force ? "Rebuild and run the GnuCOBOL oracle" : "Build (cached) and run the GnuCOBOL oracle",
+            (op, ct) => oracle.BuildAndRunAsync(projectId, op, ct, force, only: only is { Count: > 0 } ? only : null));
 
     public Operation StartGraphs(string projectId) =>
         ops.Start(projectId, Graphs, "Rebuild graphs (AST, call graph, DDG)", (op, ct) => graphs.RebuildAsync(projectId, op, ct));
@@ -37,12 +38,20 @@ public sealed class WorkspaceActions(OperationService ops, ProjectService projec
         ops.Start(projectId, Test, runTests ? "Build & test against GnuCOBOL" : "Build & job checks against GnuCOBOL",
             async (op, ct) => op.Result = await conversion.BuildAndTestAsync(projectId, op, ct, runTests));
 
-    public Operation StartGemmaDesign(string projectId, IReadOnlyList<string> programs, GemmaOptions options) =>
-        ops.Start(projectId, GemmaDesign, $"Gemma 4 designs {string.Join(", ", programs)}", (op, ct) => gemma.DesignAsync(projectId, programs, options, op, ct), "gpu");
+    public Operation StartModelDesign(ModelRunService model, string projectId, IReadOnlyList<string> programs, ModelOptions options) =>
+        ops.Start(projectId, model.DesignKind, $"{model.Display} designs {string.Join(", ", programs)}", (op, ct) => model.DesignAsync(projectId, programs, options, op, ct), "gpu");
 
-    public Operation StartGemmaPublish(string projectId, IReadOnlyList<string> programs, GemmaOptions options) =>
-        ops.Start(projectId, GemmaPublish, $"Gemma 4 implements {string.Join(", ", programs)}", (op, ct) => gemma.PublishToServiceAsync(projectId, programs, options, op, ct), "gpu");
+    public Operation StartModelPublish(ModelRunService model, string projectId, IReadOnlyList<string> programs, ModelOptions options) =>
+        ops.Start(projectId, model.PublishKind, $"{model.Display} implements {string.Join(", ", programs)}", (op, ct) => model.PublishToServiceAsync(projectId, programs, options, op, ct), "gpu");
 
-    public Operation StartGemmaTest(string projectId) =>
-        ops.Start(projectId, GemmaTest, "Test Gemma's service against GnuCOBOL", async (op, ct) => op.Result = await gemma.TestAsync(projectId, op, ct));
+    /// <summary>Assembles the model's service from code already on disk (a run made by a script), without running the model.</summary>
+    public Operation StartModelAssemble(ModelRunService model, string projectId, IReadOnlyList<string> programs) =>
+        ops.Start(projectId, model.PublishKind, $"Assemble {model.Display}'s service", (op, ct) =>
+        {
+            op.Result = model.Assemble(projectId, programs, op);
+            return Task.CompletedTask;
+        });
+
+    public Operation StartModelTest(ModelRunService model, string projectId) =>
+        ops.Start(projectId, model.TestKind, $"Test {model.Display}'s service against GnuCOBOL", async (op, ct) => op.Result = await model.TestAsync(projectId, op, ct));
 }

@@ -1,0 +1,19 @@
+package {{ model.plugin.javaPackage }};
+
+import {{ item.fqn }};
+import java.time.LocalDate;
+
+/** The business date of the calling service (its businessDate attribute, or today). */
+public final class {{ item.class }} implements {{ item.interface }} {
+
+    private final LocalDate today;
+
+    public {{ item.class }}({{ model.plugin.resourceName }}PortContext context) {
+        this.today = context.today();
+    }
+
+    @Override
+    public LocalDate today() {
+        return today;
+    }
+}

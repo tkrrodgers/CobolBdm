@@ -1,0 +1,16 @@
+package {{ model.package }};
+
+/**
+ * {{ item.title }}: layout {{ item.layout }}, {{ item.length }} bytes{{ if item.dsn }}, dataset {{ item.dsn }}{{ end }}. Its variants share
+ * the record's storage (REDEFINES); {{ item.discriminator.cobol }} at offset {{ item.discriminator.offset }} says which:
+{{~ for c in item.discriminator.cases ~}}
+ * {{ c.values | array.join ', ' }}: {@link {{ c.record }}}.
+{{~ end ~}}
+ */
+public sealed interface {{ item.name }} permits {{ item.permits | array.join ', ' }} {
+{{~ for f in item.fields ~}}
+
+    /** @return {{ f.cobol }} PIC {{ f.pic }} at offset {{ f.offset }} */
+    {{ f.java }} {{ f.name }}();
+{{~ end ~}}
+}

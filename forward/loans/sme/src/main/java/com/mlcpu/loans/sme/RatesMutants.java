@@ -29,6 +29,7 @@ final class RatesMutants {
         RATE_03("the interest factor ends at the stretch's end, not the period's due date"),
         RATE_04("no year crossing: the year fractions are never used"),
         RATE_05("actual days in the month: the period's days in place of the stretch's"),
+        RATE_05_B("actual days in the month: the stretch's days exact, not first rounded to the precision"),
         RATE_06("30-day months: a month counts 31 days"),
         RATE_07("30-day months, interest factor: every in place of the period's length in intervals"),
         RATE_08("the period's length in intervals: whole intervals only"),
@@ -43,11 +44,22 @@ final class RatesMutants {
         }
 
         String rule() {
+            return RatesMutants.rule(label());
+        }
+
+        /** The mutant's name: its rule, and a letter for a rule's second mutant (RATE-05-B). */
+        String label() {
             return name().replace('_', '-');
         }
     }
 
     private RatesMutants() {
+    }
+
+    /** The rule of a mutant's label (RATE-05-B -> RATE-05). */
+    static String rule(String label) {
+        String[] p = label.split("-");
+        return p[0] + "-" + p[1];
     }
 
     static RateOutcome factors(RateQuery query, Calculation calculation, Mutant m) {
@@ -90,6 +102,9 @@ final class RatesMutants {
         BigDecimal actualDays = BigDecimal.valueOf(ChronoUnit.DAYS.between(from, to));
         BigDecimal periodDays = BigDecimal.valueOf(ChronoUnit.DAYS.between(q.period().from(), q.period().due()));
         if (q.monthDays() == MonthDays.ACTUAL) {
+            if (m == Mutant.RATE_05_B) {
+                return scale(rate.multiply(actualDays.divide(daysInYear, mc), mc), mc, m);
+            }
             return byDays(rate, m == Mutant.RATE_05 ? periodDays : actualDays, BigDecimal.ONE, daysInYear, BigDecimal.ONE, BigDecimal.ONE, mc, m);
         }
         BigDecimal intervalDays = switch (q.frequency()) {

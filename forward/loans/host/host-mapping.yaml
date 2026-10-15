@@ -1,0 +1,259 @@
+# The SME's host mapping for the loans service in OFBiz (mlcpu.host-mapping.v1): the only hand-written input of the host templates.
+# Everything it does not say is derived from the fixed API (api-model.json, by tools/api-importer) by MlCpu.Templates' model step:
+# entity columns and their types, child entities, enumerations, service attributes. FE §5.5 sketched these by hand; here they are
+# generated (FE Appendix E, 2026-10-15).
+schema: mlcpu.host-mapping.v1
+
+service:
+  name: loans
+  title: Loans
+  description: Loan quoting, disclosure, booking, disbursement, installment billing and principal collection on OFBiz accounting.
+
+api:
+  package: com.mlcpu.loans.api
+  application: com.mlcpu.loans.application.LoansApplication
+  ports: LoansPorts
+  quotes: quotes        # LoansApplication.quotes(): the pure schedule service
+  create: create        # LoansApplication.create(LoansPorts): the servicing use cases over the ports
+
+plugin:
+  id: loans
+  resourceName: Loans
+  javaPackage: org.apache.ofbiz.loans
+  permissionService: acctgFinAcctPermissionCheck   # OFB-09: no FinAccount-specific permission exists in OFBiz
+
+enums:
+  prefix: LOAN
+  idLength: 20          # OFBiz 'id' fields are VARCHAR(20) (fieldtypeh2.xml): every enumeration and status id must fit
+  status: [LoanStatus]  # stored as StatusItem (statusTypeId LOAN_STATUS); the others as Enumeration rows (OFB-03)
+  types:                # the code between the prefix and the constant (the default is the name's initials)
+    LoanStatus: { code: "" }
+    Frequency: { code: FREQ }
+    MonthDays: { code: MDAYS }
+    YearDays: { code: YDAYS }
+    InterestMethod: { code: IM, ids: { DECLINING_BALANCE: LOAN_IM_DECLINING } }
+    RoundingMode: { code: RND }
+
+aggregates:
+  - id: agg.loan
+    record: LoanRecord
+    entity: Loan
+    title: A booked loan, its terms, its current schedule and its servicing state
+    key: loanId
+    prefixes: { terms: "", "terms.currency": currency, "terms.calculation": calc, schedule: schedule, "schedule.totals": total }
+    columns: { status: statusId, "terms.loanId": termsLoanId, "schedule.totals.outstanding": outstandingTotal }   # not totalOutstanding: a source-system name (leak dictionary)
+    fieldTypes:
+      loanId: id-long
+      externalId: id-long
+      termsLoanId: id-long
+      scheduleLoanId: id-long
+      ownerPartyId: id
+      organizationPartyId: id
+      loanProductId: id
+      accountId: id
+      currencyCode: id
+      scheduleCurrencyCode: id
+      disbursementPaymentId: id
+      disbursementTransactionId: id
+    unique: [externalId]
+    relations: { ownerPartyId: Party.partyId, organizationPartyId: Party.partyId, accountId: FinAccount.finAccountId, loanProductId: LoanProduct }
+    children:
+      - path: schedule.lines
+        entity: LoanScheduleLine
+        title: The lines of a loan's current schedule (disbursement, down payment, installments)
+        discriminator: lineTypeId
+        values: { DisbursementLine: LOAN_DISBURSEMENT, DownPaymentLine: LOAN_DOWN_PAYMENT, InstallmentLine: LOAN_INSTALLMENT }
+        columns: { from: fromDate, due: dueDate, number: lineNumber }
+      - path: lines
+        entity: LoanServicingLine
+        title: The servicing state of each line to bill (its invoice and the deposit that collected its principal)
+        columns: { due: dueDate, number: lineNumber }
+        fieldTypes: { invoiceId: id, collectionTransactionId: id }
+        index: [invoiceId]
+
+entities:
+  - name: LoanProduct
+    title: A loan product, with the GL accounts its invoices and disbursements post to (OFB-05, OFB-06)
+    pk: [loanProductId]
+    fields:
+      loanProductId: id
+      description: description
+      receivableGlAccountId: id
+      interestIncomeGlAccountId: id
+    relations: { receivableGlAccountId: GlAccount.glAccountId, interestIncomeGlAccountId: GlAccount.glAccountId }
+  - name: LoanLegacyRecon
+    title: The reconciliation of one legacy loan in a migration run (FE 9.2 LEG-02 to LEG-05; outcomes MIG)
+    pk: [migrationId, legacyLoanId]
+    fields:
+      migrationId: id-long
+      legacyLoanId: id
+      outcome: id
+      decision: id
+      field: long-varchar
+      legacyValue: long-varchar
+      serviceValue: long-varchar
+      legacyCode: id
+      serviceRejection: name
+      loanId: id-long
+      bookingRejection: name
+  - name: LoanLegacyLine
+    title: A line of a legacy loan's schedule as the legacy wrote it (version 0, FE 9.2 LEG-02)
+    pk: [migrationId, legacyLoanId, seq]
+    fields:
+      migrationId: id-long
+      legacyLoanId: id
+      seq: numeric
+      recType: indicator
+      periodNumber: numeric
+      fromDate: date
+      dueDate: date
+      principal: fixed-point
+      interest: fixed-point
+      fee: fixed-point
+      penalty: fixed-point
+      totalDue: fixed-point
+      outstBalance: fixed-point
+      totOutstanding: fixed-point
+
+migration:              # FE 9.2 (S9): the legacy loan book into the plugin (H-OFBIZ-MIGRATION), with the engine's LegacyMigration
+  service: migrateLegacyLoanBook
+  description: >-
+    Migrates a legacy loan book (its five datasets in bookDir, each named datasetPrefix + its name): every loan reconciled by the
+    engine (LegacyMigration), its reconciliation and its legacy schedule lines (version 0) stored, and the loans that reconcile
+    (MATCH, or D-2 where the service's schedule is the right one) booked through servicing. All or nothing: a DIFF rolls the run
+    back. Idempotent by migrationId.
+  action: CREATE
+  legacyModel: ../legacy/legacy-model.json
+  externalIdPrefix: "LEGACY-"
+  recon: LoanLegacyRecon
+  line: LoanLegacyLine
+  export:               # G11 (FE 9.3): the shadow run's export of the day's bookings (exportLoansAsLegacyRequests)
+    service: exportLoansAsLegacyRequests
+    description: >-
+      The shadow run's export (FE 9.3): the loans booked on a date as the legacy job's input, one folder per calculation with the
+      requests, the run control, the legacy currency file and the map from the legacy ids to the loans.
+    entity: Loan
+    key: loanId
+    dateField: bookedOn
+    terms: terms
+    mapFile: LOANS.MAP
+  records:
+    request: { record: LegacyRequest, dataset: LOAN.REQUEST.DATA, loanId: RQ-LOAN-ID, currency: RQ-CURRENCY-CODE }
+    runControl: { record: LegacyRunControl, dataset: RUN.CONTROL }
+    currency: { record: LegacyCurrency, dataset: CURRENCY.VSAM.KSDS, key: CU-CODE }
+    schedule: { record: LegacyScheduleRecord, dataset: LOAN.SCHEDULE.DATA, loanId: SC-LOAN-ID, header: LegacyScheduleHeader, line: LegacyScheduleLine }
+    reject: { record: LegacyReject, dataset: LOAN.REJECTS.DATA, loanId: RJ-LOAN-ID }
+
+ports:                  # LoansPorts components: generated by H-OFBIZ-PORTS, or holes for the implementer (S8)
+  Ids: { implementation: generated, derive: prefixExternalId, prefix: "LN-" }
+  LoanBook:
+    implementation: generated
+    aggregate: agg.loan
+    finders:
+      findByInvoice: { child: LoanServicingLine, field: invoiceId }
+      withStatus: { field: statusId }
+  Clock: { implementation: generated }
+  Ledger:
+    implementation: hole
+    rules: [OFB-06, D-11]
+  Billing:
+    implementation: hole
+    rules: [OFB-05, OFB-08]
+  FinancialAccounts:
+    implementation: hole
+    rules: [OFB-02, OFB-04, OFB-07]
+
+services:
+  - name: quoteLoanSchedule
+    description: The schedule of proposed terms; nothing is stored (OFB-01).
+    calls: ScheduleService.schedule
+    via: quotes
+    action: VIEW
+    rest: true
+    prefixes: &requestPrefixes { "currency": currency, "calculation": calc }
+  - name: discloseLoan
+    description: The disclosure of proposed terms (amount financed, finance charge, total of payments, APR); nothing is stored (OFB-01).
+    calls: ScheduleService.disclose
+    via: quotes
+    action: VIEW
+    rest: true
+    prefixes: *requestPrefixes
+  - name: documentLoanSchedule
+    description: The schedule document of proposed terms (the printed schedule's lines and totals); nothing is stored.
+    calls: ScheduleService.document
+    via: quotes
+    action: VIEW
+    prefixes: *requestPrefixes
+  - name: bookLoan
+    description: Books a loan (OFB-02); idempotent by its external id (IDEM-01).
+    calls: LoanServicing.book
+    via: create
+    action: CREATE
+    prefixes: { terms: "", "terms.currency": currency, "terms.calculation": calc }
+    attributes: { "terms.loanId": termsLoanId }
+  - name: disburseLoan
+    description: Disburses a booked loan (OFB-04, OFB-06), with its down payment's invoice.
+    calls: LoanServicing.disburse
+    via: create
+    action: UPDATE
+  - name: billDueLoanInstallments
+    description: Bills every installment due on or before the date and not billed yet, one invoice each (OFB-05, OFB-08).
+    calls: LoanServicing.billDue
+    via: create
+    action: UPDATE
+  - name: recordLoanInvoiceStatus
+    description: An invoice changed status; for a loan invoice that became paid, or stopped being paid, the principal is collected or that collection cancelled (OFB-07).
+    calls: LoanServicing.invoicePaid
+    via: create
+    action: UPDATE
+    derived: { paid: '"INVOICE_PAID".equals(context.get("statusId"))' }
+    inputs: { statusId: String }
+    ignoreOutcomes: [ServicingRejected]   # not a loan invoice: nothing to do
+
+seca:
+  - { service: setInvoiceStatus, event: return, action: recordLoanInvoiceStatus }
+
+seed:
+  - { entity: InvoiceItemType, invoiceItemTypeId: LOAN_PRINCIPAL, description: Loan principal, hasTable: N }
+  - { entity: Enumeration, enumId: LOAN_DISBURSEMENT, enumTypeId: LOAN_SCHEDULE_LINE, enumCode: DISBURSEMENT, sequenceId: "01", description: Disbursement }
+  - { entity: Enumeration, enumId: LOAN_DOWN_PAYMENT, enumTypeId: LOAN_SCHEDULE_LINE, enumCode: DOWN_PAYMENT, sequenceId: "02", description: Down payment }
+  - { entity: Enumeration, enumId: LOAN_INSTALLMENT, enumTypeId: LOAN_SCHEDULE_LINE, enumCode: INSTALLMENT, sequenceId: "03", description: Installment }
+  - { entity: EnumerationType, enumTypeId: LOAN_SCHEDULE_LINE, description: Loan schedule line type, first: true }
+
+demo:
+  # OFBiz's demo chart has 124000 LOANS RECEIVABLE but does not assign it to the demo organization (posting a disbursement to it
+  # failed the GlAccountOrganization key); 810000 INTEREST INCOME is assigned already.
+  - { entity: GlAccountOrganization, glAccountId: "124000", organizationPartyId: Company, fromDate: "2001-01-01 00:00:00.0" }
+  - { entity: LoanProduct, loanProductId: LOAN_STD, description: Standard amortizing loan, receivableGlAccountId: "124000", interestIncomeGlAccountId: "810000" }
+facade:                 # what the holes may call and read (FE §7.6)
+  services: [createFinAccount, createFinAccountTrans, createPayment, setPaymentStatus, createInvoice, createInvoiceItem,
+             setInvoiceStatus, setFinAccountTransStatus, getPartyAccountingPreferences]
+  entities: [FinAccount, FinAccountTrans, Payment, Invoice, InvoiceItem, PartyAcctgPreference, UomConversionDated, LoanProduct]
+  # The Java classes the holes use: their exact imports and the methods' signatures, from the pinned source (the S8 baseline
+  # run without them guessed org.apache.ofbiz.entity.EntityQuery and Delegator.find overloads for 15 attempts, 2026-10-15)
+  classes:
+    - { class: org.apache.ofbiz.service.LocalDispatcher, methods: [runSync] }
+    - { class: org.apache.ofbiz.service.ServiceUtil, methods: [isError, isFailure, getErrorMessage] }
+    - { class: org.apache.ofbiz.service.GenericServiceException, methods: [] }
+    - { class: org.apache.ofbiz.entity.Delegator, methods: [] }
+    - { class: org.apache.ofbiz.entity.util.EntityQuery, methods: [use, from, where, filterByDate, orderBy, queryOne, queryFirst, queryList] }
+    - { class: org.apache.ofbiz.entity.GenericValue, methods: [getString, getBigDecimal, getTimestamp] }
+    - { class: org.apache.ofbiz.entity.GenericEntityException, methods: [] }
+  snippets:
+    - { title: "A Java service: DispatchContext, the user login and ServiceUtil", file: applications/accounting/src/main/java/org/apache/ofbiz/accounting/finaccount/FinAccountServices.java, from: "public static Map<String, Object> createAccountAndCredit", lines: 40 }
+    - { title: "Reading with EntityQuery", file: applications/accounting/src/main/java/org/apache/ofbiz/accounting/finaccount/FinAccountServices.java, from: "EntityQuery.use\\(delegator\\)", lines: 8 }
+
+testData:               # loaded by the test suite before the scenarios (testdef/data)
+  # Rates to the base currency, both ways, for the scenarios' INR, JPY and ZAR loans: OFBiz converts every GL entry to it (D-11)
+  # and its payment matching converts back. Test data, not demo: OFBiz's own FX test (AutoAcctgAdminTests.testUpdateFXConversion)
+  # reads the first INR-USD rate unordered and failed with a demo row there (G12, 2026-10-15).
+  - { entity: UomConversionDated, uomId: INR, uomIdTo: USD, fromDate: "2000-01-01 00:00:00.000", conversionFactor: "0.012" }
+  - { entity: UomConversionDated, uomId: USD, uomIdTo: INR, fromDate: "2000-01-01 00:00:00.000", conversionFactor: "83.3333" }
+  - { entity: UomConversionDated, uomId: JPY, uomIdTo: USD, fromDate: "2000-01-01 00:00:00.000", conversionFactor: "0.0067" }
+  - { entity: UomConversionDated, uomId: USD, uomIdTo: JPY, fromDate: "2000-01-01 00:00:00.000", conversionFactor: "149.2537" }
+  - { entity: UomConversionDated, uomId: ZAR, uomIdTo: USD, fromDate: "2000-01-01 00:00:00.000", conversionFactor: "0.054" }
+  - { entity: UomConversionDated, uomId: USD, uomIdTo: ZAR, fromDate: "2000-01-01 00:00:00.000", conversionFactor: "18.5185" }
+  - { entity: StatusItem, statusId: LOAN_TEST_RETIRED, statusTypeId: LOAN_STATUS, statusCode: TEST_RETIRED, sequenceId: "99", description: "A loan an earlier scenario left (tests only)" }
+  - { entity: Party, partyId: LOAN_BORROWER_1, partyTypeId: PERSON, statusId: PARTY_ENABLED }
+  - { entity: Person, partyId: LOAN_BORROWER_1, firstName: Loan, lastName: Borrower }
+  - { entity: PartyRole, partyId: LOAN_BORROWER_1, roleTypeId: BILL_TO_CUSTOMER }

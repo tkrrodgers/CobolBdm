@@ -1,5 +1,6 @@
 package com.mlcpu.carddemo.platform.records;
 
+import com.mlcpu.rt.OpenDatasets;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -28,6 +29,8 @@ public final class SequentialDataset {
         private final int lrecl;
 
         Reader(InputStream in, int lrecl) {
+
+            OpenDatasets.opened(this);
             this.in = in;
             this.lrecl = lrecl;
         }
@@ -42,6 +45,7 @@ public final class SequentialDataset {
 
         @Override
         public void close() throws IOException {
+            OpenDatasets.closed(this);
             in.close();
         }
     }
@@ -51,6 +55,8 @@ public final class SequentialDataset {
         private final int lrecl;
 
         Writer(OutputStream out, int lrecl) {
+
+            OpenDatasets.opened(this);
             this.out = out;
             this.lrecl = lrecl;
         }
@@ -62,6 +68,7 @@ public final class SequentialDataset {
 
         @Override
         public void close() throws IOException {
+            OpenDatasets.closed(this);
             out.close();
         }
     }

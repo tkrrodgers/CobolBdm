@@ -47,7 +47,9 @@ public final class RatesPool {
     private static final ObjectMapper JSON = new ObjectMapper();
     private static final String SLICE = "rates";
 
-    record Candidate(String key, RateQuery query, Calculation calculation, JsonNode expected, String origin, boolean rejection, Set<String> tags) {
+    /** tags: the rules whose mutants it kills; selection: the mutants themselves (a rule's second mutant, RATE-05-B, apart). */
+    record Candidate(String key, RateQuery query, Calculation calculation, JsonNode expected, String origin, boolean rejection, Set<String> tags,
+            Set<String> selection) {
     }
 
     public static void main(String[] args) throws IOException {
@@ -82,13 +84,15 @@ public final class RatesPool {
                         continue;
                     }
                     Set<String> tags = new TreeSet<>();
+                    Set<String> selection = new TreeSet<>();
                     for (Mutant m : Mutant.values()) {
                         if (!outcomeJson(RatesMutants.factors(q, calc, m)).equals(expected)) {
                             tags.add(m.rule());
+                            selection.add(m.label());
                             kills.merge(m, 1, Integer::sum);
                         }
                     }
-                    all.add(new Candidate(key, q, calc, expected, c.get("origin").asText(), rejection, tags));
+                    all.add(new Candidate(key, q, calc, expected, c.get("origin").asText(), rejection, tags, selection));
                 }
             }
         }
@@ -96,7 +100,7 @@ public final class RatesPool {
             if (kills.getOrDefault(m, 0) == 0) problems.add("rule " + m.rule() + ": no candidate kills its mutant (" + m.change + ")");
         }
 
-        SlicePools.Chosen<Candidate> chosen = SlicePools.choose(all, Candidate::tags,
+        SlicePools.Chosen<Candidate> chosen = SlicePools.choose(all, Candidate::selection,
                 c -> c.query().monthDays() + "|" + c.query().yearDays() + "|" + c.query().frequency(), Candidate::rejection, perGroup,
                 Comparator.comparing((Candidate c) -> c.query().monthDays()).thenComparing(c -> c.query().frequency()).thenComparing(Candidate::key),
                 "rate", c -> c.key().length(), "RATE-01");
@@ -107,13 +111,18 @@ public final class RatesPool {
             Candidate c = e.getValue();
             String visibility = chosen.publicIds().contains(id) ? "public" : "hidden";
             Files.writeString(scenarioRoot.resolve(visibility).resolve(SLICE).resolve(id + ".json"), scenario(id, c), StandardCharsets.UTF_8);
-            SlicePools.entry(entries, id, SLICE, visibility, chosen.primary().get(id), c.tags(), c.origin());
+            SlicePools.entry(entries, id, SLICE, visibility, RatesMutants.rule(chosen.primary().get(id)), c.tags(), c.origin());
         }
         SlicePools.writeManifest(manifest, SLICE, entries);
+        for (Mutant m : Mutant.values()) {
+            if (kills.getOrDefault(m, 0) > 0 && chosen.byId().values().stream().noneMatch(c -> c.selection().contains(m.label()))) {
+                problems.add("mutant " + m.label() + ": no chosen scenario kills it (" + m.change + ")");
+            }
+        }
         writeReport(report, read, all, kills, chosen, problems);
         System.out.printf("rates pool: %d candidate lines, %d distinct (reference agrees on all: %s), %d chosen, %d public; %d problem(s)%n", read,
                 all.size(), problems.stream().noneMatch(p -> p.startsWith("the reference")), chosen.byId().size(), chosen.publicIds().size(), problems.size());
-        kills.forEach((m, n) -> System.out.printf("  %s killed by %d candidate(s)%n", m.rule(), n));
+        kills.forEach((m, n) -> System.out.printf("  %s killed by %d candidate(s)%n", m.label(), n));
         problems.stream().limit(20).forEach(p -> System.out.println("  problem: " + p));
         if (!problems.isEmpty()) System.exit(1);
     }
@@ -124,6 +133,9 @@ public final class RatesPool {
                 MonthDays.ACTUAL, YearDays.ACTUAL, 12, RoundingMode.HALF_EVEN, "0.020026948125", "0.020026948125");
         check(reference, problems, "RATE-05", "2023-01-01", "2023-01-01", "2023-02-01", "2023-01-01", "2023-02-01", "9.48222", Frequency.MONTHS, 1,
                 MonthDays.ACTUAL, YearDays.DAYS_365, 6, RoundingMode.HALF_UP, "0.008053", "0.008053");
+        // the stretch's days are rounded to the precision first: 1,096 days at precision 3 are 1,090 (exact days would give 0.361)
+        check(reference, problems, "RATE-05 (days at the precision)", "1919-07-06", "1919-07-06", "1922-07-06", "1919-07-06", "1922-07-06",
+                "11.98", Frequency.YEARS, 3, MonthDays.ACTUAL, YearDays.DAYS_360, 3, RoundingMode.FLOOR, "0.359", "0.359");
         check(reference, problems, "RATE-06", "2023-01-01", "2023-01-01", "2023-02-01", "2023-01-01", "2023-02-01", "7", Frequency.MONTHS, 1,
                 MonthDays.THIRTY, YearDays.DAYS_360, 12, RoundingMode.HALF_EVEN, "0.005833333333", "0.005833333333");
         check(reference, problems, "RATE-08", "2023-01-29", "2023-02-28", "2023-03-31", "2023-02-28", "2023-03-31", "7", Frequency.MONTHS, 1,
@@ -219,12 +231,12 @@ public final class RatesPool {
         sb.append("| Reference (`InterestFactors`) equal on | ").append(problems.stream().anyMatch(p -> p.startsWith("the reference")) ? "NOT ALL" : "all").append(" |\n");
         sb.append("| Chosen | ").append(chosen.byId().size()).append(": ").append(chosen.publicIds().size()).append(" public, ")
                 .append(chosen.byId().size() - chosen.publicIds().size()).append(" hidden |\n\n");
-        sb.append("## Rule mutants (FE 7.2 step 3)\n\n| Rule | Mutant | Candidates that kill it | Chosen scenarios tagged | of them public |\n| --- | --- | --- | --- | --- |\n");
+        sb.append("## Rule mutants (FE 7.2 step 3)\n\n| Rule | Mutant | Candidates that kill it | Chosen scenarios that kill it | of them public |\n| --- | --- | --- | --- | --- |\n");
         for (Mutant m : Mutant.values()) {
-            String rule = m.rule();
-            long pub = chosen.publicIds().stream().filter(id -> chosen.byId().get(id).tags().contains(rule)).count();
-            sb.append("| ").append(rule).append(" | ").append(m.change).append(" | ").append(kills.getOrDefault(m, 0)).append(" | ")
-                    .append(chosen.ruleCount().getOrDefault(rule, 0)).append(" | ").append(pub).append(" |\n");
+            String label = m.label();
+            long pub = chosen.publicIds().stream().filter(id -> chosen.byId().get(id).selection().contains(label)).count();
+            sb.append("| ").append(label).append(" | ").append(m.change).append(" | ").append(kills.getOrDefault(m, 0)).append(" | ")
+                    .append(chosen.ruleCount().getOrDefault(label, 0)).append(" | ").append(pub).append(" |\n");
         }
         if (!problems.isEmpty()) {
             sb.append("\n## Problems\n\n");

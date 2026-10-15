@@ -22,6 +22,8 @@ builder.Services.AddSingleton<CapabilityKitBuilder>();
 builder.Services.AddSingleton<JobParityService>();
 builder.Services.AddSingleton<ConversionService>();
 builder.Services.AddSingleton<GemmaService>();
+builder.Services.AddSingleton<MuseService>();
+builder.Services.AddSingleton<ModelRunners>();
 builder.Services.AddSingleton<ForwardService>();
 builder.Services.AddSingleton<WorkspaceActions>();
 builder.Services.AddSingleton<ReferenceSweepService>();
@@ -93,25 +95,48 @@ object OpJson(Operation o, bool log = false) => new
 api.MapGet("/projects", (ProjectService ps) => Results.Json(ps.Projects.Select(p => new
 {
     p.Id, p.Name, p.Origin, active = ps.Active?.Id == p.Id, programs = p.Programs.Count, jobs = p.Oracle.Jobs, jobChecks = p.Oracle.JobChecks.Count,
-    oracle = p.Oracle.Status, published = p.Publish.Last, gemma = p.Gemma
+    oracle = p.Oracle.Status, published = p.Publish.Last, gemma = p.Gemma, muse = p.Muse
 }), indented));
 api.MapGet("/projects/{id}", (string id, ProjectService ps) => ps.Get(id) is { } p ? Results.Json(p, indented) : Results.NotFound());
 api.MapPost("/projects/onboard", (string name, string source, bool? oracle, bool? graphs, WorkspaceActions a) =>
     Results.Json(OpJson(a.StartOnboard(name, source, oracle ?? true, graphs ?? true))));
 api.MapPost("/projects/{id}/activate", (string id, ProjectService ps, EstateService es) => { ps.Activate(id); es.Reload(); return Results.Ok(new { active = id }); });
-api.MapPost("/projects/{id}/oracle", (string id, bool? force, WorkspaceActions a) => Results.Json(OpJson(a.StartOracle(id, force ?? false))));
+// only=a,b: those scenarios (and base) alone, e.g. a shadow run's days; the project's job checks and status stay as they are
+api.MapPost("/projects/{id}/oracle", (string id, bool? force, string? only, WorkspaceActions a) => Results.Json(OpJson(a.StartOracle(id, force ?? false,
+    only?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)))));
 api.MapPost("/projects/{id}/graphs", (string id, WorkspaceActions a) => Results.Json(OpJson(a.StartGraphs(id))));
 api.MapPost("/projects/{id}/transpile", (string id, WorkspaceActions a) => Results.Json(OpJson(a.StartTranspile(id))));
 api.MapPost("/projects/{id}/publish", (string id, string? dir, WorkspaceActions a, ProjectService ps) =>
     Results.Json(OpJson(a.StartPublish(id, string.IsNullOrWhiteSpace(dir) ? ps.Paths(ps.Get(id)!).Publish : dir))));
 api.MapPost("/projects/{id}/test", (string id, bool? tests, WorkspaceActions a) => Results.Json(OpJson(a.StartTest(id, tests ?? true))));
-api.MapPost("/projects/{id}/gemma/design", (string id, string programs, bool? outline, int? attempts, WorkspaceActions a) =>
-    Results.Json(OpJson(a.StartGemmaDesign(id, programs.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
-        new GemmaOptions(DesignAttempts: attempts ?? 3, AstOutline: outline ?? true)))));
-api.MapPost("/projects/{id}/gemma/publish", (string id, string programs, bool? outline, bool? examples, int? attempts, WorkspaceActions a) =>
-    Results.Json(OpJson(a.StartGemmaPublish(id, programs.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
-        new GemmaOptions(ImplementationAttempts: attempts ?? 15, AstOutline: outline ?? true, WorkedExamples: examples ?? true)))));
-api.MapPost("/projects/{id}/gemma/test", (string id, WorkspaceActions a) => Results.Json(OpJson(a.StartGemmaTest(id))));
+// A local model's steps (gemma, muse): design, publish the design to a service (implement + assemble), assemble from code a
+// script wrote, test the service against GnuCOBOL. debug=true sends the focused debug prompt on repair turns; warm=true starts
+// from the model's previous best code. Unset options take the model's defaults (ModelRunService.Defaults).
+static string[] Programs(string programs) => programs.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+api.MapPost("/projects/{id}/{model}/design", (string id, string model, string programs, bool? outline, int? attempts, WorkspaceActions a, ModelRunners m) =>
+    m.Get(model) is not { } svc ? Results.NotFound()
+        : Results.Json(OpJson(a.StartModelDesign(svc, id, Programs(programs),
+            svc.Defaults with { DesignAttempts = attempts ?? svc.Defaults.DesignAttempts, AstOutline = outline ?? svc.Defaults.AstOutline }))));
+api.MapPost("/projects/{id}/{model}/publish", (string id, string model, string programs, bool? outline, bool? examples, int? attempts, bool? debug, bool? warm,
+        WorkspaceActions a, ModelRunners m) =>
+    m.Get(model) is not { } svc ? Results.NotFound()
+        : Results.Json(OpJson(a.StartModelPublish(svc, id, Programs(programs), svc.Defaults with
+        {
+            ImplementationAttempts = attempts ?? svc.Defaults.ImplementationAttempts, AstOutline = outline ?? svc.Defaults.AstOutline,
+            WorkedExamples = examples ?? svc.Defaults.WorkedExamples, DebugMode = debug ?? svc.Defaults.DebugMode, WarmStart = warm ?? svc.Defaults.WarmStart
+        }))));
+api.MapPost("/projects/{id}/{model}/assemble", (string id, string model, string programs, WorkspaceActions a, ModelRunners m) =>
+    m.Get(model) is not { } svc ? Results.NotFound() : Results.Json(OpJson(a.StartModelAssemble(svc, id, Programs(programs)))));
+api.MapPost("/projects/{id}/{model}/test", (string id, string model, WorkspaceActions a, ModelRunners m) =>
+    m.Get(model) is not { } svc ? Results.NotFound() : Results.Json(OpJson(a.StartModelTest(svc, id))));
+// The command lines the page would run (after `dotnet MlCpu.DesignModel.dll`), for a script that runs the same steps.
+api.MapGet("/projects/{id}/{model}/commands", (string id, string model, string programs, bool? debug, ProjectService ps, ModelRunners m) =>
+    ps.Get(id) is not { } p || m.Get(model) is not { } svc ? Results.NotFound()
+        : Results.Json(new
+        {
+            design = svc.DesignArgs(p, Programs(programs), svc.Defaults), implement = svc.ImplementArgs(p, Programs(programs), svc.Defaults with { DebugMode = debug ?? svc.Defaults.DebugMode }),
+            env = new { MLCPU_REASONING_BUDGET = svc.ReasoningBudget }
+        }, indented));
 // Model evaluation: any assembled service (a copy of the published project with a model's capability classes) is tested
 // exactly as Gemma's is: every test, then each job with --mlcpu.implementation=normalized against the GnuCOBOL oracle.
 // The report goes to runs/<label>/report.json.
@@ -132,7 +157,7 @@ api.MapPost("/projects/{id}/reference-sweep", (string id, string inputs, string?
     return Results.Json(OpJson(ops.Start(id, "reference-sweep", $"Reference sweep ({impl}, {filter ?? "*"})", async (op, ct) =>
         op.Result = await sweep.RunAsync(id, dir, impl, inputs, filter, parallel ?? Math.Max(1, Environment.ProcessorCount / 3), op, ct))));
 });
-api.MapGet("/projects/{id}/gemma/status", (string id, ProjectService ps, GemmaService g) => ps.Get(id) is { } p
+api.MapGet("/projects/{id}/{model}/status", (string id, string model, ProjectService ps, ModelRunners m) => ps.Get(id) is { } p && m.Get(model) is { } g
     ? Results.Json(g.Capabilities(p).Select(c => g.Status(p, c.ProgramId) with { Design = null }), indented) : Results.NotFound());
 api.MapGet("/operations", (string? project, OperationService ops) =>
     Results.Json(ops.All.Where(o => project is null || o.ProjectId == project).Select(o => OpJson(o)), indented));

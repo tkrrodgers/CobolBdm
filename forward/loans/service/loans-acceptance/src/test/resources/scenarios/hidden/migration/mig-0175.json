@@ -1,0 +1,15 @@
+{
+  "id": "mig-0175",
+  "slice": "migration",
+  "origin": "legacy book sample-p06-half_down, loan 0000000000000851",
+  "rules": ["MIG-02","MIG-04","MIG-05"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000085120241231USD+000000000100000002024123100020045DAYS      +018750000000N01001N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC06HALF_DOWN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"LegacyTerms","terms":{"loanId":"0000000000000851","scheduleStart":"2024-12-31","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-12-31","installments":2,"every":45,"frequency":"DAYS","annualRatePercent":"18.750000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"HALF_DOWN"}}}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000085120241231USD+000000000100000002024123100020045DAYS      +018750000000N01001N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC06HALF_DOWN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":["0000000000000851H0000USD020000900003+00000000010000000+00000000010000000+00000000000348100+00000000000000000+00000000000000000+00000000010348100+00000000000000000                                      ","0000000000000851D000100002024123120241231+00000000010000000+00000000000000000+00000000000000000+00000000000000000+00000000000000000+00000000010000000+00000000000000000                                 ","0000000000000851R000200012024123120250214+00000000004942800+00000000000231200+00000000000000000+00000000000000000+00000000005174000+00000000005057200+00000000005174100                                 ","0000000000000851R000300022025021420250331+00000000005057200+00000000000116900+00000000000000000+00000000000000000+00000000005174100+00000000000000000+00000000000000000                                 "],"reject":null},
+    "expected": {"loanId":"0000000000000851","outcome":"MATCH","decision":null,"field":null,"legacyValue":null,"serviceValue":null,"legacyCode":null,"serviceRejection":null}
+  } ]
+}

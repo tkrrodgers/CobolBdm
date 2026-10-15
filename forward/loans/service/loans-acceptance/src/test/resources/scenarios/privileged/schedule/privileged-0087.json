@@ -2,7 +2,7 @@
   "id": "privileged-0087",
   "slice": "schedule",
   "origin": "privileged precision-p25-ceiling, loan 1300000000000057: oracle A' D-2 without the legacy envelope (clean room, FnHarness --forward-limits): privileged, decision D-6",
-  "rules": ["AMZ-02","AMZ-06","AMZ-11"],
+  "rules": ["AMZ-02","AMZ-06","AMZ-11","AMZ-12"],
   "steps": [ {
     "call": "schedule",
     "input": {"loanId":"1300000000000057","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-01-01","installments":1,"every":3,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":1,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":25,"roundingMode":"CEILING"}},

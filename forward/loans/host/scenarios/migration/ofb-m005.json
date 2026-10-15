@@ -1,0 +1,30 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-m005",
+  "origin" : "the legacy book sample-p12-half_even with one installment's interest altered: it does not reconcile, nothing is migrated (LEG-03, LEG-05)",
+  "rules" : [ "LEG-03", "LEG-05" ],
+  "steps" : [ {
+    "service" : "migrateLegacyLoanBook",
+    "today" : "2026-09-01",
+    "params" : {
+      "migrationId" : "M-sample-p12-half_even-altered",
+      "externalIdPrefix" : "Lm005-",
+      "bookDir" : "plugins/loans/testdef/scenarios/legacy/sample-p12-half_even-altered",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "businessDate" : "2026-09-01"
+    },
+    "expect" : {
+      "success" : false,
+      "errorContains" : "does not reconcile"
+    }
+  } ],
+  "checks" : [ {
+    "entity" : "LoanLegacyRecon",
+    "where" : {
+      "migrationId" : "M-sample-p12-half_even-altered"
+    },
+    "count" : 0
+  } ]
+}

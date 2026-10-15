@@ -1,0 +1,15 @@
+{
+  "id": "mig-0028",
+  "slice": "migration",
+  "origin": "SME probe: a currency the currency file does not have (XXX), rejected by the legacy (RJENV010)",
+  "rules": [],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000000520230128XXX+000000001500000002023012800130001MONTHS    +009482200000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":null},
+    "expected": {"@type":"Unrepresentable","loanId":"0000000000000005","field":"RQ-CURRENCY-CODE","value":"XXX"}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000000520230128XXX+000000001500000002023012800130001MONTHS    +009482200000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":null,"schedule":[],"reject":"0000000000000005RJENV010PROBE                   an SME probe                                                            "},
+    "expected": {"loanId":"0000000000000005","outcome":"EXPLAINED","decision":"D-5","field":"RQ-CURRENCY-CODE","legacyValue":null,"serviceValue":null,"legacyCode":"RJENV010","serviceRejection":null}
+  } ]
+}

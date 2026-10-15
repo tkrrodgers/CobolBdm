@@ -1,0 +1,17 @@
+package {{ model.package }};
+{{~ if (item.fields | array.filter @(do; ret $0.java == 'BigDecimal'; end) | array.size) > 0 ~}}
+
+import java.math.BigDecimal;
+{{~ end ~}}
+{{~ if (item.fields | array.filter @(do; ret $0.java == 'LocalDate'; end) | array.size) > 0 ~}}
+import java.time.LocalDate;
+{{~ end ~}}
+
+/**
+ * {{ item.title }}: layout {{ item.layout }}, {{ item.length }} bytes{{ if item.dsn }}, dataset {{ item.dsn }}{{ end }}.
+{{~ for f in item.fields ~}}
+ * @param {{ f.name }} {{ f.cobol }} PIC {{ f.pic }} at offset {{ f.offset }}{{ if f.decode == 'date' }} (yyyymmdd; null when all zeros){{ else if f.decode == 'flag' }} (Y or N: true for Y){{ else if f.decode == 'id' }} (the digits as they are){{ end }}
+{{~ end ~}}
+ */
+public record {{ item.name }}({{ for f in item.fields }}{{ f.java }} {{ f.name }}{{ if !for.last }}, {{ end }}{{ end }}){{ if item.parent }} implements {{ item.parent }}{{ end }} {
+}

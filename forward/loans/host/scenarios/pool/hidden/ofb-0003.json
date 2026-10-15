@@ -1,0 +1,45 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0003",
+  "origin" : "the S5 loan envelope-1-p06-ceiling-0000000000000029, moved -28 years into OFBiz's dated window; expected values: the reference over in-memory ports with the demo ledger",
+  "rules" : [ "D-1", "OFB-02" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2013-02-20",
+    "params" : {
+      "externalId" : "E-ofb-0003",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000029",
+      "scheduleStart" : "2013-02-20",
+      "currencyCode" : "JPY",
+      "currencyDecimalPlaces" : "0",
+      "principal" : "1754847.5100",
+      "disbursementDate" : "2013-02-20",
+      "installments" : "9",
+      "every" : "178",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "95.810000000",
+      "downPaymentEnabled" : true,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_360",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2013-02-20"
+    },
+    "expect" : {
+      "outcome" : "BookingRejected",
+      "result" : {
+        "@type" : "BookingRejected",
+        "externalId" : "E-ofb-0003",
+        "reason" : "SCHEDULE_REJECTED",
+        "scheduleReason" : "DOWN_PAYMENT_PERCENT_MISSING",
+        "field" : null
+      }
+    }
+  } ],
+  "checks" : [ ]
+}

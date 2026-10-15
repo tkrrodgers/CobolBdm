@@ -1,0 +1,15 @@
+schema: mlcpu.template-manifest.v1
+id: H-OFBIZ-DATA
+version: 1.0.0
+family: host
+tier: adapters
+priority: 40
+summary: Seed data (the API's enumerations as Enumeration and StatusItem rows, the mapping's seed rows) and demo data.
+selectWhen: "profile.host.kind == 'ofbiz'"
+card: |
+  OFBiz seed data: one EnumerationType per API enum with an Enumeration per constant (id TYPE_CONSTANT), one StatusType per
+  status enum with a StatusItem per constant, then the SME's seed rows. Demo data: the SME's demo rows (products, rates).
+outputs:
+  - { path: "data/{{ model.plugin.resourceName }}TypeData.xml", template: TypeData.xml.sbn }
+  - { path: "data/{{ model.plugin.resourceName }}DemoData.xml", template: DemoData.xml.sbn }
+holes: []

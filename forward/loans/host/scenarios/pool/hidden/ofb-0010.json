@@ -1,0 +1,47 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0010",
+  "origin" : "the S5 loan envelope-1-p06-ceiling-0000000000001988, moved -84 years into OFBiz's dated window; expected values: the reference over in-memory ports with the demo ledger (the ledger refuses the currency)",
+  "rules" : [ "D-11", "OFB-02" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2006-05-29",
+    "params" : {
+      "externalId" : "E-ofb-0010",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000001988",
+      "scheduleStart" : "2006-05-29",
+      "currencyCode" : "CLF",
+      "currencyDecimalPlaces" : "4",
+      "principal" : "1599.0440",
+      "disbursementDate" : "2006-05-29",
+      "installments" : "6",
+      "every" : "30",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "80.490000000",
+      "downPaymentPercent" : "20.932800000",
+      "downPaymentEnabled" : true,
+      "monthDaysEnumId" : "LOAN_MDAYS_THIRTY",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_365",
+      "fixedLength" : "159",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2006-05-29"
+    },
+    "expect" : {
+      "outcome" : "BookingRejected",
+      "result" : {
+        "@type" : "BookingRejected",
+        "externalId" : "E-ofb-0010",
+        "reason" : "CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER",
+        "scheduleReason" : null,
+        "field" : null
+      }
+    }
+  } ],
+  "checks" : [ ]
+}

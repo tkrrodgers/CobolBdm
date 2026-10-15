@@ -1,0 +1,15 @@
+{
+  "id": "mig-0091",
+  "slice": "migration",
+  "origin": "legacy book edge-p12-half_even, loan 0000000000001181",
+  "rules": ["MIG-04"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000118120240101INR+000000000000000012024010100060001MONTHS    +012000000000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"INR02Y00010Indian Rupee                 "},
+    "expected": {"@type":"LegacyTerms","terms":{"loanId":"0000000000001181","scheduleStart":"2024-01-01","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"0.0001","disbursementDate":"2024-01-01","installments":6,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}}}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000118120240101INR+000000000000000012024010100060001MONTHS    +012000000000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"INR02Y00010Indian Rupee                 ","schedule":[],"reject":"0000000000001181RJTNNT05S05                     DOWN PAYMENT COVERS THE WHOLE PRINCIPAL                                 "},
+    "expected": {"loanId":"0000000000001181","outcome":"LEGACY_REJECT","decision":null,"field":null,"legacyValue":null,"serviceValue":null,"legacyCode":"RJTNNT05","serviceRejection":"DOWN_PAYMENT_COVERS_PRINCIPAL"}
+  } ]
+}

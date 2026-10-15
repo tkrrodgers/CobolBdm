@@ -1,0 +1,15 @@
+schema: mlcpu.template-manifest.v1
+id: H-OFBIZ-SERVICEDEF
+version: 1.0.0
+family: host
+tier: adapters
+priority: 30
+summary: The plugin's service definitions (one per API call the mapping exposes) and its SECAs.
+selectWhen: "profile.host.kind == 'ofbiz'"
+card: |
+  OFBiz services: each API call with its command flattened into IN attributes (enumerations by id, dates as java.sql.Date),
+  auth and a permission service (OFB-09), OUT outcome (the result's type) and result (its canonical map). SECAs per the mapping.
+outputs:
+  - { path: "servicedef/services.xml", template: services.xml.sbn }
+  - { path: "servicedef/secas.xml", template: secas.xml.sbn }
+holes: []

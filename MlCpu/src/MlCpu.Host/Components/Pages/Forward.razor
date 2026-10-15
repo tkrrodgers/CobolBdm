@@ -7,6 +7,12 @@
 <PageTitle>Forward Engineering</PageTitle>
 <h2>Forward Engineering</h2>
 
+<div class="page-tabs">
+    <button class="@(view == "cas" ? "" : "secondary")" @onclick='() => view = "cas"'>Customer Account Service (CardDemo)</button>
+    <button class="@(view == "loans" ? "" : "secondary")" @onclick='() => view = "loans"'>Loans service (Fineract): Gemma's code</button>
+</div>
+
+<div style="display:@(view == "cas" ? "block" : "none")">
 @if (results is null)
 {
     <p>No forward-engineering results yet. The evaluation (<code>tools/eval/PROTOCOL-forward.md</code>) runs with
@@ -142,8 +148,101 @@ else
     </div>
 }
 
+</div>
+
+<div style="display:@(view == "loans" ? "block" : "none")">
+@if (!Fwd.HasLoans())
+{
+    <p>No loans-service results yet: the runs go to <code>@Fwd.LoansRoot</code> (whole service in <code>@ForwardService.LoansFinal</code>).</p>
+}
+else
+{
+    var gate = Fwd.LoansGate();
+    var size = Fwd.LoansCodeSize();
+    var last = Fwd.LoansSummary()?["slices"]?.AsArray().LastOrDefault();
+    var best = last?["best"];
+    <p class="muted">Fineract's loan-schedule engine, forward-engineered by Gemma 4 into a new hexagonal loans service. Gemma never saw the COBOL
+    nor the pipeline's Java: it designed and coded each slice from the SME package (<code>@Fwd.LoansPackage</code>: a fixed API, SPEC, RULES,
+    rule digests with worked examples, public scenarios), in debug mode (focused repairs, the reference's intermediate values, warm starts).
+    It is judged by architecture rules and acceptance scenarios derived from the COBOL estate and the Fineract jar, most of them hidden from it;
+    the privileged ones go beyond the estate's corpus (the jar itself as the oracle) and are never shown. Runs: <code>@Fwd.LoansRoot</code>.</p>
+
+    <div class="panel">
+        <h3>The whole service (@ForwardService.LoansFinal)</h3>
+        <span class="chip ok">architecture @best?["architecture"]?["passed"]/@best?["architecture"]?["total"]</span>
+        <span class="chip ok">public @best?["public"]?["passed"]/@best?["public"]?["total"]</span>
+        <span class="chip ok">hidden @best?["hidden"]?["passed"]/@best?["hidden"]?["total"]</span>
+        <span class="chip ok">privileged @best?["privileged"]?["passed"]/@best?["privileged"]?["total"]</span>
+        <span class="chip info">Gemma's code: @size.Files files, @size.Lines.ToString("N0") lines (@size.Code.ToString("N0") without blanks and comments)</span>
+        @if (gate is not null)
+        {
+            <span class="chip @(gate["pass"]?.GetValue<bool>() == true ? "ok" : "bad")" title="Phase 0: the reference against every suite, mutation per module, traceability, leaks, cross-check">
+                package gate @(gate["pass"]?.GetValue<bool>() == true ? "passed" : "not passed"): reference @gate["reference"]?["scenarios"]?["total"] scenarios, leaks @gate["leaks"]?["hits"], cross-check @gate["crossCheck"]?["summary"]</span>
+        }
+        <table class="grid">
+            <tr><th>Slice</th><th>Public</th><th>Hidden</th><th>Privileged</th></tr>
+            @foreach (var (name, c) in best?["slices"]?.AsObject() ?? [])
+            {
+                <tr><td>@name</td><td>@c?["publicPassed"]/@c?["publicTotal"]</td><td>@c?["hiddenPassed"]/@c?["hiddenTotal"]</td>
+                    <td>@(c?["privilegedTotal"]?.GetValue<int>() > 0 ? $"{c["privilegedPassed"]}/{c["privilegedTotal"]}" : "—")</td></tr>
+            }
+        </table>
+        @if (gate?["mutation"]?["perModule"] is JsonObject pit)
+        {
+            <p class="muted">Mutation score of the package's scenarios on the reference (threshold @gate["mutation"]?["threshold"]%):
+                @string.Join(", ", pit.Select(m => $"{m.Key} {m.Value?["scorePercent"]}%"))</p>
+        }
+    </div>
+
+    <h3>How each slice got there</h3>
+    <p class="muted">Every run in which Gemma worked on a slice, oldest first (the slices before it were resumed from their passing code). Counts are the slice's own scenarios at its best attempt.</p>
+    <table class="grid">
+        <tr><th>Run</th><th>Slice</th><th>Attempts</th><th>Best</th><th>Ended by</th><th>Public</th><th>Hidden</th><th>Minutes</th></tr>
+        @foreach (var r in Fwd.LoansHistory())
+        {
+            <tr><td>@r.Run</td><td>@r.Slice</td><td>@r.Attempts</td><td>@r.BestAttempt</td>
+                <td><span class="@(r.EndedBy == "passed" ? "ok" : "")">@r.EndedBy</span></td>
+                <td>@r.PublicPassed/@r.PublicTotal</td><td>@r.HiddenPassed/@r.HiddenTotal</td><td>@r.Minutes</td></tr>
+        }
+    </table>
+
+    <h3>Code</h3>
+    <p class="muted">Gemma's code of the whole service (one folder per module), each run's prompts, debug prompts and attempts with their reasoning,
+    the results write-up, and the fixed API it coded against. Files open in tabs (read-only).</p>
+    <div class="ide forward-ide">
+        <aside class="explorer">
+            <div class="pane-title">Explorer</div>
+            <CodeTree Nodes="loansTree" Expanded="loansExpanded" Selected="@loansActive" Open="OpenLoans" />
+        </aside>
+        <section class="editor">
+            <div class="tabs">
+                @foreach (var t in loansTabs)
+                {
+                    <div class="tab @(t == loansActive ? "active" : "")" title="@t" @onclick="() => ActivateLoans(t)">
+                        <span class="ic @CodeTree.Icon(t)"></span>
+                        <span>@System.IO.Path.GetFileName(t)</span>
+                        <span class="x" title="Close" @onclick="() => CloseLoans(t)" @onclick:stopPropagation="true">×</span>
+                    </div>
+                }
+            </div>
+            <div class="editor-host">
+                <div id="@loansHostId" class="monaco-host"></div>
+                @if (loansActive is null) { <div class="welcome">Select a file in the Explorer to open it in a tab.</div> }
+            </div>
+        </section>
+    </div>
+}
+</div>
+
 @code {
     readonly string hostId = "fwd" + Guid.NewGuid().ToString("n")[..10];
+    readonly string loansHostId = "loans" + Guid.NewGuid().ToString("n")[..10];
+    readonly HashSet<string> loansExpanded = [];
+    readonly List<string> loansTabs = [];
+    IReadOnlyList<GemmaCodeNode> loansTree = [];
+    string? loansActive;
+    /// <summary>The tab shown: cas (the Customer Account Service evaluation) or loans (the loans service and Gemma's code).</summary>
+    string view = "cas";
     readonly HashSet<string> expanded = [];
     readonly List<string> tabs = [];
     JsonObject? results;
@@ -156,6 +255,10 @@ else
         results = Fwd.Results();
         tree = results is null ? [] : Fwd.CodeTree(results);
         foreach (var n in tree) expanded.Add(n.Path);
+        loansTree = Fwd.LoansCodeTree();
+        // The code of the whole service starts open, one folder per module.
+        if (loansTree.FirstOrDefault(n => n.IsDir) is { } code) loansExpanded.Add(code.Path);
+        if (results is null && Fwd.HasLoans()) view = "loans";
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -190,10 +293,40 @@ else
         if (tabs.LastOrDefault() is { } previous) await Activate(previous);
     }
 
+    async Task OpenLoans(GemmaCodeNode n)
+    {
+        if (!loansTabs.Contains(n.Path))
+        {
+            if (Fwd.ReadLoans(n.Path) is not { } text) return;
+            loansTabs.Add(n.Path);
+            await JS.InvokeVoidAsync("mlcpuCode.open", loansHostId, n.Path, text);
+        }
+        await ActivateLoans(n.Path);
+    }
+
+    async Task ActivateLoans(string path)
+    {
+        loansActive = path;
+        await JS.InvokeVoidAsync("mlcpuCode.show", loansHostId, path);
+    }
+
+    async Task CloseLoans(string path)
+    {
+        loansTabs.Remove(path);
+        await JS.InvokeVoidAsync("mlcpuCode.close", loansHostId, path);
+        if (loansActive != path) return;
+        loansActive = null;
+        if (loansTabs.LastOrDefault() is { } previous) await ActivateLoans(previous);
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (!interactive) return;
-        try { await JS.InvokeVoidAsync("mlcpuCode.destroy", hostId); }
+        try
+        {
+            await JS.InvokeVoidAsync("mlcpuCode.destroy", loansHostId);
+            await JS.InvokeVoidAsync("mlcpuCode.destroy", hostId);
+        }
         catch (Exception e) when (e is JSDisconnectedException or InvalidOperationException or TaskCanceledException) { }
     }
 }

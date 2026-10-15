@@ -16,6 +16,7 @@ public sealed record ProjectPaths(string Dir)
     public string Capabilities => Path.Combine(Dir, "capabilities");
     public string Scenarios => Path.Combine(Dir, "scenarios");
     public string Gemma => Path.Combine(Dir, "gemma");
+    public string Muse => Path.Combine(Dir, "muse");
     public string Runs => Path.Combine(Dir, "runs");
     public string Logs => Path.Combine(Dir, "logs");
 }

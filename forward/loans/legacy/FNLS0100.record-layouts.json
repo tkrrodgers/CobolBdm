@@ -1,0 +1,3159 @@
+{
+  "schema": "mlcpu.record-layouts.v1",
+  "programId": "FNLS0100",
+  "kind": "step",
+  "host": "FNLS0100",
+  "package": "com.mlcpu.capabilities.fnls0100.records",
+  "classes": [
+    {
+      "class": "FnRunControl",
+      "roots": [
+        "FN-RUN-CONTROL"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnLoanRequest",
+      "roots": [
+        "FN-LOAN-REQUEST"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnCurrencyRec",
+      "roots": [
+        "FN-CURRENCY-REC"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnScheduleRec",
+      "roots": [
+        "FN-SCHEDULE-REC"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnRejectRec",
+      "roots": [
+        "FN-REJECT-REC"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnMathContext",
+      "roots": [
+        "FN-MATH-CONTEXT"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnLoanTerms",
+      "roots": [
+        "FN-LOAN-TERMS"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnStatus",
+      "roots": [
+        "FN-STATUS"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnExpectedPeriods",
+      "roots": [
+        "FN-EXPECTED-PERIODS"
+      ],
+      "line": false
+    },
+    {
+      "class": "MaModel",
+      "roots": [
+        "MA-MODEL"
+      ],
+      "line": false
+    },
+    {
+      "class": "LkProcessDisbRequest",
+      "roots": [
+        "LK-PROCESS-DISB-REQUEST"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnScheduleParams",
+      "roots": [
+        "FN-SCHEDULE-PARAMS"
+      ],
+      "line": false
+    },
+    {
+      "class": "FnPeriodTable",
+      "roots": [
+        "FN-PERIOD-TABLE"
+      ],
+      "line": false
+    },
+    {
+      "class": "LkModelQuery",
+      "roots": [
+        "LK-MODEL-QUERY"
+      ],
+      "line": false
+    },
+    {
+      "class": "LkDeriveRequest",
+      "roots": [
+        "LK-DERIVE-REQUEST"
+      ],
+      "line": false
+    },
+    {
+      "class": "DtParms",
+      "roots": [
+        "DT-PARMS"
+      ],
+      "line": false
+    }
+  ],
+  "linkage": [],
+  "datasets": [
+    {
+      "dsn": "LNS.RUN.CONTROL",
+      "dd": "RUNCTL",
+      "file": "RUNCTL-FILE",
+      "program": "FNLS0100",
+      "direction": "input",
+      "format": "fixed:80",
+      "layouts": [
+        "FN-RUN-CONTROL"
+      ]
+    },
+    {
+      "dsn": "LNS.LOAN.REQUEST.DATA",
+      "dd": "LOANREQ",
+      "file": "LOANREQ-FILE",
+      "program": "FNLS0100",
+      "direction": "input",
+      "format": "fixed:200",
+      "layouts": [
+        "FN-LOAN-REQUEST"
+      ]
+    },
+    {
+      "dsn": "LNS.CURRENCY.VSAM.KSDS",
+      "dd": "CURRFILE",
+      "file": "CURRENCY-FILE",
+      "program": "FNLS0100",
+      "direction": "input",
+      "format": "fixed:40",
+      "layouts": [
+        "FN-CURRENCY-REC"
+      ],
+      "keyOffset": 0,
+      "keyLength": 3
+    },
+    {
+      "dsn": "LNS.LOAN.SCHEDULE.DATA",
+      "dd": "SCHEDOUT",
+      "file": "SCHEDULE-FILE",
+      "program": "FNLS0100",
+      "direction": "output",
+      "format": "fixed:200",
+      "layouts": [
+        "FN-SCHEDULE-REC"
+      ]
+    },
+    {
+      "dsn": "LNS.LOAN.REJECTS.DATA",
+      "dd": "REJECTS",
+      "file": "REJECT-FILE",
+      "program": "FNLS0100",
+      "direction": "output",
+      "format": "fixed:120",
+      "layouts": [
+        "FN-REJECT-REC"
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "name": "FN-RUN-CONTROL",
+      "program": "FNLS0100",
+      "role": "FD RUNCTL-FILE",
+      "length": 80,
+      "class": "FnRunControl",
+      "fields": [
+        {
+          "name": "RC-REC-TYPE",
+          "offset": 0,
+          "length": 2,
+          "kind": "text",
+          "pic": "X(2)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rcRecType"
+        },
+        {
+          "name": "RC-PRECISION",
+          "offset": 2,
+          "length": 2,
+          "kind": "zoned",
+          "pic": "9(2)",
+          "digits": 2,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rcPrecision"
+        },
+        {
+          "name": "RC-ROUNDING-MODE",
+          "offset": 4,
+          "length": 10,
+          "kind": "text",
+          "pic": "X(10)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rcRoundingMode"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-LOAN-REQUEST",
+      "program": "FNLS0100",
+      "role": "FD LOANREQ-FILE",
+      "length": 200,
+      "class": "FnLoanRequest",
+      "fields": [
+        {
+          "name": "RQ-REC-TYPE",
+          "offset": 0,
+          "length": 2,
+          "kind": "text",
+          "pic": "X(2)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqRecType"
+        },
+        {
+          "name": "RQ-LOAN-ID",
+          "offset": 2,
+          "length": 16,
+          "kind": "zoned",
+          "pic": "9(16)",
+          "digits": 16,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqLoanId"
+        },
+        {
+          "name": "RQ-SCHED-START-DATE",
+          "offset": 18,
+          "length": 8,
+          "kind": "zoned",
+          "pic": "9(8)",
+          "digits": 8,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqSchedStartDate"
+        },
+        {
+          "name": "RQ-CURRENCY-CODE",
+          "offset": 26,
+          "length": 3,
+          "kind": "text",
+          "pic": "X(3)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqCurrencyCode"
+        },
+        {
+          "name": "RQ-DISB-AMOUNT",
+          "offset": 29,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "rqDisbAmount"
+        },
+        {
+          "name": "RQ-DISB-DATE",
+          "offset": 47,
+          "length": 8,
+          "kind": "zoned",
+          "pic": "9(8)",
+          "digits": 8,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqDisbDate"
+        },
+        {
+          "name": "RQ-NUM-REPAYMENTS",
+          "offset": 55,
+          "length": 4,
+          "kind": "zoned",
+          "pic": "9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqNumRepayments"
+        },
+        {
+          "name": "RQ-REPAY-EVERY",
+          "offset": 59,
+          "length": 4,
+          "kind": "zoned",
+          "pic": "9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqRepayEvery"
+        },
+        {
+          "name": "RQ-FREQ-TYPE",
+          "offset": 63,
+          "length": 10,
+          "kind": "text",
+          "pic": "X(10)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqFreqType"
+        },
+        {
+          "name": "RQ-ANNUAL-RATE",
+          "offset": 73,
+          "length": 13,
+          "kind": "zoned",
+          "pic": "S9(3)V9(9)",
+          "digits": 12,
+          "scale": 9,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "rqAnnualRate"
+        },
+        {
+          "name": "RQ-DOWNPAY-ENABLED",
+          "offset": 86,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqDownpayEnabled"
+        },
+        {
+          "name": "RQ-DAYS-IN-MONTH",
+          "offset": 87,
+          "length": 2,
+          "kind": "zoned",
+          "pic": "9(2)",
+          "digits": 2,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqDaysInMonth"
+        },
+        {
+          "name": "RQ-DAYS-IN-YEAR",
+          "offset": 89,
+          "length": 3,
+          "kind": "zoned",
+          "pic": "9(3)",
+          "digits": 3,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqDaysInYear"
+        },
+        {
+          "name": "RQ-DOWNPAY-PCT-IND",
+          "offset": 92,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqDownpayPctInd"
+        },
+        {
+          "name": "RQ-DOWNPAY-PCT",
+          "offset": 93,
+          "length": 13,
+          "kind": "zoned",
+          "pic": "S9(3)V9(9)",
+          "digits": 12,
+          "scale": 9,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "rqDownpayPct"
+        },
+        {
+          "name": "RQ-MULTIPLES-IND",
+          "offset": 106,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqMultiplesInd"
+        },
+        {
+          "name": "RQ-MULTIPLES",
+          "offset": 107,
+          "length": 9,
+          "kind": "zoned",
+          "pic": "9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqMultiples"
+        },
+        {
+          "name": "RQ-FIXED-LENGTH-IND",
+          "offset": 116,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqFixedLengthInd"
+        },
+        {
+          "name": "RQ-FIXED-LENGTH",
+          "offset": 117,
+          "length": 5,
+          "kind": "zoned",
+          "pic": "9(5)",
+          "digits": 5,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqFixedLength"
+        },
+        {
+          "name": "RQ-INT-RECOG-DISB",
+          "offset": 122,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqIntRecogDisb"
+        },
+        {
+          "name": "RQ-DIY-STRATEGY",
+          "offset": 123,
+          "length": 20,
+          "kind": "text",
+          "pic": "X(20)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqDiyStrategy"
+        },
+        {
+          "name": "RQ-INTEREST-METHOD",
+          "offset": 143,
+          "length": 18,
+          "kind": "text",
+          "pic": "X(18)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqInterestMethod"
+        },
+        {
+          "name": "RQ-ALLOW-PARTIAL",
+          "offset": 161,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqAllowPartial"
+        },
+        {
+          "name": "RQ-FULL-TERM-TRANCHE",
+          "offset": 162,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rqFullTermTranche"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-CURRENCY-REC",
+      "program": "FNLS0100",
+      "role": "FD CURRENCY-FILE",
+      "length": 40,
+      "class": "FnCurrencyRec",
+      "fields": [
+        {
+          "name": "CU-CODE",
+          "offset": 0,
+          "length": 3,
+          "kind": "text",
+          "pic": "X(3)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "cuCode"
+        },
+        {
+          "name": "CU-DECIMAL-PLACES",
+          "offset": 3,
+          "length": 2,
+          "kind": "zoned",
+          "pic": "9(2)",
+          "digits": 2,
+          "scale": 0,
+          "signed": false,
+          "accessor": "cuDecimalPlaces"
+        },
+        {
+          "name": "CU-MULTIPLES-IND",
+          "offset": 5,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "cuMultiplesInd"
+        },
+        {
+          "name": "CU-MULTIPLES",
+          "offset": 6,
+          "length": 5,
+          "kind": "zoned",
+          "pic": "9(5)",
+          "digits": 5,
+          "scale": 0,
+          "signed": false,
+          "accessor": "cuMultiples"
+        },
+        {
+          "name": "CU-NAME",
+          "offset": 11,
+          "length": 20,
+          "kind": "text",
+          "pic": "X(20)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "cuName"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-SCHEDULE-REC",
+      "program": "FNLS0100",
+      "role": "FD SCHEDULE-FILE",
+      "length": 200,
+      "class": "FnScheduleRec",
+      "fields": [
+        {
+          "name": "SC-LOAN-ID",
+          "offset": 0,
+          "length": 16,
+          "kind": "zoned",
+          "pic": "9(16)",
+          "digits": 16,
+          "scale": 0,
+          "signed": false,
+          "accessor": "scLoanId"
+        },
+        {
+          "name": "SC-REC-TYPE",
+          "offset": 16,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "scRecType"
+        },
+        {
+          "name": "SC-SEQ",
+          "offset": 17,
+          "length": 4,
+          "kind": "zoned",
+          "pic": "9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": false,
+          "accessor": "scSeq"
+        },
+        {
+          "name": "SC-BODY",
+          "offset": 21,
+          "length": 179,
+          "kind": "text",
+          "pic": "X(179)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "scBody"
+        },
+        {
+          "name": "SC-HEADER",
+          "offset": 21,
+          "length": 179,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "accessor": "scHeader"
+        },
+        {
+          "name": "SH-CURRENCY-CODE",
+          "offset": 21,
+          "length": 3,
+          "kind": "text",
+          "pic": "X(3)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "shCurrencyCode"
+        },
+        {
+          "name": "SH-DECIMAL-PLACES",
+          "offset": 24,
+          "length": 2,
+          "kind": "zoned",
+          "pic": "9(2)",
+          "digits": 2,
+          "scale": 0,
+          "signed": false,
+          "accessor": "shDecimalPlaces"
+        },
+        {
+          "name": "SH-TERM-DAYS",
+          "offset": 26,
+          "length": 6,
+          "kind": "zoned",
+          "pic": "9(6)",
+          "digits": 6,
+          "scale": 0,
+          "signed": false,
+          "accessor": "shTermDays"
+        },
+        {
+          "name": "SH-PERIOD-COUNT",
+          "offset": 32,
+          "length": 4,
+          "kind": "zoned",
+          "pic": "9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": false,
+          "accessor": "shPeriodCount"
+        },
+        {
+          "name": "SH-TOT-DISBURSED",
+          "offset": 36,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "shTotDisbursed"
+        },
+        {
+          "name": "SH-TOT-PRINCIPAL",
+          "offset": 54,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "shTotPrincipal"
+        },
+        {
+          "name": "SH-TOT-INTEREST",
+          "offset": 72,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "shTotInterest"
+        },
+        {
+          "name": "SH-TOT-FEE",
+          "offset": 90,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "shTotFee"
+        },
+        {
+          "name": "SH-TOT-PENALTY",
+          "offset": 108,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "shTotPenalty"
+        },
+        {
+          "name": "SH-TOT-REPAYMENT",
+          "offset": 126,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "shTotRepayment"
+        },
+        {
+          "name": "SH-TOT-OUTSTANDING",
+          "offset": 144,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "shTotOutstanding"
+        },
+        {
+          "name": "SC-PERIOD",
+          "offset": 21,
+          "length": 179,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "accessor": "scPeriod"
+        },
+        {
+          "name": "SP-PERIOD-NUMBER",
+          "offset": 21,
+          "length": 4,
+          "kind": "zoned",
+          "pic": "9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": false,
+          "accessor": "spPeriodNumber"
+        },
+        {
+          "name": "SP-FROM-DATE",
+          "offset": 25,
+          "length": 8,
+          "kind": "zoned",
+          "pic": "9(8)",
+          "digits": 8,
+          "scale": 0,
+          "signed": false,
+          "accessor": "spFromDate"
+        },
+        {
+          "name": "SP-DUE-DATE",
+          "offset": 33,
+          "length": 8,
+          "kind": "zoned",
+          "pic": "9(8)",
+          "digits": 8,
+          "scale": 0,
+          "signed": false,
+          "accessor": "spDueDate"
+        },
+        {
+          "name": "SP-PRINCIPAL",
+          "offset": 41,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "spPrincipal"
+        },
+        {
+          "name": "SP-INTEREST",
+          "offset": 59,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "spInterest"
+        },
+        {
+          "name": "SP-FEE",
+          "offset": 77,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "spFee"
+        },
+        {
+          "name": "SP-PENALTY",
+          "offset": 95,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "spPenalty"
+        },
+        {
+          "name": "SP-TOTAL-DUE",
+          "offset": 113,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "spTotalDue"
+        },
+        {
+          "name": "SP-OUTST-BALANCE",
+          "offset": 131,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "spOutstBalance"
+        },
+        {
+          "name": "SP-TOT-OUTSTANDING",
+          "offset": 149,
+          "length": 18,
+          "kind": "zoned",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "signSeparate": true,
+          "signLeading": true,
+          "accessor": "spTotOutstanding"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-REJECT-REC",
+      "program": "FNLS0100",
+      "role": "FD REJECT-FILE",
+      "length": 120,
+      "class": "FnRejectRec",
+      "fields": [
+        {
+          "name": "RJ-LOAN-ID",
+          "offset": 0,
+          "length": 16,
+          "kind": "zoned",
+          "pic": "9(16)",
+          "digits": 16,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rjLoanId"
+        },
+        {
+          "name": "RJ-CODE",
+          "offset": 16,
+          "length": 8,
+          "kind": "text",
+          "pic": "X(8)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rjCode"
+        },
+        {
+          "name": "RJ-SOURCE",
+          "offset": 24,
+          "length": 24,
+          "kind": "text",
+          "pic": "X(24)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rjSource"
+        },
+        {
+          "name": "RJ-TEXT",
+          "offset": 48,
+          "length": 60,
+          "kind": "text",
+          "pic": "X(60)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "rjText"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-MATH-CONTEXT",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 3,
+      "class": "FnMathContext",
+      "fields": [
+        {
+          "name": "MC-PRECISION",
+          "offset": 0,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "mcPrecision"
+        },
+        {
+          "name": "MC-MODE",
+          "offset": 2,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "mcMode"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-LOAN-TERMS",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 81,
+      "class": "FnLoanTerms",
+      "fields": [
+        {
+          "name": "LT-CURRENCY-CODE",
+          "offset": 0,
+          "length": 3,
+          "kind": "text",
+          "pic": "X(3)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltCurrencyCode"
+        },
+        {
+          "name": "LT-DECIMAL-PLACES",
+          "offset": 3,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltDecimalPlaces"
+        },
+        {
+          "name": "LT-MULTIPLES-IND",
+          "offset": 5,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltMultiplesInd"
+        },
+        {
+          "name": "LT-MULTIPLES",
+          "offset": 6,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltMultiples"
+        },
+        {
+          "name": "LT-PRINCIPAL",
+          "offset": 10,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "ltPrincipal"
+        },
+        {
+          "name": "LT-SUBMITTED-DAY",
+          "offset": 19,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltSubmittedDay"
+        },
+        {
+          "name": "LT-EXP-DISB-DAY",
+          "offset": 23,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltExpDisbDay"
+        },
+        {
+          "name": "LT-SEED-DAY",
+          "offset": 27,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltSeedDay"
+        },
+        {
+          "name": "LT-NUM-REPAYMENTS",
+          "offset": 31,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltNumRepayments"
+        },
+        {
+          "name": "LT-REPAY-EVERY",
+          "offset": 35,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltRepayEvery"
+        },
+        {
+          "name": "LT-FREQ-TYPE",
+          "offset": 39,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltFreqType"
+        },
+        {
+          "name": "LT-ANNUAL-RATE",
+          "offset": 41,
+          "length": 7,
+          "kind": "packed",
+          "pic": "S9(3)V9(9)",
+          "digits": 12,
+          "scale": 9,
+          "signed": true,
+          "accessor": "ltAnnualRate"
+        },
+        {
+          "name": "LT-DAYS-IN-MONTH",
+          "offset": 48,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltDaysInMonth"
+        },
+        {
+          "name": "LT-DAYS-IN-YEAR",
+          "offset": 50,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltDaysInYear"
+        },
+        {
+          "name": "LT-INTEREST-METHOD",
+          "offset": 52,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltInterestMethod"
+        },
+        {
+          "name": "LT-DOWNPAY-SW",
+          "offset": 54,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltDownpaySw"
+        },
+        {
+          "name": "LT-DOWNPAY-PCT-IND",
+          "offset": 55,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltDownpayPctInd"
+        },
+        {
+          "name": "LT-DOWNPAY-PCT",
+          "offset": 56,
+          "length": 7,
+          "kind": "packed",
+          "pic": "S9(3)V9(9)",
+          "digits": 12,
+          "scale": 9,
+          "signed": true,
+          "accessor": "ltDownpayPct"
+        },
+        {
+          "name": "LT-DOWNPAY-AMOUNT",
+          "offset": 63,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "ltDownpayAmount"
+        },
+        {
+          "name": "LT-FIXED-LENGTH-IND",
+          "offset": 72,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltFixedLengthInd"
+        },
+        {
+          "name": "LT-FIXED-LENGTH",
+          "offset": 73,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ltFixedLength"
+        },
+        {
+          "name": "LT-FULL-TERM-SW",
+          "offset": 77,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltFullTermSw"
+        },
+        {
+          "name": "LT-LCD-INT-RECOG-SW",
+          "offset": 78,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltLcdIntRecogSw"
+        },
+        {
+          "name": "LT-INT-RECOG-SW",
+          "offset": 79,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltIntRecogSw"
+        },
+        {
+          "name": "LT-PARTIAL-SW",
+          "offset": 80,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "ltPartialSw"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-STATUS",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 94,
+      "class": "FnStatus",
+      "fields": [
+        {
+          "name": "ST-RC",
+          "offset": 0,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "stRc"
+        },
+        {
+          "name": "ST-REJECT-CODE",
+          "offset": 2,
+          "length": 8,
+          "kind": "text",
+          "pic": "X(8)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "stRejectCode"
+        },
+        {
+          "name": "ST-REJECT-SRC",
+          "offset": 10,
+          "length": 24,
+          "kind": "text",
+          "pic": "X(24)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "stRejectSrc"
+        },
+        {
+          "name": "ST-REJECT-TEXT",
+          "offset": 34,
+          "length": 60,
+          "kind": "text",
+          "pic": "X(60)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "stRejectText"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-EXPECTED-PERIODS",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 30722,
+      "class": "FnExpectedPeriods",
+      "fields": [
+        {
+          "name": "XP-COUNT",
+          "offset": 0,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "xpCount"
+        },
+        {
+          "name": "XP-ENTRY",
+          "offset": 2,
+          "length": 64,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpEntry"
+        },
+        {
+          "name": "XP-PERIOD-NUMBER",
+          "offset": 2,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpPeriodNumber"
+        },
+        {
+          "name": "XP-FROM-DAY",
+          "offset": 4,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpFromDay"
+        },
+        {
+          "name": "XP-DUE-DAY",
+          "offset": 8,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpDueDay"
+        },
+        {
+          "name": "XP-PRINCIPAL",
+          "offset": 12,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpPrincipal"
+        },
+        {
+          "name": "XP-OUTST-BAL",
+          "offset": 21,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpOutstBal"
+        },
+        {
+          "name": "XP-INTEREST",
+          "offset": 30,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpInterest"
+        },
+        {
+          "name": "XP-FEE",
+          "offset": 39,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpFee"
+        },
+        {
+          "name": "XP-PENALTY",
+          "offset": 48,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpPenalty"
+        },
+        {
+          "name": "XP-TOTAL-DUE",
+          "offset": 57,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              64
+            ]
+          ],
+          "accessor": "xpTotalDue"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "MA-MODEL",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 262095,
+      "class": "MaModel",
+      "fields": [
+        {
+          "name": "MA-HDR",
+          "offset": 0,
+          "length": 15,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "accessor": "maHdr"
+        },
+        {
+          "name": "MA-RP-COUNT",
+          "offset": 0,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "maRpCount"
+        },
+        {
+          "name": "MA-EMI-RECALC-SW",
+          "offset": 2,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "maEmiRecalcSw"
+        },
+        {
+          "name": "MA-COPY-SW",
+          "offset": 3,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "maCopySw"
+        },
+        {
+          "name": "MA-INT-RECALC-SW",
+          "offset": 4,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "maIntRecalcSw"
+        },
+        {
+          "name": "MA-INT-PAUSE-EMI-SW",
+          "offset": 5,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "maIntPauseEmiSw"
+        },
+        {
+          "name": "MA-PRIN-GRACE-LIFT-SW",
+          "offset": 6,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "maPrinGraceLiftSw"
+        },
+        {
+          "name": "MA-LAST-OVD-DAY",
+          "offset": 7,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "maLastOvdDay"
+        },
+        {
+          "name": "MA-OID-SEQ",
+          "offset": 11,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "maOidSeq"
+        },
+        {
+          "name": "MA-RP-TABLE",
+          "offset": 15,
+          "length": 262080,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "accessor": "maRpTable"
+        },
+        {
+          "name": "MA-RP",
+          "offset": 15,
+          "length": 546,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRp"
+        },
+        {
+          "name": "MA-RP-FROM-DAY",
+          "offset": 15,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpFromDay"
+        },
+        {
+          "name": "MA-RP-DUE-DAY",
+          "offset": 19,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpDueDay"
+        },
+        {
+          "name": "MA-RP-EMI",
+          "offset": 23,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpEmi"
+        },
+        {
+          "name": "MA-RP-ORIG-EMI",
+          "offset": 32,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpOrigEmi"
+        },
+        {
+          "name": "MA-RP-PAID-PRIN",
+          "offset": 41,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpPaidPrin"
+        },
+        {
+          "name": "MA-RP-PAID-INT",
+          "offset": 50,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpPaidInt"
+        },
+        {
+          "name": "MA-RP-FUT-UNREC-INT",
+          "offset": 59,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpFutUnrecInt"
+        },
+        {
+          "name": "MA-RP-TOT-DISB",
+          "offset": 68,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpTotDisb"
+        },
+        {
+          "name": "MA-RP-TOT-CAP-INC",
+          "offset": 77,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpTotCapInc"
+        },
+        {
+          "name": "MA-RP-CR-PRIN-REAGE",
+          "offset": 86,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpCrPrinReage"
+        },
+        {
+          "name": "MA-RP-CR-INT-REAGE",
+          "offset": 95,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpCrIntReage"
+        },
+        {
+          "name": "MA-RP-FIXED-INT",
+          "offset": 104,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpFixedInt"
+        },
+        {
+          "name": "MA-RP-FLAGS",
+          "offset": 113,
+          "length": 6,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpFlags"
+        },
+        {
+          "name": "MA-RP-INT-MOVED-UP",
+          "offset": 113,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpIntMovedUp"
+        },
+        {
+          "name": "MA-RP-INT-PAY-GRACE",
+          "offset": 114,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpIntPayGrace"
+        },
+        {
+          "name": "MA-RP-PRIN-PAY-GRACE",
+          "offset": 115,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpPrinPayGrace"
+        },
+        {
+          "name": "MA-RP-INT-MOVED-DOWN",
+          "offset": 116,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpIntMovedDown"
+        },
+        {
+          "name": "MA-RP-REAGED",
+          "offset": 117,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpReaged"
+        },
+        {
+          "name": "MA-RP-REAGED-EARLY",
+          "offset": 118,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpReagedEarly"
+        },
+        {
+          "name": "MA-RP-DRV",
+          "offset": 119,
+          "length": 98,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpDrv"
+        },
+        {
+          "name": "MA-RP-RF-PLUS1",
+          "offset": 119,
+          "length": 8,
+          "kind": "packed",
+          "pic": "S9(3)V9(12)",
+          "digits": 15,
+          "scale": 12,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpRfPlus1"
+        },
+        {
+          "name": "MA-RP-CR-PRIN",
+          "offset": 127,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpCrPrin"
+        },
+        {
+          "name": "MA-RP-CR-INT",
+          "offset": 136,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpCrInt"
+        },
+        {
+          "name": "MA-RP-TOT-CREDITED",
+          "offset": 145,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpTotCredited"
+        },
+        {
+          "name": "MA-RP-EMI-PLUS",
+          "offset": 154,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpEmiPlus"
+        },
+        {
+          "name": "MA-RP-CALC-DUE-INT",
+          "offset": 163,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpCalcDueInt"
+        },
+        {
+          "name": "MA-RP-CALC-DUE-PRIN",
+          "offset": 172,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpCalcDuePrin"
+        },
+        {
+          "name": "MA-RP-DUE-INT",
+          "offset": 181,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpDueInt"
+        },
+        {
+          "name": "MA-RP-DUE-PRIN",
+          "offset": 190,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpDuePrin"
+        },
+        {
+          "name": "MA-RP-UNREC-INT",
+          "offset": 199,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpUnrecInt"
+        },
+        {
+          "name": "MA-RP-OUTST-BAL",
+          "offset": 208,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpOutstBal"
+        },
+        {
+          "name": "MA-RP-MEMO",
+          "offset": 217,
+          "length": 10,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpMemo"
+        },
+        {
+          "name": "MA-RP-MEMO-OUTST-SW",
+          "offset": 217,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpMemoOutstSw"
+        },
+        {
+          "name": "MA-RP-MEMO-OUTST",
+          "offset": 218,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpMemoOutst"
+        },
+        {
+          "name": "MA-RP-IP-COUNT",
+          "offset": 227,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ]
+          ],
+          "accessor": "maRpIpCount"
+        },
+        {
+          "name": "MA-IP",
+          "offset": 229,
+          "length": 83,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIp"
+        },
+        {
+          "name": "MA-IP-FROM-DAY",
+          "offset": 229,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpFromDay"
+        },
+        {
+          "name": "MA-IP-DUE-DAY",
+          "offset": 233,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpDueDay"
+        },
+        {
+          "name": "MA-IP-RATE-FACTOR",
+          "offset": 237,
+          "length": 8,
+          "kind": "packed",
+          "pic": "S9(3)V9(12)",
+          "digits": 15,
+          "scale": 12,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpRateFactor"
+        },
+        {
+          "name": "MA-IP-RF-TILL-DUE",
+          "offset": 245,
+          "length": 8,
+          "kind": "packed",
+          "pic": "S9(3)V9(12)",
+          "digits": 15,
+          "scale": 12,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpRfTillDue"
+        },
+        {
+          "name": "MA-IP-CR-PRIN",
+          "offset": 253,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpCrPrin"
+        },
+        {
+          "name": "MA-IP-CR-INT",
+          "offset": 262,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpCrInt"
+        },
+        {
+          "name": "MA-IP-DISB-AMT",
+          "offset": 271,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpDisbAmt"
+        },
+        {
+          "name": "MA-IP-BAL-CORR",
+          "offset": 280,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpBalCorr"
+        },
+        {
+          "name": "MA-IP-OUTST-BAL",
+          "offset": 289,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpOutstBal"
+        },
+        {
+          "name": "MA-IP-CAP-INC-PRIN",
+          "offset": 298,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpCapIncPrin"
+        },
+        {
+          "name": "MA-IP-PAUSED",
+          "offset": 307,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpPaused"
+        },
+        {
+          "name": "MA-IP-OUTST-OID",
+          "offset": 308,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              480,
+              546
+            ],
+            [
+              4,
+              83
+            ]
+          ],
+          "accessor": "maIpOutstOid"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "LK-PROCESS-DISB-REQUEST",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 2,
+      "class": "LkProcessDisbRequest",
+      "fields": [
+        {
+          "name": "PD-INCLUDE-AFTER-MATURITY",
+          "offset": 0,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "pdIncludeAfterMaturity"
+        },
+        {
+          "name": "PD-PROCESSED-SW",
+          "offset": 1,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "pdProcessedSw"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-SCHEDULE-PARAMS",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 84,
+      "class": "FnScheduleParams",
+      "fields": [
+        {
+          "name": "PR-PERIOD-NUMBER",
+          "offset": 0,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "prPeriodNumber"
+        },
+        {
+          "name": "PR-INSTALMENT-NUMBER",
+          "offset": 2,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "prInstalmentNumber"
+        },
+        {
+          "name": "PR-PERIOD-START-DAY",
+          "offset": 4,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "prPeriodStartDay"
+        },
+        {
+          "name": "PR-ACTUAL-REPAY-DAY",
+          "offset": 8,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "prActualRepayDay"
+        },
+        {
+          "name": "PR-CUM-PRINCIPAL",
+          "offset": 12,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "prCumPrincipal"
+        },
+        {
+          "name": "PR-CUM-INTEREST",
+          "offset": 21,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "prCumInterest"
+        },
+        {
+          "name": "PR-TOT-FEE",
+          "offset": 30,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "prTotFee"
+        },
+        {
+          "name": "PR-TOT-PENALTY",
+          "offset": 39,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "prTotPenalty"
+        },
+        {
+          "name": "PR-TOT-REPAY-EXPECTED",
+          "offset": 48,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "prTotRepayExpected"
+        },
+        {
+          "name": "PR-PRIN-TO-SCHEDULE",
+          "offset": 57,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "prPrinToSchedule"
+        },
+        {
+          "name": "PR-REDUCE-PRINCIPAL",
+          "offset": 66,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "prReducePrincipal"
+        },
+        {
+          "name": "PR-INT-DUE-TO-GRACE",
+          "offset": 75,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "prIntDueToGrace"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "FN-PERIOD-TABLE",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 31332,
+      "class": "FnPeriodTable",
+      "fields": [
+        {
+          "name": "PT-COUNT",
+          "offset": 0,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "ptCount"
+        },
+        {
+          "name": "PT-ENTRY",
+          "offset": 2,
+          "length": 65,
+          "kind": "group",
+          "pic": null,
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "group": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptEntry"
+        },
+        {
+          "name": "PT-TYPE",
+          "offset": 2,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptType"
+        },
+        {
+          "name": "PT-PERIOD-NUMBER",
+          "offset": 3,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptPeriodNumber"
+        },
+        {
+          "name": "PT-FROM-DAY",
+          "offset": 5,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptFromDay"
+        },
+        {
+          "name": "PT-DUE-DAY",
+          "offset": 9,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptDueDay"
+        },
+        {
+          "name": "PT-PRINCIPAL",
+          "offset": 13,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptPrincipal"
+        },
+        {
+          "name": "PT-INTEREST",
+          "offset": 22,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptInterest"
+        },
+        {
+          "name": "PT-FEE",
+          "offset": 31,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptFee"
+        },
+        {
+          "name": "PT-PENALTY",
+          "offset": 40,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptPenalty"
+        },
+        {
+          "name": "PT-TOTAL-DUE",
+          "offset": 49,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptTotalDue"
+        },
+        {
+          "name": "PT-OUTST-BAL",
+          "offset": 58,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "occurs": [
+            [
+              482,
+              65
+            ]
+          ],
+          "accessor": "ptOutstBal"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "LK-MODEL-QUERY",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 28,
+      "class": "LkModelQuery",
+      "fields": [
+        {
+          "name": "QY-FUNCTION",
+          "offset": 0,
+          "length": 2,
+          "kind": "text",
+          "pic": "X(2)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "qyFunction"
+        },
+        {
+          "name": "QY-DAY",
+          "offset": 2,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "qyDay"
+        },
+        {
+          "name": "QY-DAY2",
+          "offset": 6,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "qyDay2"
+        },
+        {
+          "name": "QY-RP-INDEX",
+          "offset": 10,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "qyRpIndex"
+        },
+        {
+          "name": "QY-IP-INDEX",
+          "offset": 12,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "qyIpIndex"
+        },
+        {
+          "name": "QY-RESULT-N",
+          "offset": 14,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "qyResultN"
+        },
+        {
+          "name": "QY-MONEY",
+          "offset": 18,
+          "length": 9,
+          "kind": "packed",
+          "pic": "S9(13)V9(4)",
+          "digits": 17,
+          "scale": 4,
+          "signed": true,
+          "accessor": "qyMoney"
+        },
+        {
+          "name": "QY-FOUND-SW",
+          "offset": 27,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "qyFoundSw"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "LK-DERIVE-REQUEST",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 1,
+      "class": "LkDeriveRequest",
+      "fields": [
+        {
+          "name": "DV-FUNCTION",
+          "offset": 0,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "dvFunction"
+        }
+      ],
+      "constants": []
+    },
+    {
+      "name": "DT-PARMS",
+      "program": "FNLS0100",
+      "role": "CALL USING",
+      "length": 29,
+      "class": "DtParms",
+      "fields": [
+        {
+          "name": "DT-FUNCTION",
+          "offset": 0,
+          "length": 2,
+          "kind": "text",
+          "pic": "X(2)",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "dtFunction"
+        },
+        {
+          "name": "DT-UNIT",
+          "offset": 2,
+          "length": 1,
+          "kind": "text",
+          "pic": "X",
+          "digits": 0,
+          "scale": 0,
+          "signed": false,
+          "accessor": "dtUnit"
+        },
+        {
+          "name": "DT-DAY",
+          "offset": 3,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "dtDay"
+        },
+        {
+          "name": "DT-DAY2",
+          "offset": 7,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "dtDay2"
+        },
+        {
+          "name": "DT-N",
+          "offset": 11,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "dtN"
+        },
+        {
+          "name": "DT-RESULT",
+          "offset": 15,
+          "length": 4,
+          "kind": "binary",
+          "pic": "S9(9)",
+          "digits": 9,
+          "scale": 0,
+          "signed": true,
+          "accessor": "dtResult"
+        },
+        {
+          "name": "DT-YYYYMMDD",
+          "offset": 19,
+          "length": 8,
+          "kind": "zoned",
+          "pic": "9(8)",
+          "digits": 8,
+          "scale": 0,
+          "signed": false,
+          "accessor": "dtYyyymmdd"
+        },
+        {
+          "name": "DT-RC",
+          "offset": 27,
+          "length": 2,
+          "kind": "binary",
+          "pic": "S9(4)",
+          "digits": 4,
+          "scale": 0,
+          "signed": true,
+          "accessor": "dtRc"
+        }
+      ],
+      "constants": []
+    }
+  ],
+  "writers": [
+    {
+      "file": "SCHEDULE-FILE",
+      "verb": "WRITE",
+      "stepId": "2690-WRITE-SCHEDULE-RECORD:1:WRITE:L628",
+      "paragraph": "2690-WRITE-SCHEDULE-RECORD",
+      "cobol": "WRITE FN-SCHEDULE-REC",
+      "record": "FN-SCHEDULE-REC",
+      "layout": "FN-SCHEDULE-REC",
+      "advancing": null
+    },
+    {
+      "file": "REJECT-FILE",
+      "verb": "WRITE",
+      "stepId": "2900-WRITE-REJECT:10:WRITE:L651",
+      "paragraph": "2900-WRITE-REJECT",
+      "cobol": "WRITE FN-REJECT-REC",
+      "record": "FN-REJECT-REC",
+      "layout": "FN-REJECT-REC",
+      "advancing": null
+    }
+  ]
+}

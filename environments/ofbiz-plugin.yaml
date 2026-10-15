@@ -1,0 +1,24 @@
+# The OFBiz host profile (mlcpu.environment.v1, GemmaJavaTemplates.md §5.11): the facts the H-OFBIZ templates depend on, verified
+# in the pinned source. Changing a profile to make a result pass is not allowed; it changes only when the host does.
+schema: mlcpu.environment.v1
+name: ofbiz-plugin
+host:
+  kind: ofbiz
+  repository: https://github.com/apache/ofbiz-framework
+  commit: 45506b377c            # trunk, 2026-10-09 (FE baseline)
+  javaRelease: 17               # build.gradle:203-204
+  database: h2                  # entityengine.xml:54-57
+  checkstyleMaxErrors: 0        # build.gradle:379 (A-13)
+  lineLength: 150               # config/checkstyle/checkstyle.xml
+  testResults: runtime/logs/test-results
+  entityDtd: https://ofbiz.apache.org/dtds/entitymodel.xsd
+  servicesDtd: https://ofbiz.apache.org/dtds/services.xsd
+  secaDtd: https://ofbiz.apache.org/dtds/service-eca.xsd
+  dataDtd: https://ofbiz.apache.org/dtds/entity-engine-xml.xsd
+  componentDtd: https://ofbiz.apache.org/dtds/ofbiz-component.xsd
+  testSuiteDtd: https://ofbiz.apache.org/dtds/test-suite.xsd
+types:                          # OFBiz field types by API kind (fieldtypeh2.xml)
+  decimalScale: 6               # fixed-point: NUMERIC(18,6)
+  ledgerDecimals: 2             # invoice.decimals, finaccount.decimals (arithmetic.properties)
+engine:
+  lib: lib                      # the engine's jars, on the classpath through the plugin's lib folder (build.gradle:326-327)

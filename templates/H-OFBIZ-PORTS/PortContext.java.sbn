@@ -1,0 +1,18 @@
+package {{ model.plugin.javaPackage }};
+
+import java.time.LocalDate;
+
+import org.apache.ofbiz.entity.Delegator;
+import org.apache.ofbiz.entity.GenericValue;
+import org.apache.ofbiz.service.LocalDispatcher;
+
+/**
+ * What every port implementation gets from the calling service: the dispatcher (to call OFBiz services, passing the user login),
+ * the delegator (to read and write entities), the user login, and the business date.
+ * @param dispatcher the service dispatcher
+ * @param delegator the entity delegator
+ * @param userLogin the calling user's login
+ * @param today the business date
+ */
+public record {{ model.plugin.resourceName }}PortContext(LocalDispatcher dispatcher, Delegator delegator, GenericValue userLogin, LocalDate today) {
+}

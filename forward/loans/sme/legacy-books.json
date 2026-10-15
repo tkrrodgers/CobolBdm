@@ -1,0 +1,1180 @@
+{
+  "schema": "mlcpu.legacy-books.v1",
+  "about": "The legacy loan books the migration slice reconciles (FE 9.2): five datasets each, by repository root and path. Built by sme/tools/make_legacy_books.py; MigrationPool refuses a dataset whose SHA-256 differs.",
+  "roots": {
+    "cobolbdm": "the CobolBdm repository",
+    "fcg": "fineract-cobol-gen (the JavaToCOBOLTest repository)"
+  },
+  "books": [
+    {
+      "name": "edge-p12-half_even",
+      "source": "the edge corpus; legacy output oracle A of the clean-room estate (= the COBOL job, G2)",
+      "request": {
+        "root": "fcg",
+        "path": "out/tier1-2026-10-12-cr/scenarios/edge-p12-half_even/LOAN.REQUEST.txt",
+        "format": "lines",
+        "bytes": 242607,
+        "sha256": "d1935ddb3eb3e69a53861bfeca38f253b8e1d68cdd9908eaec296b469f4a08d8"
+      },
+      "runControl": {
+        "root": "fcg",
+        "path": "out/tier1-2026-10-12-cr/scenarios/edge-p12-half_even/RUN.CONTROL.txt",
+        "format": "lines",
+        "bytes": 16,
+        "sha256": "c5c3b4311841b0cc9debd6da3d1b0f12cbef824a93f2bc5eb7191282eec23f54"
+      },
+      "currency": {
+        "root": "fcg",
+        "path": "corpus/CURRENCY.txt",
+        "format": "lines",
+        "bytes": 369,
+        "sha256": "cfc53125ba2c209f01a8bc50877088ace452bef03d178b4f5d3ec367429401ba"
+      },
+      "schedule": {
+        "root": "fcg",
+        "path": "out/tier1-2026-10-12-cr/oracle-a/edge-p12-half_even/SCHEDULE.dat",
+        "format": "fixed",
+        "bytes": 2833200,
+        "sha256": "db5a3cf58bc0e342e5f1fce43c6e3efa354c903a56322a7430fe2fd1bae99060"
+      },
+      "rejects": {
+        "root": "fcg",
+        "path": "out/tier1-2026-10-12-cr/oracle-a/edge-p12-half_even/REJECTS.dat",
+        "format": "fixed",
+        "bytes": 6000,
+        "sha256": "f5204dca7e23b5d4e2d1965406d1ef97e784690045de6fee3eb240653b3d51eb"
+      }
+    },
+    {
+      "name": "sample-p03-ceiling",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-ceiling/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "c0b02447b49b85d4a412a6d0f85c63e610c20c0fed4364752b456cd35b1f3fcb"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-ceiling/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "e9dea9805d65d34856d8b70b77fb006c7edcd2408f8f967fc6799831df576f0e"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-ceiling/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-ceiling/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 913000,
+        "sha256": "738062974b97f072de7f05f53309b726dbb260717ecc1de6a609f0f8af570ac6"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-ceiling/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1200,
+        "sha256": "d2bd15b8d0382cb471cad3f190ae61c1d47de795a9c02bf80ab2bffa59d04c95"
+      }
+    },
+    {
+      "name": "sample-p03-down",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-down/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "28546b9b05917a531eeb940c406c853c5c277159e802b241ece8f630ee993c48"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-down/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "97c5ab576c40118abfae96c5a842bd0123c87ee27daedff4a554e50a6eeb58cd"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-down/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-down/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 769800,
+        "sha256": "e3bf12da74e77f8a69b4582bc79fc80f55a95313c06a0565e224d8adbd74e2fb"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-down/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 720,
+        "sha256": "a924480d1cddb5a74b44e2fc25ce676874f55c440d5aed59791317c3a8ed3c98"
+      }
+    },
+    {
+      "name": "sample-p03-floor",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-floor/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "2211803fccac98149bafe4ad13b8b5b517724f1110956736d78f2b9b344554fc"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-floor/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "e150749961ad7d1ce7f8fbfc0fae9795120243427a1591668cdd529e62eba945"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-floor/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-floor/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 753600,
+        "sha256": "3b09df76e1f7e0ac759772a83f7669a6e7baeea32a6f5cc93bff8e2bb6bf6164"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-floor/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 480,
+        "sha256": "d0aa40783e194b872cba28c9b8780d1fecfa0f6553d0e28760d2f6ce89bdbd2e"
+      }
+    },
+    {
+      "name": "sample-p03-half_down",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_down/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "1161e566fc9575ca64a24758b13a024e77cfc716a87d4b0cda61871e5c358953"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_down/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "87736b1362b367954957e852774731f675eb715f6ccf17bd40956724da7df380"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_down/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_down/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 926400,
+        "sha256": "86f5b8179963e18b9d4fe2b98a1244d0c511ba5bba059bb4bfae448554553fe4"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_down/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 240,
+        "sha256": "be2384f39bef80261a4ec00d2feb9d3957f3fab452fb90e168e74c115faa0d48"
+      }
+    },
+    {
+      "name": "sample-p03-half_even",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_even/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "1fe2912d0f92dee226eae76ab9882fd931cb85ecc107dc81af45a76cd155ba31"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_even/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "b01be805d5c9ec5f8c658bd3534ff918c18f8bbed75a349cf68150154b31f88f"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_even/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_even/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 749400,
+        "sha256": "31556980d3aef11e68f4eb40cf6090269c81e78a8f377b61818b73a5bc269d68"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_even/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 840,
+        "sha256": "22629193f389a54bdb8494232e9fbaf04390c74e52d7812a0b49dd0723fbe0c3"
+      }
+    },
+    {
+      "name": "sample-p03-half_up",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_up/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "a8f89c231628f4bed2235c68c034b7c0eb012dc79a19779655da33bf52d92f2c"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_up/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "3c108bce0db7f815e50bae1605854495130bb9efa3640936672cb3ab837db648"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_up/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_up/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 768800,
+        "sha256": "ad7dbdea3115106b50b49aa0b4c475634bf4da9a8b68163ca3163c469f3e4e63"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-half_up/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 240,
+        "sha256": "449ac8a320d0f6c336d07fbbc227642704b9eed4cd7ac205326fa27ec7545651"
+      }
+    },
+    {
+      "name": "sample-p03-up",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-up/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "58955b7efd7cce30e0cd395743af9683bd8462d6bd35fcbffb6d4f2ef780d98f"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-up/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "b26850da8e217bc0815608e14c5b901fc8ab935324c7951d2bba26f73fe75269"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-up/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-up/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 741800,
+        "sha256": "4b8206329db785160d4ab366c01feaa056b5b9f1570fc63ed4ae1f0751efd4a9"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p03-up/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1920,
+        "sha256": "dcf581650b284652b626903b25a68e4c53123771b2bc4c522979ed2b71be821e"
+      }
+    },
+    {
+      "name": "sample-p06-ceiling",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-ceiling/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "e0563bff4994edb7a69c1c99f32c522ee54692b8baf89ebb2f5d2fd05d70b616"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-ceiling/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "072f40efd59645549bbe16078d8dea980d9a94e44a1524c0706daf4fafa055e1"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-ceiling/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-ceiling/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 271200,
+        "sha256": "368a2e2557f170fae091605e251b085d22a4917a0613bc6cbc2124cfbfd69c5c"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-ceiling/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "13f46f67f6e2ef57969b4e600716d729440613fbcdccc50ea91634a5ef9f8794"
+      }
+    },
+    {
+      "name": "sample-p06-down",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-down/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "837ac1a37cd773c64c880b46c8d4d7adff36801448e706f2e113893d5d260ac5"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-down/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "6f540942bd02f8ffb3f2d9152bc0c57cd7b5289723391e63f9af7780b112a54c"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-down/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-down/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 437600,
+        "sha256": "9b23adde054ff36cf9b32b0be0818ea13e457ad50104d55abdf9cf1345f53245"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-down/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "4d53c25124a3f854a50deadc7b1408c4c01ed91d053c9001f2d55d05841beae7"
+      }
+    },
+    {
+      "name": "sample-p06-floor",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-floor/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "880f0935ea8f423319c93f972ae6fc2d665fbac530347701edceaa2bce745d62"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-floor/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "2564d4088bed87b04ac8967d6d86171178dcc0d35a37646e83364f73680c42fa"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-floor/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-floor/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 279000,
+        "sha256": "2691fc4e89905bc66f0c15788830ae291ee98214385255e45e138b4e3af85ee3"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-floor/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1440,
+        "sha256": "e0591021a66a6329ba08972e2b90c1c4ee935cfccf5de0060586b6aec89805f3"
+      }
+    },
+    {
+      "name": "sample-p06-half_down",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_down/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "05c788eb6c7878a3f7aaf176f35cf208d31b6fefed9675f17447d50a8e34c100"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_down/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "a22542883f19cc9e1b91e26ef55ed353102b414a9013f811daa86e147fc537a5"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_down/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_down/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 266800,
+        "sha256": "9c1b8f5677a6c7851067597d18f078b1eb818b5213274df8311853a67c3ede97"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_down/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1080,
+        "sha256": "4b50ca2fc6ceae1fc6a844bb7eccbaa686c322f62c0339b0e9467e1a49a750ec"
+      }
+    },
+    {
+      "name": "sample-p06-half_even",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_even/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "e294bc10b5342c252fd54be078102aafb2922f8845c45731006669e151e07e05"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_even/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "3f4907e65cdb927828c82faec63051322de0b29eace3598243215cf41a0a0b56"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_even/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_even/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 290200,
+        "sha256": "279719bb1c18e80df82df0544b922bc11a307d1da5adc405ebacf21df85cef9d"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_even/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "7a6723513fc4ae7ccb5f5c8e2807aa16217b7acd5ee0cfda0a34fa89a1244522"
+      }
+    },
+    {
+      "name": "sample-p06-half_up",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_up/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "f7456e3e41a5590dea0be3271ddf152cdb107dd976117596e830bee09e3fc44f"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_up/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "7d3485da073ae00204fe973a445d268cf80dde5c954d067174557365218a0698"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_up/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_up/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 432800,
+        "sha256": "ff763de1b946378f4aa0fb8695836516e9cda4ea0bdd0d3f83fd9b8e2a0f887f"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-half_up/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1320,
+        "sha256": "6f097faae58690dec7fdd66b565e2d0e287b36d5d51b378d0750594f87f38107"
+      }
+    },
+    {
+      "name": "sample-p06-up",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-up/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "3af0ace050378daa26c10cce01f83bf0ef35219f45e9b7addaece53cfb8c717c"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-up/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "ad77f2757cf26da6ca433474157a63e297ae136fe60ba6408d7e9a3dc881e0ac"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-up/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-up/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 282800,
+        "sha256": "d2341e48e85113f0b82779c5941bf32a8c4d170447d5bf1f3c2b11684f582ad7"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p06-up/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1320,
+        "sha256": "a753164b488dd34c424f4b525087a3601e963b63cf8d6babaec42a4fdc4c8eee"
+      }
+    },
+    {
+      "name": "sample-p09-ceiling",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-ceiling/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "41410cbcd02b148432683a4b3b92f440b0d2707f5d2ca1e5cfa01df8ff62c86d"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-ceiling/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "c64badc3fa094aa918f89effced718493589825e8f4480c191029b267d3769b2"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-ceiling/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-ceiling/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 285000,
+        "sha256": "a781f058c137a132aa557a97cd1492ad458ea956f84b3db317fe7735ab2d2e92"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-ceiling/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "b9053eeeb739c3ebc25bb7251713308ace21d22292d332f8420345387587dd93"
+      }
+    },
+    {
+      "name": "sample-p09-down",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-down/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "01b45f00e5f3f4240bed3a2ae5fd1dac05557d2dd99a26ba72fbdea89699fa5a"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-down/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "c4039563cbf486b9c7fcf538e772550ac760b716b6289a4b3023cd0797d0a6c2"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-down/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-down/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 276200,
+        "sha256": "f8e41ada08bcaa6f0593e2ba9cd21004b03d34e628d88caf80cda8e45feb82a0"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-down/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "f0f691c6e0c0ad4de6cb9eb906eca7aaaf374a85b387a0736bb463bd87bf378d"
+      }
+    },
+    {
+      "name": "sample-p09-floor",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-floor/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "69e78d3754acf5da812b379ecd84246203db46c3e88e363fffbd28154b78e1e1"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-floor/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "047f66b52be31eee95819d8f0afecd846bcf212a9c7e3ff2242c9a920df33015"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-floor/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-floor/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 438200,
+        "sha256": "fa2e762f0cdae779d370f2ed131b129167c7fae2de326939878029c204b6f6f2"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-floor/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1080,
+        "sha256": "0f0200f653b38975e79110c28046f609fd0428d4c9a4d9687021a87e31404b0d"
+      }
+    },
+    {
+      "name": "sample-p09-half_down",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_down/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "13117bb2f0540e4bfd96b2d47d5dbf9a1dd3d5b95d2c3ed3f1b9c52d1e8f94d7"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_down/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "e37b5458d1da0971359b685026716ec324f356767bb0a848dbee0be0060ca9e1"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_down/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_down/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 284000,
+        "sha256": "d9e1a12ab63268e5c7c8384f788dd8e015281496e1314ac2dd8dce2f1b37cecb"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_down/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1080,
+        "sha256": "6b78c7ad946b556f07f982a7f2485147eafe1edf8853be945d164c68b5e4f9f3"
+      }
+    },
+    {
+      "name": "sample-p09-half_even",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_even/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "506310730b2360bd449c19d42b5b7a0957bb0f6cf938d280a52a8b8c68553bf1"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_even/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "8d9bd0b3c4e9da9f529b564af3cca690babc63b71712fdbe3388046596f348a2"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_even/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_even/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 433600,
+        "sha256": "ebde1a25201973e92a69757a87dbd196983d36b32683614a8a0e6d015b66254c"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_even/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "2934384c4535c4ff62fdab9970f0566443e6edf2fd1e4d61f8ddc9752d7672fd"
+      }
+    },
+    {
+      "name": "sample-p09-half_up",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_up/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "753338bfee4675689139714bb849bc45afa263f8eac47033f48b3e0799ef4c97"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_up/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "fb94ed18d880a14502e5bdd91c03f3462779caf562442994b53fd8c7016b9890"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_up/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_up/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 262400,
+        "sha256": "cd63fafe9650e6be18b2078d325b786954d4b15dff8f683fc676a37df56d8936"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-half_up/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1320,
+        "sha256": "e1b3cce423dd847e6dddb0a3d8381dbea7f81db289cc0a8e34d566f04546a5e1"
+      }
+    },
+    {
+      "name": "sample-p09-up",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-up/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "08ea8f5ca13bce5eaf9667410418ef9ff63c43cb248e0329e88ab318bb704214"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-up/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "2095c7d596722ce14804370609f5ccc8146e8f5a8c9d4388621b3c472deefae3"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-up/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-up/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 435800,
+        "sha256": "61a696ffea6e3ed63c52d06ed1750ae7a590ebc4927491d3ea41c090365b7031"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p09-up/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "8468feed38c5281b093e1eebcf977fed5be69bc647214136c3bd7f7b00ea2398"
+      }
+    },
+    {
+      "name": "sample-p12-ceiling",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-ceiling/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "51197726656372738e2cd35afe41f5e4189b867c5144b8b329089bea69664b84"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-ceiling/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "571e97322a42e5d85a17d6748c62daf57a7937bdd8beeab6a6e9a37c81e916c5"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-ceiling/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-ceiling/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 441400,
+        "sha256": "e5d7b93ca5f486ddfc5e10320d723d23bd49ca9d9768e4883db4863cd1170f3f"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-ceiling/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "02d4d12dc066016c856b7a717e22b211c8f77245dc777aca83c0be2e1ad75787"
+      }
+    },
+    {
+      "name": "sample-p12-down",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-down/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "2ee3e6ac5053173cbb31827106fe6696372cab5b7bc5160a6b494233aee35982"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-down/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "3a285df227ecfb959bcb3ddd6e50ea816c4cdd8cd3e35a90c0aed3794953a3f8"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-down/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-down/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 283800,
+        "sha256": "c7605998770f3b1a7ab29dc3171c5e23d1245b411261b0c7e01bb49155355a96"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-down/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1200,
+        "sha256": "aef986ec553ec1dfd953ee24620fb4c34fdf8592bcd8968780a105e2da50227d"
+      }
+    },
+    {
+      "name": "sample-p12-floor",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-floor/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "cc8eafe1c8fae4c061226e1a0bba37cfed9fb7267e7e8172b38416de924fa3ed"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-floor/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "f73ef56e9f5794d497b8c4df5e9b0975eb2f933b13c6c982c63eecbce61bccd3"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-floor/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-floor/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 274400,
+        "sha256": "b08fa05d19611ea403676443f0e19f0b58fd2bb03d57db6b426a86e0c1251e23"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-floor/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 720,
+        "sha256": "050e71f5bd01e9e9dd1c3447ea73f1517916799a5df07a07deab527db64680c6"
+      }
+    },
+    {
+      "name": "sample-p12-half_down",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_down/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "d177d639338e983919007519ff3fdfa567f7b934e85adf60ffe6ffa9cc319834"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_down/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "26955b902c759bc9089cdb36b66f39c66959d890e332ce6f8e4432b9864660a9"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_down/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_down/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 432800,
+        "sha256": "42a505fb7c4f8003c31055d0280db55813f953a42e7e973f973f2b0e448d32a5"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_down/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1200,
+        "sha256": "67d830858e826c0d3ff01266d9d8405a28ada7fe0556abfd9bac1240b18ad264"
+      }
+    },
+    {
+      "name": "sample-p12-half_even",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_even/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "4a74c51140e36c44c1c1d7236115b04616159c8de4ee2801556403c45ef3ea50"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_even/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "518cb998a5e02ef007bcbed962f6eb4ddd74486356b3f90ce0559611756d1e9d"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_even/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_even/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 269000,
+        "sha256": "0c8f252db2c87d5e4fa5f5491f57fc172d5ebaf1cc605b6e43065f41857cf0b6"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_even/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1200,
+        "sha256": "7d8639fd8de977c59ec0dac3e896a675306923f16fb5e1bb988adaf7424e8cb3"
+      }
+    },
+    {
+      "name": "sample-p12-half_up",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_up/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "50a2ffdf80bbe81b3b98253d09a7930a86fa61652dbf82d49922e2cc8e13bdba"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_up/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "1c06c4ca93c268a218b98c189c17ed06c7006f6a26785d7a21b6f6e4fbddc876"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_up/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_up/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 286200,
+        "sha256": "fafbfb769eb05b2affaf7e75b6051ae71adcbc090ac55c33a406d7f9ffe83828"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-half_up/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 960,
+        "sha256": "84c290f0035fac476c1131dd45f18c426c734d255d17235974be3233f62928e9"
+      }
+    },
+    {
+      "name": "sample-p12-up",
+      "source": "a sample cell; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-up/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12600,
+        "sha256": "1f9a4fc45898d1ecb1f6eb9d440fcad2ba230ae2abfa74aed5b950a19f03da7f"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-up/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "d7c74c239c7ed4cddbf6251fddac146e2f5a16a1026fbd620c03dcd0d467c860"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-up/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-up/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 268600,
+        "sha256": "00f1adb1424106c4f2604af506a8881ff82c2d107655ee4544308b4d879213ca"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/sample-p12-up/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 1200,
+        "sha256": "81f8e3c849f7d935abd563b28a4feda01ee8dbf6ec4ee2779ac4fb6466678e20"
+      }
+    },
+    {
+      "name": "rejects-p12-half_even",
+      "source": "the rejects corpus; legacy output the faithful COBOL job (C)",
+      "request": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/rejects-p12-half_even/data/LNS.LOAN.REQUEST.DATA",
+        "format": "fixed",
+        "bytes": 12000,
+        "sha256": "1eae0108eee263ace1ff5d1644295d45cdfbc4ac54b4cf4573d64d25bdc2a47d"
+      },
+      "runControl": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/rejects-p12-half_even/data/LNS.RUN.CONTROL",
+        "format": "fixed",
+        "bytes": 80,
+        "sha256": "518cb998a5e02ef007bcbed962f6eb4ddd74486356b3f90ce0559611756d1e9d"
+      },
+      "currency": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/rejects-p12-half_even/data/LNS.CURRENCY.VSAM.KSDS",
+        "format": "fixed",
+        "bytes": 360,
+        "sha256": "bf30d43347d1cd5c0596f0b337af55764e759e6a0559bc8bd9c5dfd183c73d82"
+      },
+      "schedule": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/rejects-p12-half_even/data/LNS.LOAN.SCHEDULE.DATA",
+        "format": "fixed",
+        "bytes": 13800,
+        "sha256": "656bd5078d1fd502ce92bca462490b7fafedb6ef7b4a1c03dddd88057de0b3c2"
+      },
+      "rejects": {
+        "root": "cobolbdm",
+        "path": "projects/fineract-cobol-cr/oracle/runs/rejects-p12-half_even/data/LNS.LOAN.REJECTS.DATA",
+        "format": "fixed",
+        "bytes": 6600,
+        "sha256": "334b95eb9641639d3d65c7c72e47a0319b784b4fc814cf7f0da4749c64ae16b1"
+      }
+    }
+  ]
+}

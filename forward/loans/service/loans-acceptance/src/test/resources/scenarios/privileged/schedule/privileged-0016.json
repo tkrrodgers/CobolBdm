@@ -2,7 +2,7 @@
   "id": "privileged-0016",
   "slice": "schedule",
   "origin": "privileged every-p12-half_even, loan 0200000000000012: oracle A' D-2 without the legacy envelope (clean room, FnHarness --forward-limits): privileged, decision D-6",
-  "rules": ["AMZ-02","AMZ-06","AMZ-11"],
+  "rules": ["AMZ-02","AMZ-06","AMZ-11","AMZ-12"],
   "steps": [ {
     "call": "schedule",
     "input": {"loanId":"0200000000000012","scheduleStart":"2024-12-31","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2024-12-31","installments":13,"every":2756,"frequency":"DAYS","annualRatePercent":"18.750000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},

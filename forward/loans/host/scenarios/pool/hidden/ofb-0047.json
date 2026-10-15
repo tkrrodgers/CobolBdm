@@ -1,0 +1,45 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0047",
+  "origin" : "the S5 loan envelope-1-p06-ceiling-0000000000001318, moved 56 years into OFBiz's dated window; expected values: the reference over in-memory ports with the demo ledger (the ledger refuses the currency)",
+  "rules" : [ "D-11", "OFB-02" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2013-01-22",
+    "params" : {
+      "externalId" : "E-ofb-0047",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000001318",
+      "scheduleStart" : "2012-12-31",
+      "currencyCode" : "KWD",
+      "currencyDecimalPlaces" : "3",
+      "principal" : "2650350.9610",
+      "disbursementDate" : "2013-01-22",
+      "installments" : "10",
+      "every" : "1",
+      "frequencyEnumId" : "LOAN_FREQ_YEARS",
+      "annualRatePercent" : "81.310000000",
+      "downPaymentEnabled" : false,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_ACTUAL",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2013-01-22"
+    },
+    "expect" : {
+      "outcome" : "BookingRejected",
+      "result" : {
+        "@type" : "BookingRejected",
+        "externalId" : "E-ofb-0047",
+        "reason" : "CURRENCY_SCALE_UNSUPPORTED_BY_LEDGER",
+        "scheduleReason" : null,
+        "field" : null
+      }
+    }
+  } ],
+  "checks" : [ ]
+}

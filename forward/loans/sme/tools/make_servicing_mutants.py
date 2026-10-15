@@ -18,6 +18,7 @@ MUTANTS = [
     ("SRV_08", "the deposit is the principal and the interest"),
     ("SRV_09", "a cancelled collection leaves the loan paid off"),
     ("SRV_10", "an unknown invoice is reported as an unknown loan"),
+    ("SRV_11", "the terms are saved with the command's loan id"),
     ("IDEM_01", "booking again books again"),
     ("IDEM_02", "disbursing again pays again"),
     ("IDEM_03", "a billed line is billed again"),
@@ -28,6 +29,7 @@ M = "ServicingMutant.M.get() == ServicingMutant."
 N = "ServicingMutant.M.get() != ServicingMutant."
 
 EDITS = [
+    ("                accountId, terms, LoanStatus.BOOKED,", f"                accountId, {M}SRV_11 ? command.terms() : terms, LoanStatus.BOOKED,"),
     ("final class Servicing implements LoanServicing {", "public final class ServicingM implements LoanServicing {"),
     ("    Servicing(ScheduleService quotes, LoansPorts ports) {", "    public ServicingM(ScheduleService quotes, LoansPorts ports) {"),
     ("BookingRejection.SCHEDULE_REJECTED, r.reason(), r.field());", f"BookingRejection.SCHEDULE_REJECTED, {M}SRV_01 ? null : r.reason(), r.field());"),

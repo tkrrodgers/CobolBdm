@@ -20,7 +20,7 @@ public static class DebugPrompt
 
     public static string Build(string programId, string fullPrompt, string? outline, string? kit, string? equivalences, string? callees,
         IReadOnlyList<string> paragraphs, string code, string feedback, string status, IReadOnlyCollection<string> passing, bool editsOnly = false,
-        IReadOnlyList<string>? tried = null)
+        IReadOnlyList<string>? tried = null, string? notes = null)
     {
         var sb = new StringBuilder($"# Debugging {programId}\n");
         sb.Append($"{status} Below: the contract it must keep, the COBOL logic around the first place where it parts from the faithful program, " +
@@ -40,17 +40,18 @@ public static class DebugPrompt
         if (task.Success) sb.Append(task.Value.TrimEnd()).Append("\n\n");
         if (equivalences is not null) sb.Append(equivalences.Replace("\r\n", "\n").TrimEnd()).Append("\n\n");
         if (callees is not null) sb.Append(callees.Replace("\r\n", "\n").TrimEnd()).Append("\n\n");
-        if (outline is not null && paragraphs.Count > 0)
+        if (outline is not null)
         {
-            var slice = Paragraphs(outline.Replace("\r\n", "\n"), paragraphs);
+            var o = outline.Replace("\r\n", "\n");
+            var (heading, slice) = Slice(o, paragraphs, feedback);
             if (slice.Length > 0)
             {
-                sb.Append("# The COBOL paragraphs the feedback points at (AST outline: where the first divergence is made or the rules that write the differing items, and the paragraphs they PERFORM)\n```\n")
-                  .Append(slice).Append("```\n\n");
-                var data = DataItems(outline.Replace("\r\n", "\n"), slice);
+                sb.Append(heading).Append("\n```\n").Append(slice).Append("```\n\n");
+                var data = DataItems(o, slice);
                 if (data.Length > 0) sb.Append("# Their data items (AST outline)\n```\n").Append(data).Append("```\n\n");
             }
         }
+        if (notes is not null) sb.Append(notes.TrimEnd()).Append("\n\n");
         if (kit is not null) sb.Append(Kit(kit, code + "\n" + feedback)).Append("\n\n");
         sb.Append("# Your current code\n").Append(code.TrimEnd()).Append("\n\n");
         if (passing.Count > 0)
@@ -100,6 +101,69 @@ public static class DebugPrompt
     }
 
     static readonly Regex Performed = new(@"\bPERFORM ([A-Z0-9][A-Z0-9-]*)(?: (?:THRU|THROUGH) ([A-Z0-9][A-Z0-9-]*))?");
+
+    /// <summary>
+    /// The COBOL a debug turn shows, with its heading. CALL-level feedback names the paragraphs (the guide). Record-level feedback
+    /// of a program that makes no CALLs (CardDemo's) names none: without COBOL, Muse Glimmer's CBTRN02C repairs guessed the
+    /// over-limit test (ACCT-CURR-BAL at S9(10)V99, where the program COMPUTEs WS-TEMP-BAL, PIC S9(09)V99, from the cycle credit
+    /// and debit) and fell from 22/23 to 4/23. So the whole PROCEDURE DIVISION when it fits the budget (CardDemo's are 12,000 to
+    /// 14,000 characters), else the paragraphs that write the differing items or name them, and those they PERFORM.
+    /// </summary>
+    public static (string Heading, string Slice) Slice(string outline, IReadOnlyList<string> guide, string feedback)
+    {
+        const string pointed = "# The COBOL paragraphs the feedback points at (AST outline: where the first divergence is made or the rules that write the differing items, and the paragraphs they PERFORM)";
+        if (guide.Count > 0) return (pointed, Paragraphs(outline, guide));
+        var procedure = Regex.Match(outline, @"(?m)^L\d+ PROCEDURE DIVISION\b");
+        if (procedure.Success && outline.Length - procedure.Index <= SliceBudget)
+            return ("# The program's logic (AST outline: the whole PROCEDURE DIVISION; the feedback compares records, so it names no paragraph)", outline[procedure.Index..]);
+        var writers = Writers(outline, feedback);
+        return writers.Count > 0 ? (pointed, Paragraphs(outline, writers)) : ("", "");
+    }
+
+    /// <summary>
+    /// What the first prompt says about behaviour a repair must keep, for every debug turn: the packet's legacy quirks and the COBOL
+    /// parity notes. With the COBOL in view but not these, Muse Glimmer's CBACT04C repairs "fixed" the dead end-of-file branch that
+    /// would update the last account (quirk Q-01, which its first attempt had kept) and fell from 13/17 to 4/17 four times.
+    /// </summary>
+    public static string? Notes(string packetPath, string? notesPath)
+    {
+        var sb = new StringBuilder();
+        try
+        {
+            if (System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(packetPath))?["legacyQuirks"] is System.Text.Json.Nodes.JsonArray quirks && quirks.Count > 0)
+            {
+                sb.Append("# The program's legacy quirks (the faithful program behaves this way; keep it, do not correct it)\n");
+                foreach (var q in quirks)
+                    sb.Append($"- {q?["id"]} ({q?["kind"]}, {q?["paragraph"]}, {q?["evidence"]}): {q?["description"]}\n");
+                sb.Append('\n');
+            }
+        }
+        catch (System.Text.Json.JsonException) { }
+        catch (IOException) { }
+        if (notesPath is not null && File.Exists(notesPath)) sb.Append(File.ReadAllText(notesPath).Replace("\r\n", "\n").TrimEnd()).Append('\n');
+        return sb.Length == 0 ? null : sb.ToString();
+    }
+
+    static readonly Regex DifferingItem =new(@"(?m)^\s+([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+) \((?:PIC|group)");
+    static readonly Regex RecordArea = new(@"\(([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+)\)");
+
+    /// <summary>The paragraphs the feedback names, and those that store into a differing item or record area (MOVE/ADD … TO, COMPUTE, WRITE … FROM, READ … INTO).</summary>
+    static IReadOnlyList<string> Writers(string outline, string feedback)
+    {
+        var items = DifferingItem.Matches(feedback).Select(m => m.Groups[1].Value)
+            .Concat(RecordArea.Matches(feedback).Select(m => m.Groups[1].Value)).ToHashSet(StringComparer.Ordinal);
+        var heads = ParagraphHeader.Matches(outline).Select(m => (Name: m.Groups[1].Value, Start: m.Index)).ToList();
+        var names = new List<string>();
+        for (int i = 0; i < heads.Count; i++)
+        {
+            int end = i + 1 < heads.Count ? heads[i + 1].Start : outline.Length;
+            var text = outline[heads[i].Start..end];
+            if (feedback.Contains(heads[i].Name, StringComparison.Ordinal)
+                || items.Any(x => Regex.IsMatch(text, $@"\b(?:TO|FROM|INTO|GIVING|COMPUTE|INITIALIZE)\s+{Regex.Escape(x)}\b")))
+                names.Add(heads[i].Name);
+        }
+        return names;
+    }
 
     /// <summary>
     /// The named paragraphs of the outline and, breadth first, the paragraphs they PERFORM, within the budget; printed in

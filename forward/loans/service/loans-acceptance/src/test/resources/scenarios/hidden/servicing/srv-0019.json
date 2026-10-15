@@ -2,7 +2,7 @@
   "id": "srv-0019",
   "slice": "servicing",
   "origin": "the S5 loan envelope-2-p12-ceiling-0000000000001916; expected values: the reference over the in-memory ports",
-  "rules": ["IDEM-03","SRV-03","SRV-04","SRV-08"],
+  "rules": ["IDEM-03","SRV-03","SRV-04","SRV-08","SRV-11"],
   "given": {"today":"2126-11-21","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
     {"call": "book", "input": {"externalId":"E-0480","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001916","scheduleStart":"2126-11-24","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"6075.8165","disbursementDate":"2126-11-24","installments":5,"every":199,"frequency":"DAYS","annualRatePercent":"9.300000000","downPaymentPercent":"18.365500000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}}},
@@ -47,6 +47,7 @@
     "loans" : [ {
       "loanId" : "LN-E-0480",
       "externalId" : "E-0480",
+      "termsLoanId" : "LN-E-0480",
       "accountId" : "ACC-0001",
       "status" : "PAID_OFF",
       "bookedOn" : "2126-11-21",

@@ -1,0 +1,18 @@
+schema: mlcpu.template-manifest.v1
+id: H-OFBIZ-MIGRATION
+version: 1.1.0
+family: host
+tier: adapters
+priority: 55
+summary: The legacy loan book's migration service (FE 9.2, S9) - the datasets decoded by C-LEGACY-LAYOUT, each loan reconciled by the engine, its reconciliation and legacy lines stored, the loans that reconcile booked; all or nothing, idempotent by run.
+selectWhen: "profile.host.kind == 'ofbiz' && model.migration != null"
+card: |
+  OFBiz migration service (A-MIGRATE-LOAD, TD-17): reads the legacy book's five fixed-length datasets, groups the records by
+  loan id without decoding them, decodes each loan with the generated LegacyCodec (a request that does not decode is
+  UNDECODABLE, D-5), reconciles it with the engine's LegacyMigration, books the loans that reconcile through servicing (the
+  ledger may still refuse: the booking rejection is stored), and stores one reconciliation row per loan and the legacy lines
+  (version 0). A DIFF rolls the whole run back (LEG-05); a run id seen before returns that run's result.
+outputs:
+  - { path: "servicedef/migration.xml", template: migration.xml.sbn }
+  - { path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}Migration.java", template: Migration.java.sbn }
+holes: []

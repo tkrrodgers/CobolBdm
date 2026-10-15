@@ -1,0 +1,22 @@
+package {{ model.package }};
+
+/**
+ * The service's terms as legacy records: the inverse of the migration's terms (MIG-01 to MIG-05), for the shadow run's export
+ * (FE 9.3). Encode the result with {@link {{ model.codec }}} to get the dataset's characters.
+ */
+public final class {{ item.class }} {
+
+    private {{ item.class }}() {
+    }
+{{~ for t in item.targets ~}}
+
+    /** A {{ t.record }} from {@code {{ t.paramName }}}. */
+    public static {{ t.record }} {{ t.method }}({{ t.param }} {{ t.paramName }}{{ t.extra }}) {
+        return new {{ t.record }}(
+{{~ for a in t.args ~}}
+                {{ a.expr }}{{ if !for.last }},{{ end }}
+{{~ end ~}}
+        );
+    }
+{{~ end ~}}
+}

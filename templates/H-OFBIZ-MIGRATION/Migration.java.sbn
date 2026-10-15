@@ -1,0 +1,339 @@
+{{~ m = model.migration ~}}
+{{~ r = m.records ~}}
+package {{ model.plugin.javaPackage }};
+
+import {{ m.package }}.{{ m.codec }};
+import {{ m.package }}.LegacyRecordException;
+import {{ m.package }}.{{ r.request.record }};
+import {{ m.package }}.{{ r.runControl.record }};
+import {{ m.package }}.{{ r.schedule.header }};
+import {{ m.package }}.{{ r.schedule.line }};
+import {{ m.package }}.{{ r.schedule.record }};
+import {{ m.package }}.{{ m.fromTerms }};
+import com.mlcpu.loans.api.Schedule;
+import com.mlcpu.loans.api.ScheduleOutcome;
+import com.mlcpu.loans.api.ScheduleRequest;
+import com.mlcpu.loans.api.Scheduled;
+import com.mlcpu.loans.api.migration.LegacyLoan;
+import com.mlcpu.loans.api.migration.LegacyMigration;
+import com.mlcpu.loans.api.migration.LegacyTerms;
+import com.mlcpu.loans.api.migration.LegacyTermsOutcome;
+import com.mlcpu.loans.api.migration.Reconciliation;
+import com.mlcpu.loans.api.migration.ReconciliationOutcome;
+import com.mlcpu.loans.api.ports.LoanRecord;
+import com.mlcpu.loans.api.ports.LoansPorts;
+import com.mlcpu.loans.api.servicing.BookLoan;
+import com.mlcpu.loans.api.servicing.Booked;
+import com.mlcpu.loans.api.servicing.BookingOutcome;
+import com.mlcpu.loans.api.servicing.BookingRejected;
+import com.mlcpu.loans.api.servicing.LoanServicing;
+import com.mlcpu.loans.application.LoansApplication;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.apache.ofbiz.base.util.Debug;
+import org.apache.ofbiz.entity.Delegator;
+import org.apache.ofbiz.entity.GenericEntityException;
+import org.apache.ofbiz.entity.GenericValue;
+import org.apache.ofbiz.entity.util.EntityQuery;
+import org.apache.ofbiz.service.DispatchContext;
+import org.apache.ofbiz.service.ServiceUtil;
+
+/**
+ * The legacy loan book's migration (FE 9.2): {@code {{ m.service }}}. The engine reconciles each loan (LegacyMigration); this class
+ * reads the datasets, books the loans that reconcile, and stores the reconciliation ({{ m.recon }}) and the legacy lines
+ * ({{ m.line }}, version 0). All or nothing (a DIFF rolls the run back); a run id seen before returns that run's result.
+ */
+public final class {{ model.plugin.resourceName }}Migration {
+
+    private static final String MODULE = {{ model.plugin.resourceName }}Migration.class.getName();
+
+    private {{ model.plugin.resourceName }}Migration() {
+    }
+
+    public static Map<String, Object> {{ m.service }}(DispatchContext dctx, Map<String, ? extends Object> context) {
+        Delegator delegator = dctx.getDelegator();
+        String migrationId = (String) context.get("migrationId");
+        try {
+            List<GenericValue> earlier = EntityQuery.use(delegator).from("{{ m.recon }}").where("migrationId", migrationId).queryList();
+            if (!earlier.isEmpty()) {
+                return result(migrationId, earlier);
+            }
+            Path dir = Paths.get((String) context.get("bookDir"));
+            String prefix = context.get("datasetPrefix") == null ? "" : (String) context.get("datasetPrefix");
+            List<String> requests = {{ m.codec }}.records(Files.readAllBytes(dir.resolve(prefix + "{{ r.request.dataset }}")), {{ m.codec }}.{{ r.request.lengthConstant }});
+            {{ r.runControl.record }} control = {{ m.codec }}.{{ r.runControl.decoder }}({{ m.codec }}.records(
+                    Files.readAllBytes(dir.resolve(prefix + "{{ r.runControl.dataset }}")), {{ m.codec }}.{{ r.runControl.lengthConstant }}).get(0));
+            Map<String, String> currencies = byKey(dir.resolve(prefix + "{{ r.currency.dataset }}"), {{ m.codec }}.{{ r.currency.lengthConstant }},
+                    {{ r.currency.keyOffset }}, {{ r.currency.keyLength }});
+            Map<String, List<String>> schedules = grouped(dir.resolve(prefix + "{{ r.schedule.dataset }}"), {{ m.codec }}.{{ r.schedule.lengthConstant }},
+                    {{ r.schedule.loanIdOffset }}, {{ r.schedule.loanIdLength }});
+            Map<String, String> rejects = byKey(dir.resolve(prefix + "{{ r.reject.dataset }}"), {{ m.codec }}.{{ r.reject.lengthConstant }},
+                    {{ r.reject.loanIdOffset }}, {{ r.reject.loanIdLength }});
+            // SHADOW (G11, FE 9.3): the book is the legacy job's run on an export of the service's own loans; nothing is booked, the
+            // loans come from the export's map, a difference is reported (drift), not rolled back
+            boolean shadow = "SHADOW".equals(context.get("mode"));
+            Map<String, String> exported = shadow ? exportMap(dir.resolve("{{ m.export.mapFile }}")) : Map.of();
+            LegacyMigration migration = LoansApplication.migration();
+            LoansPorts ports = {{ model.plugin.resourceName }}PortsFactory.create(dctx, context);
+            LoanServicing servicing = LoansApplication.create(ports);
+            List<String> differences = new ArrayList<>();
+            List<GenericValue> recons = new ArrayList<>();
+            List<GenericValue> lines = new ArrayList<>();
+            for (String raw : requests) {
+                String legacyLoanId = raw.substring({{ r.request.loanIdOffset }}, {{ r.request.loanIdOffset + r.request.loanIdLength }});
+                GenericValue recon = delegator.makeValue("{{ m.recon }}", "migrationId", migrationId, "legacyLoanId", legacyLoanId);
+                recons.add(recon);
+                {{ r.request.record }} request;
+                try {
+                    request = {{ m.codec }}.{{ r.request.decoder }}(raw);
+                } catch (LegacyRecordException e) {
+                    recon.set("outcome", "UNDECODABLE");
+                    recon.set("decision", "D-5");
+                    recon.set("field", e.field());
+                    continue;
+                }
+                {{ r.schedule.header }} header = null;
+                List<{{ r.schedule.line }}> scheduleLines = new ArrayList<>();
+                for (String s : schedules.getOrDefault(legacyLoanId, List.of())) {
+                    {{ r.schedule.record }} x = {{ m.codec }}.{{ r.schedule.decoder }}(s);
+                    if (x instanceof {{ r.schedule.header }} h) {
+                        header = h;
+                    } else {
+                        scheduleLines.add(({{ r.schedule.line }}) x);
+                    }
+                }
+                String currency = currencies.get(raw.substring({{ r.request.currencyOffset }}, {{ r.request.currencyOffset + r.request.currencyLength }}));
+                String reject = rejects.get(legacyLoanId);
+                LegacyLoan loan = new LegacyLoan(request, control, currency == null ? null : {{ m.codec }}.{{ r.currency.decoder }}(currency), header,
+                        scheduleLines, reject == null ? null : {{ m.codec }}.{{ r.reject.decoder }}(reject));
+                Reconciliation rec = migration.reconcile(loan);
+                recon.set("outcome", rec.outcome().name());
+                recon.set("decision", rec.decision());
+                recon.set("field", rec.field());
+                recon.set("legacyValue", rec.legacyValue());
+                recon.set("serviceValue", rec.serviceValue());
+                recon.set("legacyCode", rec.legacyCode());
+                recon.set("serviceRejection", rec.serviceRejection() == null ? null : rec.serviceRejection().name());
+                if (shadow) {
+                    String loanId = exported.get(legacyLoanId);
+                    recon.set("loanId", loanId);
+                    if (rec.outcome() != ReconciliationOutcome.DIFF && loanId != null && !storedAsComputed(ports, loanId)) {
+                        recon.set("outcome", ReconciliationOutcome.DIFF.name());
+                        recon.set("field", "stored schedule");
+                    }
+                    continue;
+                }
+                if (rec.outcome() == ReconciliationOutcome.DIFF) {
+                    differences.add(legacyLoanId + " " + rec.field() + ": legacy " + rec.legacyValue() + ", service " + rec.serviceValue());
+                    continue;
+                }
+                if (header != null && (rec.outcome() == ReconciliationOutcome.MATCH || "D-2".equals(rec.decision()))) {
+                    book(migration.terms(loan), servicing, recon, context, legacyLoanId);
+                }
+                for ({{ r.schedule.line }} l : scheduleLines) {
+                    lines.add(line(delegator, migrationId, legacyLoanId, l));
+                }
+            }
+            if (!differences.isEmpty()) {
+                return ServiceUtil.returnError("the legacy book does not reconcile, nothing is migrated: "
+                        + String.join("; ", differences.subList(0, Math.min(20, differences.size()))));
+            }
+            delegator.storeAll(recons);
+            delegator.storeAll(lines);
+            return result(migrationId, recons);
+        } catch (IOException | GenericEntityException e) {
+            return ServiceUtil.returnError("{{ m.service }}: " + e.getMessage());
+        } catch (RuntimeException e) {
+            Debug.logError(e, "{{ m.service }} failed", MODULE);
+            return ServiceUtil.returnError("{{ m.service }}: " + e.getMessage());
+        }
+    }
+
+    /** The stored schedule of a booked loan is the engine's for its stored terms (all but the loan id they carry). */
+    private static boolean storedAsComputed(LoansPorts ports, String loanId) {
+        LoanRecord loan = ports.book().find(loanId).orElse(null);
+        if (loan == null) {
+            return false;
+        }
+        ScheduleOutcome o = LoansApplication.quotes().schedule(loan.{{ m.export.terms }}());
+        if (!(o instanceof Scheduled s)) {
+            return false;
+        }
+        Schedule a = loan.schedule();
+        Schedule b = s.schedule();
+        // by value: the database keeps amounts at its own scale (fixed-point), the engine at the currency's
+        return a.currencyCode().equals(b.currencyCode()) && a.decimalPlaces() == b.decimalPlaces() && a.termDays() == b.termDays()
+                && byValue(a.totals()).equals(byValue(b.totals())) && byValue(a.lines()).equals(byValue(b.lines()));
+    }
+
+    /** A value's text with every decimal number written without trailing zeros (100.000000 and 100.00 are both 100). */
+    private static String byValue(Object value) {
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("-?\\d+\\.\\d+").matcher(String.valueOf(value));
+        StringBuilder out = new StringBuilder();
+        while (m.find()) {
+            m.appendReplacement(out, new java.math.BigDecimal(m.group()).stripTrailingZeros().toPlainString());
+        }
+        m.appendTail(out);
+        return out.toString();
+    }
+
+    /** The export's map: one line per exported loan, its legacy id and its loan id ("0000000000000001;LN-E-1"). */
+    private static Map<String, String> exportMap(Path file) throws IOException {
+        Map<String, String> out = new HashMap<>();
+        for (String line : Files.readAllLines(file, java.nio.charset.StandardCharsets.UTF_8)) {
+            int at = line.indexOf(';');
+            if (at > 0) {
+                out.put(line.substring(0, at), line.substring(at + 1));
+            }
+        }
+        return out;
+    }
+
+    /**
+     * The shadow run's export (G11, FE 9.3): the loans booked on a date, as the legacy job's input. One folder per calculation
+     * (p&lt;precision&gt;-&lt;rounding mode&gt;) with the requests, the run control, the legacy currency file and the map from the
+     * legacy ids (1, 2, ... in loan id order) to the loans. A loan the legacy records cannot hold is listed, not exported.
+     */
+    public static Map<String, Object> {{ m.export.service }}(DispatchContext dctx, Map<String, ? extends Object> context) {
+        Delegator delegator = dctx.getDelegator();
+        java.sql.Date day = (java.sql.Date) context.get("{{ m.export.dateField }}");
+        Path out = Paths.get((String) context.get("outDir"));
+        try {
+            List<GenericValue> loans = EntityQuery.use(delegator).from("{{ m.export.entity }}").where("{{ m.export.dateField }}", day)
+                    .orderBy("{{ m.export.key }}").queryList();
+            LoansPorts ports = {{ model.plugin.resourceName }}PortsFactory.create(dctx, context);
+            Map<String, StringBuilder> requests = new TreeMap<>();
+            Map<String, String> controls = new TreeMap<>();
+            Map<String, StringBuilder> maps = new TreeMap<>();
+            List<String> skipped = new ArrayList<>();
+            long n = 0;
+            for (GenericValue v : loans) {
+                LoanRecord loan = ports.book().find(v.getString("{{ m.export.key }}")).orElseThrow();
+                ScheduleRequest terms = loan.{{ m.export.terms }}();
+                String legacyId = String.format("%016d", ++n);
+                String cell = "p" + String.format("%02d", terms.calculation().precision()) + "-"
+                        + terms.calculation().roundingMode().name().toLowerCase(java.util.Locale.ROOT);
+                try {
+                    String request = {{ m.codec }}.encode({{ m.fromTerms }}.request(terms, legacyId));
+                    controls.put(cell, {{ m.codec }}.encode({{ m.fromTerms }}.runControl(terms.calculation())));
+                    requests.computeIfAbsent(cell, k -> new StringBuilder()).append(request);
+                    maps.computeIfAbsent(cell, k -> new StringBuilder()).append(legacyId).append(';').append(loan.loanId()).append('\n');
+                } catch (LegacyRecordException e) {
+                    skipped.add(loan.loanId() + ": " + e.getMessage());
+                }
+            }
+            byte[] currency = Files.readAllBytes(Paths.get((String) context.get("currencyFile")));
+            Map<String, Object> cells = new TreeMap<>();
+            for (Map.Entry<String, StringBuilder> e : requests.entrySet()) {
+                Path d = out.resolve(e.getKey());
+                Files.createDirectories(d);
+                Files.write(d.resolve("{{ r.request.dataset }}"), e.getValue().toString().getBytes({{ m.codec }}.CHARSET));
+                Files.write(d.resolve("{{ r.runControl.dataset }}"), controls.get(e.getKey()).getBytes({{ m.codec }}.CHARSET));
+                Files.write(d.resolve("{{ r.currency.dataset }}"), currency);
+                Files.writeString(d.resolve("{{ m.export.mapFile }}"), maps.get(e.getKey()).toString(), java.nio.charset.StandardCharsets.UTF_8);
+                cells.put(e.getKey(), e.getValue().length() / {{ m.codec }}.{{ r.request.lengthConstant }});
+            }
+            Map<String, Object> run = new LinkedHashMap<>();
+            run.put("{{ m.export.dateField }}", String.valueOf(day));
+            run.put("loans", loans.size());
+            run.put("cells", cells);
+            run.put("skipped", skipped);
+            Map<String, Object> result = ServiceUtil.returnSuccess();
+            result.put("outcome", "LegacyExport");
+            result.put("result", run);
+            return result;
+        } catch (IOException | GenericEntityException e) {
+            return ServiceUtil.returnError("{{ m.export.service }}: " + e.getMessage());
+        } catch (RuntimeException e) {
+            Debug.logError(e, "{{ m.export.service }} failed", MODULE);
+            return ServiceUtil.returnError("{{ m.export.service }}: " + e.getMessage());
+        }
+    }
+
+    /** A loan that reconciles is booked through servicing under the external id externalIdPrefix ({{ m.externalIdPrefix }}) + its legacy id. */
+    private static void book(LegacyTermsOutcome terms, LoanServicing servicing, GenericValue recon, Map<String, ? extends Object> context,
+            String legacyLoanId) {
+        if (!(terms instanceof LegacyTerms t)) {
+            return;
+        }
+        String prefix = context.get("externalIdPrefix") == null ? "{{ m.externalIdPrefix }}" : (String) context.get("externalIdPrefix");
+        BookingOutcome outcome = servicing.book(new BookLoan(prefix + legacyLoanId, (String) context.get("ownerPartyId"),
+                (String) context.get("organizationPartyId"), (String) context.get("loanProductId"), t.terms()));
+        if (outcome instanceof Booked b) {
+            recon.set("loanId", b.loanId());
+        } else if (outcome instanceof BookingRejected r) {
+            recon.set("bookingRejection", r.reason().name());
+        }
+    }
+
+    private static GenericValue line(Delegator delegator, String migrationId, String legacyLoanId, {{ r.schedule.line }} l) {
+        GenericValue row = delegator.makeValue("{{ m.line }}", "migrationId", migrationId, "legacyLoanId", legacyLoanId);
+{{~ for f in m.lineFields ~}}
+{{~ if f.java == 'int' || f.java == 'long' ~}}
+        row.set("{{ f.name }}", Long.valueOf(l.{{ f.name }}()));
+{{~ else if f.java == 'LocalDate' ~}}
+        row.set("{{ f.name }}", date(l.{{ f.name }}()));
+{{~ else if f.java == 'boolean' ~}}
+        row.set("{{ f.name }}", l.{{ f.name }}() ? "Y" : "N");
+{{~ else ~}}
+        row.set("{{ f.name }}", l.{{ f.name }}());
+{{~ end ~}}
+{{~ end ~}}
+        return row;
+    }
+
+    private static java.sql.Date date(LocalDate d) {
+        return d == null ? null : java.sql.Date.valueOf(d);
+    }
+
+    /** The records of a dataset by the text at a key's offset (the last record of a key wins). */
+    private static Map<String, String> byKey(Path file, int length, int offset, int keyLength) throws IOException {
+        Map<String, String> out = new HashMap<>();
+        for (String rec : {{ m.codec }}.records(Files.readAllBytes(file), length)) {
+            out.put(rec.substring(offset, offset + keyLength), rec);
+        }
+        return out;
+    }
+
+    /** The records of a dataset grouped by the text at a key's offset, in dataset order. */
+    private static Map<String, List<String>> grouped(Path file, int length, int offset, int keyLength) throws IOException {
+        Map<String, List<String>> out = new LinkedHashMap<>();
+        for (String rec : {{ m.codec }}.records(Files.readAllBytes(file), length)) {
+            out.computeIfAbsent(rec.substring(offset, offset + keyLength), k -> new ArrayList<>()).add(rec);
+        }
+        return out;
+    }
+
+    /** The run's result: its id, the number of loans, the count of each outcome (with its decision), and the bookings. */
+    private static Map<String, Object> result(String migrationId, List<GenericValue> recons) {
+        Map<String, Object> outcomes = new TreeMap<>();
+        int booked = 0;
+        int notBookable = 0;
+        for (GenericValue r : recons) {
+            String key = r.getString("outcome") + (r.getString("decision") == null ? "" : " " + r.getString("decision"));
+            outcomes.merge(key, 1, (a, b) -> (Integer) a + (Integer) b);
+            booked += r.getString("loanId") == null ? 0 : 1;
+            notBookable += r.getString("bookingRejection") == null ? 0 : 1;
+        }
+        Map<String, Object> run = new LinkedHashMap<>();
+        run.put("migrationId", migrationId);
+        run.put("loans", recons.size());
+        run.put("outcomes", outcomes);
+        run.put("booked", booked);
+        run.put("notBookable", notBookable);
+        Map<String, Object> out = ServiceUtil.returnSuccess();
+        out.put("outcome", "MigrationRun");
+        out.put("result", run);
+        return out;
+    }
+}

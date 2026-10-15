@@ -1,0 +1,14 @@
+schema: mlcpu.template-manifest.v1
+id: H-OFBIZ-ENTITYMODEL
+version: 1.0.0
+family: host
+tier: adapters
+priority: 20
+summary: The plugin's entity definitions, derived from the fixed API's records (aggregates, their child lines) and the host-only entities.
+selectWhen: "profile.host.kind == 'ofbiz'"
+card: |
+  OFBiz entities: one per aggregate root (its record flattened), one per list of lines, plus the SME's host-only entities.
+  Enumerations and statuses relate to OFBiz Enumeration and StatusItem.
+outputs:
+  - { path: "entitydef/entitymodel.xml", template: entitymodel.xml.sbn }
+holes: []

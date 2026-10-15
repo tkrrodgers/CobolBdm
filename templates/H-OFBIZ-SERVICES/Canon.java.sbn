@@ -1,0 +1,73 @@
+package {{ model.plugin.javaPackage }};
+
+import java.lang.reflect.RecordComponent;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ofbiz.service.ServiceUtil;
+
+/**
+ * The canonical form of the API's results as OFBiz values: a record is a map of its components in declaration order, with
+ * "@type" first when it is one of a sealed interface's records; a list stays a list; a constant is its name; a date is
+ * yyyy-MM-dd; numbers, strings and booleans stay as they are. The acceptance scenarios use the same form.
+ */
+public final class {{ model.plugin.resourceName }}Canon {
+
+    private {{ model.plugin.resourceName }}Canon() {
+    }
+
+    public static Object of(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Record record) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            if (sealedMember(record.getClass())) {
+                map.put("@type", record.getClass().getSimpleName());
+            }
+            for (RecordComponent component : record.getClass().getRecordComponents()) {
+                try {
+                    map.put(component.getName(), of(component.getAccessor().invoke(record)));
+                } catch (ReflectiveOperationException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+            return map;
+        }
+        if (value instanceof List<?> list) {
+            List<Object> out = new ArrayList<>(list.size());
+            for (Object element : list) {
+                out.add(of(element));
+            }
+            return out;
+        }
+        if (value instanceof Enum<?> constant) {
+            return constant.name();
+        }
+        if (value instanceof LocalDate date) {
+            return date.toString();
+        }
+        return value;
+    }
+
+    private static boolean sealedMember(Class<?> type) {
+        for (Class<?> parent : type.getInterfaces()) {
+            if (parent.isSealed()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** A service's success result: the outcome's type and its canonical map. */
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> result(Object outcome) {
+        Map<String, Object> result = ServiceUtil.returnSuccess();
+        result.put("outcome", outcome.getClass().getSimpleName());
+        result.put("result", (Map<String, Object>) of(outcome));
+        return result;
+    }
+}

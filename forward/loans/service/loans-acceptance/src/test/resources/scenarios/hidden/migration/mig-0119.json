@@ -1,0 +1,15 @@
+{
+  "id": "mig-0119",
+  "slice": "migration",
+  "origin": "legacy book rejects-p12-half_even, loan 0000000000000043",
+  "rules": [],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000004320240101USD+000000000100000002024010100120001MONTHS    +012000000000N30999N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"Unrepresentable","loanId":"0000000000000043","field":"RQ-DAYS-IN-YEAR","value":"999"}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000004320240101USD+000000000100000002024010100120001MONTHS    +012000000000N30999N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000043RJARIT01S23                     DIVISION BY ZERO DAYS IN YEAR                                           "},
+    "expected": {"loanId":"0000000000000043","outcome":"EXPLAINED","decision":"D-5","field":"RQ-DAYS-IN-YEAR","legacyValue":null,"serviceValue":null,"legacyCode":"RJARIT01","serviceRejection":null}
+  } ]
+}

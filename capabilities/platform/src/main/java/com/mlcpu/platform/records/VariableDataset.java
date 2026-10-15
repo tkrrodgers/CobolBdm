@@ -1,5 +1,6 @@
 package com.mlcpu.platform.records;
 
+import com.mlcpu.rt.OpenDatasets;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -31,6 +32,8 @@ public final class VariableDataset {
         private final InputStream in;
 
         Reader(InputStream in) {
+
+            OpenDatasets.opened(this);
             this.in = in;
         }
 
@@ -47,6 +50,7 @@ public final class VariableDataset {
 
         @Override
         public void close() throws IOException {
+            OpenDatasets.closed(this);
             in.close();
         }
     }
@@ -55,6 +59,8 @@ public final class VariableDataset {
         private final OutputStream out;
 
         Writer(OutputStream out) {
+
+            OpenDatasets.opened(this);
             this.out = out;
         }
 
@@ -70,6 +76,7 @@ public final class VariableDataset {
 
         @Override
         public void close() throws IOException {
+            OpenDatasets.closed(this);
             out.close();
         }
     }

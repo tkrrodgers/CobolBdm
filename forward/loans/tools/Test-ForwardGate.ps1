@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   The Phase 0 gate of the loans forward engineering (ForwardEngineeringFineract.md section 7.7; forward\cas\tools\Test-ForwardGate.ps1
   generalized). The runner refuses to start without a passing gate.json:
@@ -64,10 +64,12 @@ $acceptance = Test-Results (Join-Path $service 'loans-acceptance\build\test-resu
 Write-Host "reference: architecture $($architecture.total - $architecture.failed)/$($architecture.total), scenarios $($acceptance.total - $acceptance.failed)/$($acceptance.total) of $($manifest.Count)"
 
 # 2. mutation score per context module (one flat project: PIT needs the code and the tests together)
-$contexts = [ordered]@{ calendar = 'loans-calendar'; rates = 'loans-rates'; terms = 'loans-terms'; schedule = 'loans-schedule'; disclosure = 'loans-disclosure'; application = 'loans-application' }
+$contexts = [ordered]@{ calendar = 'loans-calendar'; rates = 'loans-rates'; terms = 'loans-terms'; schedule = 'loans-schedule'; disclosure = 'loans-disclosure'; migration = 'loans-migration'; application = 'loans-application' }
 $pit = Join-Path $Work 'mutation'
 New-Item -ItemType Directory -Force (Join-Path $pit 'src\main\java'), (Join-Path $pit 'src\test\java'), (Join-Path $pit 'src\test\resources') | Out-Null
 Copy-Item (Join-Path $loans 'service\loans-api\src\main\java\*') -Destination (Join-Path $pit 'src\main\java') -Recurse -Force
+# the legacy records and their decoders, generated from the copybooks (C-LEGACY-LAYOUT)
+Copy-Item (Join-Path $loans 'service\loans-api\src\generated\java\*') -Destination (Join-Path $pit 'src\main\java') -Recurse -Force
 foreach ($m in @('loans-kernel') + @($contexts.Values)) {
     Copy-Item (Join-Path $loans "reference\$m\src\main\java\*") -Destination (Join-Path $pit 'src\main\java') -Recurse -Force
 }
@@ -119,18 +121,21 @@ foreach ($c in $contexts.Keys) {
 
 # 3. traceability and the public share
 $docs = (Get-ChildItem (Join-Path $loans 'digests') -Filter *.md | ForEach-Object { Get-Content $_.FullName -Raw -Encoding UTF8 }) -join "`n"
-$rules = @([regex]::Matches($docs, '\| ((?:MNY|DATE|CAL|RATE|TRM|AMZ|PLAN|RPT|DISC|SRV|IDEM)-\d\d) \|') | ForEach-Object { $_.Groups[1].Value }) | Sort-Object -Unique
+# the package's own rule patterns (forward.json rulePatterns)
+$patterns = (Get-Content (Join-Path $loans 'forward.json') -Raw | ConvertFrom-Json).rulePatterns
+$rules = @($patterns | ForEach-Object { [regex]::Matches($docs, $_) } | ForEach-Object { $_.Groups[1].Value }) | Sort-Object -Unique
 $untraced = @($rules | Where-Object { $r = $_; -not ($manifest | Where-Object { $_.rules -contains $r }) })
 $noPublic = @($rules | Where-Object {
         $r = $_; $with = @($manifest | Where-Object { $_.rules -contains $r })
         $with.Count -ge 3 -and -not ($with | Where-Object { $_.visibility -eq 'public' }) })
 Write-Host "rules: $($rules.Count); untraced: $($untraced -join ', '); without a public scenario: $($noPublic -join ', ')"
 
-# 4. every rule's mutant killed (the pools' reports list each rule with the scenarios that kill its mutant)
+# 4. every rule's mutant killed (the pools' reports list each rule with the scenarios that kill its mutant; a rule's second
+# mutant has a letter, RATE-05-B)
 $unkilled = @()
 foreach ($r in Get-ChildItem (Join-Path $loans 'sme\reports') -Filter '*-pool.md') {
     foreach ($line in Get-Content $r.FullName -Encoding UTF8) {
-        if ($line -match '^\| ([A-Z]+-\d\d) \| [^|]+ \| 0 \|') { $unkilled += "$($Matches[1]) ($($r.Name))" }
+        if ($line -match '^\| ([A-Z]+-\d\d(?:-[A-Z])?) \| [^|]+ \| 0 \|') { $unkilled += "$($Matches[1]) ($($r.Name))" }
     }
 }
 Write-Host "rules whose mutant no scenario kills: $($unkilled -join ', ')"

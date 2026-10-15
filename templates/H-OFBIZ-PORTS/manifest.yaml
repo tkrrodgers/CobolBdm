@@ -1,0 +1,41 @@
+schema: mlcpu.template-manifest.v1
+id: H-OFBIZ-PORTS
+version: 1.0.1
+family: host
+tier: adapters
+priority: 60
+summary: The fixed ports' implementations the mapping marks generated (the aggregate store over entities, ids, the clock), the port context and the factory that wires them with the holes.
+selectWhen: "profile.host.kind == 'ofbiz'"
+card: |
+  OFBiz ports: the aggregate store reads and writes the root entity and its line entities (finders per the mapping), ids are
+  derived from the domain key, the clock is the business date. Every port class takes the port context (dispatcher, delegator,
+  user login, business date). The ports the mapping marks as holes are the implementer's.
+outputs:
+  - { path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}PortContext.java", template: PortContext.java.sbn }
+  - { path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}PortsFactory.java", template: PortsFactory.java.sbn }
+  - forEach: model.ports
+    where: "item.implementation == 'generated' && item.spec.aggregate != null"
+    path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ item.class }}.java"
+    template: StorePort.java.sbn
+  - forEach: model.ports
+    where: "item.implementation == 'generated' && item.spec.derive != null"
+    path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ item.class }}.java"
+    template: IdsPort.java.sbn
+  - forEach: model.ports
+    where: "item.implementation == 'generated' && item.interface == 'Clock'"
+    path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ item.class }}.java"
+    template: ClockPort.java.sbn
+holes:
+  - id: "H-{{ item.interface }}"
+    kind: host-port
+    forEach: model.ports
+    where: "item.implementation == 'hole'"
+    path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ item.class }}.java"
+    implements: "{{ item.fqn }}"
+    rules: "{{ item.rules | array.join ', ' }}"
+    contract: |
+      public final class {{ item.class }} implements {{ item.interface }}, with a public constructor taking
+      {{ model.plugin.resourceName }}PortContext (dispatcher, delegator, userLogin, today). Call OFBiz services with
+      context.dispatcher().runSync(name, map) passing "userLogin", and read entities with EntityQuery.use(context.delegator()).
+      A failed OFBiz call throws IllegalStateException with its message (the service then rolls back). The loan's
+      business rules are the engine's: a hole only maps each port call onto OFBiz, as the host digest's rules say.

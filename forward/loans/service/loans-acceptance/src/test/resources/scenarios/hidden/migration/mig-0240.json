@@ -1,0 +1,15 @@
+{
+  "id": "mig-0240",
+  "slice": "migration",
+  "origin": "legacy book sample-p12-half_down, loan 0000000000000921",
+  "rules": ["MIG-02","MIG-04"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000092120991220USD+000000000100000002099122000020001YEARS     +018750000000N30001N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_DOWN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"LegacyTerms","terms":{"loanId":"0000000000000921","scheduleStart":"2099-12-20","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"1000.0000","disbursementDate":"2099-12-20","installments":2,"every":1,"frequency":"YEARS","annualRatePercent":"18.750000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_DOWN"}}}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000092120991220USD+000000000100000002099122000020001YEARS     +018750000000N30001N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_DOWN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000921RJUNSP01S19                     REPAYMENT FREQUENCY NOT SUPPORTED WITH 30-DAY MONTHS                    "},
+    "expected": {"loanId":"0000000000000921","outcome":"LEGACY_REJECT","decision":null,"field":null,"legacyValue":null,"serviceValue":null,"legacyCode":"RJUNSP01","serviceRejection":"PERIOD_NOT_SUPPORTED_WITH_THIRTY_DAY_MONTHS"}
+  } ]
+}

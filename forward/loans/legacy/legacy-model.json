@@ -1,0 +1,1021 @@
+{
+  "schema": "mlcpu.legacy-model.v1",
+  "layouts": "FNLS0100 record layouts (sha256:0268413f770d)",
+  "package": "com.mlcpu.loans.api.legacy",
+  "codec": "LegacyCodec",
+  "title": "The legacy loan book's records, decoded from the estate's fixed-length datasets (Latin-1, one record per LRECL)",
+  "records": [
+    {
+      "name": "LegacyRequest",
+      "title": "A loan request (LOAN.REQUEST.DATA, copybook FNLNREQ)",
+      "layout": "FN-LOAN-REQUEST",
+      "length": 200,
+      "dsn": "LNS.LOAN.REQUEST.DATA",
+      "dd": "LOANREQ",
+      "decoder": "request",
+      "prefix": "RQ-",
+      "fields": [
+        {
+          "cobol": "RQ-LOAN-ID",
+          "name": "loanId",
+          "java": "String",
+          "decode": "id",
+          "offset": 2,
+          "length": 16,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(16)"
+        },
+        {
+          "cobol": "RQ-SCHED-START-DATE",
+          "name": "schedStartDate",
+          "java": "LocalDate",
+          "decode": "date",
+          "offset": 18,
+          "length": 8,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(8)"
+        },
+        {
+          "cobol": "RQ-CURRENCY-CODE",
+          "name": "currencyCode",
+          "java": "String",
+          "decode": "text",
+          "offset": 26,
+          "length": 3,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(3)"
+        },
+        {
+          "cobol": "RQ-DISB-AMOUNT",
+          "name": "disbAmount",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 29,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "RQ-DISB-DATE",
+          "name": "disbDate",
+          "java": "LocalDate",
+          "decode": "date",
+          "offset": 47,
+          "length": 8,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(8)"
+        },
+        {
+          "cobol": "RQ-NUM-REPAYMENTS",
+          "name": "numRepayments",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 55,
+          "length": 4,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(4)"
+        },
+        {
+          "cobol": "RQ-REPAY-EVERY",
+          "name": "repayEvery",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 59,
+          "length": 4,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(4)"
+        },
+        {
+          "cobol": "RQ-FREQ-TYPE",
+          "name": "freqType",
+          "java": "String",
+          "decode": "text",
+          "offset": 63,
+          "length": 10,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(10)"
+        },
+        {
+          "cobol": "RQ-ANNUAL-RATE",
+          "name": "annualRate",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 73,
+          "length": 13,
+          "scale": 9,
+          "signed": true,
+          "pic": "S9(3)V9(9)"
+        },
+        {
+          "cobol": "RQ-DOWNPAY-ENABLED",
+          "name": "downpayEnabled",
+          "java": "boolean",
+          "decode": "flag",
+          "offset": 86,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "RQ-DAYS-IN-MONTH",
+          "name": "daysInMonth",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 87,
+          "length": 2,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(2)"
+        },
+        {
+          "cobol": "RQ-DAYS-IN-YEAR",
+          "name": "daysInYear",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 89,
+          "length": 3,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(3)"
+        },
+        {
+          "cobol": "RQ-DOWNPAY-PCT-IND",
+          "name": "downpayPctInd",
+          "java": "boolean",
+          "decode": "flag",
+          "offset": 92,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "RQ-DOWNPAY-PCT",
+          "name": "downpayPct",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 93,
+          "length": 13,
+          "scale": 9,
+          "signed": true,
+          "pic": "S9(3)V9(9)"
+        },
+        {
+          "cobol": "RQ-MULTIPLES-IND",
+          "name": "multiplesInd",
+          "java": "boolean",
+          "decode": "flag",
+          "offset": 106,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "RQ-MULTIPLES",
+          "name": "multiples",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 107,
+          "length": 9,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(9)"
+        },
+        {
+          "cobol": "RQ-FIXED-LENGTH-IND",
+          "name": "fixedLengthInd",
+          "java": "boolean",
+          "decode": "flag",
+          "offset": 116,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "RQ-FIXED-LENGTH",
+          "name": "fixedLength",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 117,
+          "length": 5,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(5)"
+        },
+        {
+          "cobol": "RQ-INT-RECOG-DISB",
+          "name": "intRecogDisb",
+          "java": "boolean",
+          "decode": "flag",
+          "offset": 122,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "RQ-DIY-STRATEGY",
+          "name": "diyStrategy",
+          "java": "String",
+          "decode": "text",
+          "offset": 123,
+          "length": 20,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(20)"
+        },
+        {
+          "cobol": "RQ-INTEREST-METHOD",
+          "name": "interestMethod",
+          "java": "String",
+          "decode": "text",
+          "offset": 143,
+          "length": 18,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(18)"
+        },
+        {
+          "cobol": "RQ-ALLOW-PARTIAL",
+          "name": "allowPartial",
+          "java": "boolean",
+          "decode": "flag",
+          "offset": 161,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "RQ-FULL-TERM-TRANCHE",
+          "name": "fullTermTranche",
+          "java": "boolean",
+          "decode": "flag",
+          "offset": 162,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        }
+      ],
+      "constants": [
+        {
+          "cobol": "RQ-REC-TYPE",
+          "offset": 0,
+          "length": 2,
+          "value": "LR"
+        }
+      ],
+      "parent": null,
+      "sealed": false,
+      "permits": null,
+      "discriminator": null
+    },
+    {
+      "name": "LegacyScheduleHeader",
+      "title": "The header of a loan's schedule: currency, term, line count and totals",
+      "layout": "FN-SCHEDULE-REC",
+      "length": 200,
+      "dsn": "LNS.LOAN.SCHEDULE.DATA",
+      "dd": "SCHEDOUT",
+      "decoder": "scheduleHeader",
+      "prefix": "SC-",
+      "fields": [
+        {
+          "cobol": "SC-LOAN-ID",
+          "name": "loanId",
+          "java": "String",
+          "decode": "id",
+          "offset": 0,
+          "length": 16,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(16)"
+        },
+        {
+          "cobol": "SC-REC-TYPE",
+          "name": "recType",
+          "java": "String",
+          "decode": "text",
+          "offset": 16,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "SC-SEQ",
+          "name": "seq",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 17,
+          "length": 4,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(4)"
+        },
+        {
+          "cobol": "SH-CURRENCY-CODE",
+          "name": "currencyCode",
+          "java": "String",
+          "decode": "text",
+          "offset": 21,
+          "length": 3,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(3)"
+        },
+        {
+          "cobol": "SH-DECIMAL-PLACES",
+          "name": "decimalPlaces",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 24,
+          "length": 2,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(2)"
+        },
+        {
+          "cobol": "SH-TERM-DAYS",
+          "name": "termDays",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 26,
+          "length": 6,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(6)"
+        },
+        {
+          "cobol": "SH-PERIOD-COUNT",
+          "name": "periodCount",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 32,
+          "length": 4,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(4)"
+        },
+        {
+          "cobol": "SH-TOT-DISBURSED",
+          "name": "totDisbursed",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 36,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SH-TOT-PRINCIPAL",
+          "name": "totPrincipal",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 54,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SH-TOT-INTEREST",
+          "name": "totInterest",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 72,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SH-TOT-FEE",
+          "name": "totFee",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 90,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SH-TOT-PENALTY",
+          "name": "totPenalty",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 108,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SH-TOT-REPAYMENT",
+          "name": "totRepayment",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 126,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SH-TOT-OUTSTANDING",
+          "name": "totOutstanding",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 144,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        }
+      ],
+      "constants": [],
+      "parent": "LegacyScheduleRecord",
+      "sealed": false,
+      "permits": null,
+      "discriminator": null
+    },
+    {
+      "name": "LegacyScheduleLine",
+      "title": "A line of a loan's schedule: the disbursement (D), the down payment (P) or an installment (R)",
+      "layout": "FN-SCHEDULE-REC",
+      "length": 200,
+      "dsn": "LNS.LOAN.SCHEDULE.DATA",
+      "dd": "SCHEDOUT",
+      "decoder": "scheduleLine",
+      "prefix": "SC-",
+      "fields": [
+        {
+          "cobol": "SC-LOAN-ID",
+          "name": "loanId",
+          "java": "String",
+          "decode": "id",
+          "offset": 0,
+          "length": 16,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(16)"
+        },
+        {
+          "cobol": "SC-REC-TYPE",
+          "name": "recType",
+          "java": "String",
+          "decode": "text",
+          "offset": 16,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "SC-SEQ",
+          "name": "seq",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 17,
+          "length": 4,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(4)"
+        },
+        {
+          "cobol": "SP-PERIOD-NUMBER",
+          "name": "periodNumber",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 21,
+          "length": 4,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(4)"
+        },
+        {
+          "cobol": "SP-FROM-DATE",
+          "name": "fromDate",
+          "java": "LocalDate",
+          "decode": "date",
+          "offset": 25,
+          "length": 8,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(8)"
+        },
+        {
+          "cobol": "SP-DUE-DATE",
+          "name": "dueDate",
+          "java": "LocalDate",
+          "decode": "date",
+          "offset": 33,
+          "length": 8,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(8)"
+        },
+        {
+          "cobol": "SP-PRINCIPAL",
+          "name": "principal",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 41,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SP-INTEREST",
+          "name": "interest",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 59,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SP-FEE",
+          "name": "fee",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 77,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SP-PENALTY",
+          "name": "penalty",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 95,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SP-TOTAL-DUE",
+          "name": "totalDue",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 113,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SP-OUTST-BALANCE",
+          "name": "outstBalance",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 131,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        },
+        {
+          "cobol": "SP-TOT-OUTSTANDING",
+          "name": "totOutstanding",
+          "java": "BigDecimal",
+          "decode": "signedDecimal",
+          "offset": 149,
+          "length": 18,
+          "scale": 4,
+          "signed": true,
+          "pic": "S9(13)V9(4)"
+        }
+      ],
+      "constants": [],
+      "parent": "LegacyScheduleRecord",
+      "sealed": false,
+      "permits": null,
+      "discriminator": null
+    },
+    {
+      "name": "LegacyScheduleRecord",
+      "title": "A record of a loan's schedule (LOAN.SCHEDULE.DATA, copybook FNSCHED) - its header or one of its lines",
+      "layout": "FN-SCHEDULE-REC",
+      "length": 200,
+      "dsn": "LNS.LOAN.SCHEDULE.DATA",
+      "dd": "SCHEDOUT",
+      "decoder": "scheduleRecord",
+      "prefix": "SC-",
+      "fields": [
+        {
+          "cobol": "SC-LOAN-ID",
+          "name": "loanId",
+          "java": "String",
+          "decode": "id",
+          "offset": 0,
+          "length": 16,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(16)"
+        },
+        {
+          "cobol": "SC-REC-TYPE",
+          "name": "recType",
+          "java": "String",
+          "decode": "text",
+          "offset": 16,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "SC-SEQ",
+          "name": "seq",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 17,
+          "length": 4,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(4)"
+        }
+      ],
+      "constants": [],
+      "parent": null,
+      "sealed": true,
+      "permits": [
+        "LegacyScheduleHeader",
+        "LegacyScheduleLine"
+      ],
+      "discriminator": {
+        "cobol": "SC-REC-TYPE",
+        "offset": 16,
+        "length": 1,
+        "cases": [
+          {
+            "values": [
+              "H"
+            ],
+            "record": "LegacyScheduleHeader"
+          },
+          {
+            "values": [
+              "D",
+              "P",
+              "R"
+            ],
+            "record": "LegacyScheduleLine"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LegacyReject",
+      "title": "A rejected request (LOAN.REJECTS.DATA, copybook FNREJCT)",
+      "layout": "FN-REJECT-REC",
+      "length": 120,
+      "dsn": "LNS.LOAN.REJECTS.DATA",
+      "dd": "REJECTS",
+      "decoder": "reject",
+      "prefix": "RJ-",
+      "fields": [
+        {
+          "cobol": "RJ-LOAN-ID",
+          "name": "loanId",
+          "java": "String",
+          "decode": "id",
+          "offset": 0,
+          "length": 16,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(16)"
+        },
+        {
+          "cobol": "RJ-CODE",
+          "name": "code",
+          "java": "String",
+          "decode": "text",
+          "offset": 16,
+          "length": 8,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(8)"
+        },
+        {
+          "cobol": "RJ-SOURCE",
+          "name": "source",
+          "java": "String",
+          "decode": "text",
+          "offset": 24,
+          "length": 24,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(24)"
+        },
+        {
+          "cobol": "RJ-TEXT",
+          "name": "text",
+          "java": "String",
+          "decode": "text",
+          "offset": 48,
+          "length": 60,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(60)"
+        }
+      ],
+      "constants": [],
+      "parent": null,
+      "sealed": false,
+      "permits": null,
+      "discriminator": null
+    },
+    {
+      "name": "LegacyCurrency",
+      "title": "A currency (CURRENCY.VSAM.KSDS, copybook FNCURR)",
+      "layout": "FN-CURRENCY-REC",
+      "length": 40,
+      "dsn": "LNS.CURRENCY.VSAM.KSDS",
+      "dd": "CURRFILE",
+      "decoder": "currency",
+      "prefix": "CU-",
+      "fields": [
+        {
+          "cobol": "CU-CODE",
+          "name": "code",
+          "java": "String",
+          "decode": "text",
+          "offset": 0,
+          "length": 3,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(3)"
+        },
+        {
+          "cobol": "CU-DECIMAL-PLACES",
+          "name": "decimalPlaces",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 3,
+          "length": 2,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(2)"
+        },
+        {
+          "cobol": "CU-MULTIPLES-IND",
+          "name": "multiplesInd",
+          "java": "boolean",
+          "decode": "flag",
+          "offset": 5,
+          "length": 1,
+          "scale": 0,
+          "signed": false,
+          "pic": "X"
+        },
+        {
+          "cobol": "CU-MULTIPLES",
+          "name": "multiples",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 6,
+          "length": 5,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(5)"
+        },
+        {
+          "cobol": "CU-NAME",
+          "name": "name",
+          "java": "String",
+          "decode": "text",
+          "offset": 11,
+          "length": 20,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(20)"
+        }
+      ],
+      "constants": [],
+      "parent": null,
+      "sealed": false,
+      "permits": null,
+      "discriminator": null
+    },
+    {
+      "name": "LegacyRunControl",
+      "title": "The run's calculation (RUN.CONTROL, copybook FNRUNCT)",
+      "layout": "FN-RUN-CONTROL",
+      "length": 80,
+      "dsn": "LNS.RUN.CONTROL",
+      "dd": "RUNCTL",
+      "decoder": "runControl",
+      "prefix": "RC-",
+      "fields": [
+        {
+          "cobol": "RC-PRECISION",
+          "name": "precision",
+          "java": "int",
+          "decode": "unsignedInt",
+          "offset": 2,
+          "length": 2,
+          "scale": 0,
+          "signed": false,
+          "pic": "9(2)"
+        },
+        {
+          "cobol": "RC-ROUNDING-MODE",
+          "name": "roundingMode",
+          "java": "String",
+          "decode": "text",
+          "offset": 4,
+          "length": 10,
+          "scale": 0,
+          "signed": false,
+          "pic": "X(10)"
+        }
+      ],
+      "constants": [
+        {
+          "cobol": "RC-REC-TYPE",
+          "offset": 0,
+          "length": 2,
+          "value": "MC"
+        }
+      ],
+      "parent": null,
+      "sealed": false,
+      "permits": null,
+      "discriminator": null
+    }
+  ],
+  "fromTerms": [
+    {
+      "class": "LegacyTermsCodec",
+      "targets": [
+        {
+          "role": "request",
+          "record": "LegacyRequest",
+          "method": "request",
+          "param": "com.mlcpu.loans.api.ScheduleRequest",
+          "paramName": "terms",
+          "extra": ", String legacyLoanId",
+          "args": [
+            {
+              "name": "loanId",
+              "java": "String",
+              "expr": "legacyLoanId"
+            },
+            {
+              "name": "schedStartDate",
+              "java": "LocalDate",
+              "expr": "terms.scheduleStart()"
+            },
+            {
+              "name": "currencyCode",
+              "java": "String",
+              "expr": "terms.currency().code()"
+            },
+            {
+              "name": "disbAmount",
+              "java": "BigDecimal",
+              "expr": "terms.principal()"
+            },
+            {
+              "name": "disbDate",
+              "java": "LocalDate",
+              "expr": "terms.disbursementDate()"
+            },
+            {
+              "name": "numRepayments",
+              "java": "int",
+              "expr": "terms.installments()"
+            },
+            {
+              "name": "repayEvery",
+              "java": "int",
+              "expr": "terms.every()"
+            },
+            {
+              "name": "freqType",
+              "java": "String",
+              "expr": "switch (terms.frequency()) { case DAYS -> \"DAYS\"; case WEEKS -> \"WEEKS\"; case MONTHS -> \"MONTHS\"; case YEARS -> \"YEARS\"; }"
+            },
+            {
+              "name": "annualRate",
+              "java": "BigDecimal",
+              "expr": "terms.annualRatePercent()"
+            },
+            {
+              "name": "downpayEnabled",
+              "java": "boolean",
+              "expr": "terms.downPaymentEnabled()"
+            },
+            {
+              "name": "daysInMonth",
+              "java": "int",
+              "expr": "switch (terms.monthDays()) { case ACTUAL -> 1; case THIRTY -> 30; }"
+            },
+            {
+              "name": "daysInYear",
+              "java": "int",
+              "expr": "switch (terms.yearDays()) { case ACTUAL -> 1; case DAYS_360 -> 360; case DAYS_364 -> 364; case DAYS_365 -> 365; }"
+            },
+            {
+              "name": "downpayPctInd",
+              "java": "boolean",
+              "expr": "terms.downPaymentPercent() != null"
+            },
+            {
+              "name": "downpayPct",
+              "java": "BigDecimal",
+              "expr": "terms.downPaymentPercent() == null ? new java.math.BigDecimal(\"0\") : terms.downPaymentPercent()"
+            },
+            {
+              "name": "multiplesInd",
+              "java": "boolean",
+              "expr": "false"
+            },
+            {
+              "name": "multiples",
+              "java": "int",
+              "expr": "0"
+            },
+            {
+              "name": "fixedLengthInd",
+              "java": "boolean",
+              "expr": "terms.fixedLength() != null"
+            },
+            {
+              "name": "fixedLength",
+              "java": "int",
+              "expr": "terms.fixedLength() == null ? 0 : terms.fixedLength()"
+            },
+            {
+              "name": "intRecogDisb",
+              "java": "boolean",
+              "expr": "false"
+            },
+            {
+              "name": "diyStrategy",
+              "java": "String",
+              "expr": "\"\""
+            },
+            {
+              "name": "interestMethod",
+              "java": "String",
+              "expr": "switch (terms.interestMethod()) { case DECLINING_BALANCE -> \"DECLINING_BALANCE\"; case FLAT -> \"FLAT\"; }"
+            },
+            {
+              "name": "allowPartial",
+              "java": "boolean",
+              "expr": "false"
+            },
+            {
+              "name": "fullTermTranche",
+              "java": "boolean",
+              "expr": "terms.fullTermTranche()"
+            }
+          ]
+        },
+        {
+          "role": "runControl",
+          "record": "LegacyRunControl",
+          "method": "runControl",
+          "param": "com.mlcpu.loans.api.Calculation",
+          "paramName": "calculation",
+          "extra": "",
+          "args": [
+            {
+              "name": "precision",
+              "java": "int",
+              "expr": "calculation.precision()"
+            },
+            {
+              "name": "roundingMode",
+              "java": "String",
+              "expr": "calculation.roundingMode().name()"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,87 +1,44 @@
 {
   "id": "srv-0048",
   "slice": "servicing",
-  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000049; expected values: the reference over the in-memory ports for an organization whose base currency is GBP, without a rate from INR",
-  "rules": ["SRV-10"],
-  "given": {"today":"2015-09-29","baseCurrency":"GBP","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000001194; expected values: the reference over the in-memory ports with a principal beyond the ledger's capacity",
+  "rules": ["SRV-01","SRV-03","SRV-05","SRV-10","SRV-11"],
+  "given": {"today":"1953-01-09","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
-    {"call": "book", "input": {"externalId":"E-0522-X","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000049","scheduleStart":"2015-09-29","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"7696520.5400","disbursementDate":"2015-09-29","installments":8,"every":2,"frequency":"WEEKS","annualRatePercent":"21.840000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
-     "expected": {"@type":"Booked","loanId":"LN-E-0522-X","accountId":"ACC-0001","scheduleVersion":1}},
-    {"call": "disburse", "input": {"loanId":"LN-E-0522-X","paymentMethodId":"PM-1"},
-     "expected": {"@type":"Disbursed","loanId":"LN-E-0522-X","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
+    {"call": "book", "input": {"externalId":"E-0511-C","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001194","scheduleStart":"1953-01-09","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"1476498000000000.0000","disbursementDate":"1953-01-09","installments":1,"every":198,"frequency":"DAYS","annualRatePercent":"94.440000000","downPaymentPercent":"69.446500000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"BookingRejected","externalId":"E-0511-C","reason":"SCHEDULE_REJECTED","scheduleReason":"OUT_OF_RANGE","field":"principal"}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0511-C","paymentMethodId":"PM-1"},
+     "expected": {"@type":"ServicingRejected","reference":"LN-E-0511-C","reason":"UNKNOWN_LOAN"}},
+    {"call": "book", "input": {"externalId":"E-0511-C","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001194","scheduleStart":"1953-01-09","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"738249.0000","disbursementDate":"1953-01-09","installments":1,"every":198,"frequency":"DAYS","annualRatePercent":"94.440000000","downPaymentPercent":"69.446500000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0511-C","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0511-C","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0511-C","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":"INV-0001"}},
     {"call": "invoicePaid", "input": {"invoiceId":"INV-9999","paid":true},
      "expected": {"@type":"ServicingRejected","reference":"INV-9999","reason":"UNKNOWN_INVOICE"}}
   ],
   "state": {
-    "today" : "2015-09-29",
+    "today" : "1953-01-09",
     "loans" : [ {
-      "loanId" : "LN-E-0522-X",
-      "externalId" : "E-0522-X",
+      "loanId" : "LN-E-0511-C",
+      "externalId" : "E-0511-C",
+      "termsLoanId" : "LN-E-0511-C",
       "accountId" : "ACC-0001",
       "status" : "ACTIVE",
-      "bookedOn" : "2015-09-29",
+      "bookedOn" : "1953-01-09",
       "scheduleVersion" : 1,
       "lines" : [ {
         "number" : 1,
-        "due" : "2015-10-13",
-        "principal" : "934210.62",
-        "interest" : "64474.00",
-        "invoiceId" : null,
-        "billedOn" : null,
+        "due" : "1953-01-09",
+        "principal" : "512689.00",
+        "interest" : "0.00",
+        "invoiceId" : "INV-0001",
+        "billedOn" : "1953-01-09",
         "collectionTransactionId" : null
       }, {
         "number" : 2,
-        "due" : "2015-10-27",
-        "principal" : "942036.62",
-        "interest" : "56648.00",
-        "invoiceId" : null,
-        "billedOn" : null,
-        "collectionTransactionId" : null
-      }, {
-        "number" : 3,
-        "due" : "2015-11-10",
-        "principal" : "949928.02",
-        "interest" : "48756.60",
-        "invoiceId" : null,
-        "billedOn" : null,
-        "collectionTransactionId" : null
-      }, {
-        "number" : 4,
-        "due" : "2015-11-24",
-        "principal" : "957885.62",
-        "interest" : "40799.00",
-        "invoiceId" : null,
-        "billedOn" : null,
-        "collectionTransactionId" : null
-      }, {
-        "number" : 5,
-        "due" : "2015-12-08",
-        "principal" : "965909.92",
-        "interest" : "32774.70",
-        "invoiceId" : null,
-        "billedOn" : null,
-        "collectionTransactionId" : null
-      }, {
-        "number" : 6,
-        "due" : "2015-12-22",
-        "principal" : "974001.22",
-        "interest" : "24683.40",
-        "invoiceId" : null,
-        "billedOn" : null,
-        "collectionTransactionId" : null
-      }, {
-        "number" : 7,
-        "due" : "2016-01-05",
-        "principal" : "982160.42",
-        "interest" : "16524.20",
-        "invoiceId" : null,
-        "billedOn" : null,
-        "collectionTransactionId" : null
-      }, {
-        "number" : 8,
-        "due" : "2016-01-19",
-        "principal" : "990388.10",
-        "interest" : "8296.50",
+        "due" : "1953-07-26",
+        "principal" : "225560.00",
+        "interest" : "115558.00",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
@@ -92,34 +49,47 @@
     "payments" : [ {
       "paymentId" : "PAY-0001",
       "payment" : {
-        "loanId" : "LN-E-0522-X",
+        "loanId" : "LN-E-0511-C",
         "loanProductId" : "PRODUCT-1",
         "fromPartyId" : "ORG-1",
         "toPartyId" : "BORROWER-1",
         "paymentMethodId" : "PM-1",
         "currencyCode" : "INR",
-        "amount" : "7696520.54",
-        "date" : "2015-09-29"
+        "amount" : "738249.00",
+        "date" : "1953-01-09"
       }
     } ],
-    "invoices" : [ ],
+    "invoices" : [ {
+      "invoiceId" : "INV-0001",
+      "invoice" : {
+        "loanId" : "LN-E-0511-C",
+        "loanProductId" : "PRODUCT-1",
+        "lineNumber" : 1,
+        "fromPartyId" : "ORG-1",
+        "toPartyId" : "BORROWER-1",
+        "currencyCode" : "INR",
+        "invoiceDate" : "1953-01-09",
+        "principal" : "512689.00",
+        "interest" : "0.00"
+      }
+    } ],
     "accounts" : [ {
       "accountId" : "ACC-0001",
       "account" : {
-        "loanId" : "LN-E-0522-X",
+        "loanId" : "LN-E-0511-C",
         "ownerPartyId" : "BORROWER-1",
         "organizationPartyId" : "ORG-1",
         "currencyCode" : "INR"
       },
-      "balance" : "-7696520.54"
+      "balance" : "-738249.00"
     } ],
     "transactions" : [ {
       "transactionId" : "TRN-0001",
       "transaction" : {
         "accountId" : "ACC-0001",
         "type" : "WITHDRAWAL",
-        "amount" : "7696520.54",
-        "date" : "2015-09-29",
+        "amount" : "738249.00",
+        "date" : "1953-01-09",
         "paymentId" : "PAY-0001",
         "invoiceId" : null
       },

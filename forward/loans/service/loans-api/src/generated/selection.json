@@ -1,0 +1,11 @@
+{
+  "schema": "mlcpu.template-selection.v1",
+  "arm": "RL",
+  "decisions": [
+    {
+      "template": "C-LEGACY-LAYOUT@1.2.0",
+      "selectWhen": "model.schema == 'mlcpu.legacy-model.v1'",
+      "selected": true
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+schema: mlcpu.template-manifest.v1
+id: H-OFBIZ-SERVICES
+version: 1.0.0
+family: host
+tier: adapters
+priority: 50
+summary: The Java behind the plugin's services - context to API command, the engine call, outcome to a canonical map - and the shared value conversions.
+selectWhen: "profile.host.kind == 'ofbiz'"
+card: |
+  OFBiz service entry points: one static method per service; builds the API command from the context (unknown enumeration ids
+  are service errors naming the field, OFB-03), calls the engine (quotes, or the servicing use cases over the ports) and
+  returns outcome and result. Business rejections are results, not errors; an exception rolls the transaction back.
+outputs:
+  - { path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}Services.java", template: Services.java.sbn }
+  - { path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}Context.java", template: Context.java.sbn }
+  - { path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}Values.java", template: Values.java.sbn }
+  - { path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}Canon.java", template: Canon.java.sbn }
+  - { path: "src/main/java/{{ x.package_path model.plugin.javaPackage }}/{{ model.plugin.resourceName }}Enums.java", template: Enums.java.sbn }
+holes: []

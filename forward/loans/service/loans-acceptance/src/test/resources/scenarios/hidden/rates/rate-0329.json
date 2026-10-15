@@ -1,0 +1,11 @@
+{
+  "id": "rate-0329",
+  "slice": "rates",
+  "origin": "FNEM0300 CALL trace, probe-rate08-edge-p12-half_even (loans 0000000000000001 to 0000000000000040), CALL 9 (function P)",
+  "rules": ["RATE-01","RATE-03","RATE-06","RATE-07","RATE-08","RATE-09"],
+  "steps": [ {
+    "call": "factors",
+    "input": {"query":{"scheduleStart":"2023-05-29","period":{"from":"2023-05-29","due":"2023-06-30"},"from":"2023-05-29","to":"2023-05-31","annualRatePercent":"9.482200000","frequency":"MONTHS","every":1,"monthDays":"THIRTY","yearDays":"DAYS_360"},"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}},
+    "expected": {"@type":"Factors","installment":"0.000493864583","interest":"0.008165227778"}
+  } ]
+}

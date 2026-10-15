@@ -1,0 +1,42 @@
+{
+  "schema": "mlcpu.host-gate.v1",
+  "checked": "2026-10-15T11:14:33-07:00",
+  "pass": true,
+  "reference": {
+    "tests": 78,
+    "failed": 0,
+    "failedTests": []
+  },
+  "mutants": {
+    "total": 17,
+    "killed": 17,
+    "survived": [],
+    "invalid": [],
+    "perRule": {
+      "OFB-02": {
+        "mutants": 2,
+        "killed": 2
+      },
+      "OFB-04": {
+        "mutants": 3,
+        "killed": 3
+      },
+      "OFB-05": {
+        "mutants": 6,
+        "killed": 6
+      },
+      "OFB-06": {
+        "mutants": 3,
+        "killed": 3
+      },
+      "OFB-07": {
+        "mutants": 1,
+        "killed": 1
+      },
+      "D-11": {
+        "mutants": 2,
+        "killed": 2
+      }
+    }
+  }
+}

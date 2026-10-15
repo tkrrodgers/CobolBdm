@@ -1,19 +1,19 @@
 {
   "id": "srv-0035",
   "slice": "servicing",
-  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000792; expected values: the reference over the in-memory ports",
+  "origin": "the S5 loan envelope-1-p06-down-0000000000000029; expected values: the reference over the in-memory ports",
   "rules": ["SRV-01","SRV-05","SRV-10"],
-  "given": {"today":"2118-10-08","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "given": {"today":"2041-02-20","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
-    {"call": "book", "input": {"externalId":"E-0149","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000792","scheduleStart":"2118-10-08","currency":{"code":"KWD","decimalPlaces":3,"roundingMultiple":null},"principal":"256394.3935","disbursementDate":"2118-10-08","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"49.980000000","downPaymentPercent":null,"downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
-     "expected": {"@type":"BookingRejected","externalId":"E-0149","reason":"SCHEDULE_REJECTED","scheduleReason":"DOWN_PAYMENT_PERCENT_MISSING","field":null}},
-    {"call": "disburse", "input": {"loanId":"LN-E-0149","paymentMethodId":"PM-1"},
-     "expected": {"@type":"ServicingRejected","reference":"LN-E-0149","reason":"UNKNOWN_LOAN"}},
+    {"call": "book", "input": {"externalId":"E-0148","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000029","scheduleStart":"2041-02-20","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"1754847.5100","disbursementDate":"2041-02-20","installments":9,"every":178,"frequency":"DAYS","annualRatePercent":"95.810000000","downPaymentPercent":null,"downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"DOWN"}}},
+     "expected": {"@type":"BookingRejected","externalId":"E-0148","reason":"SCHEDULE_REJECTED","scheduleReason":"DOWN_PAYMENT_PERCENT_MISSING","field":null}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0148","paymentMethodId":"PM-1"},
+     "expected": {"@type":"ServicingRejected","reference":"LN-E-0148","reason":"UNKNOWN_LOAN"}},
     {"call": "invoicePaid", "input": {"invoiceId":"INV-9999","paid":true},
      "expected": {"@type":"ServicingRejected","reference":"INV-9999","reason":"UNKNOWN_INVOICE"}}
   ],
   "state": {
-    "today" : "2118-10-08",
+    "today" : "2041-02-20",
     "loans" : [ ],
     "payments" : [ ],
     "invoices" : [ ],

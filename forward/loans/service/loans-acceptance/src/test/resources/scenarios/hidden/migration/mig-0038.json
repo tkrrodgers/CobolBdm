@@ -1,0 +1,15 @@
+{
+  "id": "mig-0038",
+  "slice": "migration",
+  "origin": "SME probe: the frequency MONTHLY and the interest method SIMPLE, rejected by the legacy (RJFREQ01)",
+  "rules": ["MIG-06"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000000520230128USD+000000001500000002023012800130001MONTHLY   +009482200000N30360N+000000000000N000000000N00000N                    SIMPLE            NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"Unrepresentable","loanId":"0000000000000005","field":"RQ-FREQ-TYPE","value":"MONTHLY"}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000000520230128USD+000000001500000002023012800130001MONTHLY   +009482200000N30360N+000000000000N000000000N00000N                    SIMPLE            NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000005RJFREQ01PROBE                   an SME probe                                                            "},
+    "expected": {"loanId":"0000000000000005","outcome":"EXPLAINED","decision":"D-5","field":"RQ-FREQ-TYPE","legacyValue":null,"serviceValue":null,"legacyCode":"RJFREQ01","serviceRejection":null}
+  } ]
+}

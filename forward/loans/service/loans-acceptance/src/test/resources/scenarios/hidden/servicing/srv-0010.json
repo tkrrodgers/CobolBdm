@@ -2,7 +2,7 @@
   "id": "srv-0010",
   "slice": "servicing",
   "origin": "the S5 loan edge-p06-half_up-0000000000001165; expected values: the reference over the in-memory ports",
-  "rules": ["SRV-06","SRV-07"],
+  "rules": ["SRV-06","SRV-07","SRV-11"],
   "given": {"today":"2024-01-01","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
     {"call": "book", "input": {"externalId":"E-0549","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001165","scheduleStart":"2024-01-01","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"0.5000","disbursementDate":"2024-01-01","installments":6,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"HALF_UP"}}},
@@ -23,6 +23,7 @@
     "loans" : [ {
       "loanId" : "LN-E-0549",
       "externalId" : "E-0549",
+      "termsLoanId" : "LN-E-0549",
       "accountId" : "ACC-0001",
       "status" : "PAID_OFF",
       "bookedOn" : "2024-01-01",

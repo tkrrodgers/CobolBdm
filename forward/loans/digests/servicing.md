@@ -27,6 +27,7 @@ its interest.
 | SRV-08 | An invoice paid (`InvoicePaid(invoiceId, true)`) of a line not collected yet: a `DEPOSIT` of the line's principal (not its interest) on the loan's account, dated today, naming the invoice; the line is collected by it. When every line that owes more than 0 is collected, the loan is `PAID_OFF`. The result is `PrincipalCollected(loanId, number, depositId, paidOff)`. |
 | SRV-09 | An invoice no longer paid (`InvoicePaid(invoiceId, false)`) of a collected line: its deposit is cancelled (`accounts.cancel`), the line is no longer collected, and the loan is `ACTIVE` (also when it was `PAID_OFF`). The result is `CollectionCancelled(loanId, number, depositId)` with the cancelled deposit. |
 | SRV-10 | An invoice that is no loan line's: `ServicingRejected(invoiceId, UNKNOWN_INVOICE)`; nothing changes. |
+| SRV-11 | The loan saved at booking (SRV-03) keeps the command's terms under the loan's id: their `loanId` is the loan id, as the schedule's (SRV-01). |
 | IDEM-01 | Booking a loan id the book already has returns that loan's `Booked(loanId, accountId, scheduleVersion)` and changes nothing, whatever the command's terms. A rejected booking stored nothing, so booking again is decided afresh. |
 | IDEM-02 | Disbursing a loan that is not `BOOKED` (it was disbursed) returns its `Disbursed` from the book (its payment, its withdrawal, its down payment line's invoice) and changes nothing. |
 | IDEM-03 | A billed line is never billed again: a billing run with nothing new to bill returns an empty list and changes nothing. |

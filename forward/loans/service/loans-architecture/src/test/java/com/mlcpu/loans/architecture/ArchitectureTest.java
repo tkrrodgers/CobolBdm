@@ -8,6 +8,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noMethods;
 
 import com.mlcpu.loans.api.ScheduleService;
+import com.mlcpu.loans.api.migration.LegacyMigration;
 import com.mlcpu.loans.api.ports.LoansPorts;
 import com.mlcpu.loans.api.servicing.LoanServicing;
 import com.mlcpu.loans.api.spi.DueDates;
@@ -48,7 +49,7 @@ class ArchitectureTest {
     static final String API = ROOT + ".api..";
     static final String KERNEL = ROOT + ".kernel..";
     static final String APPLICATION = ROOT + ".application..";
-    static final List<String> CONTEXTS = List.of("calendar", "rates", "terms", "schedule", "disclosure");
+    static final List<String> CONTEXTS = List.of("calendar", "rates", "terms", "schedule", "disclosure", "migration");
     static JavaClasses classes;
 
     @BeforeAll
@@ -198,7 +199,8 @@ class ArchitectureTest {
             "terms", new Entry("quotes", ScheduleService.class),
             "schedule", new Entry("quotes", ScheduleService.class),
             "disclosure", new Entry("quotes", ScheduleService.class),
-            "servicing", new Entry("create", LoanServicing.class, LoansPorts.class));
+            "servicing", new Entry("create", LoanServicing.class, LoansPorts.class),
+            "migration", new Entry("migration", LegacyMigration.class));
 
     /** A-8, for the slices under test (system property loans.slices; empty = all). */
     @Test

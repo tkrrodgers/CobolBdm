@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test-suite suite-name="{{ model.plugin.id }}tests"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="{{ profile.host.testSuiteDtd }}">
+    <test-case case-name="{{ model.plugin.id }}-tests-data-load">
+        <entity-xml action="load" entity-xml-url="component://{{ model.plugin.id }}/testdef/data/{{ model.plugin.resourceName }}TestsData.xml"/>
+    </test-case>
+    <test-case case-name="{{ model.plugin.id }}-scenarios">
+        <jupiter-test-suite class-name="{{ model.plugin.javaPackage }}.{{ model.plugin.resourceName }}ScenarioTests"/>
+    </test-case>
+</test-suite>

@@ -1,0 +1,1340 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0060",
+  "origin" : "the S5 loan envelope-1-p06-ceiling-0000000000000609, moved -28 years into OFBiz's dated window; expected values: the reference over in-memory ports with the demo ledger",
+  "rules" : [ "OFB-02", "OFB-04", "OFB-05", "OFB-06", "OFB-07", "OFB-10" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2023-01-05",
+    "params" : {
+      "externalId" : "E-ofb-0060",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000609",
+      "scheduleStart" : "2023-01-08",
+      "currencyCode" : "ZAR",
+      "currencyDecimalPlaces" : "1",
+      "principal" : "5986.9605",
+      "disbursementDate" : "2023-01-08",
+      "installments" : "9",
+      "every" : "1",
+      "frequencyEnumId" : "LOAN_FREQ_MONTHS",
+      "annualRatePercent" : "67.270000000",
+      "downPaymentPercent" : "58.326100000",
+      "downPaymentEnabled" : true,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_360",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2023-01-05"
+    },
+    "expect" : {
+      "outcome" : "Booked",
+      "result" : {
+        "@type" : "Booked",
+        "loanId" : "LN-E-ofb-0060",
+        "accountId" : "*",
+        "scheduleVersion" : 1
+      }
+    },
+    "bind" : {
+      "acc1" : "result.accountId"
+    }
+  }, {
+    "service" : "disburseLoan",
+    "today" : "2023-01-08",
+    "params" : {
+      "loanId" : "LN-E-ofb-0060",
+      "paymentMethodId" : "SC_CHECKING",
+      "businessDate" : "2023-01-08"
+    },
+    "expect" : {
+      "outcome" : "Disbursed",
+      "result" : {
+        "@type" : "Disbursed",
+        "loanId" : "LN-E-ofb-0060",
+        "paymentId" : "*",
+        "accountTransactionId" : "*",
+        "downPaymentInvoiceId" : "*"
+      }
+    },
+    "bind" : {
+      "pay1" : "result.paymentId",
+      "trn1" : "result.accountTransactionId",
+      "inv1" : "result.downPaymentInvoiceId"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-02-08",
+    "params" : {
+      "asOf" : "2023-02-08",
+      "businessDate" : "2023-02-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-02-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 2,
+          "invoiceId" : "*",
+          "principal" : "216.6",
+          "interest" : "144.6"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv2" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-02-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.2",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-02-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv1" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-02-08",
+    "params" : {
+      "paymentId" : "$rcv1",
+      "invoiceId" : "$inv2",
+      "amountApplied" : "361.2"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-03-08",
+    "params" : {
+      "asOf" : "2023-03-08",
+      "businessDate" : "2023-03-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-03-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 3,
+          "invoiceId" : "*",
+          "principal" : "241.9",
+          "interest" : "119.3"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv3" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-03-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.2",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-03-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv2" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-03-08",
+    "params" : {
+      "paymentId" : "$rcv2",
+      "invoiceId" : "$inv3",
+      "amountApplied" : "361.2"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-04-08",
+    "params" : {
+      "asOf" : "2023-04-08",
+      "businessDate" : "2023-04-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-04-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 4,
+          "invoiceId" : "*",
+          "principal" : "243.2",
+          "interest" : "118.0"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv4" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-04-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.2",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-04-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv3" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-04-08",
+    "params" : {
+      "paymentId" : "$rcv3",
+      "invoiceId" : "$inv4",
+      "amountApplied" : "361.2"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-05-08",
+    "params" : {
+      "asOf" : "2023-05-08",
+      "businessDate" : "2023-05-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-05-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 5,
+          "invoiceId" : "*",
+          "principal" : "260.6",
+          "interest" : "100.6"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv5" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-05-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.2",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-05-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv4" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-05-08",
+    "params" : {
+      "paymentId" : "$rcv4",
+      "invoiceId" : "$inv5",
+      "amountApplied" : "361.2"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-06-08",
+    "params" : {
+      "asOf" : "2023-06-08",
+      "businessDate" : "2023-06-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-06-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 6,
+          "invoiceId" : "*",
+          "principal" : "272.4",
+          "interest" : "88.8"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv6" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-06-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.2",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-06-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv5" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-06-08",
+    "params" : {
+      "paymentId" : "$rcv5",
+      "invoiceId" : "$inv6",
+      "amountApplied" : "361.2"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-07-08",
+    "params" : {
+      "asOf" : "2023-07-08",
+      "businessDate" : "2023-07-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-07-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 7,
+          "invoiceId" : "*",
+          "principal" : "290.5",
+          "interest" : "70.7"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv7" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-07-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.2",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-07-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv6" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-07-08",
+    "params" : {
+      "paymentId" : "$rcv6",
+      "invoiceId" : "$inv7",
+      "amountApplied" : "361.2"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-08-08",
+    "params" : {
+      "asOf" : "2023-08-08",
+      "businessDate" : "2023-08-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-08-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 8,
+          "invoiceId" : "*",
+          "principal" : "305.0",
+          "interest" : "56.2"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv8" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-08-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.2",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-08-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv7" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-08-08",
+    "params" : {
+      "paymentId" : "$rcv7",
+      "invoiceId" : "$inv8",
+      "amountApplied" : "361.2"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-09-08",
+    "params" : {
+      "asOf" : "2023-09-08",
+      "businessDate" : "2023-09-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-09-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 9,
+          "invoiceId" : "*",
+          "principal" : "322.6",
+          "interest" : "38.6"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv9" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-09-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.2",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-09-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv8" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-09-08",
+    "params" : {
+      "paymentId" : "$rcv8",
+      "invoiceId" : "$inv9",
+      "amountApplied" : "361.2"
+    }
+  }, {
+    "service" : "billDueLoanInstallments",
+    "today" : "2023-10-08",
+    "params" : {
+      "asOf" : "2023-10-08",
+      "businessDate" : "2023-10-08"
+    },
+    "expect" : {
+      "outcome" : "BillingRun",
+      "result" : {
+        "asOf" : "2023-10-08",
+        "billed" : [ {
+          "loanId" : "LN-E-ofb-0060",
+          "number" : 10,
+          "invoiceId" : "*",
+          "principal" : "342.2",
+          "interest" : "19.2"
+        } ]
+      }
+    },
+    "bind" : {
+      "inv10" : "result.billed.0.invoiceId"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-10-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "361.4",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-10-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv9" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-10-08",
+    "params" : {
+      "paymentId" : "$rcv9",
+      "invoiceId" : "$inv10",
+      "amountApplied" : "361.4"
+    }
+  }, {
+    "service" : "createPayment",
+    "today" : "2023-10-08",
+    "params" : {
+      "paymentTypeId" : "CUSTOMER_PAYMENT",
+      "paymentMethodTypeId" : "CASH",
+      "partyIdFrom" : "LOAN_BORROWER_1",
+      "partyIdTo" : "Company",
+      "amount" : "3492.0",
+      "currencyUomId" : "ZAR",
+      "statusId" : "PMNT_RECEIVED",
+      "effectiveDate" : "2023-10-08 00:00:00.0"
+    },
+    "bind" : {
+      "rcv10" : "paymentId"
+    }
+  }, {
+    "service" : "createPaymentApplication",
+    "today" : "2023-10-08",
+    "params" : {
+      "paymentId" : "$rcv10",
+      "invoiceId" : "$inv1",
+      "amountApplied" : "3492.0"
+    }
+  } ],
+  "checks" : [ {
+    "entity" : "Loan",
+    "where" : {
+      "loanId" : "LN-E-ofb-0060"
+    },
+    "fields" : [ "externalId", "statusId", "accountId", "disbursementPaymentId", "disbursementTransactionId" ],
+    "rows" : [ {
+      "externalId" : "E-ofb-0060",
+      "statusId" : "LOAN_PAID_OFF",
+      "accountId" : "$acc1",
+      "disbursementPaymentId" : "$pay1",
+      "disbursementTransactionId" : "$trn1"
+    } ]
+  }, {
+    "entity" : "LoanServicingLine",
+    "where" : {
+      "loanId" : "LN-E-ofb-0060"
+    },
+    "orderBy" : [ "lineSeqId" ],
+    "fields" : [ "lineNumber", "dueDate", "principal", "interest", "invoiceId", "billedOn", "collectionTransactionId" ],
+    "rows" : [ {
+      "lineNumber" : 1,
+      "dueDate" : "2023-01-08",
+      "principal" : "3492.0",
+      "interest" : "0.0",
+      "invoiceId" : "$inv1",
+      "billedOn" : "2023-01-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 2,
+      "dueDate" : "2023-02-08",
+      "principal" : "216.6",
+      "interest" : "144.6",
+      "invoiceId" : "$inv2",
+      "billedOn" : "2023-02-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 3,
+      "dueDate" : "2023-03-08",
+      "principal" : "241.9",
+      "interest" : "119.3",
+      "invoiceId" : "$inv3",
+      "billedOn" : "2023-03-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 4,
+      "dueDate" : "2023-04-08",
+      "principal" : "243.2",
+      "interest" : "118.0",
+      "invoiceId" : "$inv4",
+      "billedOn" : "2023-04-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 5,
+      "dueDate" : "2023-05-08",
+      "principal" : "260.6",
+      "interest" : "100.6",
+      "invoiceId" : "$inv5",
+      "billedOn" : "2023-05-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 6,
+      "dueDate" : "2023-06-08",
+      "principal" : "272.4",
+      "interest" : "88.8",
+      "invoiceId" : "$inv6",
+      "billedOn" : "2023-06-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 7,
+      "dueDate" : "2023-07-08",
+      "principal" : "290.5",
+      "interest" : "70.7",
+      "invoiceId" : "$inv7",
+      "billedOn" : "2023-07-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 8,
+      "dueDate" : "2023-08-08",
+      "principal" : "305.0",
+      "interest" : "56.2",
+      "invoiceId" : "$inv8",
+      "billedOn" : "2023-08-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 9,
+      "dueDate" : "2023-09-08",
+      "principal" : "322.6",
+      "interest" : "38.6",
+      "invoiceId" : "$inv9",
+      "billedOn" : "2023-09-08",
+      "collectionTransactionId" : "*"
+    }, {
+      "lineNumber" : 10,
+      "dueDate" : "2023-10-08",
+      "principal" : "342.2",
+      "interest" : "19.2",
+      "invoiceId" : "$inv10",
+      "billedOn" : "2023-10-08",
+      "collectionTransactionId" : "*"
+    } ]
+  }, {
+    "entity" : "FinAccount",
+    "where" : {
+      "finAccountId" : "$acc1"
+    },
+    "fields" : [ "finAccountTypeId", "statusId", "ownerPartyId", "organizationPartyId", "currencyUomId", "actualBalance" ],
+    "rows" : [ {
+      "finAccountTypeId" : "LOAN_ACCOUNT",
+      "statusId" : "FNACT_ACTIVE",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "currencyUomId" : "ZAR",
+      "actualBalance" : "0.0"
+    } ]
+  }, {
+    "entity" : "FinAccountTrans",
+    "where" : {
+      "finAccountId" : "$acc1"
+    },
+    "orderBy" : [ "finAccountTransId" ],
+    "fields" : [ "finAccountTransTypeId", "amount", "transactionDate", "statusId", "paymentId" ],
+    "rows" : [ {
+      "finAccountTransTypeId" : "WITHDRAWAL",
+      "amount" : "5987.0",
+      "transactionDate" : "2023-01-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : "$pay1"
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "216.6",
+      "transactionDate" : "2023-02-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "241.9",
+      "transactionDate" : "2023-03-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "243.2",
+      "transactionDate" : "2023-04-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "260.6",
+      "transactionDate" : "2023-05-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "272.4",
+      "transactionDate" : "2023-06-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "290.5",
+      "transactionDate" : "2023-07-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "305.0",
+      "transactionDate" : "2023-08-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "322.6",
+      "transactionDate" : "2023-09-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "342.2",
+      "transactionDate" : "2023-10-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    }, {
+      "finAccountTransTypeId" : "DEPOSIT",
+      "amount" : "3492.0",
+      "transactionDate" : "2023-10-08",
+      "statusId" : "FINACT_TRNS_APPROVED",
+      "paymentId" : null
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv1"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-01-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv1"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "3492.0",
+      "overrideGlAccountId" : "124000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv1",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "3492.0",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "3492.0",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv2"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-02-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv2"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "216.6",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "144.6",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv2",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "216.6",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "144.6",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.2",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv3"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-03-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv3"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "241.9",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "119.3",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv3",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "241.9",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "119.3",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.2",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv4"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-04-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv4"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "243.2",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "118.0",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv4",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "243.2",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "118.0",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.2",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv5"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-05-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv5"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "260.6",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "100.6",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv5",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "260.6",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "100.6",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.2",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv6"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-06-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv6"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "272.4",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "88.8",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv6",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "272.4",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "88.8",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.2",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv7"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-07-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv7"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "290.5",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "70.7",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv7",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "290.5",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "70.7",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.2",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv8"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-08-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv8"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "305.0",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "56.2",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv8",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "305.0",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "56.2",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.2",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv9"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-09-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv9"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "322.6",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "38.6",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv9",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "322.6",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "38.6",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.2",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Invoice",
+    "where" : {
+      "invoiceId" : "$inv10"
+    },
+    "fields" : [ "invoiceTypeId", "statusId", "invoiceDate", "partyIdFrom", "partyId", "currencyUomId" ],
+    "rows" : [ {
+      "invoiceTypeId" : "SALES_INVOICE",
+      "statusId" : "INVOICE_PAID",
+      "invoiceDate" : "2023-10-08",
+      "partyIdFrom" : "Company",
+      "partyId" : "LOAN_BORROWER_1",
+      "currencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "InvoiceItem",
+    "where" : {
+      "invoiceId" : "$inv10"
+    },
+    "orderBy" : [ "invoiceItemSeqId" ],
+    "fields" : [ "invoiceItemTypeId", "amount", "overrideGlAccountId" ],
+    "rows" : [ {
+      "invoiceItemTypeId" : "LOAN_PRINCIPAL",
+      "amount" : "342.2",
+      "overrideGlAccountId" : "124000"
+    }, {
+      "invoiceItemTypeId" : "INV_INTRST_CHRG",
+      "amount" : "19.2",
+      "overrideGlAccountId" : "810000"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "invoiceId" : "$inv10",
+          "acctgTransTypeId" : "SALES_INVOICE"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "342.2",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "810000",
+      "debitCreditFlag" : "C",
+      "origAmount" : "19.2",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "120000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "361.4",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  }, {
+    "entity" : "Payment",
+    "where" : {
+      "paymentId" : "$pay1"
+    },
+    "fields" : [ "paymentTypeId", "paymentMethodId", "statusId", "amount", "currencyUomId", "overrideGlAccountId", "partyIdFrom", "partyIdTo", "effectiveDate" ],
+    "rows" : [ {
+      "paymentTypeId" : "DISBURSEMENT",
+      "paymentMethodId" : "SC_CHECKING",
+      "statusId" : "PMNT_SENT",
+      "amount" : "5987.0",
+      "currencyUomId" : "ZAR",
+      "overrideGlAccountId" : "124000",
+      "partyIdFrom" : "Company",
+      "partyIdTo" : "LOAN_BORROWER_1",
+      "effectiveDate" : "2023-01-08"
+    } ]
+  }, {
+    "entity" : "AcctgTransEntry",
+    "where" : {
+      "acctgTransId" : {
+        "from" : "AcctgTrans",
+        "where" : {
+          "paymentId" : "$pay1",
+          "acctgTransTypeId" : "OUTGOING_PAYMENT"
+        },
+        "field" : "acctgTransId"
+      }
+    },
+    "orderBy" : [ "acctgTransEntrySeqId" ],
+    "fields" : [ "glAccountId", "debitCreditFlag", "origAmount", "origCurrencyUomId" ],
+    "rows" : [ {
+      "glAccountId" : "111100",
+      "debitCreditFlag" : "C",
+      "origAmount" : "5987.0",
+      "origCurrencyUomId" : "ZAR"
+    }, {
+      "glAccountId" : "124000",
+      "debitCreditFlag" : "D",
+      "origAmount" : "5987.0",
+      "origCurrencyUomId" : "ZAR"
+    } ]
+  } ]
+}

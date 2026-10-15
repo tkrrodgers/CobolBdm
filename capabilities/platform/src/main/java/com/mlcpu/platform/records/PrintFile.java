@@ -1,5 +1,6 @@
 package com.mlcpu.platform.records;
 
+import com.mlcpu.rt.OpenDatasets;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,6 +24,8 @@ public final class PrintFile implements AutoCloseable {
     private boolean lineOpen;
 
     private PrintFile(OutputStream out, int lrecl) {
+
+        OpenDatasets.opened(this);
         this.out = out;
         this.lrecl = lrecl;
     }
@@ -71,6 +74,7 @@ public final class PrintFile implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
+        OpenDatasets.closed(this);
         if (lineOpen) out.write('\n');
         lineOpen = false;
         out.close();

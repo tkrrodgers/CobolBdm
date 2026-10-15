@@ -1,0 +1,15 @@
+{
+  "id": "mig-0105",
+  "slice": "migration",
+  "origin": "legacy book rejects-p12-half_even, loan 0000000000000018",
+  "rules": ["MIG-02","MIG-04","MIG-07"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000001820240101USD-000000000000500002024010100120001MONTHS    +012000000000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"LegacyTerms","terms":{"loanId":"0000000000000018","scheduleStart":"2024-01-01","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"-5.0000","disbursementDate":"2024-01-01","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"HALF_EVEN"}}}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000001820240101USD-000000000000500002024010100120001MONTHS    +012000000000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000018RJENV030ENVELOPE                DISBURSEMENT AMOUNT OUTSIDE (0, 1E9)                                    "},
+    "expected": {"loanId":"0000000000000018","outcome":"LEGACY_REJECT","decision":null,"field":null,"legacyValue":null,"serviceValue":null,"legacyCode":"RJENV030","serviceRejection":"OUT_OF_RANGE"}
+  } ]
+}

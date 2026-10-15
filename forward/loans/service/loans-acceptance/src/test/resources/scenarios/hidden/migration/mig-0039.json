@@ -1,0 +1,15 @@
+{
+  "id": "mig-0039",
+  "slice": "migration",
+  "origin": "SME probe: 31 days in a month, rejected by the legacy (RJUNSP02)",
+  "rules": [],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000000520230128USD+000000001500000002023012800130001MONTHS    +009482200000N31360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"Unrepresentable","loanId":"0000000000000005","field":"RQ-DAYS-IN-MONTH","value":"31"}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000000520230128USD+000000001500000002023012800130001MONTHS    +009482200000N31360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC12HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000000005RJUNSP02PROBE                   an SME probe                                                            "},
+    "expected": {"loanId":"0000000000000005","outcome":"EXPLAINED","decision":"D-5","field":"RQ-DAYS-IN-MONTH","legacyValue":null,"serviceValue":null,"legacyCode":"RJUNSP02","serviceRejection":null}
+  } ]
+}

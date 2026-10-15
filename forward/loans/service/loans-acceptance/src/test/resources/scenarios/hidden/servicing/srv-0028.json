@@ -2,7 +2,7 @@
   "id": "srv-0028",
   "slice": "servicing",
   "origin": "the S5 loan edge-p03-ceiling-0000000000001048; expected values: the reference over the in-memory ports",
-  "rules": ["IDEM-03","SRV-03","SRV-04","SRV-07","SRV-08"],
+  "rules": ["IDEM-03","SRV-03","SRV-04","SRV-07","SRV-08","SRV-11"],
   "given": {"today":"2023-12-29","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
     {"call": "book", "input": {"externalId":"E-0552","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001048","scheduleStart":"2024-01-01","currency":{"code":"JPY","decimalPlaces":0,"roundingMultiple":null},"principal":"12345.6789","disbursementDate":"2024-01-01","installments":12,"every":1,"frequency":"MONTHS","annualRatePercent":"12.000000000","downPaymentPercent":"0.000000000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":3,"roundingMode":"CEILING"}}},
@@ -87,6 +87,7 @@
     "loans" : [ {
       "loanId" : "LN-E-0552",
       "externalId" : "E-0552",
+      "termsLoanId" : "LN-E-0552",
       "accountId" : "ACC-0001",
       "status" : "PAID_OFF",
       "bookedOn" : "2023-12-29",

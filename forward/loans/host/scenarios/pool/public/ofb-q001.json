@@ -1,0 +1,76 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-q001",
+  "rules" : [ "OFB-01" ],
+  "steps" : [ {
+    "service" : "quoteLoanSchedule",
+    "params" : {
+      "loanId" : "Q-ofb-q001",
+      "scheduleStart" : "2025-05-24",
+      "currencyCode" : "EUR",
+      "currencyDecimalPlaces" : "2",
+      "principal" : "3.9100",
+      "disbursementDate" : "2025-05-24",
+      "installments" : "1",
+      "every" : "69",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "15.140000000",
+      "downPaymentEnabled" : false,
+      "monthDaysEnumId" : "LOAN_MDAYS_THIRTY",
+      "yearDaysEnumId" : "LOAN_YDAYS_ACTUAL",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING"
+    },
+    "expect" : {
+      "outcome" : "Scheduled",
+      "result" : {
+        "@type" : "Scheduled",
+        "schedule" : {
+          "loanId" : "Q-ofb-q001",
+          "currencyCode" : "EUR",
+          "decimalPlaces" : 2,
+          "termDays" : 69,
+          "totals" : {
+            "disbursed" : "3.91",
+            "principal" : "3.91",
+            "interest" : "0.12",
+            "fee" : "0.00",
+            "penalty" : "0.00",
+            "repayment" : "4.03",
+            "outstanding" : "0.00"
+          },
+          "lines" : [ {
+            "@type" : "DisbursementLine",
+            "from" : "2025-05-24",
+            "due" : "2025-05-24",
+            "amount" : "3.91",
+            "balanceAfter" : "3.91"
+          }, {
+            "@type" : "InstallmentLine",
+            "number" : 1,
+            "from" : "2025-05-24",
+            "due" : "2025-08-01",
+            "principal" : "3.91",
+            "interest" : "0.12",
+            "fee" : "0.00",
+            "penalty" : "0.00",
+            "totalDue" : "4.03",
+            "balanceAfter" : "0.00",
+            "remainingDue" : "0.00"
+          } ]
+        }
+      }
+    }
+  } ],
+  "checks" : [ {
+    "entity" : "Loan",
+    "where" : {
+      "termsLoanId" : "Q-ofb-q001"
+    },
+    "fields" : [ ],
+    "rows" : [ ],
+    "count" : 0
+  } ]
+}

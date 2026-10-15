@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-engine-xml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="{{ profile.host.dataDtd }}">
+{{~ for e in model.enums ~}}
+{{~ if e.status ~}}
+    <StatusType statusTypeId="{{ e.typeId }}" description="{{ e.name }}"/>
+{{~ for c in e.constants ~}}
+    <StatusItem statusId="{{ c.id }}" statusTypeId="{{ e.typeId }}" statusCode="{{ c.name }}" sequenceId="{{ (for.index + 1) | math.format '00' }}" description="{{ c.name }}"/>
+{{~ end ~}}
+{{~ else ~}}
+    <EnumerationType enumTypeId="{{ e.typeId }}" description="{{ e.name }}"/>
+{{~ for c in e.constants ~}}
+    <Enumeration enumId="{{ c.id }}" enumTypeId="{{ e.typeId }}" enumCode="{{ c.name }}" sequenceId="{{ (for.index + 1) | math.format '00' }}" description="{{ c.name }}"/>
+{{~ end ~}}
+{{~ end ~}}
+{{~ end ~}}
+{{~ for r in model.seed ~}}
+    <{{ r.entity }}{{ for a in r.attributes }} {{ a.name }}="{{ x.xml a.value }}"{{ end }}/>
+{{~ end ~}}
+</entity-engine-xml>

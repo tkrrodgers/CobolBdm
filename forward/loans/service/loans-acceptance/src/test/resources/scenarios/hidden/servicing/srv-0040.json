@@ -1,22 +1,27 @@
 {
   "id": "srv-0040",
   "slice": "servicing",
-  "origin": "the S5 loan envelope-2-p12-ceiling-0000000000001916; expected values: the reference over the in-memory ports for an organization whose base currency is GBP, without a rate from EUR",
-  "rules": ["SRV-03","SRV-10"],
-  "given": {"today":"2126-11-24","baseCurrency":"GBP","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "origin": "the S5 loan envelope-2-p12-ceiling-0000000000001916; expected values: the reference over the in-memory ports with a rate of 7 decimal places",
+  "rules": ["SRV-02","SRV-03","SRV-05","SRV-10","SRV-11"],
+  "given": {"today":"2126-11-24","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
-    {"call": "book", "input": {"externalId":"E-0480-X","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001916","scheduleStart":"2126-11-24","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"6075.8165","disbursementDate":"2126-11-24","installments":5,"every":199,"frequency":"DAYS","annualRatePercent":"9.300000000","downPaymentPercent":"18.365500000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}}},
-     "expected": {"@type":"Booked","loanId":"LN-E-0480-X","accountId":"ACC-0001","scheduleVersion":1}},
-    {"call": "disburse", "input": {"loanId":"LN-E-0480-X","paymentMethodId":"PM-1"},
-     "expected": {"@type":"Disbursed","loanId":"LN-E-0480-X","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":"INV-0001"}},
+    {"call": "book", "input": {"externalId":"E-0480-R","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001916","scheduleStart":"2126-11-24","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"6075.8165","disbursementDate":"2126-11-24","installments":5,"every":199,"frequency":"DAYS","annualRatePercent":"9.300000100","downPaymentPercent":"18.365500000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"BookingRejected","externalId":"E-0480-R","reason":"RATE_PRECISION_UNSUPPORTED_BY_LEDGER","scheduleReason":null,"field":null}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0480-R","paymentMethodId":"PM-1"},
+     "expected": {"@type":"ServicingRejected","reference":"LN-E-0480-R","reason":"UNKNOWN_LOAN"}},
+    {"call": "book", "input": {"externalId":"E-0480-R","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001916","scheduleStart":"2126-11-24","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"6075.8165","disbursementDate":"2126-11-24","installments":5,"every":199,"frequency":"DAYS","annualRatePercent":"9.300000000","downPaymentPercent":"18.365500000","downPaymentEnabled":true,"monthDays":"ACTUAL","yearDays":"DAYS_365","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":12,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0480-R","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0480-R","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0480-R","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":"INV-0001"}},
     {"call": "invoicePaid", "input": {"invoiceId":"INV-9999","paid":true},
      "expected": {"@type":"ServicingRejected","reference":"INV-9999","reason":"UNKNOWN_INVOICE"}}
   ],
   "state": {
     "today" : "2126-11-24",
     "loans" : [ {
-      "loanId" : "LN-E-0480-X",
-      "externalId" : "E-0480-X",
+      "loanId" : "LN-E-0480-R",
+      "externalId" : "E-0480-R",
+      "termsLoanId" : "LN-E-0480-R",
       "accountId" : "ACC-0001",
       "status" : "ACTIVE",
       "bookedOn" : "2126-11-24",
@@ -76,7 +81,7 @@
     "payments" : [ {
       "paymentId" : "PAY-0001",
       "payment" : {
-        "loanId" : "LN-E-0480-X",
+        "loanId" : "LN-E-0480-R",
         "loanProductId" : "PRODUCT-1",
         "fromPartyId" : "ORG-1",
         "toPartyId" : "BORROWER-1",
@@ -89,7 +94,7 @@
     "invoices" : [ {
       "invoiceId" : "INV-0001",
       "invoice" : {
-        "loanId" : "LN-E-0480-X",
+        "loanId" : "LN-E-0480-R",
         "loanProductId" : "PRODUCT-1",
         "lineNumber" : 1,
         "fromPartyId" : "ORG-1",
@@ -103,7 +108,7 @@
     "accounts" : [ {
       "accountId" : "ACC-0001",
       "account" : {
-        "loanId" : "LN-E-0480-X",
+        "loanId" : "LN-E-0480-R",
         "ownerPartyId" : "BORROWER-1",
         "organizationPartyId" : "ORG-1",
         "currencyCode" : "EUR"

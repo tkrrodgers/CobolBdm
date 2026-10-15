@@ -1,107 +1,116 @@
 {
   "id": "srv-0043",
   "slice": "servicing",
-  "origin": "the S5 loan envelope-1-p06-down-0000000000000565; expected values: the reference over the in-memory ports with a principal beyond the ledger's capacity",
-  "rules": ["IDEM-01","IDEM-02","SRV-03","SRV-10"],
-  "given": {"today":"2061-10-31","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
+  "origin": "the S5 loan envelope-1-p06-ceiling-0000000000000764; expected values: the reference over the in-memory ports with a rate of 7 decimal places",
+  "rules": ["SRV-02","SRV-05","SRV-10","SRV-11"],
+  "given": {"today":"2009-08-31","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
-    {"call": "book", "input": {"externalId":"E-0497-C","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000565","scheduleStart":"2061-06-06","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"54380000000.0000","disbursementDate":"2061-10-31","installments":9,"every":34,"frequency":"WEEKS","annualRatePercent":"86.610000000","downPaymentPercent":"88.043300000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":302,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"DOWN"}}},
-     "expected": {"@type":"Booked","loanId":"LN-E-0497-C","accountId":"ACC-0001","scheduleVersion":1}},
-    {"call": "disburse", "input": {"loanId":"LN-E-0497-C","paymentMethodId":"PM-1"},
-     "expected": {"@type":"Disbursed","loanId":"LN-E-0497-C","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":"INV-0001"}},
-    {"call": "book", "input": {"externalId":"E-0497-C","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000565","scheduleStart":"2061-06-06","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"27.1900","disbursementDate":"2061-10-31","installments":9,"every":34,"frequency":"WEEKS","annualRatePercent":"86.610000000","downPaymentPercent":"88.043300000","downPaymentEnabled":true,"monthDays":"THIRTY","yearDays":"ACTUAL","fixedLength":302,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"DOWN"}}},
-     "expected": {"@type":"Booked","loanId":"LN-E-0497-C","accountId":"ACC-0001","scheduleVersion":1}},
-    {"call": "disburse", "input": {"loanId":"LN-E-0497-C","paymentMethodId":"PM-1"},
-     "expected": {"@type":"Disbursed","loanId":"LN-E-0497-C","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":"INV-0001"}},
+    {"call": "book", "input": {"externalId":"E-0485-R","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000764","scheduleStart":"2009-06-16","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"1.4760","disbursementDate":"2009-08-31","installments":11,"every":1,"frequency":"MONTHS","annualRatePercent":"0.605800100","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"BookingRejected","externalId":"E-0485-R","reason":"RATE_PRECISION_UNSUPPORTED_BY_LEDGER","scheduleReason":null,"field":null}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0485-R","paymentMethodId":"PM-1"},
+     "expected": {"@type":"ServicingRejected","reference":"LN-E-0485-R","reason":"UNKNOWN_LOAN"}},
+    {"call": "book", "input": {"externalId":"E-0485-R","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000000764","scheduleStart":"2009-06-16","currency":{"code":"EUR","decimalPlaces":2,"roundingMultiple":null},"principal":"1.4760","disbursementDate":"2009-08-31","installments":11,"every":1,"frequency":"MONTHS","annualRatePercent":"0.605800000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_364","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
+     "expected": {"@type":"Booked","loanId":"LN-E-0485-R","accountId":"ACC-0001","scheduleVersion":1}},
+    {"call": "disburse", "input": {"loanId":"LN-E-0485-R","paymentMethodId":"PM-1"},
+     "expected": {"@type":"Disbursed","loanId":"LN-E-0485-R","paymentId":"PAY-0001","accountTransactionId":"TRN-0001","downPaymentInvoiceId":null}},
     {"call": "invoicePaid", "input": {"invoiceId":"INV-9999","paid":true},
      "expected": {"@type":"ServicingRejected","reference":"INV-9999","reason":"UNKNOWN_INVOICE"}}
   ],
   "state": {
-    "today" : "2061-10-31",
+    "today" : "2009-08-31",
     "loans" : [ {
-      "loanId" : "LN-E-0497-C",
-      "externalId" : "E-0497-C",
+      "loanId" : "LN-E-0485-R",
+      "externalId" : "E-0485-R",
+      "termsLoanId" : "LN-E-0485-R",
       "accountId" : "ACC-0001",
       "status" : "ACTIVE",
-      "bookedOn" : "2061-10-31",
+      "bookedOn" : "2009-08-31",
       "scheduleVersion" : 1,
       "lines" : [ {
         "number" : 1,
-        "due" : "2061-10-31",
-        "principal" : "47877900000.00",
+        "due" : "2009-07-16",
+        "principal" : "0.00",
         "interest" : "0.00",
-        "invoiceId" : "INV-0001",
-        "billedOn" : "2061-10-31",
+        "invoiceId" : null,
+        "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 2,
-        "due" : "2062-01-30",
-        "principal" : "2020713211.20",
-        "interest" : "1403980000.00",
+        "due" : "2009-08-16",
+        "principal" : "0.00",
+        "interest" : "0.00",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 3,
-        "due" : "2062-09-25",
-        "principal" : "893903211.20",
-        "interest" : "2530790000.00",
+        "due" : "2009-09-16",
+        "principal" : "0.16",
+        "interest" : "0.01",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 4,
-        "due" : "2063-05-21",
-        "principal" : "1398703211.20",
-        "interest" : "2025990000.00",
+        "due" : "2009-10-16",
+        "principal" : "0.16",
+        "interest" : "0.01",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 5,
-        "due" : "2064-01-14",
-        "principal" : "2188780366.40",
-        "interest" : "1235890000.00",
+        "due" : "2009-11-16",
+        "principal" : "0.16",
+        "interest" : "0.01",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 6,
-        "due" : "2064-09-08",
-        "principal" : "0.00",
-        "interest" : "0.00",
+        "due" : "2009-12-16",
+        "principal" : "0.16",
+        "interest" : "0.01",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 7,
-        "due" : "2065-05-04",
-        "principal" : "0.00",
-        "interest" : "0.00",
+        "due" : "2010-01-16",
+        "principal" : "0.16",
+        "interest" : "0.01",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 8,
-        "due" : "2065-12-28",
-        "principal" : "0.00",
-        "interest" : "0.00",
+        "due" : "2010-02-16",
+        "principal" : "0.16",
+        "interest" : "0.01",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 9,
-        "due" : "2066-08-23",
-        "principal" : "0.00",
-        "interest" : "0.00",
+        "due" : "2010-03-16",
+        "principal" : "0.16",
+        "interest" : "0.01",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
       }, {
         "number" : 10,
-        "due" : "2067-03-21",
-        "principal" : "0.00",
-        "interest" : "0.00",
+        "due" : "2010-04-16",
+        "principal" : "0.16",
+        "interest" : "0.01",
+        "invoiceId" : null,
+        "billedOn" : null,
+        "collectionTransactionId" : null
+      }, {
+        "number" : 11,
+        "due" : "2010-05-16",
+        "principal" : "0.20",
+        "interest" : "0.01",
         "invoiceId" : null,
         "billedOn" : null,
         "collectionTransactionId" : null
@@ -112,47 +121,34 @@
     "payments" : [ {
       "paymentId" : "PAY-0001",
       "payment" : {
-        "loanId" : "LN-E-0497-C",
+        "loanId" : "LN-E-0485-R",
         "loanProductId" : "PRODUCT-1",
         "fromPartyId" : "ORG-1",
         "toPartyId" : "BORROWER-1",
         "paymentMethodId" : "PM-1",
         "currencyCode" : "EUR",
-        "amount" : "54380000000.00",
-        "date" : "2061-10-31"
+        "amount" : "1.48",
+        "date" : "2009-08-31"
       }
     } ],
-    "invoices" : [ {
-      "invoiceId" : "INV-0001",
-      "invoice" : {
-        "loanId" : "LN-E-0497-C",
-        "loanProductId" : "PRODUCT-1",
-        "lineNumber" : 1,
-        "fromPartyId" : "ORG-1",
-        "toPartyId" : "BORROWER-1",
-        "currencyCode" : "EUR",
-        "invoiceDate" : "2061-10-31",
-        "principal" : "47877900000.00",
-        "interest" : "0.00"
-      }
-    } ],
+    "invoices" : [ ],
     "accounts" : [ {
       "accountId" : "ACC-0001",
       "account" : {
-        "loanId" : "LN-E-0497-C",
+        "loanId" : "LN-E-0485-R",
         "ownerPartyId" : "BORROWER-1",
         "organizationPartyId" : "ORG-1",
         "currencyCode" : "EUR"
       },
-      "balance" : "-54380000000.00"
+      "balance" : "-1.48"
     } ],
     "transactions" : [ {
       "transactionId" : "TRN-0001",
       "transaction" : {
         "accountId" : "ACC-0001",
         "type" : "WITHDRAWAL",
-        "amount" : "54380000000.00",
-        "date" : "2061-10-31",
+        "amount" : "1.48",
+        "date" : "2009-08-31",
         "paymentId" : "PAY-0001",
         "invoiceId" : null
       },

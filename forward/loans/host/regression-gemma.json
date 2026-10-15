@@ -1,0 +1,10 @@
+{
+  "schema": "mlcpu.host-regression.v1",
+  "checked": "2026-10-15T12:10:52-07:00",
+  "pass": true,
+  "tests": 642,
+  "passedWithout": 642,
+  "passedWith": 642,
+  "changed": [],
+  "onlyWith": []
+}

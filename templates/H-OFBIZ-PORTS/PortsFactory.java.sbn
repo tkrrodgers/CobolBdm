@@ -1,0 +1,38 @@
+{{~ R = model.plugin.resourceName ~}}
+package {{ model.plugin.javaPackage }};
+
+import {{ model.api.portsFqn }};
+import java.time.LocalDate;
+import java.util.Map;
+
+import org.apache.ofbiz.entity.GenericValue;
+import org.apache.ofbiz.service.DispatchContext;
+
+/**
+ * Wires the engine's ports for one service call: the generated implementations and the implementer's (the holes), each over the
+ * same port context. The business date is the call's businessDate attribute, else the pinned one (BUSINESS_DATE), else today.
+ */
+public final class {{ R }}PortsFactory {
+
+    /**
+     * The business date of a call that does not carry one (a service an OFBiz event triggers, such as an invoice becoming paid):
+     * this system property, which a test or a replay of a business day pins, or else today.
+     */
+    public static final String BUSINESS_DATE = "{{ model.plugin.id }}.businessDate";
+
+    private {{ R }}PortsFactory() {
+    }
+
+    public static {{ model.api.ports }} create(DispatchContext dctx, Map<String, ? extends Object> context) {
+        LocalDate businessDate = {{ R }}Context.date(context, "businessDate");
+        if (businessDate == null && System.getProperty(BUSINESS_DATE) != null) {
+            businessDate = LocalDate.parse(System.getProperty(BUSINESS_DATE));
+        }
+        {{ R }}PortContext ports = new {{ R }}PortContext(dctx.getDispatcher(), dctx.getDelegator(), (GenericValue) context.get("userLogin"),
+                businessDate == null ? LocalDate.now() : businessDate);
+        return new {{ model.api.ports }}(
+{{~ for p in model.ports ~}}
+                new {{ p.class }}(ports){{ if !for.last }},{{ else }});{{ end }}
+{{~ end ~}}
+    }
+}

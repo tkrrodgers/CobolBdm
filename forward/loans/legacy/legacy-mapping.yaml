@@ -1,0 +1,83 @@
+# The legacy loan book's records as Java (C-LEGACY-LAYOUT, GemmaJavaTemplates.md 3.4 and 5.3; FE 9.2 LEG-01). The layouts are the
+# record kit's for the job step FNLS0100 (CobolBdm, clean-room project fineract-cobol-cr, published normalization; copied here as
+# FNLS0100.record-layouts.json because publish/ is not versioned). This mapping names only what the copybooks cannot say; every
+# other type follows from the PIC (MlCpu.Templates LegacyModelBuilder).
+schema: mlcpu.legacy-mapping.v1
+layouts: FNLS0100.record-layouts.json
+package: com.mlcpu.loans.api.legacy
+codec: LegacyCodec
+title: The legacy loan book's records, decoded from the estate's fixed-length datasets (Latin-1, one record per LRECL)
+records:
+  - layout: FN-LOAN-REQUEST
+    name: LegacyRequest
+    title: A loan request (LOAN.REQUEST.DATA, copybook FNLNREQ)
+    prefix: RQ-
+    constants: { RQ-REC-TYPE: LR }
+    ids: [RQ-LOAN-ID]
+    dates: [RQ-SCHED-START-DATE, RQ-DISB-DATE]
+    flags: [RQ-DOWNPAY-ENABLED, RQ-DOWNPAY-PCT-IND, RQ-MULTIPLES-IND, RQ-FIXED-LENGTH-IND, RQ-INT-RECOG-DISB, RQ-ALLOW-PARTIAL, RQ-FULL-TERM-TRANCHE]
+  - layout: FN-SCHEDULE-REC
+    name: LegacyScheduleRecord
+    title: A record of a loan's schedule (LOAN.SCHEDULE.DATA, copybook FNSCHED) - its header or one of its lines
+    prefix: SC-
+    ids: [SC-LOAN-ID]
+    discriminator: SC-REC-TYPE
+    variants:
+      - { name: LegacyScheduleHeader, group: SC-HEADER, prefix: SH-, when: [H], title: "The header of a loan's schedule: currency, term, line count and totals" }
+      - { name: LegacyScheduleLine, group: SC-PERIOD, prefix: SP-, when: [D, P, R], dates: [SP-FROM-DATE, SP-DUE-DATE],
+          title: "A line of a loan's schedule: the disbursement (D), the down payment (P) or an installment (R)" }
+  - layout: FN-REJECT-REC
+    name: LegacyReject
+    title: A rejected request (LOAN.REJECTS.DATA, copybook FNREJCT)
+    prefix: RJ-
+    ids: [RJ-LOAN-ID]
+  - layout: FN-CURRENCY-REC
+    name: LegacyCurrency
+    title: A currency (CURRENCY.VSAM.KSDS, copybook FNCURR)
+    prefix: CU-
+    flags: [CU-MULTIPLES-IND]
+  - layout: FN-RUN-CONTROL
+    name: LegacyRunControl
+    title: The run's calculation (RUN.CONTROL, copybook FNRUNCT)
+    prefix: RC-
+    constants: { RC-REC-TYPE: MC }
+fromTerms:              # G11 (FE 9.3): the service's terms as legacy records, the inverse of MIG-01 to MIG-05, for the shadow run's export
+  class: LegacyTermsCodec
+  request:
+    record: LegacyRequest
+    method: request
+    paramType: com.mlcpu.loans.api.ScheduleRequest
+    root: terms
+    extra: ", String legacyLoanId"
+    fields:
+      loanId: { param: legacyLoanId }
+      schedStartDate: scheduleStart
+      currencyCode: currency.code
+      disbAmount: principal
+      disbDate: disbursementDate
+      numRepayments: installments
+      repayEvery: every
+      freqType: { from: frequency, codes: { DAYS: DAYS, WEEKS: WEEKS, MONTHS: MONTHS, YEARS: YEARS } }
+      annualRate: annualRatePercent
+      downpayEnabled: downPaymentEnabled
+      daysInMonth: { from: monthDays, codes: { ACTUAL: 1, THIRTY: 30 } }
+      daysInYear: { from: yearDays, codes: { ACTUAL: 1, DAYS_360: 360, DAYS_364: 364, DAYS_365: 365 } }
+      downpayPctInd: { present: downPaymentPercent }
+      downpayPct: { from: downPaymentPercent, absent: "0" }
+      multiplesInd: { constant: false }        # D-4: not in the API, the legacy's no-effect values
+      multiples: { constant: 0 }
+      fixedLengthInd: { present: fixedLength }
+      fixedLength: { from: fixedLength, absent: 0 }
+      intRecogDisb: { constant: false }
+      diyStrategy: { constant: "" }
+      interestMethod: { from: interestMethod, codes: { DECLINING_BALANCE: DECLINING_BALANCE, FLAT: FLAT } }
+      allowPartial: { constant: false }
+      fullTermTranche: fullTermTranche
+  runControl:
+    record: LegacyRunControl
+    method: runControl
+    paramType: com.mlcpu.loans.api.Calculation
+    root: calculation
+    fields:
+      precision: precision
+      roundingMode: { from: roundingMode, name: true }

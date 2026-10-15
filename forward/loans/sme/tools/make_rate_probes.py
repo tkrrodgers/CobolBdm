@@ -8,7 +8,13 @@ dates to month ends the start's day never reaches. The probes are the monthly 30
 start moved to day 29 or 30 and their disbursement to day 31 of the same month (January, March, May, July, August, October,
 December: months with 31 days), loan ids and order kept.
 
-Usage: python -I make_rate_probes.py <corpus scenario dir> <out scenario dir> [max loans, 120]
+RATE-05 (actual days in the month) rounds the stretch's day count to the precision before dividing by the days in the year; it
+shows only when the count has more digits than the precision (a stretch of 1,000 days or more at precision 3), which the corpus
+almost never has (3 loans of an edge cell). The probes are the actual-month-day loans of a corpus scenario (days in the year not
+actual: those cross years, RATE-04) with their installments every 3 years (1,095 or 1,096 days) and at most 20 of them, loan
+ids and order kept. Found by the shadow run (G11) and the S5 sweep: a model's engine that left the days exact.
+
+Usage: python -I make_rate_probes.py <corpus scenario dir> <out scenario dir> [max loans, 120] [rule: RATE-08 (default), RATE-05]
 """
 import os
 import sys
@@ -16,13 +22,20 @@ import sys
 MONTHS_31 = [1, 3, 5, 7, 8, 10, 12]
 
 
-def main(src, out, limit=120):
+def main(src, out, limit=120, rule="RATE-08"):
     limit = int(limit)
     os.makedirs(out, exist_ok=True)
     lines = [l.rstrip("\r") for l in open(os.path.join(src, "LOAN.REQUEST.txt"), encoding="latin-1").read().split("\n") if l.strip()]
     probes = []
     for i, q in enumerate(lines):
         q = q.ljust(200)
+        if rule == "RATE-05":
+            if q[0:2] != "LR" or q[87:89] == "30" or q[89:92] == "001":
+                continue
+            probes.append(q[:55] + f"{min(int(q[55:59]), 20):04d}" + "0003" + "YEARS".ljust(10) + q[73:])
+            if len(probes) >= limit:
+                break
+            continue
         if q[0:2] != "LR" or q[63:73].rstrip() != "MONTHS" or q[87:89] != "30":
             continue
         year = q[18:22]
@@ -42,4 +55,4 @@ def main(src, out, limit=120):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:4])
+    main(*sys.argv[1:5])

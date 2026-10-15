@@ -1,0 +1,15 @@
+{
+  "id": "mig-0183",
+  "slice": "migration",
+  "origin": "legacy book sample-p06-half_even, loan 0000000000001203",
+  "rules": ["MIG-02","MIG-04","MIG-05"],
+  "steps": [ {
+    "call": "legacyTerms",
+    "input": {"request":"LR000000000000120321991231USD+000099999999999992199123104800052WEEKS     +100000000000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC06HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    "},
+    "expected": {"@type":"LegacyTerms","terms":{"loanId":"0000000000001203","scheduleStart":"2199-12-31","currency":{"code":"USD","decimalPlaces":2,"roundingMultiple":null},"principal":"999999999.9999","disbursementDate":"2199-12-31","installments":480,"every":52,"frequency":"WEEKS","annualRatePercent":"100.000000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"THIRTY","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"HALF_EVEN"}}}
+  }, {
+    "call": "reconcile",
+    "input": {"request":"LR000000000000120321991231USD+000099999999999992199123104800052WEEKS     +100000000000N30360N+000000000000N000000000N00000N                    DECLINING_BALANCE NN                                     ","runControl":"MC06HALF_EVEN                                                                   ","currency":"USD02N00000US Dollar                    ","schedule":[],"reject":"0000000000001203RJTNNT04S12                     SINGLE INSTALLMENT AFTER LATE DISBURSEMENT NOT OFFERED                  "},
+    "expected": {"loanId":"0000000000001203","outcome":"LEGACY_REJECT","decision":null,"field":null,"legacyValue":null,"serviceValue":null,"legacyCode":"RJTNNT04","serviceRejection":"SINGLE_INSTALLMENT_AFTER_LATE_DISBURSEMENT"}
+  } ]
+}

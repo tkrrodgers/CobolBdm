@@ -1,0 +1,46 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0004",
+  "origin" : "the S5 loan envelope-1-p06-ceiling-0000000000000110, moved 112 years into OFBiz's dated window; expected values: the reference over in-memory ports with the demo ledger",
+  "rules" : [ "D-1", "OFB-02" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2019-10-28",
+    "params" : {
+      "externalId" : "E-ofb-0004",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000000110",
+      "scheduleStart" : "2019-10-28",
+      "currencyCode" : "INR",
+      "currencyDecimalPlaces" : "2",
+      "currencyRoundingMultiple" : "10",
+      "principal" : "132.4100",
+      "disbursementDate" : "2019-10-28",
+      "installments" : "12",
+      "every" : "165",
+      "frequencyEnumId" : "LOAN_FREQ_DAYS",
+      "annualRatePercent" : "90.620000000",
+      "downPaymentEnabled" : false,
+      "monthDaysEnumId" : "LOAN_MDAYS_ACTUAL",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_360",
+      "interestMethodEnumId" : "LOAN_IM_FLAT",
+      "fullTermTranche" : false,
+      "calcPrecision" : "6",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2019-10-28"
+    },
+    "expect" : {
+      "outcome" : "BookingRejected",
+      "result" : {
+        "@type" : "BookingRejected",
+        "externalId" : "E-ofb-0004",
+        "reason" : "SCHEDULE_REJECTED",
+        "scheduleReason" : "FLAT_INTEREST_NOT_OFFERED",
+        "field" : null
+      }
+    }
+  } ],
+  "checks" : [ ]
+}

@@ -1,0 +1,5374 @@
+{
+  "schema": "mlcpu.service-model.v1",
+  "service": {
+    "name": "loans",
+    "title": "Loans",
+    "description": "Loan quoting, disclosure, booking, disbursement, installment billing and principal collection on OFBiz accounting."
+  },
+  "api": {
+    "package": "com.mlcpu.loans.api",
+    "application": "com.mlcpu.loans.application.LoansApplication",
+    "ports": "LoansPorts",
+    "quotes": "quotes",
+    "create": "create",
+    "portsFqn": "com.mlcpu.loans.api.ports.LoansPorts"
+  },
+  "plugin": {
+    "id": "loans",
+    "resourceName": "Loans",
+    "javaPackage": "org.apache.ofbiz.loans",
+    "permissionService": "acctgFinAcctPermissionCheck"
+  },
+  "enums": [
+    {
+      "name": "Frequency",
+      "fqn": "com.mlcpu.loans.api.Frequency",
+      "typeId": "LOAN_FREQUENCY",
+      "constants": [
+        {
+          "name": "DAYS",
+          "id": "LOAN_FREQ_DAYS"
+        },
+        {
+          "name": "WEEKS",
+          "id": "LOAN_FREQ_WEEKS"
+        },
+        {
+          "name": "MONTHS",
+          "id": "LOAN_FREQ_MONTHS"
+        },
+        {
+          "name": "YEARS",
+          "id": "LOAN_FREQ_YEARS"
+        }
+      ],
+      "status": false
+    },
+    {
+      "name": "InterestMethod",
+      "fqn": "com.mlcpu.loans.api.InterestMethod",
+      "typeId": "LOAN_INTEREST_METHOD",
+      "constants": [
+        {
+          "name": "DECLINING_BALANCE",
+          "id": "LOAN_IM_DECLINING"
+        },
+        {
+          "name": "FLAT",
+          "id": "LOAN_IM_FLAT"
+        }
+      ],
+      "status": false
+    },
+    {
+      "name": "LoanStatus",
+      "fqn": "com.mlcpu.loans.api.ports.LoanStatus",
+      "typeId": "LOAN_STATUS",
+      "constants": [
+        {
+          "name": "BOOKED",
+          "id": "LOAN_BOOKED"
+        },
+        {
+          "name": "ACTIVE",
+          "id": "LOAN_ACTIVE"
+        },
+        {
+          "name": "PAID_OFF",
+          "id": "LOAN_PAID_OFF"
+        }
+      ],
+      "status": true
+    },
+    {
+      "name": "MonthDays",
+      "fqn": "com.mlcpu.loans.api.MonthDays",
+      "typeId": "LOAN_MONTH_DAYS",
+      "constants": [
+        {
+          "name": "ACTUAL",
+          "id": "LOAN_MDAYS_ACTUAL"
+        },
+        {
+          "name": "THIRTY",
+          "id": "LOAN_MDAYS_THIRTY"
+        }
+      ],
+      "status": false
+    },
+    {
+      "name": "RoundingMode",
+      "fqn": "java.math.RoundingMode",
+      "typeId": "LOAN_ROUNDING_MODE",
+      "constants": [
+        {
+          "name": "UP",
+          "id": "LOAN_RND_UP"
+        },
+        {
+          "name": "DOWN",
+          "id": "LOAN_RND_DOWN"
+        },
+        {
+          "name": "CEILING",
+          "id": "LOAN_RND_CEILING"
+        },
+        {
+          "name": "FLOOR",
+          "id": "LOAN_RND_FLOOR"
+        },
+        {
+          "name": "HALF_UP",
+          "id": "LOAN_RND_HALF_UP"
+        },
+        {
+          "name": "HALF_DOWN",
+          "id": "LOAN_RND_HALF_DOWN"
+        },
+        {
+          "name": "HALF_EVEN",
+          "id": "LOAN_RND_HALF_EVEN"
+        },
+        {
+          "name": "UNNECESSARY",
+          "id": "LOAN_RND_UNNECESSARY"
+        }
+      ],
+      "status": false
+    },
+    {
+      "name": "YearDays",
+      "fqn": "com.mlcpu.loans.api.YearDays",
+      "typeId": "LOAN_YEAR_DAYS",
+      "constants": [
+        {
+          "name": "ACTUAL",
+          "id": "LOAN_YDAYS_ACTUAL"
+        },
+        {
+          "name": "DAYS_360",
+          "id": "LOAN_YDAYS_DAYS_360"
+        },
+        {
+          "name": "DAYS_364",
+          "id": "LOAN_YDAYS_DAYS_364"
+        },
+        {
+          "name": "DAYS_365",
+          "id": "LOAN_YDAYS_DAYS_365"
+        }
+      ],
+      "status": false
+    }
+  ],
+  "aggregates": [
+    {
+      "id": "agg.loan",
+      "record": "LoanRecord",
+      "fqn": "com.mlcpu.loans.api.ports.LoanRecord",
+      "entity": "Loan",
+      "key": "loanId",
+      "codec": "LoanRecord",
+      "children": [
+        {
+          "path": "schedule.lines",
+          "entity": "LoanScheduleLine",
+          "kind": "sealed",
+          "elementType": "ScheduleLine",
+          "codec": null,
+          "sealed": "ScheduleLine",
+          "discriminator": "lineTypeId",
+          "variants": [
+            {
+              "record": "DisbursementLine",
+              "codec": "DisbursementLine",
+              "value": "LOAN_DISBURSEMENT"
+            },
+            {
+              "record": "DownPaymentLine",
+              "codec": "DownPaymentLine",
+              "value": "LOAN_DOWN_PAYMENT"
+            },
+            {
+              "record": "InstallmentLine",
+              "codec": "InstallmentLine",
+              "value": "LOAN_INSTALLMENT"
+            }
+          ],
+          "accessors": [
+            "schedule",
+            "lines"
+          ],
+          "method": "ScheduleLines"
+        },
+        {
+          "path": "lines",
+          "entity": "LoanServicingLine",
+          "kind": "record",
+          "elementType": "LineServicing",
+          "codec": "LineServicing",
+          "sealed": null,
+          "discriminator": null,
+          "variants": [],
+          "accessors": [
+            "lines"
+          ],
+          "method": "Lines"
+        }
+      ],
+      "imports": [
+        "com.mlcpu.loans.api.Calculation",
+        "com.mlcpu.loans.api.CurrencyTerms",
+        "com.mlcpu.loans.api.DisbursementLine",
+        "com.mlcpu.loans.api.DownPaymentLine",
+        "com.mlcpu.loans.api.Frequency",
+        "com.mlcpu.loans.api.InstallmentLine",
+        "com.mlcpu.loans.api.InterestMethod",
+        "com.mlcpu.loans.api.MonthDays",
+        "com.mlcpu.loans.api.Schedule",
+        "com.mlcpu.loans.api.ScheduleLine",
+        "com.mlcpu.loans.api.ScheduleRequest",
+        "com.mlcpu.loans.api.Totals",
+        "com.mlcpu.loans.api.YearDays",
+        "com.mlcpu.loans.api.ports.LineServicing",
+        "com.mlcpu.loans.api.ports.LoanRecord",
+        "com.mlcpu.loans.api.ports.LoanStatus",
+        "java.math.RoundingMode"
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "aggregate": "agg.loan",
+      "root": true,
+      "codec": "LoanRecord",
+      "parent": null,
+      "parentKey": null,
+      "hostOnly": false,
+      "name": "Loan",
+      "title": "A booked loan, its terms, its current schedule and its servicing state",
+      "columns": [
+        {
+          "name": "loanId",
+          "type": "id-long",
+          "kind": "string",
+          "path": "loanId"
+        },
+        {
+          "name": "externalId",
+          "type": "id-long",
+          "kind": "string",
+          "path": "externalId"
+        },
+        {
+          "name": "ownerPartyId",
+          "type": "id",
+          "kind": "string",
+          "path": "ownerPartyId"
+        },
+        {
+          "name": "organizationPartyId",
+          "type": "id",
+          "kind": "string",
+          "path": "organizationPartyId"
+        },
+        {
+          "name": "loanProductId",
+          "type": "id",
+          "kind": "string",
+          "path": "loanProductId"
+        },
+        {
+          "name": "accountId",
+          "type": "id",
+          "kind": "string",
+          "path": "accountId"
+        },
+        {
+          "name": "termsLoanId",
+          "type": "id-long",
+          "kind": "string",
+          "path": "terms.loanId"
+        },
+        {
+          "name": "scheduleStart",
+          "type": "date",
+          "kind": "date",
+          "path": "terms.scheduleStart"
+        },
+        {
+          "name": "currencyCode",
+          "type": "id",
+          "kind": "string",
+          "path": "terms.currency.code"
+        },
+        {
+          "name": "currencyDecimalPlaces",
+          "type": "numeric",
+          "kind": "int",
+          "path": "terms.currency.decimalPlaces"
+        },
+        {
+          "name": "currencyRoundingMultiple",
+          "type": "numeric",
+          "kind": "int",
+          "path": "terms.currency.roundingMultiple"
+        },
+        {
+          "name": "principal",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "terms.principal"
+        },
+        {
+          "name": "disbursementDate",
+          "type": "date",
+          "kind": "date",
+          "path": "terms.disbursementDate"
+        },
+        {
+          "name": "installments",
+          "type": "numeric",
+          "kind": "int",
+          "path": "terms.installments"
+        },
+        {
+          "name": "every",
+          "type": "numeric",
+          "kind": "int",
+          "path": "terms.every"
+        },
+        {
+          "name": "frequencyEnumId",
+          "type": "id",
+          "kind": "enum",
+          "path": "terms.frequency",
+          "enum": "Frequency"
+        },
+        {
+          "name": "annualRatePercent",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "terms.annualRatePercent"
+        },
+        {
+          "name": "downPaymentPercent",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "terms.downPaymentPercent"
+        },
+        {
+          "name": "downPaymentEnabled",
+          "type": "indicator",
+          "kind": "boolean",
+          "path": "terms.downPaymentEnabled"
+        },
+        {
+          "name": "monthDaysEnumId",
+          "type": "id",
+          "kind": "enum",
+          "path": "terms.monthDays",
+          "enum": "MonthDays"
+        },
+        {
+          "name": "yearDaysEnumId",
+          "type": "id",
+          "kind": "enum",
+          "path": "terms.yearDays",
+          "enum": "YearDays"
+        },
+        {
+          "name": "fixedLength",
+          "type": "numeric",
+          "kind": "int",
+          "path": "terms.fixedLength"
+        },
+        {
+          "name": "interestMethodEnumId",
+          "type": "id",
+          "kind": "enum",
+          "path": "terms.interestMethod",
+          "enum": "InterestMethod"
+        },
+        {
+          "name": "fullTermTranche",
+          "type": "indicator",
+          "kind": "boolean",
+          "path": "terms.fullTermTranche"
+        },
+        {
+          "name": "calcPrecision",
+          "type": "numeric",
+          "kind": "int",
+          "path": "terms.calculation.precision"
+        },
+        {
+          "name": "calcRoundingModeEnumId",
+          "type": "id",
+          "kind": "enum",
+          "path": "terms.calculation.roundingMode",
+          "enum": "RoundingMode"
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "kind": "enum",
+          "path": "status",
+          "enum": "LoanStatus"
+        },
+        {
+          "name": "bookedOn",
+          "type": "date",
+          "kind": "date",
+          "path": "bookedOn"
+        },
+        {
+          "name": "scheduleVersion",
+          "type": "numeric",
+          "kind": "int",
+          "path": "scheduleVersion"
+        },
+        {
+          "name": "scheduleLoanId",
+          "type": "id-long",
+          "kind": "string",
+          "path": "schedule.loanId"
+        },
+        {
+          "name": "scheduleCurrencyCode",
+          "type": "id",
+          "kind": "string",
+          "path": "schedule.currencyCode"
+        },
+        {
+          "name": "scheduleDecimalPlaces",
+          "type": "numeric",
+          "kind": "int",
+          "path": "schedule.decimalPlaces"
+        },
+        {
+          "name": "scheduleTermDays",
+          "type": "numeric",
+          "kind": "int",
+          "path": "schedule.termDays"
+        },
+        {
+          "name": "totalDisbursed",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "schedule.totals.disbursed"
+        },
+        {
+          "name": "totalPrincipal",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "schedule.totals.principal"
+        },
+        {
+          "name": "totalInterest",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "schedule.totals.interest"
+        },
+        {
+          "name": "totalFee",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "schedule.totals.fee"
+        },
+        {
+          "name": "totalPenalty",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "schedule.totals.penalty"
+        },
+        {
+          "name": "totalRepayment",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "schedule.totals.repayment"
+        },
+        {
+          "name": "outstandingTotal",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "schedule.totals.outstanding"
+        },
+        {
+          "name": "disbursementPaymentId",
+          "type": "id",
+          "kind": "string",
+          "path": "disbursementPaymentId"
+        },
+        {
+          "name": "disbursementTransactionId",
+          "type": "id",
+          "kind": "string",
+          "path": "disbursementTransactionId"
+        }
+      ],
+      "pk": [
+        "loanId"
+      ],
+      "relations": [
+        {
+          "type": "one-nofk",
+          "entity": "Party",
+          "fields": [
+            "ownerPartyId"
+          ],
+          "remote": "partyId",
+          "title": "Owner",
+          "fkName": "LOA_OWNPAR"
+        },
+        {
+          "type": "one-nofk",
+          "entity": "Party",
+          "fields": [
+            "organizationPartyId"
+          ],
+          "remote": "partyId",
+          "title": "Organization",
+          "fkName": "LOA_ORGPAR"
+        },
+        {
+          "type": "one-nofk",
+          "entity": "FinAccount",
+          "fields": [
+            "accountId"
+          ],
+          "remote": "finAccountId",
+          "title": "Account",
+          "fkName": "LOA_ACCFINACC"
+        },
+        {
+          "type": "one-nofk",
+          "entity": "LoanProduct",
+          "fields": [
+            "loanProductId"
+          ],
+          "remote": "loanProductId",
+          "title": null,
+          "fkName": "LOA_LOAPRO"
+        },
+        {
+          "type": "one",
+          "entity": "Enumeration",
+          "fields": [
+            "frequencyEnumId"
+          ],
+          "remote": "enumId",
+          "title": "Frequency",
+          "fkName": "LOA_FREENU"
+        },
+        {
+          "type": "one",
+          "entity": "Enumeration",
+          "fields": [
+            "monthDaysEnumId"
+          ],
+          "remote": "enumId",
+          "title": "MonthDays",
+          "fkName": "LOA_MONDAYENU"
+        },
+        {
+          "type": "one",
+          "entity": "Enumeration",
+          "fields": [
+            "yearDaysEnumId"
+          ],
+          "remote": "enumId",
+          "title": "YearDays",
+          "fkName": "LOA_YEADAYENU"
+        },
+        {
+          "type": "one",
+          "entity": "Enumeration",
+          "fields": [
+            "interestMethodEnumId"
+          ],
+          "remote": "enumId",
+          "title": "InterestMethod",
+          "fkName": "LOA_INTMETENU"
+        },
+        {
+          "type": "one",
+          "entity": "Enumeration",
+          "fields": [
+            "calcRoundingModeEnumId"
+          ],
+          "remote": "enumId",
+          "title": "CalcRoundingMode",
+          "fkName": "LOA_CALROUMODENU"
+        },
+        {
+          "type": "one",
+          "entity": "StatusItem",
+          "fields": [
+            "statusId"
+          ],
+          "remote": "statusId",
+          "title": null,
+          "fkName": "LOA_STAITE"
+        }
+      ],
+      "unique": [
+        "externalId"
+      ],
+      "indexes": []
+    },
+    {
+      "aggregate": "agg.loan",
+      "root": false,
+      "codec": null,
+      "parent": "Loan",
+      "parentKey": "loanId",
+      "hostOnly": false,
+      "name": "LoanScheduleLine",
+      "title": "The lines of a loan's current schedule (disbursement, down payment, installments)",
+      "columns": [
+        {
+          "name": "loanId",
+          "type": "id-long",
+          "kind": "string",
+          "path": "(parent)"
+        },
+        {
+          "name": "lineSeqId",
+          "type": "id",
+          "kind": "string",
+          "path": "(position)"
+        },
+        {
+          "name": "lineTypeId",
+          "type": "id",
+          "kind": "string",
+          "path": "(variant)"
+        },
+        {
+          "name": "fromDate",
+          "type": "date",
+          "kind": "date",
+          "path": "from"
+        },
+        {
+          "name": "dueDate",
+          "type": "date",
+          "kind": "date",
+          "path": "due"
+        },
+        {
+          "name": "amount",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "amount"
+        },
+        {
+          "name": "balanceAfter",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "balanceAfter"
+        },
+        {
+          "name": "lineNumber",
+          "type": "numeric",
+          "kind": "int",
+          "path": "number"
+        },
+        {
+          "name": "principal",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "principal"
+        },
+        {
+          "name": "totalDue",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "totalDue"
+        },
+        {
+          "name": "remainingDue",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "remainingDue"
+        },
+        {
+          "name": "interest",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "interest"
+        },
+        {
+          "name": "fee",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "fee"
+        },
+        {
+          "name": "penalty",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "penalty"
+        }
+      ],
+      "pk": [
+        "loanId",
+        "lineSeqId"
+      ],
+      "relations": [
+        {
+          "type": "one",
+          "entity": "Loan",
+          "fields": [
+            "loanId"
+          ],
+          "remote": "loanId",
+          "title": null,
+          "fkName": "LOASCHLIN_LOA"
+        }
+      ],
+      "unique": [],
+      "indexes": []
+    },
+    {
+      "aggregate": "agg.loan",
+      "root": false,
+      "codec": null,
+      "parent": "Loan",
+      "parentKey": "loanId",
+      "hostOnly": false,
+      "name": "LoanServicingLine",
+      "title": "The servicing state of each line to bill (its invoice and the deposit that collected its principal)",
+      "columns": [
+        {
+          "name": "loanId",
+          "type": "id-long",
+          "kind": "string",
+          "path": "(parent)"
+        },
+        {
+          "name": "lineSeqId",
+          "type": "id",
+          "kind": "string",
+          "path": "(position)"
+        },
+        {
+          "name": "lineNumber",
+          "type": "numeric",
+          "kind": "int",
+          "path": "number"
+        },
+        {
+          "name": "dueDate",
+          "type": "date",
+          "kind": "date",
+          "path": "due"
+        },
+        {
+          "name": "principal",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "principal"
+        },
+        {
+          "name": "interest",
+          "type": "fixed-point",
+          "kind": "decimal",
+          "path": "interest"
+        },
+        {
+          "name": "invoiceId",
+          "type": "id",
+          "kind": "string",
+          "path": "invoiceId"
+        },
+        {
+          "name": "billedOn",
+          "type": "date",
+          "kind": "date",
+          "path": "billedOn"
+        },
+        {
+          "name": "collectionTransactionId",
+          "type": "id",
+          "kind": "string",
+          "path": "collectionTransactionId"
+        }
+      ],
+      "pk": [
+        "loanId",
+        "lineSeqId"
+      ],
+      "relations": [
+        {
+          "type": "one",
+          "entity": "Loan",
+          "fields": [
+            "loanId"
+          ],
+          "remote": "loanId",
+          "title": null,
+          "fkName": "LOASERLIN_LOA"
+        }
+      ],
+      "unique": [],
+      "indexes": [
+        "invoiceId"
+      ]
+    },
+    {
+      "aggregate": null,
+      "root": false,
+      "codec": null,
+      "parent": null,
+      "parentKey": null,
+      "hostOnly": true,
+      "name": "LoanProduct",
+      "title": "A loan product, with the GL accounts its invoices and disbursements post to (OFB-05, OFB-06)",
+      "columns": [
+        {
+          "name": "loanProductId",
+          "type": "id",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "description",
+          "type": "description",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "receivableGlAccountId",
+          "type": "id",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "interestIncomeGlAccountId",
+          "type": "id",
+          "kind": "host",
+          "path": "(host)"
+        }
+      ],
+      "pk": [
+        "loanProductId"
+      ],
+      "relations": [
+        {
+          "type": "one",
+          "entity": "GlAccount",
+          "fields": [
+            "receivableGlAccountId"
+          ],
+          "remote": "glAccountId",
+          "title": "Receivable",
+          "fkName": "LOAPRO_RECGLACC"
+        },
+        {
+          "type": "one",
+          "entity": "GlAccount",
+          "fields": [
+            "interestIncomeGlAccountId"
+          ],
+          "remote": "glAccountId",
+          "title": "InterestIncome",
+          "fkName": "LOAPRO_INTINCGLACC"
+        }
+      ],
+      "unique": [],
+      "indexes": []
+    },
+    {
+      "aggregate": null,
+      "root": false,
+      "codec": null,
+      "parent": null,
+      "parentKey": null,
+      "hostOnly": true,
+      "name": "LoanLegacyRecon",
+      "title": "The reconciliation of one legacy loan in a migration run (FE 9.2 LEG-02 to LEG-05; outcomes MIG)",
+      "columns": [
+        {
+          "name": "migrationId",
+          "type": "id-long",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "legacyLoanId",
+          "type": "id",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "outcome",
+          "type": "id",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "decision",
+          "type": "id",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "field",
+          "type": "long-varchar",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "legacyValue",
+          "type": "long-varchar",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "serviceValue",
+          "type": "long-varchar",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "legacyCode",
+          "type": "id",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "serviceRejection",
+          "type": "name",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "loanId",
+          "type": "id-long",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "bookingRejection",
+          "type": "name",
+          "kind": "host",
+          "path": "(host)"
+        }
+      ],
+      "pk": [
+        "migrationId",
+        "legacyLoanId"
+      ],
+      "relations": [],
+      "unique": [],
+      "indexes": []
+    },
+    {
+      "aggregate": null,
+      "root": false,
+      "codec": null,
+      "parent": null,
+      "parentKey": null,
+      "hostOnly": true,
+      "name": "LoanLegacyLine",
+      "title": "A line of a legacy loan's schedule as the legacy wrote it (version 0, FE 9.2 LEG-02)",
+      "columns": [
+        {
+          "name": "migrationId",
+          "type": "id-long",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "legacyLoanId",
+          "type": "id",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "seq",
+          "type": "numeric",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "recType",
+          "type": "indicator",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "periodNumber",
+          "type": "numeric",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "fromDate",
+          "type": "date",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "dueDate",
+          "type": "date",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "principal",
+          "type": "fixed-point",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "interest",
+          "type": "fixed-point",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "fee",
+          "type": "fixed-point",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "penalty",
+          "type": "fixed-point",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "totalDue",
+          "type": "fixed-point",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "outstBalance",
+          "type": "fixed-point",
+          "kind": "host",
+          "path": "(host)"
+        },
+        {
+          "name": "totOutstanding",
+          "type": "fixed-point",
+          "kind": "host",
+          "path": "(host)"
+        }
+      ],
+      "pk": [
+        "migrationId",
+        "legacyLoanId",
+        "seq"
+      ],
+      "relations": [],
+      "unique": [],
+      "indexes": []
+    }
+  ],
+  "codecs": [
+    {
+      "name": "LoanRecord",
+      "record": "LoanRecord",
+      "fqn": "com.mlcpu.loans.api.ports.LoanRecord",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "loanId",
+          "path": "loanId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "loanId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "externalId",
+          "path": "externalId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "externalId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "ownerPartyId",
+          "path": "ownerPartyId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "ownerPartyId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "organizationPartyId",
+          "path": "organizationPartyId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "organizationPartyId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "loanProductId",
+          "path": "loanProductId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "loanProductId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "accountId",
+          "path": "accountId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "accountId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "terms",
+          "path": "terms",
+          "kind": "record",
+          "javaType": "ScheduleRequest",
+          "nullable": true,
+          "stored": false,
+          "column": null,
+          "codec": "ScheduleRequest",
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "status",
+          "path": "status",
+          "kind": "enum",
+          "javaType": "LoanStatus",
+          "nullable": true,
+          "stored": true,
+          "column": "statusId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": "LoanStatus",
+          "enumTypeId": "LOAN_STATUS",
+          "enumFqn": "com.mlcpu.loans.api.ports.LoanStatus"
+        },
+        {
+          "name": "bookedOn",
+          "path": "bookedOn",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "bookedOn",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "scheduleVersion",
+          "path": "scheduleVersion",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "scheduleVersion",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "schedule",
+          "path": "schedule",
+          "kind": "record",
+          "javaType": "Schedule",
+          "nullable": true,
+          "stored": false,
+          "column": null,
+          "codec": "ScheduleSchedule",
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "lines",
+          "path": "lines",
+          "kind": "list",
+          "javaType": "List<LineServicing>",
+          "nullable": true,
+          "stored": false,
+          "column": null,
+          "codec": null,
+          "child": "lines",
+          "elementType": "LineServicing",
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "disbursementPaymentId",
+          "path": "disbursementPaymentId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "disbursementPaymentId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "disbursementTransactionId",
+          "path": "disbursementTransactionId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "disbursementTransactionId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    },
+    {
+      "name": "ScheduleRequest",
+      "record": "ScheduleRequest",
+      "fqn": "com.mlcpu.loans.api.ScheduleRequest",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "loanId",
+          "path": "terms.loanId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "termsLoanId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "scheduleStart",
+          "path": "terms.scheduleStart",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "scheduleStart",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "currency",
+          "path": "terms.currency",
+          "kind": "record",
+          "javaType": "CurrencyTerms",
+          "nullable": true,
+          "stored": false,
+          "column": null,
+          "codec": "CurrencyTermsCurrency",
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "principal",
+          "path": "terms.principal",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "principal",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "disbursementDate",
+          "path": "terms.disbursementDate",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "disbursementDate",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "installments",
+          "path": "terms.installments",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "installments",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "every",
+          "path": "terms.every",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "every",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "frequency",
+          "path": "terms.frequency",
+          "kind": "enum",
+          "javaType": "Frequency",
+          "nullable": true,
+          "stored": true,
+          "column": "frequencyEnumId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": "Frequency",
+          "enumTypeId": "LOAN_FREQUENCY",
+          "enumFqn": "com.mlcpu.loans.api.Frequency"
+        },
+        {
+          "name": "annualRatePercent",
+          "path": "terms.annualRatePercent",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "annualRatePercent",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "downPaymentPercent",
+          "path": "terms.downPaymentPercent",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "downPaymentPercent",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "downPaymentEnabled",
+          "path": "terms.downPaymentEnabled",
+          "kind": "boolean",
+          "javaType": "boolean",
+          "nullable": false,
+          "stored": true,
+          "column": "downPaymentEnabled",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "monthDays",
+          "path": "terms.monthDays",
+          "kind": "enum",
+          "javaType": "MonthDays",
+          "nullable": true,
+          "stored": true,
+          "column": "monthDaysEnumId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": "MonthDays",
+          "enumTypeId": "LOAN_MONTH_DAYS",
+          "enumFqn": "com.mlcpu.loans.api.MonthDays"
+        },
+        {
+          "name": "yearDays",
+          "path": "terms.yearDays",
+          "kind": "enum",
+          "javaType": "YearDays",
+          "nullable": true,
+          "stored": true,
+          "column": "yearDaysEnumId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": "YearDays",
+          "enumTypeId": "LOAN_YEAR_DAYS",
+          "enumFqn": "com.mlcpu.loans.api.YearDays"
+        },
+        {
+          "name": "fixedLength",
+          "path": "terms.fixedLength",
+          "kind": "int",
+          "javaType": "Integer",
+          "nullable": true,
+          "stored": true,
+          "column": "fixedLength",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "interestMethod",
+          "path": "terms.interestMethod",
+          "kind": "enum",
+          "javaType": "InterestMethod",
+          "nullable": true,
+          "stored": true,
+          "column": "interestMethodEnumId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": "InterestMethod",
+          "enumTypeId": "LOAN_INTEREST_METHOD",
+          "enumFqn": "com.mlcpu.loans.api.InterestMethod"
+        },
+        {
+          "name": "fullTermTranche",
+          "path": "terms.fullTermTranche",
+          "kind": "boolean",
+          "javaType": "boolean",
+          "nullable": false,
+          "stored": true,
+          "column": "fullTermTranche",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "calculation",
+          "path": "terms.calculation",
+          "kind": "record",
+          "javaType": "Calculation",
+          "nullable": true,
+          "stored": false,
+          "column": null,
+          "codec": "CalculationCalc",
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    },
+    {
+      "name": "CurrencyTermsCurrency",
+      "record": "CurrencyTerms",
+      "fqn": "com.mlcpu.loans.api.CurrencyTerms",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "code",
+          "path": "terms.currency.code",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "currencyCode",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "decimalPlaces",
+          "path": "terms.currency.decimalPlaces",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "currencyDecimalPlaces",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "roundingMultiple",
+          "path": "terms.currency.roundingMultiple",
+          "kind": "int",
+          "javaType": "Integer",
+          "nullable": true,
+          "stored": true,
+          "column": "currencyRoundingMultiple",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    },
+    {
+      "name": "CalculationCalc",
+      "record": "Calculation",
+      "fqn": "com.mlcpu.loans.api.Calculation",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "precision",
+          "path": "terms.calculation.precision",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "calcPrecision",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "roundingMode",
+          "path": "terms.calculation.roundingMode",
+          "kind": "enum",
+          "javaType": "RoundingMode",
+          "nullable": true,
+          "stored": true,
+          "column": "calcRoundingModeEnumId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": "RoundingMode",
+          "enumTypeId": "LOAN_ROUNDING_MODE",
+          "enumFqn": "java.math.RoundingMode"
+        }
+      ]
+    },
+    {
+      "name": "ScheduleSchedule",
+      "record": "Schedule",
+      "fqn": "com.mlcpu.loans.api.Schedule",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "loanId",
+          "path": "schedule.loanId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "scheduleLoanId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "currencyCode",
+          "path": "schedule.currencyCode",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "scheduleCurrencyCode",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "decimalPlaces",
+          "path": "schedule.decimalPlaces",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "scheduleDecimalPlaces",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "termDays",
+          "path": "schedule.termDays",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "scheduleTermDays",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "totals",
+          "path": "schedule.totals",
+          "kind": "record",
+          "javaType": "Totals",
+          "nullable": true,
+          "stored": false,
+          "column": null,
+          "codec": "TotalsTotal",
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "lines",
+          "path": "schedule.lines",
+          "kind": "list",
+          "javaType": "List<ScheduleLine>",
+          "nullable": true,
+          "stored": false,
+          "column": null,
+          "codec": null,
+          "child": "schedule.lines",
+          "elementType": "ScheduleLine",
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    },
+    {
+      "name": "TotalsTotal",
+      "record": "Totals",
+      "fqn": "com.mlcpu.loans.api.Totals",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "disbursed",
+          "path": "schedule.totals.disbursed",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "totalDisbursed",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "principal",
+          "path": "schedule.totals.principal",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "totalPrincipal",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "interest",
+          "path": "schedule.totals.interest",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "totalInterest",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "fee",
+          "path": "schedule.totals.fee",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "totalFee",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "penalty",
+          "path": "schedule.totals.penalty",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "totalPenalty",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "repayment",
+          "path": "schedule.totals.repayment",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "totalRepayment",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "outstanding",
+          "path": "schedule.totals.outstanding",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "outstandingTotal",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    },
+    {
+      "name": "DisbursementLine",
+      "record": "DisbursementLine",
+      "fqn": "com.mlcpu.loans.api.DisbursementLine",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "from",
+          "path": "from",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "fromDate",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "due",
+          "path": "due",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "dueDate",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "amount",
+          "path": "amount",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "amount",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "balanceAfter",
+          "path": "balanceAfter",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "balanceAfter",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    },
+    {
+      "name": "DownPaymentLine",
+      "record": "DownPaymentLine",
+      "fqn": "com.mlcpu.loans.api.DownPaymentLine",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "number",
+          "path": "number",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "lineNumber",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "from",
+          "path": "from",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "fromDate",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "due",
+          "path": "due",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "dueDate",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "principal",
+          "path": "principal",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "principal",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "totalDue",
+          "path": "totalDue",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "totalDue",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "balanceAfter",
+          "path": "balanceAfter",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "balanceAfter",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "remainingDue",
+          "path": "remainingDue",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "remainingDue",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    },
+    {
+      "name": "InstallmentLine",
+      "record": "InstallmentLine",
+      "fqn": "com.mlcpu.loans.api.InstallmentLine",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "number",
+          "path": "number",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "lineNumber",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "from",
+          "path": "from",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "fromDate",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "due",
+          "path": "due",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "dueDate",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "principal",
+          "path": "principal",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "principal",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "interest",
+          "path": "interest",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "interest",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "fee",
+          "path": "fee",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "fee",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "penalty",
+          "path": "penalty",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "penalty",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "totalDue",
+          "path": "totalDue",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "totalDue",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "balanceAfter",
+          "path": "balanceAfter",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "balanceAfter",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "remainingDue",
+          "path": "remainingDue",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "remainingDue",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    },
+    {
+      "name": "LineServicing",
+      "record": "LineServicing",
+      "fqn": "com.mlcpu.loans.api.ports.LineServicing",
+      "aggregate": "agg.loan",
+      "fields": [
+        {
+          "name": "number",
+          "path": "number",
+          "kind": "int",
+          "javaType": "int",
+          "nullable": false,
+          "stored": true,
+          "column": "lineNumber",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "due",
+          "path": "due",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "dueDate",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "principal",
+          "path": "principal",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "principal",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "interest",
+          "path": "interest",
+          "kind": "decimal",
+          "javaType": "BigDecimal",
+          "nullable": true,
+          "stored": true,
+          "column": "interest",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "invoiceId",
+          "path": "invoiceId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "invoiceId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "billedOn",
+          "path": "billedOn",
+          "kind": "date",
+          "javaType": "LocalDate",
+          "nullable": true,
+          "stored": true,
+          "column": "billedOn",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        },
+        {
+          "name": "collectionTransactionId",
+          "path": "collectionTransactionId",
+          "kind": "string",
+          "javaType": "String",
+          "nullable": true,
+          "stored": true,
+          "column": "collectionTransactionId",
+          "codec": null,
+          "child": null,
+          "elementType": null,
+          "enum": null,
+          "enumTypeId": null,
+          "enumFqn": null
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "imports": [
+        "com.mlcpu.loans.api.Calculation",
+        "com.mlcpu.loans.api.CurrencyTerms",
+        "com.mlcpu.loans.api.Frequency",
+        "com.mlcpu.loans.api.InterestMethod",
+        "com.mlcpu.loans.api.MonthDays",
+        "com.mlcpu.loans.api.ScheduleOutcome",
+        "com.mlcpu.loans.api.ScheduleRequest",
+        "com.mlcpu.loans.api.ScheduleService",
+        "com.mlcpu.loans.api.YearDays",
+        "java.math.RoundingMode"
+      ],
+      "name": "quoteLoanSchedule",
+      "description": "The schedule of proposed terms; nothing is stored (OFB-01).",
+      "interface": "ScheduleService",
+      "method": "schedule",
+      "via": "quotes",
+      "command": "ScheduleRequest",
+      "argument": {
+        "record": "ScheduleRequest",
+        "fqn": "com.mlcpu.loans.api.ScheduleRequest",
+        "parts": [
+          {
+            "name": "loanId",
+            "path": "loanId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "loanId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "scheduleStart",
+            "path": "scheduleStart",
+            "kind": "date",
+            "javaType": "LocalDate",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "scheduleStart",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "currency",
+            "path": "currency",
+            "kind": "record",
+            "javaType": "CurrencyTerms",
+            "nullable": true,
+            "derived": null,
+            "record": {
+              "record": "CurrencyTerms",
+              "fqn": "com.mlcpu.loans.api.CurrencyTerms",
+              "parts": [
+                {
+                  "name": "code",
+                  "path": "currency.code",
+                  "kind": "string",
+                  "javaType": "String",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyCode",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "decimalPlaces",
+                  "path": "currency.decimalPlaces",
+                  "kind": "int",
+                  "javaType": "int",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyDecimalPlaces",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "roundingMultiple",
+                  "path": "currency.roundingMultiple",
+                  "kind": "int",
+                  "javaType": "Integer",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyRoundingMultiple",
+                  "enum": null,
+                  "enumTypeId": null
+                }
+              ]
+            },
+            "attribute": null,
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "principal",
+            "path": "principal",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "principal",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "disbursementDate",
+            "path": "disbursementDate",
+            "kind": "date",
+            "javaType": "LocalDate",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "disbursementDate",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "installments",
+            "path": "installments",
+            "kind": "int",
+            "javaType": "int",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "installments",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "every",
+            "path": "every",
+            "kind": "int",
+            "javaType": "int",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "every",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "frequency",
+            "path": "frequency",
+            "kind": "enum",
+            "javaType": "Frequency",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "frequencyEnumId",
+            "enum": "Frequency",
+            "enumTypeId": "LOAN_FREQUENCY"
+          },
+          {
+            "name": "annualRatePercent",
+            "path": "annualRatePercent",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "annualRatePercent",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "downPaymentPercent",
+            "path": "downPaymentPercent",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "downPaymentPercent",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "downPaymentEnabled",
+            "path": "downPaymentEnabled",
+            "kind": "boolean",
+            "javaType": "boolean",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "downPaymentEnabled",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "monthDays",
+            "path": "monthDays",
+            "kind": "enum",
+            "javaType": "MonthDays",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "monthDaysEnumId",
+            "enum": "MonthDays",
+            "enumTypeId": "LOAN_MONTH_DAYS"
+          },
+          {
+            "name": "yearDays",
+            "path": "yearDays",
+            "kind": "enum",
+            "javaType": "YearDays",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "yearDaysEnumId",
+            "enum": "YearDays",
+            "enumTypeId": "LOAN_YEAR_DAYS"
+          },
+          {
+            "name": "fixedLength",
+            "path": "fixedLength",
+            "kind": "int",
+            "javaType": "Integer",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "fixedLength",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "interestMethod",
+            "path": "interestMethod",
+            "kind": "enum",
+            "javaType": "InterestMethod",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "interestMethodEnumId",
+            "enum": "InterestMethod",
+            "enumTypeId": "LOAN_INTEREST_METHOD"
+          },
+          {
+            "name": "fullTermTranche",
+            "path": "fullTermTranche",
+            "kind": "boolean",
+            "javaType": "boolean",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "fullTermTranche",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "calculation",
+            "path": "calculation",
+            "kind": "record",
+            "javaType": "Calculation",
+            "nullable": true,
+            "derived": null,
+            "record": {
+              "record": "Calculation",
+              "fqn": "com.mlcpu.loans.api.Calculation",
+              "parts": [
+                {
+                  "name": "precision",
+                  "path": "calculation.precision",
+                  "kind": "int",
+                  "javaType": "int",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "calcPrecision",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "roundingMode",
+                  "path": "calculation.roundingMode",
+                  "kind": "enum",
+                  "javaType": "RoundingMode",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "calcRoundingModeEnumId",
+                  "enum": "RoundingMode",
+                  "enumTypeId": "LOAN_ROUNDING_MODE"
+                }
+              ]
+            },
+            "attribute": null,
+            "enum": null,
+            "enumTypeId": null
+          }
+        ]
+      },
+      "returns": "ScheduleOutcome",
+      "inputs": [
+        {
+          "name": "loanId",
+          "type": "String",
+          "optional": true,
+          "path": "loanId"
+        },
+        {
+          "name": "scheduleStart",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "scheduleStart"
+        },
+        {
+          "name": "currencyCode",
+          "type": "String",
+          "optional": true,
+          "path": "currency.code"
+        },
+        {
+          "name": "currencyDecimalPlaces",
+          "type": "Integer",
+          "optional": false,
+          "path": "currency.decimalPlaces"
+        },
+        {
+          "name": "currencyRoundingMultiple",
+          "type": "Integer",
+          "optional": true,
+          "path": "currency.roundingMultiple"
+        },
+        {
+          "name": "principal",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "principal"
+        },
+        {
+          "name": "disbursementDate",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "disbursementDate"
+        },
+        {
+          "name": "installments",
+          "type": "Integer",
+          "optional": false,
+          "path": "installments"
+        },
+        {
+          "name": "every",
+          "type": "Integer",
+          "optional": false,
+          "path": "every"
+        },
+        {
+          "name": "frequencyEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "frequency"
+        },
+        {
+          "name": "annualRatePercent",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "annualRatePercent"
+        },
+        {
+          "name": "downPaymentPercent",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "downPaymentPercent"
+        },
+        {
+          "name": "downPaymentEnabled",
+          "type": "Boolean",
+          "optional": false,
+          "path": "downPaymentEnabled"
+        },
+        {
+          "name": "monthDaysEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "monthDays"
+        },
+        {
+          "name": "yearDaysEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "yearDays"
+        },
+        {
+          "name": "fixedLength",
+          "type": "Integer",
+          "optional": true,
+          "path": "fixedLength"
+        },
+        {
+          "name": "interestMethodEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "interestMethod"
+        },
+        {
+          "name": "fullTermTranche",
+          "type": "Boolean",
+          "optional": false,
+          "path": "fullTermTranche"
+        },
+        {
+          "name": "calcPrecision",
+          "type": "Integer",
+          "optional": false,
+          "path": "calculation.precision"
+        },
+        {
+          "name": "calcRoundingModeEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "calculation.roundingMode"
+        }
+      ],
+      "action": "VIEW",
+      "rest": true,
+      "outcome": {
+        "type": "ScheduleOutcome",
+        "sealed": true,
+        "variants": [
+          "Rejected",
+          "Scheduled"
+        ]
+      },
+      "ignoreOutcomes": [],
+      "errorOutcomes": []
+    },
+    {
+      "imports": [
+        "com.mlcpu.loans.api.Calculation",
+        "com.mlcpu.loans.api.CurrencyTerms",
+        "com.mlcpu.loans.api.DisclosureOutcome",
+        "com.mlcpu.loans.api.Frequency",
+        "com.mlcpu.loans.api.InterestMethod",
+        "com.mlcpu.loans.api.MonthDays",
+        "com.mlcpu.loans.api.ScheduleRequest",
+        "com.mlcpu.loans.api.ScheduleService",
+        "com.mlcpu.loans.api.YearDays",
+        "java.math.RoundingMode"
+      ],
+      "name": "discloseLoan",
+      "description": "The disclosure of proposed terms (amount financed, finance charge, total of payments, APR); nothing is stored (OFB-01).",
+      "interface": "ScheduleService",
+      "method": "disclose",
+      "via": "quotes",
+      "command": "ScheduleRequest",
+      "argument": {
+        "record": "ScheduleRequest",
+        "fqn": "com.mlcpu.loans.api.ScheduleRequest",
+        "parts": [
+          {
+            "name": "loanId",
+            "path": "loanId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "loanId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "scheduleStart",
+            "path": "scheduleStart",
+            "kind": "date",
+            "javaType": "LocalDate",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "scheduleStart",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "currency",
+            "path": "currency",
+            "kind": "record",
+            "javaType": "CurrencyTerms",
+            "nullable": true,
+            "derived": null,
+            "record": {
+              "record": "CurrencyTerms",
+              "fqn": "com.mlcpu.loans.api.CurrencyTerms",
+              "parts": [
+                {
+                  "name": "code",
+                  "path": "currency.code",
+                  "kind": "string",
+                  "javaType": "String",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyCode",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "decimalPlaces",
+                  "path": "currency.decimalPlaces",
+                  "kind": "int",
+                  "javaType": "int",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyDecimalPlaces",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "roundingMultiple",
+                  "path": "currency.roundingMultiple",
+                  "kind": "int",
+                  "javaType": "Integer",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyRoundingMultiple",
+                  "enum": null,
+                  "enumTypeId": null
+                }
+              ]
+            },
+            "attribute": null,
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "principal",
+            "path": "principal",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "principal",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "disbursementDate",
+            "path": "disbursementDate",
+            "kind": "date",
+            "javaType": "LocalDate",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "disbursementDate",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "installments",
+            "path": "installments",
+            "kind": "int",
+            "javaType": "int",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "installments",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "every",
+            "path": "every",
+            "kind": "int",
+            "javaType": "int",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "every",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "frequency",
+            "path": "frequency",
+            "kind": "enum",
+            "javaType": "Frequency",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "frequencyEnumId",
+            "enum": "Frequency",
+            "enumTypeId": "LOAN_FREQUENCY"
+          },
+          {
+            "name": "annualRatePercent",
+            "path": "annualRatePercent",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "annualRatePercent",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "downPaymentPercent",
+            "path": "downPaymentPercent",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "downPaymentPercent",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "downPaymentEnabled",
+            "path": "downPaymentEnabled",
+            "kind": "boolean",
+            "javaType": "boolean",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "downPaymentEnabled",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "monthDays",
+            "path": "monthDays",
+            "kind": "enum",
+            "javaType": "MonthDays",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "monthDaysEnumId",
+            "enum": "MonthDays",
+            "enumTypeId": "LOAN_MONTH_DAYS"
+          },
+          {
+            "name": "yearDays",
+            "path": "yearDays",
+            "kind": "enum",
+            "javaType": "YearDays",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "yearDaysEnumId",
+            "enum": "YearDays",
+            "enumTypeId": "LOAN_YEAR_DAYS"
+          },
+          {
+            "name": "fixedLength",
+            "path": "fixedLength",
+            "kind": "int",
+            "javaType": "Integer",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "fixedLength",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "interestMethod",
+            "path": "interestMethod",
+            "kind": "enum",
+            "javaType": "InterestMethod",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "interestMethodEnumId",
+            "enum": "InterestMethod",
+            "enumTypeId": "LOAN_INTEREST_METHOD"
+          },
+          {
+            "name": "fullTermTranche",
+            "path": "fullTermTranche",
+            "kind": "boolean",
+            "javaType": "boolean",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "fullTermTranche",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "calculation",
+            "path": "calculation",
+            "kind": "record",
+            "javaType": "Calculation",
+            "nullable": true,
+            "derived": null,
+            "record": {
+              "record": "Calculation",
+              "fqn": "com.mlcpu.loans.api.Calculation",
+              "parts": [
+                {
+                  "name": "precision",
+                  "path": "calculation.precision",
+                  "kind": "int",
+                  "javaType": "int",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "calcPrecision",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "roundingMode",
+                  "path": "calculation.roundingMode",
+                  "kind": "enum",
+                  "javaType": "RoundingMode",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "calcRoundingModeEnumId",
+                  "enum": "RoundingMode",
+                  "enumTypeId": "LOAN_ROUNDING_MODE"
+                }
+              ]
+            },
+            "attribute": null,
+            "enum": null,
+            "enumTypeId": null
+          }
+        ]
+      },
+      "returns": "DisclosureOutcome",
+      "inputs": [
+        {
+          "name": "loanId",
+          "type": "String",
+          "optional": true,
+          "path": "loanId"
+        },
+        {
+          "name": "scheduleStart",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "scheduleStart"
+        },
+        {
+          "name": "currencyCode",
+          "type": "String",
+          "optional": true,
+          "path": "currency.code"
+        },
+        {
+          "name": "currencyDecimalPlaces",
+          "type": "Integer",
+          "optional": false,
+          "path": "currency.decimalPlaces"
+        },
+        {
+          "name": "currencyRoundingMultiple",
+          "type": "Integer",
+          "optional": true,
+          "path": "currency.roundingMultiple"
+        },
+        {
+          "name": "principal",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "principal"
+        },
+        {
+          "name": "disbursementDate",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "disbursementDate"
+        },
+        {
+          "name": "installments",
+          "type": "Integer",
+          "optional": false,
+          "path": "installments"
+        },
+        {
+          "name": "every",
+          "type": "Integer",
+          "optional": false,
+          "path": "every"
+        },
+        {
+          "name": "frequencyEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "frequency"
+        },
+        {
+          "name": "annualRatePercent",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "annualRatePercent"
+        },
+        {
+          "name": "downPaymentPercent",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "downPaymentPercent"
+        },
+        {
+          "name": "downPaymentEnabled",
+          "type": "Boolean",
+          "optional": false,
+          "path": "downPaymentEnabled"
+        },
+        {
+          "name": "monthDaysEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "monthDays"
+        },
+        {
+          "name": "yearDaysEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "yearDays"
+        },
+        {
+          "name": "fixedLength",
+          "type": "Integer",
+          "optional": true,
+          "path": "fixedLength"
+        },
+        {
+          "name": "interestMethodEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "interestMethod"
+        },
+        {
+          "name": "fullTermTranche",
+          "type": "Boolean",
+          "optional": false,
+          "path": "fullTermTranche"
+        },
+        {
+          "name": "calcPrecision",
+          "type": "Integer",
+          "optional": false,
+          "path": "calculation.precision"
+        },
+        {
+          "name": "calcRoundingModeEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "calculation.roundingMode"
+        }
+      ],
+      "action": "VIEW",
+      "rest": true,
+      "outcome": {
+        "type": "DisclosureOutcome",
+        "sealed": true,
+        "variants": [
+          "Disclosed",
+          "Rejected"
+        ]
+      },
+      "ignoreOutcomes": [],
+      "errorOutcomes": []
+    },
+    {
+      "imports": [
+        "com.mlcpu.loans.api.Calculation",
+        "com.mlcpu.loans.api.CurrencyTerms",
+        "com.mlcpu.loans.api.DocumentOutcome",
+        "com.mlcpu.loans.api.Frequency",
+        "com.mlcpu.loans.api.InterestMethod",
+        "com.mlcpu.loans.api.MonthDays",
+        "com.mlcpu.loans.api.ScheduleRequest",
+        "com.mlcpu.loans.api.ScheduleService",
+        "com.mlcpu.loans.api.YearDays",
+        "java.math.RoundingMode"
+      ],
+      "name": "documentLoanSchedule",
+      "description": "The schedule document of proposed terms (the printed schedule's lines and totals); nothing is stored.",
+      "interface": "ScheduleService",
+      "method": "document",
+      "via": "quotes",
+      "command": "ScheduleRequest",
+      "argument": {
+        "record": "ScheduleRequest",
+        "fqn": "com.mlcpu.loans.api.ScheduleRequest",
+        "parts": [
+          {
+            "name": "loanId",
+            "path": "loanId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "loanId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "scheduleStart",
+            "path": "scheduleStart",
+            "kind": "date",
+            "javaType": "LocalDate",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "scheduleStart",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "currency",
+            "path": "currency",
+            "kind": "record",
+            "javaType": "CurrencyTerms",
+            "nullable": true,
+            "derived": null,
+            "record": {
+              "record": "CurrencyTerms",
+              "fqn": "com.mlcpu.loans.api.CurrencyTerms",
+              "parts": [
+                {
+                  "name": "code",
+                  "path": "currency.code",
+                  "kind": "string",
+                  "javaType": "String",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyCode",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "decimalPlaces",
+                  "path": "currency.decimalPlaces",
+                  "kind": "int",
+                  "javaType": "int",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyDecimalPlaces",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "roundingMultiple",
+                  "path": "currency.roundingMultiple",
+                  "kind": "int",
+                  "javaType": "Integer",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "currencyRoundingMultiple",
+                  "enum": null,
+                  "enumTypeId": null
+                }
+              ]
+            },
+            "attribute": null,
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "principal",
+            "path": "principal",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "principal",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "disbursementDate",
+            "path": "disbursementDate",
+            "kind": "date",
+            "javaType": "LocalDate",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "disbursementDate",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "installments",
+            "path": "installments",
+            "kind": "int",
+            "javaType": "int",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "installments",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "every",
+            "path": "every",
+            "kind": "int",
+            "javaType": "int",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "every",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "frequency",
+            "path": "frequency",
+            "kind": "enum",
+            "javaType": "Frequency",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "frequencyEnumId",
+            "enum": "Frequency",
+            "enumTypeId": "LOAN_FREQUENCY"
+          },
+          {
+            "name": "annualRatePercent",
+            "path": "annualRatePercent",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "annualRatePercent",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "downPaymentPercent",
+            "path": "downPaymentPercent",
+            "kind": "decimal",
+            "javaType": "BigDecimal",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "downPaymentPercent",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "downPaymentEnabled",
+            "path": "downPaymentEnabled",
+            "kind": "boolean",
+            "javaType": "boolean",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "downPaymentEnabled",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "monthDays",
+            "path": "monthDays",
+            "kind": "enum",
+            "javaType": "MonthDays",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "monthDaysEnumId",
+            "enum": "MonthDays",
+            "enumTypeId": "LOAN_MONTH_DAYS"
+          },
+          {
+            "name": "yearDays",
+            "path": "yearDays",
+            "kind": "enum",
+            "javaType": "YearDays",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "yearDaysEnumId",
+            "enum": "YearDays",
+            "enumTypeId": "LOAN_YEAR_DAYS"
+          },
+          {
+            "name": "fixedLength",
+            "path": "fixedLength",
+            "kind": "int",
+            "javaType": "Integer",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "fixedLength",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "interestMethod",
+            "path": "interestMethod",
+            "kind": "enum",
+            "javaType": "InterestMethod",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "interestMethodEnumId",
+            "enum": "InterestMethod",
+            "enumTypeId": "LOAN_INTEREST_METHOD"
+          },
+          {
+            "name": "fullTermTranche",
+            "path": "fullTermTranche",
+            "kind": "boolean",
+            "javaType": "boolean",
+            "nullable": false,
+            "derived": null,
+            "record": null,
+            "attribute": "fullTermTranche",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "calculation",
+            "path": "calculation",
+            "kind": "record",
+            "javaType": "Calculation",
+            "nullable": true,
+            "derived": null,
+            "record": {
+              "record": "Calculation",
+              "fqn": "com.mlcpu.loans.api.Calculation",
+              "parts": [
+                {
+                  "name": "precision",
+                  "path": "calculation.precision",
+                  "kind": "int",
+                  "javaType": "int",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "calcPrecision",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "roundingMode",
+                  "path": "calculation.roundingMode",
+                  "kind": "enum",
+                  "javaType": "RoundingMode",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "calcRoundingModeEnumId",
+                  "enum": "RoundingMode",
+                  "enumTypeId": "LOAN_ROUNDING_MODE"
+                }
+              ]
+            },
+            "attribute": null,
+            "enum": null,
+            "enumTypeId": null
+          }
+        ]
+      },
+      "returns": "DocumentOutcome",
+      "inputs": [
+        {
+          "name": "loanId",
+          "type": "String",
+          "optional": true,
+          "path": "loanId"
+        },
+        {
+          "name": "scheduleStart",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "scheduleStart"
+        },
+        {
+          "name": "currencyCode",
+          "type": "String",
+          "optional": true,
+          "path": "currency.code"
+        },
+        {
+          "name": "currencyDecimalPlaces",
+          "type": "Integer",
+          "optional": false,
+          "path": "currency.decimalPlaces"
+        },
+        {
+          "name": "currencyRoundingMultiple",
+          "type": "Integer",
+          "optional": true,
+          "path": "currency.roundingMultiple"
+        },
+        {
+          "name": "principal",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "principal"
+        },
+        {
+          "name": "disbursementDate",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "disbursementDate"
+        },
+        {
+          "name": "installments",
+          "type": "Integer",
+          "optional": false,
+          "path": "installments"
+        },
+        {
+          "name": "every",
+          "type": "Integer",
+          "optional": false,
+          "path": "every"
+        },
+        {
+          "name": "frequencyEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "frequency"
+        },
+        {
+          "name": "annualRatePercent",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "annualRatePercent"
+        },
+        {
+          "name": "downPaymentPercent",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "downPaymentPercent"
+        },
+        {
+          "name": "downPaymentEnabled",
+          "type": "Boolean",
+          "optional": false,
+          "path": "downPaymentEnabled"
+        },
+        {
+          "name": "monthDaysEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "monthDays"
+        },
+        {
+          "name": "yearDaysEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "yearDays"
+        },
+        {
+          "name": "fixedLength",
+          "type": "Integer",
+          "optional": true,
+          "path": "fixedLength"
+        },
+        {
+          "name": "interestMethodEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "interestMethod"
+        },
+        {
+          "name": "fullTermTranche",
+          "type": "Boolean",
+          "optional": false,
+          "path": "fullTermTranche"
+        },
+        {
+          "name": "calcPrecision",
+          "type": "Integer",
+          "optional": false,
+          "path": "calculation.precision"
+        },
+        {
+          "name": "calcRoundingModeEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "calculation.roundingMode"
+        }
+      ],
+      "action": "VIEW",
+      "rest": false,
+      "outcome": {
+        "type": "DocumentOutcome",
+        "sealed": true,
+        "variants": [
+          "Documented",
+          "Rejected"
+        ]
+      },
+      "ignoreOutcomes": [],
+      "errorOutcomes": []
+    },
+    {
+      "imports": [
+        "com.mlcpu.loans.api.Calculation",
+        "com.mlcpu.loans.api.CurrencyTerms",
+        "com.mlcpu.loans.api.Frequency",
+        "com.mlcpu.loans.api.InterestMethod",
+        "com.mlcpu.loans.api.MonthDays",
+        "com.mlcpu.loans.api.ScheduleRequest",
+        "com.mlcpu.loans.api.YearDays",
+        "com.mlcpu.loans.api.servicing.BookLoan",
+        "com.mlcpu.loans.api.servicing.BookingOutcome",
+        "com.mlcpu.loans.api.servicing.LoanServicing",
+        "java.math.RoundingMode"
+      ],
+      "name": "bookLoan",
+      "description": "Books a loan (OFB-02); idempotent by its external id (IDEM-01).",
+      "interface": "LoanServicing",
+      "method": "book",
+      "via": "create",
+      "command": "BookLoan",
+      "argument": {
+        "record": "BookLoan",
+        "fqn": "com.mlcpu.loans.api.servicing.BookLoan",
+        "parts": [
+          {
+            "name": "externalId",
+            "path": "externalId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "externalId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "ownerPartyId",
+            "path": "ownerPartyId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "ownerPartyId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "organizationPartyId",
+            "path": "organizationPartyId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "organizationPartyId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "loanProductId",
+            "path": "loanProductId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "loanProductId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "terms",
+            "path": "terms",
+            "kind": "record",
+            "javaType": "ScheduleRequest",
+            "nullable": true,
+            "derived": null,
+            "record": {
+              "record": "ScheduleRequest",
+              "fqn": "com.mlcpu.loans.api.ScheduleRequest",
+              "parts": [
+                {
+                  "name": "loanId",
+                  "path": "terms.loanId",
+                  "kind": "string",
+                  "javaType": "String",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "termsLoanId",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "scheduleStart",
+                  "path": "terms.scheduleStart",
+                  "kind": "date",
+                  "javaType": "LocalDate",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "scheduleStart",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "currency",
+                  "path": "terms.currency",
+                  "kind": "record",
+                  "javaType": "CurrencyTerms",
+                  "nullable": true,
+                  "derived": null,
+                  "record": {
+                    "record": "CurrencyTerms",
+                    "fqn": "com.mlcpu.loans.api.CurrencyTerms",
+                    "parts": [
+                      {
+                        "name": "code",
+                        "path": "terms.currency.code",
+                        "kind": "string",
+                        "javaType": "String",
+                        "nullable": true,
+                        "derived": null,
+                        "record": null,
+                        "attribute": "currencyCode",
+                        "enum": null,
+                        "enumTypeId": null
+                      },
+                      {
+                        "name": "decimalPlaces",
+                        "path": "terms.currency.decimalPlaces",
+                        "kind": "int",
+                        "javaType": "int",
+                        "nullable": false,
+                        "derived": null,
+                        "record": null,
+                        "attribute": "currencyDecimalPlaces",
+                        "enum": null,
+                        "enumTypeId": null
+                      },
+                      {
+                        "name": "roundingMultiple",
+                        "path": "terms.currency.roundingMultiple",
+                        "kind": "int",
+                        "javaType": "Integer",
+                        "nullable": true,
+                        "derived": null,
+                        "record": null,
+                        "attribute": "currencyRoundingMultiple",
+                        "enum": null,
+                        "enumTypeId": null
+                      }
+                    ]
+                  },
+                  "attribute": null,
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "principal",
+                  "path": "terms.principal",
+                  "kind": "decimal",
+                  "javaType": "BigDecimal",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "principal",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "disbursementDate",
+                  "path": "terms.disbursementDate",
+                  "kind": "date",
+                  "javaType": "LocalDate",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "disbursementDate",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "installments",
+                  "path": "terms.installments",
+                  "kind": "int",
+                  "javaType": "int",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "installments",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "every",
+                  "path": "terms.every",
+                  "kind": "int",
+                  "javaType": "int",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "every",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "frequency",
+                  "path": "terms.frequency",
+                  "kind": "enum",
+                  "javaType": "Frequency",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "frequencyEnumId",
+                  "enum": "Frequency",
+                  "enumTypeId": "LOAN_FREQUENCY"
+                },
+                {
+                  "name": "annualRatePercent",
+                  "path": "terms.annualRatePercent",
+                  "kind": "decimal",
+                  "javaType": "BigDecimal",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "annualRatePercent",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "downPaymentPercent",
+                  "path": "terms.downPaymentPercent",
+                  "kind": "decimal",
+                  "javaType": "BigDecimal",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "downPaymentPercent",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "downPaymentEnabled",
+                  "path": "terms.downPaymentEnabled",
+                  "kind": "boolean",
+                  "javaType": "boolean",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "downPaymentEnabled",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "monthDays",
+                  "path": "terms.monthDays",
+                  "kind": "enum",
+                  "javaType": "MonthDays",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "monthDaysEnumId",
+                  "enum": "MonthDays",
+                  "enumTypeId": "LOAN_MONTH_DAYS"
+                },
+                {
+                  "name": "yearDays",
+                  "path": "terms.yearDays",
+                  "kind": "enum",
+                  "javaType": "YearDays",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "yearDaysEnumId",
+                  "enum": "YearDays",
+                  "enumTypeId": "LOAN_YEAR_DAYS"
+                },
+                {
+                  "name": "fixedLength",
+                  "path": "terms.fixedLength",
+                  "kind": "int",
+                  "javaType": "Integer",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "fixedLength",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "interestMethod",
+                  "path": "terms.interestMethod",
+                  "kind": "enum",
+                  "javaType": "InterestMethod",
+                  "nullable": true,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "interestMethodEnumId",
+                  "enum": "InterestMethod",
+                  "enumTypeId": "LOAN_INTEREST_METHOD"
+                },
+                {
+                  "name": "fullTermTranche",
+                  "path": "terms.fullTermTranche",
+                  "kind": "boolean",
+                  "javaType": "boolean",
+                  "nullable": false,
+                  "derived": null,
+                  "record": null,
+                  "attribute": "fullTermTranche",
+                  "enum": null,
+                  "enumTypeId": null
+                },
+                {
+                  "name": "calculation",
+                  "path": "terms.calculation",
+                  "kind": "record",
+                  "javaType": "Calculation",
+                  "nullable": true,
+                  "derived": null,
+                  "record": {
+                    "record": "Calculation",
+                    "fqn": "com.mlcpu.loans.api.Calculation",
+                    "parts": [
+                      {
+                        "name": "precision",
+                        "path": "terms.calculation.precision",
+                        "kind": "int",
+                        "javaType": "int",
+                        "nullable": false,
+                        "derived": null,
+                        "record": null,
+                        "attribute": "calcPrecision",
+                        "enum": null,
+                        "enumTypeId": null
+                      },
+                      {
+                        "name": "roundingMode",
+                        "path": "terms.calculation.roundingMode",
+                        "kind": "enum",
+                        "javaType": "RoundingMode",
+                        "nullable": true,
+                        "derived": null,
+                        "record": null,
+                        "attribute": "calcRoundingModeEnumId",
+                        "enum": "RoundingMode",
+                        "enumTypeId": "LOAN_ROUNDING_MODE"
+                      }
+                    ]
+                  },
+                  "attribute": null,
+                  "enum": null,
+                  "enumTypeId": null
+                }
+              ]
+            },
+            "attribute": null,
+            "enum": null,
+            "enumTypeId": null
+          }
+        ]
+      },
+      "returns": "BookingOutcome",
+      "inputs": [
+        {
+          "name": "externalId",
+          "type": "String",
+          "optional": true,
+          "path": "externalId"
+        },
+        {
+          "name": "ownerPartyId",
+          "type": "String",
+          "optional": true,
+          "path": "ownerPartyId"
+        },
+        {
+          "name": "organizationPartyId",
+          "type": "String",
+          "optional": true,
+          "path": "organizationPartyId"
+        },
+        {
+          "name": "loanProductId",
+          "type": "String",
+          "optional": true,
+          "path": "loanProductId"
+        },
+        {
+          "name": "termsLoanId",
+          "type": "String",
+          "optional": true,
+          "path": "terms.loanId"
+        },
+        {
+          "name": "scheduleStart",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "terms.scheduleStart"
+        },
+        {
+          "name": "currencyCode",
+          "type": "String",
+          "optional": true,
+          "path": "terms.currency.code"
+        },
+        {
+          "name": "currencyDecimalPlaces",
+          "type": "Integer",
+          "optional": false,
+          "path": "terms.currency.decimalPlaces"
+        },
+        {
+          "name": "currencyRoundingMultiple",
+          "type": "Integer",
+          "optional": true,
+          "path": "terms.currency.roundingMultiple"
+        },
+        {
+          "name": "principal",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "terms.principal"
+        },
+        {
+          "name": "disbursementDate",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "terms.disbursementDate"
+        },
+        {
+          "name": "installments",
+          "type": "Integer",
+          "optional": false,
+          "path": "terms.installments"
+        },
+        {
+          "name": "every",
+          "type": "Integer",
+          "optional": false,
+          "path": "terms.every"
+        },
+        {
+          "name": "frequencyEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "terms.frequency"
+        },
+        {
+          "name": "annualRatePercent",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "terms.annualRatePercent"
+        },
+        {
+          "name": "downPaymentPercent",
+          "type": "BigDecimal",
+          "optional": true,
+          "path": "terms.downPaymentPercent"
+        },
+        {
+          "name": "downPaymentEnabled",
+          "type": "Boolean",
+          "optional": false,
+          "path": "terms.downPaymentEnabled"
+        },
+        {
+          "name": "monthDaysEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "terms.monthDays"
+        },
+        {
+          "name": "yearDaysEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "terms.yearDays"
+        },
+        {
+          "name": "fixedLength",
+          "type": "Integer",
+          "optional": true,
+          "path": "terms.fixedLength"
+        },
+        {
+          "name": "interestMethodEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "terms.interestMethod"
+        },
+        {
+          "name": "fullTermTranche",
+          "type": "Boolean",
+          "optional": false,
+          "path": "terms.fullTermTranche"
+        },
+        {
+          "name": "calcPrecision",
+          "type": "Integer",
+          "optional": false,
+          "path": "terms.calculation.precision"
+        },
+        {
+          "name": "calcRoundingModeEnumId",
+          "type": "String",
+          "optional": true,
+          "path": "terms.calculation.roundingMode"
+        }
+      ],
+      "action": "CREATE",
+      "rest": false,
+      "outcome": {
+        "type": "BookingOutcome",
+        "sealed": true,
+        "variants": [
+          "Booked",
+          "BookingRejected"
+        ]
+      },
+      "ignoreOutcomes": [],
+      "errorOutcomes": []
+    },
+    {
+      "imports": [
+        "com.mlcpu.loans.api.servicing.DisburseLoan",
+        "com.mlcpu.loans.api.servicing.DisbursementOutcome",
+        "com.mlcpu.loans.api.servicing.LoanServicing"
+      ],
+      "name": "disburseLoan",
+      "description": "Disburses a booked loan (OFB-04, OFB-06), with its down payment's invoice.",
+      "interface": "LoanServicing",
+      "method": "disburse",
+      "via": "create",
+      "command": "DisburseLoan",
+      "argument": {
+        "record": "DisburseLoan",
+        "fqn": "com.mlcpu.loans.api.servicing.DisburseLoan",
+        "parts": [
+          {
+            "name": "loanId",
+            "path": "loanId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "loanId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "paymentMethodId",
+            "path": "paymentMethodId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "paymentMethodId",
+            "enum": null,
+            "enumTypeId": null
+          }
+        ]
+      },
+      "returns": "DisbursementOutcome",
+      "inputs": [
+        {
+          "name": "loanId",
+          "type": "String",
+          "optional": true,
+          "path": "loanId"
+        },
+        {
+          "name": "paymentMethodId",
+          "type": "String",
+          "optional": true,
+          "path": "paymentMethodId"
+        }
+      ],
+      "action": "UPDATE",
+      "rest": false,
+      "outcome": {
+        "type": "DisbursementOutcome",
+        "sealed": true,
+        "variants": [
+          "Disbursed",
+          "ServicingRejected"
+        ]
+      },
+      "ignoreOutcomes": [],
+      "errorOutcomes": []
+    },
+    {
+      "imports": [
+        "com.mlcpu.loans.api.servicing.BillDue",
+        "com.mlcpu.loans.api.servicing.BillingRun",
+        "com.mlcpu.loans.api.servicing.LoanServicing"
+      ],
+      "name": "billDueLoanInstallments",
+      "description": "Bills every installment due on or before the date and not billed yet, one invoice each (OFB-05, OFB-08).",
+      "interface": "LoanServicing",
+      "method": "billDue",
+      "via": "create",
+      "command": "BillDue",
+      "argument": {
+        "record": "BillDue",
+        "fqn": "com.mlcpu.loans.api.servicing.BillDue",
+        "parts": [
+          {
+            "name": "asOf",
+            "path": "asOf",
+            "kind": "date",
+            "javaType": "LocalDate",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "asOf",
+            "enum": null,
+            "enumTypeId": null
+          }
+        ]
+      },
+      "returns": "BillingRun",
+      "inputs": [
+        {
+          "name": "asOf",
+          "type": "java.sql.Date",
+          "optional": true,
+          "path": "asOf"
+        }
+      ],
+      "action": "UPDATE",
+      "rest": false,
+      "outcome": {
+        "type": "BillingRun",
+        "sealed": false,
+        "variants": [
+          "BillingRun"
+        ]
+      },
+      "ignoreOutcomes": [],
+      "errorOutcomes": []
+    },
+    {
+      "imports": [
+        "com.mlcpu.loans.api.servicing.CollectionOutcome",
+        "com.mlcpu.loans.api.servicing.InvoicePaid",
+        "com.mlcpu.loans.api.servicing.LoanServicing"
+      ],
+      "name": "recordLoanInvoiceStatus",
+      "description": "An invoice changed status; for a loan invoice that became paid, or stopped being paid, the principal is collected or that collection cancelled (OFB-07).",
+      "interface": "LoanServicing",
+      "method": "invoicePaid",
+      "via": "create",
+      "command": "InvoicePaid",
+      "argument": {
+        "record": "InvoicePaid",
+        "fqn": "com.mlcpu.loans.api.servicing.InvoicePaid",
+        "parts": [
+          {
+            "name": "invoiceId",
+            "path": "invoiceId",
+            "kind": "string",
+            "javaType": "String",
+            "nullable": true,
+            "derived": null,
+            "record": null,
+            "attribute": "invoiceId",
+            "enum": null,
+            "enumTypeId": null
+          },
+          {
+            "name": "paid",
+            "path": "paid",
+            "kind": "boolean",
+            "javaType": "boolean",
+            "nullable": false,
+            "derived": "\"INVOICE_PAID\".equals(context.get(\"statusId\"))",
+            "record": null,
+            "attribute": null,
+            "enum": null,
+            "enumTypeId": null
+          }
+        ]
+      },
+      "returns": "CollectionOutcome",
+      "inputs": [
+        {
+          "name": "invoiceId",
+          "type": "String",
+          "optional": true,
+          "path": "invoiceId"
+        },
+        {
+          "name": "statusId",
+          "type": "String",
+          "optional": true,
+          "extra": true
+        }
+      ],
+      "action": "UPDATE",
+      "rest": false,
+      "outcome": {
+        "type": "CollectionOutcome",
+        "sealed": true,
+        "variants": [
+          "CollectionCancelled",
+          "CollectionUnchanged",
+          "PrincipalCollected",
+          "ServicingRejected"
+        ]
+      },
+      "ignoreOutcomes": [
+        "ServicingRejected"
+      ],
+      "errorOutcomes": []
+    }
+  ],
+  "ports": [
+    {
+      "component": "ids",
+      "interface": "Ids",
+      "fqn": "com.mlcpu.loans.api.ports.Ids",
+      "implementation": "generated",
+      "class": "OfbizIds",
+      "rules": [],
+      "methods": [
+        {
+          "name": "loanId",
+          "returns": {
+            "fqn": "java.lang.String",
+            "simple": "String"
+          },
+          "params": [
+            {
+              "name": "externalId",
+              "type": {
+                "fqn": "java.lang.String",
+                "simple": "String"
+              }
+            }
+          ],
+          "role": null,
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        }
+      ],
+      "spec": {
+        "implementation": "generated",
+        "derive": "prefixExternalId",
+        "prefix": "LN-",
+        "aggregate": null,
+        "finders": null,
+        "rules": null,
+        "class": null
+      },
+      "aggregate": null,
+      "imports": [
+        "com.mlcpu.loans.api.ports.Ids"
+      ]
+    },
+    {
+      "component": "book",
+      "interface": "LoanBook",
+      "fqn": "com.mlcpu.loans.api.ports.LoanBook",
+      "implementation": "generated",
+      "class": "OfbizLoanBook",
+      "rules": [],
+      "methods": [
+        {
+          "name": "find",
+          "returns": {
+            "fqn": "java.util.Optional",
+            "simple": "Optional",
+            "args": [
+              {
+                "fqn": "com.mlcpu.loans.api.ports.LoanRecord",
+                "simple": "LoanRecord"
+              }
+            ]
+          },
+          "params": [
+            {
+              "name": "loanId",
+              "type": {
+                "fqn": "java.lang.String",
+                "simple": "String"
+              }
+            }
+          ],
+          "role": "byKey",
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        },
+        {
+          "name": "findByInvoice",
+          "returns": {
+            "fqn": "java.util.Optional",
+            "simple": "Optional",
+            "args": [
+              {
+                "fqn": "com.mlcpu.loans.api.ports.LoanRecord",
+                "simple": "LoanRecord"
+              }
+            ]
+          },
+          "params": [
+            {
+              "name": "invoiceId",
+              "type": {
+                "fqn": "java.lang.String",
+                "simple": "String"
+              }
+            }
+          ],
+          "role": "byChild",
+          "finder": {
+            "child": "LoanServicingLine",
+            "field": "invoiceId"
+          },
+          "paramKind": "string",
+          "paramEnum": null,
+          "many": false
+        },
+        {
+          "name": "save",
+          "returns": {
+            "fqn": "void",
+            "simple": "void",
+            "primitive": true
+          },
+          "params": [
+            {
+              "name": "loan",
+              "type": {
+                "fqn": "com.mlcpu.loans.api.ports.LoanRecord",
+                "simple": "LoanRecord"
+              }
+            }
+          ],
+          "role": "save",
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        },
+        {
+          "name": "withStatus",
+          "returns": {
+            "fqn": "java.util.List",
+            "simple": "List",
+            "args": [
+              {
+                "fqn": "com.mlcpu.loans.api.ports.LoanRecord",
+                "simple": "LoanRecord"
+              }
+            ]
+          },
+          "params": [
+            {
+              "name": "status",
+              "type": {
+                "fqn": "com.mlcpu.loans.api.ports.LoanStatus",
+                "simple": "LoanStatus",
+                "enum": true
+              }
+            }
+          ],
+          "role": "byField",
+          "finder": {
+            "field": "statusId"
+          },
+          "paramKind": "enum",
+          "paramEnum": "LOAN_STATUS",
+          "many": true
+        }
+      ],
+      "spec": {
+        "implementation": "generated",
+        "aggregate": "agg.loan",
+        "finders": {
+          "findByInvoice": {
+            "child": "LoanServicingLine",
+            "field": "invoiceId"
+          },
+          "withStatus": {
+            "field": "statusId"
+          }
+        },
+        "derive": null,
+        "prefix": null,
+        "rules": null,
+        "class": null
+      },
+      "aggregate": "agg.loan",
+      "imports": [
+        "com.mlcpu.loans.api.ports.LoanBook",
+        "com.mlcpu.loans.api.ports.LoanRecord",
+        "com.mlcpu.loans.api.ports.LoanStatus",
+        "java.util.List",
+        "java.util.Optional"
+      ]
+    },
+    {
+      "component": "ledger",
+      "interface": "Ledger",
+      "fqn": "com.mlcpu.loans.api.ports.Ledger",
+      "implementation": "hole",
+      "class": "OfbizLedger",
+      "rules": [
+        "OFB-06",
+        "D-11"
+      ],
+      "methods": [
+        {
+          "name": "disbursementPayment",
+          "returns": {
+            "fqn": "java.lang.String",
+            "simple": "String"
+          },
+          "params": [
+            {
+              "name": "payment",
+              "type": {
+                "fqn": "com.mlcpu.loans.api.ports.DisbursementPayment",
+                "simple": "DisbursementPayment"
+              }
+            }
+          ],
+          "role": null,
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        },
+        {
+          "name": "postable",
+          "returns": {
+            "fqn": "boolean",
+            "simple": "boolean",
+            "primitive": true
+          },
+          "params": [
+            {
+              "name": "currencyCode",
+              "type": {
+                "fqn": "java.lang.String",
+                "simple": "String"
+              }
+            },
+            {
+              "name": "organizationPartyId",
+              "type": {
+                "fqn": "java.lang.String",
+                "simple": "String"
+              }
+            }
+          ],
+          "role": null,
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        }
+      ],
+      "spec": {
+        "implementation": "hole",
+        "rules": [
+          "OFB-06",
+          "D-11"
+        ],
+        "aggregate": null,
+        "derive": null,
+        "prefix": null,
+        "finders": null,
+        "class": null
+      },
+      "aggregate": null,
+      "imports": [
+        "com.mlcpu.loans.api.ports.DisbursementPayment",
+        "com.mlcpu.loans.api.ports.Ledger"
+      ]
+    },
+    {
+      "component": "billing",
+      "interface": "Billing",
+      "fqn": "com.mlcpu.loans.api.ports.Billing",
+      "implementation": "hole",
+      "class": "OfbizBilling",
+      "rules": [
+        "OFB-05",
+        "OFB-08"
+      ],
+      "methods": [
+        {
+          "name": "invoice",
+          "returns": {
+            "fqn": "java.lang.String",
+            "simple": "String"
+          },
+          "params": [
+            {
+              "name": "invoice",
+              "type": {
+                "fqn": "com.mlcpu.loans.api.ports.LoanInvoice",
+                "simple": "LoanInvoice"
+              }
+            }
+          ],
+          "role": null,
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        }
+      ],
+      "spec": {
+        "implementation": "hole",
+        "rules": [
+          "OFB-05",
+          "OFB-08"
+        ],
+        "aggregate": null,
+        "derive": null,
+        "prefix": null,
+        "finders": null,
+        "class": null
+      },
+      "aggregate": null,
+      "imports": [
+        "com.mlcpu.loans.api.ports.Billing",
+        "com.mlcpu.loans.api.ports.LoanInvoice"
+      ]
+    },
+    {
+      "component": "accounts",
+      "interface": "FinancialAccounts",
+      "fqn": "com.mlcpu.loans.api.ports.FinancialAccounts",
+      "implementation": "hole",
+      "class": "OfbizFinancialAccounts",
+      "rules": [
+        "OFB-02",
+        "OFB-04",
+        "OFB-07"
+      ],
+      "methods": [
+        {
+          "name": "cancel",
+          "returns": {
+            "fqn": "void",
+            "simple": "void",
+            "primitive": true
+          },
+          "params": [
+            {
+              "name": "transactionId",
+              "type": {
+                "fqn": "java.lang.String",
+                "simple": "String"
+              }
+            }
+          ],
+          "role": null,
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        },
+        {
+          "name": "open",
+          "returns": {
+            "fqn": "java.lang.String",
+            "simple": "String"
+          },
+          "params": [
+            {
+              "name": "account",
+              "type": {
+                "fqn": "com.mlcpu.loans.api.ports.LoanAccount",
+                "simple": "LoanAccount"
+              }
+            }
+          ],
+          "role": null,
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        },
+        {
+          "name": "post",
+          "returns": {
+            "fqn": "java.lang.String",
+            "simple": "String"
+          },
+          "params": [
+            {
+              "name": "transaction",
+              "type": {
+                "fqn": "com.mlcpu.loans.api.ports.AccountTransaction",
+                "simple": "AccountTransaction"
+              }
+            }
+          ],
+          "role": null,
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        }
+      ],
+      "spec": {
+        "implementation": "hole",
+        "rules": [
+          "OFB-02",
+          "OFB-04",
+          "OFB-07"
+        ],
+        "aggregate": null,
+        "derive": null,
+        "prefix": null,
+        "finders": null,
+        "class": null
+      },
+      "aggregate": null,
+      "imports": [
+        "com.mlcpu.loans.api.ports.AccountTransaction",
+        "com.mlcpu.loans.api.ports.FinancialAccounts",
+        "com.mlcpu.loans.api.ports.LoanAccount"
+      ]
+    },
+    {
+      "component": "clock",
+      "interface": "Clock",
+      "fqn": "com.mlcpu.loans.api.ports.Clock",
+      "implementation": "generated",
+      "class": "OfbizClock",
+      "rules": [],
+      "methods": [
+        {
+          "name": "today",
+          "returns": {
+            "fqn": "java.time.LocalDate",
+            "simple": "LocalDate"
+          },
+          "params": [],
+          "role": null,
+          "finder": null,
+          "paramKind": null,
+          "paramEnum": null,
+          "many": false
+        }
+      ],
+      "spec": {
+        "implementation": "generated",
+        "aggregate": null,
+        "derive": null,
+        "prefix": null,
+        "finders": null,
+        "rules": null,
+        "class": null
+      },
+      "aggregate": null,
+      "imports": [
+        "com.mlcpu.loans.api.ports.Clock",
+        "java.time.LocalDate"
+      ]
+    }
+  ],
+  "seca": [
+    {
+      "service": "setInvoiceStatus",
+      "event": "return",
+      "action": "recordLoanInvoiceStatus"
+    }
+  ],
+  "seed": [
+    {
+      "entity": "EnumerationType",
+      "attributes": [
+        {
+          "name": "enumTypeId",
+          "value": "LOAN_SCHEDULE_LINE"
+        },
+        {
+          "name": "description",
+          "value": "Loan schedule line type"
+        }
+      ]
+    },
+    {
+      "entity": "InvoiceItemType",
+      "attributes": [
+        {
+          "name": "invoiceItemTypeId",
+          "value": "LOAN_PRINCIPAL"
+        },
+        {
+          "name": "description",
+          "value": "Loan principal"
+        },
+        {
+          "name": "hasTable",
+          "value": "N"
+        }
+      ]
+    },
+    {
+      "entity": "Enumeration",
+      "attributes": [
+        {
+          "name": "enumId",
+          "value": "LOAN_DISBURSEMENT"
+        },
+        {
+          "name": "enumTypeId",
+          "value": "LOAN_SCHEDULE_LINE"
+        },
+        {
+          "name": "enumCode",
+          "value": "DISBURSEMENT"
+        },
+        {
+          "name": "sequenceId",
+          "value": "01"
+        },
+        {
+          "name": "description",
+          "value": "Disbursement"
+        }
+      ]
+    },
+    {
+      "entity": "Enumeration",
+      "attributes": [
+        {
+          "name": "enumId",
+          "value": "LOAN_DOWN_PAYMENT"
+        },
+        {
+          "name": "enumTypeId",
+          "value": "LOAN_SCHEDULE_LINE"
+        },
+        {
+          "name": "enumCode",
+          "value": "DOWN_PAYMENT"
+        },
+        {
+          "name": "sequenceId",
+          "value": "02"
+        },
+        {
+          "name": "description",
+          "value": "Down payment"
+        }
+      ]
+    },
+    {
+      "entity": "Enumeration",
+      "attributes": [
+        {
+          "name": "enumId",
+          "value": "LOAN_INSTALLMENT"
+        },
+        {
+          "name": "enumTypeId",
+          "value": "LOAN_SCHEDULE_LINE"
+        },
+        {
+          "name": "enumCode",
+          "value": "INSTALLMENT"
+        },
+        {
+          "name": "sequenceId",
+          "value": "03"
+        },
+        {
+          "name": "description",
+          "value": "Installment"
+        }
+      ]
+    }
+  ],
+  "demo": [
+    {
+      "entity": "GlAccountOrganization",
+      "attributes": [
+        {
+          "name": "glAccountId",
+          "value": "124000"
+        },
+        {
+          "name": "organizationPartyId",
+          "value": "Company"
+        },
+        {
+          "name": "fromDate",
+          "value": "2001-01-01 00:00:00.0"
+        }
+      ]
+    },
+    {
+      "entity": "LoanProduct",
+      "attributes": [
+        {
+          "name": "loanProductId",
+          "value": "LOAN_STD"
+        },
+        {
+          "name": "description",
+          "value": "Standard amortizing loan"
+        },
+        {
+          "name": "receivableGlAccountId",
+          "value": "124000"
+        },
+        {
+          "name": "interestIncomeGlAccountId",
+          "value": "810000"
+        }
+      ]
+    }
+  ],
+  "testData": [
+    {
+      "entity": "UomConversionDated",
+      "attributes": [
+        {
+          "name": "uomId",
+          "value": "INR"
+        },
+        {
+          "name": "uomIdTo",
+          "value": "USD"
+        },
+        {
+          "name": "fromDate",
+          "value": "2000-01-01 00:00:00.000"
+        },
+        {
+          "name": "conversionFactor",
+          "value": "0.012"
+        }
+      ]
+    },
+    {
+      "entity": "UomConversionDated",
+      "attributes": [
+        {
+          "name": "uomId",
+          "value": "USD"
+        },
+        {
+          "name": "uomIdTo",
+          "value": "INR"
+        },
+        {
+          "name": "fromDate",
+          "value": "2000-01-01 00:00:00.000"
+        },
+        {
+          "name": "conversionFactor",
+          "value": "83.3333"
+        }
+      ]
+    },
+    {
+      "entity": "UomConversionDated",
+      "attributes": [
+        {
+          "name": "uomId",
+          "value": "JPY"
+        },
+        {
+          "name": "uomIdTo",
+          "value": "USD"
+        },
+        {
+          "name": "fromDate",
+          "value": "2000-01-01 00:00:00.000"
+        },
+        {
+          "name": "conversionFactor",
+          "value": "0.0067"
+        }
+      ]
+    },
+    {
+      "entity": "UomConversionDated",
+      "attributes": [
+        {
+          "name": "uomId",
+          "value": "USD"
+        },
+        {
+          "name": "uomIdTo",
+          "value": "JPY"
+        },
+        {
+          "name": "fromDate",
+          "value": "2000-01-01 00:00:00.000"
+        },
+        {
+          "name": "conversionFactor",
+          "value": "149.2537"
+        }
+      ]
+    },
+    {
+      "entity": "UomConversionDated",
+      "attributes": [
+        {
+          "name": "uomId",
+          "value": "ZAR"
+        },
+        {
+          "name": "uomIdTo",
+          "value": "USD"
+        },
+        {
+          "name": "fromDate",
+          "value": "2000-01-01 00:00:00.000"
+        },
+        {
+          "name": "conversionFactor",
+          "value": "0.054"
+        }
+      ]
+    },
+    {
+      "entity": "UomConversionDated",
+      "attributes": [
+        {
+          "name": "uomId",
+          "value": "USD"
+        },
+        {
+          "name": "uomIdTo",
+          "value": "ZAR"
+        },
+        {
+          "name": "fromDate",
+          "value": "2000-01-01 00:00:00.000"
+        },
+        {
+          "name": "conversionFactor",
+          "value": "18.5185"
+        }
+      ]
+    },
+    {
+      "entity": "StatusItem",
+      "attributes": [
+        {
+          "name": "statusId",
+          "value": "LOAN_TEST_RETIRED"
+        },
+        {
+          "name": "statusTypeId",
+          "value": "LOAN_STATUS"
+        },
+        {
+          "name": "statusCode",
+          "value": "TEST_RETIRED"
+        },
+        {
+          "name": "sequenceId",
+          "value": "99"
+        },
+        {
+          "name": "description",
+          "value": "A loan an earlier scenario left (tests only)"
+        }
+      ]
+    },
+    {
+      "entity": "Party",
+      "attributes": [
+        {
+          "name": "partyId",
+          "value": "LOAN_BORROWER_1"
+        },
+        {
+          "name": "partyTypeId",
+          "value": "PERSON"
+        },
+        {
+          "name": "statusId",
+          "value": "PARTY_ENABLED"
+        }
+      ]
+    },
+    {
+      "entity": "Person",
+      "attributes": [
+        {
+          "name": "partyId",
+          "value": "LOAN_BORROWER_1"
+        },
+        {
+          "name": "firstName",
+          "value": "Loan"
+        },
+        {
+          "name": "lastName",
+          "value": "Borrower"
+        }
+      ]
+    },
+    {
+      "entity": "PartyRole",
+      "attributes": [
+        {
+          "name": "partyId",
+          "value": "LOAN_BORROWER_1"
+        },
+        {
+          "name": "roleTypeId",
+          "value": "BILL_TO_CUSTOMER"
+        }
+      ]
+    }
+  ],
+  "facade": {
+    "services": [
+      "createFinAccount",
+      "createFinAccountTrans",
+      "createPayment",
+      "setPaymentStatus",
+      "createInvoice",
+      "createInvoiceItem",
+      "setInvoiceStatus",
+      "setFinAccountTransStatus",
+      "getPartyAccountingPreferences"
+    ],
+    "entities": [
+      "FinAccount",
+      "FinAccountTrans",
+      "Payment",
+      "Invoice",
+      "InvoiceItem",
+      "PartyAcctgPreference",
+      "UomConversionDated",
+      "LoanProduct"
+    ],
+    "classes": [
+      {
+        "class": "org.apache.ofbiz.service.LocalDispatcher",
+        "methods": [
+          "runSync"
+        ]
+      },
+      {
+        "class": "org.apache.ofbiz.service.ServiceUtil",
+        "methods": [
+          "isError",
+          "isFailure",
+          "getErrorMessage"
+        ]
+      },
+      {
+        "class": "org.apache.ofbiz.service.GenericServiceException",
+        "methods": []
+      },
+      {
+        "class": "org.apache.ofbiz.entity.Delegator",
+        "methods": []
+      },
+      {
+        "class": "org.apache.ofbiz.entity.util.EntityQuery",
+        "methods": [
+          "use",
+          "from",
+          "where",
+          "filterByDate",
+          "orderBy",
+          "queryOne",
+          "queryFirst",
+          "queryList"
+        ]
+      },
+      {
+        "class": "org.apache.ofbiz.entity.GenericValue",
+        "methods": [
+          "getString",
+          "getBigDecimal",
+          "getTimestamp"
+        ]
+      },
+      {
+        "class": "org.apache.ofbiz.entity.GenericEntityException",
+        "methods": []
+      }
+    ],
+    "snippets": [
+      {
+        "title": "A Java service: DispatchContext, the user login and ServiceUtil",
+        "file": "applications/accounting/src/main/java/org/apache/ofbiz/accounting/finaccount/FinAccountServices.java",
+        "from": "public static Map<String, Object> createAccountAndCredit",
+        "lines": 40
+      },
+      {
+        "title": "Reading with EntityQuery",
+        "file": "applications/accounting/src/main/java/org/apache/ofbiz/accounting/finaccount/FinAccountServices.java",
+        "from": "EntityQuery.use\\(delegator\\)",
+        "lines": 8
+      }
+    ]
+  },
+  "migration": {
+    "service": "migrateLegacyLoanBook",
+    "description": "Migrates a legacy loan book (its five datasets in bookDir, each named datasetPrefix + its name): every loan reconciled by the engine (LegacyMigration), its reconciliation and its legacy schedule lines (version 0) stored, and the loans that reconcile (MATCH, or D-2 where the service's schedule is the right one) booked through servicing. All or nothing: a DIFF rolls the run back. Idempotent by migrationId.",
+    "action": "CREATE",
+    "externalIdPrefix": "LEGACY-",
+    "recon": "LoanLegacyRecon",
+    "line": "LoanLegacyLine",
+    "export": {
+      "service": "exportLoansAsLegacyRequests",
+      "description": "The shadow run's export (FE 9.3): the loans booked on a date as the legacy job's input, one folder per calculation with the requests, the run control, the legacy currency file and the map from the legacy ids to the loans.",
+      "entity": "Loan",
+      "key": "loanId",
+      "dateField": "bookedOn",
+      "terms": "terms",
+      "mapFile": "LOANS.MAP"
+    },
+    "records": {
+      "request": {
+        "record": "LegacyRequest",
+        "decoder": "request",
+        "lengthConstant": "REQUEST_LENGTH",
+        "dataset": "LOAN.REQUEST.DATA",
+        "header": null,
+        "line": null,
+        "loanIdOffset": 2,
+        "loanIdLength": 16,
+        "currencyOffset": 26,
+        "currencyLength": 3,
+        "keyOffset": null,
+        "keyLength": null
+      },
+      "runControl": {
+        "record": "LegacyRunControl",
+        "decoder": "runControl",
+        "lengthConstant": "RUN_CONTROL_LENGTH",
+        "dataset": "RUN.CONTROL",
+        "header": null,
+        "line": null,
+        "loanIdOffset": null,
+        "loanIdLength": null,
+        "currencyOffset": null,
+        "currencyLength": null,
+        "keyOffset": null,
+        "keyLength": null
+      },
+      "currency": {
+        "record": "LegacyCurrency",
+        "decoder": "currency",
+        "lengthConstant": "CURRENCY_LENGTH",
+        "dataset": "CURRENCY.VSAM.KSDS",
+        "header": null,
+        "line": null,
+        "loanIdOffset": null,
+        "loanIdLength": null,
+        "currencyOffset": null,
+        "currencyLength": null,
+        "keyOffset": 0,
+        "keyLength": 3
+      },
+      "schedule": {
+        "record": "LegacyScheduleRecord",
+        "decoder": "scheduleRecord",
+        "lengthConstant": "SCHEDULE_RECORD_LENGTH",
+        "dataset": "LOAN.SCHEDULE.DATA",
+        "header": "LegacyScheduleHeader",
+        "line": "LegacyScheduleLine",
+        "loanIdOffset": 0,
+        "loanIdLength": 16,
+        "currencyOffset": null,
+        "currencyLength": null,
+        "keyOffset": null,
+        "keyLength": null
+      },
+      "reject": {
+        "record": "LegacyReject",
+        "decoder": "reject",
+        "lengthConstant": "REJECT_LENGTH",
+        "dataset": "LOAN.REJECTS.DATA",
+        "header": null,
+        "line": null,
+        "loanIdOffset": 0,
+        "loanIdLength": 16,
+        "currencyOffset": null,
+        "currencyLength": null,
+        "keyOffset": null,
+        "keyLength": null
+      }
+    },
+    "package": "com.mlcpu.loans.api.legacy",
+    "codec": "LegacyCodec",
+    "fromTerms": "LegacyTermsCodec",
+    "lineFields": [
+      {
+        "name": "recType",
+        "java": "String"
+      },
+      {
+        "name": "seq",
+        "java": "int"
+      },
+      {
+        "name": "periodNumber",
+        "java": "int"
+      },
+      {
+        "name": "fromDate",
+        "java": "LocalDate"
+      },
+      {
+        "name": "dueDate",
+        "java": "LocalDate"
+      },
+      {
+        "name": "principal",
+        "java": "BigDecimal"
+      },
+      {
+        "name": "interest",
+        "java": "BigDecimal"
+      },
+      {
+        "name": "fee",
+        "java": "BigDecimal"
+      },
+      {
+        "name": "penalty",
+        "java": "BigDecimal"
+      },
+      {
+        "name": "totalDue",
+        "java": "BigDecimal"
+      },
+      {
+        "name": "outstBalance",
+        "java": "BigDecimal"
+      },
+      {
+        "name": "totOutstanding",
+        "java": "BigDecimal"
+      }
+    ]
+  }
+}

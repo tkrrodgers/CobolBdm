@@ -170,6 +170,17 @@ public static class Program
                         maxTokens, ctx, testTimeout, a.GetValueOrDefault("arm") ?? "S", a.GetValueOrDefault("designer") ?? name,
                         int.Parse(a.GetValueOrDefault("plateau") ?? "3"), a.ContainsKey("debug-prompt"), a.GetValueOrDefault("resume"),
                         a.GetValueOrDefault("warm-start"));
+                case "fwd-host":
+                    // fwd-host --cas dir --out dir [--impl-attempts n] [--plateau 3] [--debug-prompt] [--warm-start holes-dir]: the model writes
+                    // the host holes of the package's prepared plugin (forward.json "host"); each attempt is judged by the host (FE 9.1, S8).
+                    return Forward.ForwardHost.Run(chat, FwdInputs(a), outArg, implAttempts, name, implReasoning, maxTokens, ctx,
+                        int.Parse(a.GetValueOrDefault("plateau") ?? "3"), a.ContainsKey("debug-prompt"), a.GetValueOrDefault("warm-start"));
+                case "fwd-host-prompt":
+                    // fwd-host-prompt --cas dir --out dir: the host run's first prompt, leak-checked, without a model.
+                    return Forward.ForwardHost.PromptOnly(FwdInputs(a), outArg);
+                case "fwd-host-judge":
+                    // fwd-host-judge --cas dir --holes dir --out dir [--repair-imports]: judge those hole files as an attempt is judged.
+                    return Forward.ForwardHost.JudgeOnly(FwdInputs(a), Need("holes"), outArg, a.ContainsKey("repair-imports"));
                 default:
                     Console.Error.WriteLine($"unknown verb '{verb}' (design | implement | run)");
                     return 2;

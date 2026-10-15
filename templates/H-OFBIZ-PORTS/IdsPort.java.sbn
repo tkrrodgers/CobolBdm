@@ -1,0 +1,20 @@
+package {{ model.plugin.javaPackage }};
+
+import {{ item.fqn }};
+
+/**
+ * New ids derived from domain keys ({{ item.spec.derive }}): the same key always gives the same id, so a retried create finds
+ * the record its first attempt made.
+ */
+public final class {{ item.class }} implements {{ item.interface }} {
+
+    public {{ item.class }}({{ model.plugin.resourceName }}PortContext context) {
+    }
+{{~ for m in item.methods ~}}
+
+    @Override
+    public {{ m.returns.simple }} {{ m.name }}({{ for p in m.params }}{{ p.type.simple }} {{ p.name }}{{ if !for.last }}, {{ end }}{{ end }}) {
+        return "{{ item.spec.prefix }}" + {{ m.params[0].name }};
+    }
+{{~ end ~}}
+}

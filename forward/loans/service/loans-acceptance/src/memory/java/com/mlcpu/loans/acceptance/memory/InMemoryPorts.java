@@ -27,8 +27,8 @@ import java.util.TreeMap;
  * In-memory ports for the servicing scenarios (one instance per scenario): a loan book, a ledger that knows one base currency and
  * the currencies with a rate to it, billing, financial accounts and a clock the scenario sets. New ids are sequential per kind
  * (PAY-0001, INV-0001, ACC-0001, TRN-0001); a loan's id is "LN-" + its external id. {@link #state()} is what a scenario's
- * "state" compares: the loans (without their terms and schedule), payments, invoices, accounts with their balance, and
- * transactions.
+ * "state" compares: the loans (without their schedule, and of their terms only the loan id they carry), payments, invoices,
+ * accounts with their balance, and transactions.
  */
 public final class InMemoryPorts {
 
@@ -36,7 +36,7 @@ public final class InMemoryPorts {
     public record Given(LocalDate today, String baseCurrency, List<String> ratesToBase) {
     }
 
-    public record LoanState(String loanId, String externalId, String accountId, LoanStatus status, LocalDate bookedOn, int scheduleVersion,
+    public record LoanState(String loanId, String externalId, String termsLoanId, String accountId, LoanStatus status, LocalDate bookedOn, int scheduleVersion,
             List<LineServicing> lines, String disbursementPaymentId, String disbursementTransactionId) {
     }
 
@@ -147,7 +147,7 @@ public final class InMemoryPorts {
     }
 
     public State state() {
-        List<LoanState> l = loans.values().stream().map(x -> new LoanState(x.loanId(), x.externalId(), x.accountId(), x.status(), x.bookedOn(),
+        List<LoanState> l = loans.values().stream().map(x -> new LoanState(x.loanId(), x.externalId(), x.terms().loanId(), x.accountId(), x.status(), x.bookedOn(),
                 x.scheduleVersion(), x.lines(), x.disbursementPaymentId(), x.disbursementTransactionId())).toList();
         List<Account> a = new ArrayList<>();
         for (var e : accounts.entrySet()) {

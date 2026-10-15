@@ -132,6 +132,8 @@ public static class ImplementStep
         if (stepCalls is not null) stepCalls.Statements = feedback.StatementsAt;
         // Debug mode: the outline the debug prompt takes its COBOL slices from.
         var debugOutline = debugPrompt && outlinePath is not null && File.Exists(outlinePath) ? File.ReadAllText(outlinePath) : null;
+        // Debug mode: the packet's legacy quirks and the parity notes, which the first prompt carries and a repair must keep.
+        var debugNotes = debugPrompt ? DebugPrompt.Notes(packetPath, notesPath) : null;
         File.WriteAllText(Path.Combine(outDir, "implementation.prompt.md"), prompt);
         var baseMessages = new List<ChatMessage> { new("system", SystemPrompt), new("user", prompt) };
         var messages = new List<ChatMessage>(baseMessages);
@@ -171,13 +173,20 @@ public static class ImplementStep
             // Most scenarios pass (in the code shown): edits only.
             bool editsOnly = best.Total > 0 && passing.Count * 2 >= best.Total;
             var text = DebugPrompt.Build(cap.ProgramId, prompt, debugOutline, kit, equivalences, callees, guide, Render(files), lastFeedback, status, passing,
-                editsOnly, tried);
+                editsOnly, tried, debugNotes);
             File.WriteAllText(Path.Combine(outDir, $"implementation.debug{forAttempt}.prompt.md"), text);
             int size = Tokens(text);
             debugReplyTokens = Math.Max(maxTokens, context - size - Tokens(SystemPrompt) - 512);
             Program.Log($"  debug prompt for attempt {forAttempt}: {size:N0} tokens (the first prompt: {Tokens(prompt):N0}; reply up to {debugReplyTokens:N0}); " +
-                        $"COBOL slice: {(guide.Count == 0 ? "none" : string.Join(", ", guide.Take(6)))}");
+                        $"COBOL slice: {SliceLabel(guide)}");
             return [new("system", SystemPrompt), new("user", text)];
+        }
+        string SliceLabel(IReadOnlyList<string> guide)
+        {
+            if (guide.Count > 0) return string.Join(", ", guide.Take(6));
+            if (debugOutline is null) return "none";
+            var (heading, slice) = DebugPrompt.Slice(debugOutline.Replace("\r\n", "\n"), guide, lastFeedback);
+            return slice.Length == 0 ? "none" : heading.Contains("whole PROCEDURE DIVISION") ? "the whole PROCEDURE DIVISION" : "the paragraphs that write the differing items";
         }
         string backend = chat.Name;
         // Warm start (implement-all --warm-start): the previous run's best code is where this run begins, with the feedback this
@@ -260,6 +269,8 @@ public static class ImplementStep
             foreach (var (name, src) in returned) files[name] = src;
             problems.AddRange(Check(files, cap, stepSimple, reserved));
             var attemptJson = Program.AttemptJson(attempt, r, problems);
+            // Recorded here, so an attempt that passes or does not compile is marked too.
+            if (debugTurn) attemptJson["debugPrompt"] = true;
             attemptJson["filesReturned"] = Program.Strings(returned.Keys);
             attemptJson["edits"] = new JsonObject { ["blocks"] = edits.Count, ["applied"] = applied, ["notApplied"] = Program.Strings(editProblems) };
             if (editProblems.Count > 0) Program.Log($"  {editProblems.Count} edit(s) not applied; first: {Clip(editProblems[0], 160)}");
@@ -383,7 +394,6 @@ public static class ImplementStep
                            $"{(lost.Count > 20 ? $" and {lost.Count - 20} more" : "")}.\n";
             message = editNote + message;
             fixes.Add(Clip(message.Split('\n').FirstOrDefault(l => l.Trim().Length > 0) ?? "", 300));
-            if (debugTurn) attemptJson["debugPrompt"] = true;
             runs.Add(attemptJson);
             // The same acceptance result with fewer differing CALLs is a better attempt (closer to the faithful program).
             if (best.Files is not null && best.Attempt != attempt && attemptPassed == best.Passed && attemptDiffs == best.Diffs && attemptCalls < bestCalls)

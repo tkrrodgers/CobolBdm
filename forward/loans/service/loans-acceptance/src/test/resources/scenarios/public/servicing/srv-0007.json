@@ -2,7 +2,7 @@
   "id": "srv-0007",
   "slice": "servicing",
   "origin": "the S5 loan envelope-1-p06-ceiling-0000000000001529; expected values: the reference over the in-memory ports",
-  "rules": ["SRV-06","SRV-07","SRV-08"],
+  "rules": ["SRV-06","SRV-07","SRV-08","SRV-11"],
   "given": {"today":"1974-04-24","baseCurrency":"USD","ratesToBase":["EUR","INR","JPY","ZAR"]},
   "steps": [
     {"call": "book", "input": {"externalId":"E-0525","ownerPartyId":"BORROWER-1","organizationPartyId":"ORG-1","loanProductId":"PRODUCT-1","terms":{"loanId":"0000000000001529","scheduleStart":"1974-03-31","currency":{"code":"INR","decimalPlaces":2,"roundingMultiple":10},"principal":"41.0000","disbursementDate":"1974-04-24","installments":9,"every":48,"frequency":"WEEKS","annualRatePercent":"43.060000000","downPaymentPercent":null,"downPaymentEnabled":false,"monthDays":"ACTUAL","yearDays":"DAYS_360","fixedLength":null,"interestMethod":"DECLINING_BALANCE","fullTermTranche":false,"calculation":{"precision":6,"roundingMode":"CEILING"}}},
@@ -29,6 +29,7 @@
     "loans" : [ {
       "loanId" : "LN-E-0525",
       "externalId" : "E-0525",
+      "termsLoanId" : "LN-E-0525",
       "accountId" : "ACC-0001",
       "status" : "ACTIVE",
       "bookedOn" : "1974-04-24",

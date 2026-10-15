@@ -1,11 +1,11 @@
 {
   "id": "rate-0313",
   "slice": "rates",
-  "origin": "FNEM0300 CALL trace, edge-p03-half_up (loans 0000000000000001 to 0000000000000025), CALL 17 (function P)",
-  "rules": ["RATE-01","RATE-03","RATE-09"],
+  "origin": "FNEM0300 CALL trace, edge-p06-down (loans 0000000000000851 to 0000000000000875), CALL 49 (function P)",
+  "rules": ["RATE-01","RATE-09"],
   "steps": [ {
     "call": "factors",
-    "input": {"query":{"scheduleStart":"2023-01-28","period":{"from":"2023-01-28","due":"2023-02-28"},"from":"2023-01-28","to":"2023-01-28","annualRatePercent":"9.482200000","frequency":"MONTHS","every":1,"monthDays":"THIRTY","yearDays":"DAYS_365"},"calculation":{"precision":3,"roundingMode":"HALF_UP"}},
-    "expected": {"@type":"Factors","installment":"0.000","interest":"0.008"}
+    "input": {"query":{"scheduleStart":"2024-12-31","period":{"from":"2025-02-25","due":"2025-03-25"},"from":"2025-02-25","to":"2025-03-25","annualRatePercent":"18.750000000","frequency":"WEEKS","every":4,"monthDays":"THIRTY","yearDays":"ACTUAL"},"calculation":{"precision":6,"roundingMode":"DOWN"}},
+    "expected": {"@type":"Factors","installment":"0.014383","interest":"0.014383"}
   } ]
 }

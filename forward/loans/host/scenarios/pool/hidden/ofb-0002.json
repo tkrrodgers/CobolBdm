@@ -1,0 +1,46 @@
+{
+  "schema" : "mlcpu.ofbiz-scenario.v1",
+  "id" : "ofb-0002",
+  "origin" : "the S5 loan edge-p03-ceiling-0000000000001076; expected values: the reference over in-memory ports with the demo ledger",
+  "rules" : [ "D-1", "OFB-02" ],
+  "steps" : [ {
+    "service" : "bookLoan",
+    "today" : "2024-01-01",
+    "params" : {
+      "externalId" : "E-ofb-0002",
+      "ownerPartyId" : "LOAN_BORROWER_1",
+      "organizationPartyId" : "Company",
+      "loanProductId" : "LOAN_STD",
+      "termsLoanId" : "0000000000001076",
+      "scheduleStart" : "2024-01-01",
+      "currencyCode" : "USD",
+      "currencyDecimalPlaces" : "2",
+      "principal" : "12345.6789",
+      "disbursementDate" : "2024-01-01",
+      "installments" : "12",
+      "every" : "1",
+      "frequencyEnumId" : "LOAN_FREQ_MONTHS",
+      "annualRatePercent" : "12.000000000",
+      "downPaymentPercent" : "99.999999999",
+      "downPaymentEnabled" : true,
+      "monthDaysEnumId" : "LOAN_MDAYS_THIRTY",
+      "yearDaysEnumId" : "LOAN_YDAYS_DAYS_360",
+      "interestMethodEnumId" : "LOAN_IM_DECLINING",
+      "fullTermTranche" : false,
+      "calcPrecision" : "3",
+      "calcRoundingModeEnumId" : "LOAN_RND_CEILING",
+      "businessDate" : "2024-01-01"
+    },
+    "expect" : {
+      "outcome" : "BookingRejected",
+      "result" : {
+        "@type" : "BookingRejected",
+        "externalId" : "E-ofb-0002",
+        "reason" : "SCHEDULE_REJECTED",
+        "scheduleReason" : "DOWN_PAYMENT_COVERS_PRINCIPAL",
+        "field" : null
+      }
+    }
+  } ],
+  "checks" : [ ]
+}

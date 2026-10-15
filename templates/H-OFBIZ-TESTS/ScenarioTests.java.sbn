@@ -1,0 +1,325 @@
+package {{ model.plugin.javaPackage }};
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.stream.Stream;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.ofbiz.base.component.ComponentConfig;
+import org.apache.ofbiz.base.util.Debug;
+import org.apache.ofbiz.base.util.ObjectType;
+import org.apache.ofbiz.entity.Delegator;
+import org.apache.ofbiz.entity.GenericValue;
+import org.apache.ofbiz.entity.condition.EntityCondition;
+import org.apache.ofbiz.entity.condition.EntityOperator;
+import org.apache.ofbiz.entity.util.EntityQuery;
+import org.apache.ofbiz.service.GenericServiceException;
+import org.apache.ofbiz.service.LocalDispatcher;
+import org.apache.ofbiz.service.ModelParam;
+import org.apache.ofbiz.service.ModelService;
+import org.apache.ofbiz.service.ServiceUtil;
+import org.apache.ofbiz.testtools.JunitJupiterTest;
+import org.apache.ofbiz.testtools.JupiterTestHelper;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+/**
+ * Runs the scenarios under testdef/scenarios (mlcpu.ofbiz-scenario.v1), one JUnit test each, in file name order. A scenario:
+ * <ol>
+ * <li>isolates earlier scenarios' state (testdef/scenarios/runner.json "isolate": rows moved out of the states the services
+ * look at);</li>
+ * <li>loads its "data" rows;</li>
+ * <li>runs its "steps": a service with "params" ("$name" is a bound value), then "expect" (success, errorContains, outcome,
+ * result: the canonical map, every key compared), "bind" (name to a path in the service result) and "report" (true: the
+ * result goes to the log as one JSON line after {@value #REPORT}); or "run", an outside command, which must exit 0;</li>
+ * <li>compares its "checks": the rows of an entity selected by "where" (a value, "$name", or a list of values a nested query
+ * gives), ordered by "orderBy", on "fields" (expected "*" is any value, decimals compare by value, dates by their text);
+ * "bind" names a field of the first row.</li>
+ * </ol>
+ * Every difference is reported, with the step or check it belongs to.
+ */
+@JunitJupiterTest
+public final class {{ model.plugin.resourceName }}ScenarioTests implements JupiterTestHelper {
+
+    private static final String MODULE = {{ model.plugin.resourceName }}ScenarioTests.class.getName();
+    private static final ObjectMapper JSON = new ObjectMapper();
+    private static final int MAX_REPORTED = 12;
+    /** The prefix of a reported step result in the log. */
+    private static final String REPORT = "[scenario-report] ";
+
+    @TestFactory
+    Stream<DynamicTest> scenarios() throws Exception {
+        Path root = Path.of(ComponentConfig.getRootLocation("{{ model.plugin.id }}")).resolve("testdef").resolve("scenarios");
+        Map<String, Object> runner = Files.exists(root.resolve("runner.json")) ? read(root.resolve("runner.json")) : Map.of();
+        List<Path> files;
+        try (Stream<Path> walk = Files.walk(root)) {
+            files = walk.filter(f -> f.toString().endsWith(".json") && !f.getFileName().toString().equals("runner.json")).sorted().toList();
+        }
+        return files.stream().map(f -> DynamicTest.dynamicTest(f.getFileName().toString().replace(".json", ""), () -> run(read(f), runner)));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> read(Path file) throws IOException {
+        return JSON.readValue(file.toFile(), LinkedHashMap.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void run(Map<String, Object> scenario, Map<String, Object> runner) throws Exception {
+        Delegator delegator = getDelegator();
+        LocalDispatcher dispatcher = getDispatcher();
+        GenericValue userLogin = getUserLogin(String.valueOf(runner.getOrDefault("userLogin", "system")));
+        Map<String, Object> bound = new HashMap<>();
+        System.clearProperty({{ model.plugin.resourceName }}PortsFactory.BUSINESS_DATE);
+        List<String> problems = new ArrayList<>();
+        for (Map<String, Object> rule : (List<Map<String, Object>>) runner.getOrDefault("isolate", List.of())) {
+            EntityCondition where = EntityCondition.makeCondition((String) rule.get("field"), EntityOperator.IN, rule.get("from"));
+            delegator.storeByCondition((String) rule.get("entity"), Map.of((String) rule.get("field"), rule.get("to")), where);
+        }
+        for (Map<String, Object> row : (List<Map<String, Object>>) scenario.getOrDefault("data", List.of())) {
+            GenericValue value = delegator.makeValue((String) row.get("entity"));
+            for (Map.Entry<String, Object> e : row.entrySet()) {
+                if (!e.getKey().equals("entity")) {
+                    value.setString(e.getKey(), e.getValue() == null ? null : e.getValue().toString());
+                }
+            }
+            delegator.createOrStore(value);
+        }
+        int n = 0;
+        for (Map<String, Object> step : (List<Map<String, Object>>) scenario.getOrDefault("steps", List.of())) {
+            n++;
+            if (step.get("run") != null) {
+                // an outside command in the middle of a run (the shadow run's legacy job): the test sandbox rolls the database
+                // back after the suite, so what needs both sides happens in one run
+                ProcessBuilder pb = new ProcessBuilder((List<String>) step.get("run")).inheritIO();
+                int exit = pb.start().waitFor();
+                if (exit != 0) {
+                    problems.add("step " + n + " " + step.get("run") + ": exit " + exit);
+                    break;
+                }
+                continue;
+            }
+            String service = (String) step.get("service");
+            if (step.get("today") != null) {
+                System.setProperty({{ model.plugin.resourceName }}PortsFactory.BUSINESS_DATE, String.valueOf(step.get("today")));
+            }
+            String where = "step " + n + " " + service;
+            Map<String, Object> context = params(dispatcher, service, (Map<String, Object>) step.getOrDefault("params", Map.of()), bound);
+            if (step.get("userLogin") == null) {
+                context.put("userLogin", userLogin);
+            } else if (!"none".equals(step.get("userLogin"))) {
+                context.put("userLogin", getUserLogin(String.valueOf(step.get("userLogin"))));
+            }
+            Map<String, Object> result;
+            try {
+                result = dispatcher.runSync(service, context);
+            } catch (GenericServiceException e) {
+                // OFBiz throws for a refused permission or a transaction it rolls back: an error result, like any other
+                result = ServiceUtil.returnError(e.getMessage());
+            }
+            Map<String, Object> expect = (Map<String, Object>) step.getOrDefault("expect", Map.of());
+            boolean success = !ServiceUtil.isError(result) && !ServiceUtil.isFailure(result);
+            boolean wanted = !Boolean.FALSE.equals(expect.get("success"));
+            if (success != wanted) {
+                problems.add(where + ": expected " + (wanted ? "success" : "an error") + ", got "
+                        + (success ? "success" : "error: " + ServiceUtil.getErrorMessage(result)));
+                continue;
+            }
+            if (expect.get("errorContains") instanceof String text && !String.valueOf(ServiceUtil.getErrorMessage(result)).contains(text)) {
+                problems.add(where + ": the error should contain «" + text + "», got «" + ServiceUtil.getErrorMessage(result) + "»");
+            }
+            if (expect.containsKey("outcome") && !String.valueOf(expect.get("outcome")).equals(String.valueOf(result.get("outcome")))) {
+                problems.add(where + ": outcome expected " + expect.get("outcome") + ", got " + result.get("outcome") + " " + result.get("result"));
+            }
+            if (expect.containsKey("result")) {
+                compare(where + ": result", expect.get("result"), result.get("result"), bound, problems);
+            }
+            for (Map.Entry<String, Object> b : ((Map<String, Object>) step.getOrDefault("bind", Map.of())).entrySet()) {
+                bound.put(b.getKey(), path(result, (String) b.getValue()));
+            }
+            if (Boolean.TRUE.equals(step.get("report"))) {
+                // the sandbox rolls the database back after the run: what a report needs beyond pass and fail leaves through the log
+                Map<String, Object> line = new LinkedHashMap<>();
+                line.put("scenario", scenario.get("id"));
+                line.put("step", n);
+                line.put("service", service);
+                line.put("result", result.get("result"));
+                Debug.logInfo(REPORT + JSON.writeValueAsString(line), MODULE);
+            }
+        }
+        System.clearProperty({{ model.plugin.resourceName }}PortsFactory.BUSINESS_DATE);
+        for (Map<String, Object> check : (List<Map<String, Object>>) scenario.getOrDefault("checks", List.of())) {
+            check(delegator, check, bound, problems);
+        }
+        if (!problems.isEmpty()) {
+            List<String> shown = problems.subList(0, Math.min(MAX_REPORTED, problems.size()));
+            String more = problems.size() > MAX_REPORTED ? "\n(" + (problems.size() - MAX_REPORTED) + " more)" : "";
+            throw new AssertionError(scenario.get("id") + ": " + problems.size() + " difference(s)\n" + String.join("\n", shown) + more);
+        }
+    }
+
+    /** A step's parameters with bound values resolved and converted to the service's declared types. */
+    private static Map<String, Object> params(LocalDispatcher dispatcher, String service, Map<String, Object> given, Map<String, Object> bound)
+            throws Exception {
+        ModelService model = dispatcher.getDispatchContext().getModelService(service);
+        Map<String, Object> context = new HashMap<>();
+        for (Map.Entry<String, Object> e : given.entrySet()) {
+            Object value = resolve(e.getValue(), bound);
+            ModelParam param = model.getParam(e.getKey());
+            if (value != null && param != null && !(value instanceof Map) && !(value instanceof List)) {
+                value = ObjectType.simpleTypeOrObjectConvert(value.toString(), param.getType(), null, TimeZone.getDefault(), Locale.getDefault(), true);
+            }
+            context.put(e.getKey(), value);
+        }
+        return context;
+    }
+
+    private static Object resolve(Object value, Map<String, Object> bound) {
+        if (value instanceof String text && text.startsWith("$") && bound.containsKey(text.substring(1))) {
+            return bound.get(text.substring(1));
+        }
+        return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Object path(Map<String, Object> result, String path) {
+        Object at = result;
+        for (String part : path.split("\\.")) {
+            if (at instanceof List<?> list && part.chars().allMatch(Character::isDigit)) {
+                int index = Integer.parseInt(part);
+                at = index < list.size() ? list.get(index) : null;
+            } else if (at instanceof Map) {
+                at = ((Map<String, Object>) at).get(part);
+            } else {
+                return null;
+            }
+        }
+        return at;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void check(Delegator delegator, Map<String, Object> check, Map<String, Object> bound, List<String> problems) throws Exception {
+        String entity = (String) check.get("entity");
+        List<String> fields = (List<String>) check.getOrDefault("fields", List.of());
+        List<GenericValue> rows = select(delegator, entity, (Map<String, Object>) check.getOrDefault("where", Map.of()),
+                (List<String>) check.getOrDefault("orderBy", List.of()), bound);
+        String where = "check " + entity + " " + check.getOrDefault("where", Map.of());
+        if (check.containsKey("count") && ((Number) check.get("count")).intValue() != rows.size()) {
+            problems.add(where + ": expected " + check.get("count") + " row(s), got " + rows.size());
+        }
+        if (check.containsKey("rows")) {
+            List<Map<String, Object>> expected = (List<Map<String, Object>>) check.get("rows");
+            if (expected.size() != rows.size()) {
+                problems.add(where + ": expected " + expected.size() + " row(s), got " + rows.size() + " " + describe(rows, fields));
+            }
+            for (int i = 0; i < Math.min(expected.size(), rows.size()); i++) {
+                for (String field : fields.isEmpty() ? expected.get(i).keySet() : fields) {
+                    if (expected.get(i).containsKey(field)) {
+                        compare(where + " row " + (i + 1) + " " + field, expected.get(i).get(field), rows.get(i).get(field), bound, problems);
+                    }
+                }
+            }
+        }
+        for (Map.Entry<String, Object> b : ((Map<String, Object>) check.getOrDefault("bind", Map.of())).entrySet()) {
+            bound.put(b.getKey(), rows.isEmpty() ? null : rows.get(0).get((String) b.getValue()));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<GenericValue> select(Delegator delegator, String entity, Map<String, Object> where, List<String> orderBy,
+            Map<String, Object> bound) throws Exception {
+        List<EntityCondition> conditions = new ArrayList<>();
+        for (Map.Entry<String, Object> e : where.entrySet()) {
+            Object value = resolve(e.getValue(), bound);
+            if (value instanceof Map) {
+                Map<String, Object> sub = (Map<String, Object>) value;
+                List<Object> values = new ArrayList<>();
+                for (GenericValue row : select(delegator, (String) sub.get("from"), (Map<String, Object>) sub.getOrDefault("where", Map.of()),
+                        List.of(), bound)) {
+                    values.add(row.get((String) sub.get("field")));
+                }
+                conditions.add(EntityCondition.makeCondition(e.getKey(), EntityOperator.IN, values));
+            } else {
+                conditions.add(EntityCondition.makeCondition(e.getKey(), EntityOperator.EQUALS, value));
+            }
+        }
+        return EntityQuery.use(delegator).from(entity).where(EntityCondition.makeCondition(conditions)).orderBy(orderBy).queryList();
+    }
+
+    private static String describe(List<GenericValue> rows, List<String> fields) {
+        List<String> out = new ArrayList<>();
+        for (GenericValue row : rows) {
+            Map<String, Object> shown = new LinkedHashMap<>();
+            for (String f : fields) {
+                shown.put(f, row.get(f));
+            }
+            out.add(shown.toString());
+        }
+        return out.toString();
+    }
+
+    /** Expected against actual: maps key by key, lists element by element, "*" any non-null value, decimals by value, dates by text. */
+    @SuppressWarnings("unchecked")
+    private static void compare(String where, Object expected, Object actual, Map<String, Object> bound, List<String> problems) {
+        Object want = resolve(expected, bound);
+        if ("*".equals(want)) {
+            if (actual == null) {
+                problems.add(where + ": expected a value, got null");
+            }
+            return;
+        }
+        if (want instanceof Map && actual instanceof Map) {
+            Map<String, Object> w = (Map<String, Object>) want;
+            Map<String, Object> a = (Map<String, Object>) actual;
+            for (String key : w.keySet()) {
+                compare(where + "." + key, w.get(key), a.get(key), bound, problems);
+            }
+            for (String key : a.keySet()) {
+                if (!w.containsKey(key)) {
+                    problems.add(where + "." + key + ": not expected, got " + a.get(key));
+                }
+            }
+            return;
+        }
+        if (want instanceof List && actual instanceof List) {
+            List<Object> w = (List<Object>) want;
+            List<Object> a = (List<Object>) actual;
+            if (w.size() != a.size()) {
+                problems.add(where + ": expected " + w.size() + " element(s), got " + a.size() + " " + a);
+            }
+            for (int i = 0; i < Math.min(w.size(), a.size()); i++) {
+                compare(where + "[" + i + "]", w.get(i), a.get(i), bound, problems);
+            }
+            return;
+        }
+        if (!same(want, actual)) {
+            problems.add(where + ": expected " + want + ", got " + actual);
+        }
+    }
+
+    private static boolean same(Object want, Object actual) {
+        if (want == null || actual == null) {
+            return want == null && actual == null;
+        }
+        if (actual instanceof BigDecimal || actual instanceof Number || want instanceof Number) {
+            try {
+                return new BigDecimal(want.toString()).compareTo(new BigDecimal(actual.toString())) == 0;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        if (actual instanceof java.util.Date) {
+            String text = actual instanceof java.sql.Date ? actual.toString() : new java.sql.Timestamp(((java.util.Date) actual).getTime()).toString();
+            return text.startsWith(want.toString());
+        }
+        return want.toString().equals(actual.toString());
+    }
+}
