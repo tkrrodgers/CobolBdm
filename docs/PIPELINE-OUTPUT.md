@@ -403,3 +403,51 @@ prompt tokens (the prompt names them; they are given classes). Steps (FNLS0100, 
 
 To run arm C: `kit-harness typed <kit> <cbl>...` (or `typed-all.sh`, which also writes `verified.txt`), then any
 implementation run with `MLCPU_KIT_FEATURES=examples-values,prompt-packet-compact,shadow-feedback,typed-reference`.
+
+## Pass-through records (kit feature `pass-through-records`) and split characterization seeds (2026-10-15)
+
+The first J3S estate onboarded from the Java→COBOL workbench was `JavaToCOBOLTest/claude-in-app`, the
+loan-amortization-calculator. It found two limits.
+
+**Pass-through records.** J3S passes the whole object heap to every program: FS-HEAP, 83 MB, 935 items. The job step
+LCLE0100 only hands it on to FSEM0100. Its implementation prompt still described every item three times, in the packet's
+`dataContracts`, in the record kit and in the AST outline's DATA DIVISION. The prompt was 146,112 tokens with the compact
+packet and 126,819 with the full one, so Gemma 4's 131,072-token context could not hold it and the program was skipped.
+
+Under the new kit feature, a record that the program passes through lists only the items its statements name. A
+pass-through record has more than 120 items, of which the PROCEDURE DIVISION of the AST outline names under a tenth. The
+rendering is `MlCpu.DesignModel/PromptRecords.cs`, applied in `ImplementStep.PlanPrompt`; debug turns get the same kit. The
+packet file, the record kit file, the record classes and their accessors are unchanged.
+
+Measured with `prompt-tokens` (Gemma's tokenizer):
+
+| Program | Before | With the feature |
+| --- | --- | --- |
+| LCLE0100 | does not fit | **46,314 tokens** (FS-HEAP 0/935 in the packet, the kit and the outline) |
+| CardDemo, Fineract (9 programs measured) | — | identical to the feature off: their records are named densely (Fineract's LM-MODEL 24–86% of 2,001), so nothing is cut |
+
+`KitExamples.Features` adds the feature to new publishes. Kits already published keep their `kit-features.json` and render
+as before.
+
+**Split characterization seeds.** `JavaCharacterizationRenderer` wrote every seed into one `seeds()` method. J3S's
+FSJBDEC, with its big-value store, has 1,371 seeds and 27,380 map entries, and javac refused the method as "code too large".
+No test of the published project compiled: `/test` reported 0/0, and every Gemma attempt whose own code compiled failed on
+FSJBDEC's test. The seeds are now split over `seeds0()`, `seeds1()`, ... of at most 2,000 entries each. A test that fits
+one method renders byte for byte as before; 129 of the estate's 130 tests were unchanged. After the fix, the published
+project's `/test?tests=true` runs **2,606 tests, 0 failed**, with job checks 14/14 against GnuCOBOL and the reference 7/7
+against the original Java.
+
+**Deterministic characterization seeds.** `CobolBase.runParagraph` seeded its inputs in the input map's order. The
+generated tests pass `Map.ofEntries(...)`, which iterates in an order salted per JVM. Seeds of fields that overlap in
+storage, such as REDEFINES bodies or a date over its year, month and day, then left different bytes from one JVM to the
+next. Baseline and Prog agreed within a run, but the golden file pinned by an earlier run drifted: in the assembled Gemma
+service of the loan calculator, LCLE0100 failed 31 of 32 tests and the date kernel FNDTKRN 16 of 131. Fields are now
+seeded in the program's declaration order (`_fields()` is a LinkedHashMap). Seeds that do not overlap give the same
+bytes as before. A golden pinned under the old random order can drift once: rerun the publish's tests to pin it again.
+`java-sidecar/build` keeps the old class until the sidecar is rebuilt; published projects take the runtime sources
+through `/runtime` at publish.
+
+**Gemma 4 on J3S's job step.** With the three fixes, Gemma 4 implemented LCLE0100 (the loan calculator's job step,
+whose prompt is now 46,314 tokens): acceptance **13/13 at attempt 4** (debug mode; 0/13 at attempt 2, a SYSOUT byte),
+16.8 minutes, 434 lines of Java in 3 classes. In the assembled service, the jobs give 14/14 against GnuCOBOL (G6a) and
+7/7 against the original Java (G6b).

@@ -80,11 +80,16 @@ public abstract class CobolBase implements MigratedProgram {
         ensureInit();
         materializeLinkage();
         Map<String, CobField> fields = _fields();
-        for (Map.Entry<String, String> e : inputs.entrySet()) {
-            CobField f = fields.get(e.getKey());
-            if (f == null) continue;
-            if (f.isNumeric()) CobRt.move(new NumLit(e.getValue()), f);
-            else CobRt.move(e.getValue(), f);
+        // Seeds in the program's declaration order (_fields() is ordered), not the map's: a Map.of / Map.ofEntries iterates
+        // in an order salted per JVM, and seeds of overlapping fields (REDEFINES, a date over its year/month/day) leave
+        // different bytes in different orders, so a characterization golden pinned by one JVM drifted in the next
+        // (J3S's LCLE0100 and the date kernel FNDTKRN, 47 tests).
+        for (Map.Entry<String, CobField> fe : fields.entrySet()) {
+            String v = inputs.get(fe.getKey());
+            if (v == null) continue;
+            CobField f = fe.getValue();
+            if (f.isNumeric()) CobRt.move(new NumLit(v), f);
+            else CobRt.move(v, f);
         }
         DisplaySink prev = DisplaySink.current();
         DisplaySink.Capturing cap = new DisplaySink.Capturing();

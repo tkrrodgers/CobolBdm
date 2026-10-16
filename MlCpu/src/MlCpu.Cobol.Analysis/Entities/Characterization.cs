@@ -255,20 +255,31 @@ public static class JavaCharacterizationRenderer
                     CobClock.configure("FIXED", "{{clockEpoch}}");
                 }
 
-                static Stream<Arguments> seeds() {
-                    return Stream.of(
 
             """);
-        for (int i = 0; i < vectors.Count; i++)
+        // One seeds() method while it stays well under the JVM's 64 KB of bytecode per method (about 14 bytes per
+        // Map.entry); beyond that the seeds are split over seeds0(), seeds1(), ... J3S's FSJBDEC, with the big-value
+        // store, has 1,371 seeds and 27,380 entries: one method was "code too large", and no test of the estate compiled.
+        var chunks = new List<List<CharacterizationVector>> { new() };
+        int inChunk = 0;
+        foreach (var v in vectors)
         {
-            var v = vectors[i];
-            var entries = string.Join(", ", v.Inputs.Select(x => $"Map.entry({Lit(x.Cobol)}, {Lit(x.Value)})"));
-            sb.Append($"                Arguments.of({Lit(v.Paragraph)}, {Lit(v.Seed)}, Map.<String, String>ofEntries({entries})){(i + 1 < vectors.Count ? "," : "")}\n");
+            if (inChunk > 0 && inChunk + v.Inputs.Count > SeedEntriesPerMethod)
+            {
+                chunks.Add([]);
+                inChunk = 0;
+            }
+            chunks[^1].Add(v);
+            inChunk += v.Inputs.Count;
+        }
+        if (chunks.Count == 1) Seeds(sb, "seeds", vectors, false);
+        else
+        {
+            sb.Append("    static Stream<Arguments> seeds() {\n        return Stream.of(")
+              .Append(string.Join(", ", chunks.Select((_, k) => $"seeds{k}()"))).Append(").flatMap(s -> s);\n    }\n\n");
+            for (int k = 0; k < chunks.Count; k++) Seeds(sb, $"seeds{k}", chunks[k], true);
         }
         sb.Append($$"""
-                    );
-                }
-
                 @ParameterizedTest(name = "{0} [{1}]")
                 @MethodSource("seeds")
                 void normalizedMatchesBaseline(String paragraph, String seed, Map<String, String> inputs) {
@@ -282,6 +293,21 @@ public static class JavaCharacterizationRenderer
 
             """);
         return sb.ToString();
+    }
+
+    /// <summary>Map entries per seeds method: about 28 KB of bytecode, under the JVM's 64 KB limit with room for the seeds' own code.</summary>
+    const int SeedEntriesPerMethod = 2000;
+
+    static void Seeds(StringBuilder sb, string name, IReadOnlyList<CharacterizationVector> vectors, bool helper)
+    {
+        sb.Append($"    {(helper ? "private " : "")}static Stream<Arguments> {name}() {{\n        return Stream.of(\n");
+        for (int i = 0; i < vectors.Count; i++)
+        {
+            var v = vectors[i];
+            var entries = string.Join(", ", v.Inputs.Select(x => $"Map.entry({Lit(x.Cobol)}, {Lit(x.Value)})"));
+            sb.Append($"                Arguments.of({Lit(v.Paragraph)}, {Lit(v.Seed)}, Map.<String, String>ofEntries({entries})){(i + 1 < vectors.Count ? "," : "")}\n");
+        }
+        sb.Append("        );\n    }\n\n");
     }
 
     static string Sanitize(string id) => new(id.ToUpperInvariant().Select(c => char.IsLetterOrDigit(c) ? c : '_').ToArray());

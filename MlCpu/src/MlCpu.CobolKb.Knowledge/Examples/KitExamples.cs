@@ -6,7 +6,7 @@ namespace MlCpu.CobolKb.Knowledge;
 public static class KitExamples
 {
     /// <summary>Kit features a publish of this pipeline writes to normalization/kit-features.json.</summary>
-    public static readonly string[] Features = ["examples-values", "prompt-packet-compact", "shadow-feedback", "subprogram-calls"];
+    public static readonly string[] Features = ["examples-values", "prompt-packet-compact", "shadow-feedback", "subprogram-calls", "pass-through-records"];
 
     /// <summary>Elementary item name → its 88-level condition names and values, over the given records (LINKAGE records: the CALL arguments).</summary>
     public static IReadOnlyDictionary<string, IReadOnlyDictionary<string, IReadOnlyList<string>>> Conditions(IEnumerable<DataItem> records)

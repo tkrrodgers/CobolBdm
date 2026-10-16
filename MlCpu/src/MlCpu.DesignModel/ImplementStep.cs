@@ -172,7 +172,7 @@ public static class ImplementStep
         {
             // Most scenarios pass (in the code shown): edits only.
             bool editsOnly = best.Total > 0 && passing.Count * 2 >= best.Total;
-            var text = DebugPrompt.Build(cap.ProgramId, prompt, debugOutline, kit, equivalences, callees, guide, Render(files), lastFeedback, status, passing,
+            var text = DebugPrompt.Build(cap.ProgramId, prompt, debugOutline, plan.Kit ?? kit, equivalences, callees, guide, Render(files), lastFeedback, status, passing,
                 editsOnly, tried, debugNotes);
             File.WriteAllText(Path.Combine(outDir, $"implementation.debug{forAttempt}.prompt.md"), text);
             int size = Tokens(text);
@@ -490,7 +490,9 @@ public static class ImplementStep
     }
 
     /// <param name="Compact">The packet is rendered under kit feature prompt-packet-compact (the outline is then part of the core prompt).</param>
-    public sealed record PromptPlan(string Prompt, int MaxTokens, string? ExamplesPath, bool Compact, bool OutlineUsed, PromptPacket.Rendering? Packet);
+    /// <param name="Kit">The record kit as the prompt shows it (kit feature pass-through-records cuts large records); debug turns use the same.</param>
+    public sealed record PromptPlan(string Prompt, int MaxTokens, string? ExamplesPath, bool Compact, bool OutlineUsed, PromptPacket.Rendering? Packet,
+        string? Kit = null);
 
     /// <summary>
     /// The implementation prompt and the reply budget. Pipeline v2 (no kit feature): the core prompt (packet, design, platform,
@@ -503,6 +505,24 @@ public static class ImplementStep
         KitFeatures features, int context, int maxTokens, Func<string, int> tokens, string outDir, string? typedReference = null)
     {
         string? outline = outlinePath is not null && File.Exists(outlinePath) ? File.ReadAllText(outlinePath).Replace("\r\n", "\n") : null;
+        // Kit feature pass-through-records: large records list only the items the program's statements name (the outline has
+        // every statement). The compact packet still names a record by its kit class when the whole kit lists it.
+        string? fullKit = kit;
+        string? packetJson = null;
+        HashSet<string>? referenced = null;
+        if (features.Has(KitFeatures.PassThroughRecords) && outline is not null)
+        {
+            referenced = PromptRecords.Referenced(outline);
+            var cutOutline = PromptRecords.Outline(outline, referenced, out var outlineCut);
+            if (outlineCut.Count > 0) outline = Log(cutOutline, "AST outline", outlineCut);
+            if (kit is not null)
+            {
+                var cutKit = PromptRecords.Kit(kit, referenced, out var kitCut);
+                if (kitCut.Count > 0) kit = Log(cutKit, "record kit", kitCut);
+            }
+            var json = PromptRecords.Packet(File.ReadAllText(packetPath), referenced, out var packetCut);
+            if (packetCut.Count > 0) packetJson = Log(json, "packet", packetCut);
+        }
         // The typed reference (kit feature typed-reference) carries the logic in Java: it takes the outline's place.
         if (typedReference is not null) outline = null;
         if (features.Has(KitFeatures.PromptPacketCompact) && (outline is not null || typedReference is not null))
@@ -510,7 +530,8 @@ public static class ImplementStep
             // Under the typed reference the packet names its record views (interface X   // RECORD-NAME, n bytes: ...).
             var views = typedReference is null ? null : Regex.Matches(typedReference, @"(?m)^interface (\w+)\s+// ([A-Z0-9][A-Z0-9-]*), \d+ bytes")
                 .GroupBy(x => x.Groups[2].Value).ToDictionary(g => g.Key, g => g.First().Groups[1].Value, StringComparer.Ordinal);
-            var packet = PromptPacket.Compact(packetPath, kit, views);
+            var packet = PromptPacket.Compact(packetPath, fullKit, views);
+            if (referenced is not null) packet = packet with { Json = PromptRecords.Packet(packet.Json, referenced, out _) };
             var bareC = BuildPrompt(cap, stepSimple, packetPath, designPath, projectDir, acceptanceTest, reserved, null, notesPath, kit, pattern, equivalences, callees,
                 packet, outline, typedReference);
             int coreC = tokens(SystemPrompt) + tokens(bareC);
@@ -528,12 +549,12 @@ public static class ImplementStep
                     ? FitExamples(examplesPath, context - maxC - 2000 - coreC, outDir, tokens, features.Has(KitFeatures.ExamplesValues)) : null;
                 var promptC = BuildPrompt(cap, stepSimple, packetPath, designPath, projectDir, acceptanceTest, reserved, ex, notesPath, kit, pattern, equivalences, callees,
                     packet, outline, typedReference);
-                return new PromptPlan(promptC, maxC, ex, true, outline is not null, packet);
+                return new PromptPlan(promptC, maxC, ex, true, outline is not null, packet, kit);
             }
             Program.Log($"  compact packet with the outline is {coreC:N0} tokens: too large for a {context:N0}-token context; the full packet is used");
         }
         var bare = BuildPrompt(cap, stepSimple, packetPath, designPath, projectDir, acceptanceTest, reserved, null, notesPath, kit, pattern,
-            equivalences, callees, null, null, typedReference);
+            equivalences, callees, null, null, typedReference, packetJson);
         int coreTokens = tokens(SystemPrompt) + tokens(bare);
         if (coreTokens + maxTokens + 2000 > context)
         {
@@ -547,7 +568,7 @@ public static class ImplementStep
         if (examplesPath is not null && File.Exists(examplesPath))
             examplesPath = FitExamples(examplesPath, budget - coreTokens, outDir, tokens, features.Has(KitFeatures.ExamplesValues));
         var prompt = BuildPrompt(cap, stepSimple, packetPath, designPath, projectDir, acceptanceTest, reserved, examplesPath, notesPath, kit, pattern,
-            equivalences, callees, null, null, typedReference);
+            equivalences, callees, null, null, typedReference, packetJson);
         // The AST outline goes in when the prompt, the outline and a full reply still fit the context.
         bool outlineUsed = false;
         if (outline is not null)
@@ -567,7 +588,13 @@ public static class ImplementStep
             }
             else Program.Log($"  AST outline left out: the prompt would not leave room for a {maxTokens}-token reply in a {context}-token context");
         }
-        return new PromptPlan(prompt, maxTokens, examplesPath, false, outlineUsed, null);
+        return new PromptPlan(prompt, maxTokens, examplesPath, false, outlineUsed, null, kit);
+    }
+
+    static string Log(string text, string what, List<string> cut)
+    {
+        Program.Log($"  pass-through records in the {what}: only the items the program names ({string.Join(", ", cut)})");
+        return text;
     }
 
     /// <summary>
@@ -627,7 +654,7 @@ public static class ImplementStep
 
     static string BuildPrompt(Capability cap, string stepSimple, string packetPath, string designPath, string projectDir, string acceptanceTest, ISet<string> reserved,
         string? examplesPath, string? notesPath, string? kit, string? pattern, string? equivalences = null, string? callees = null,
-        PromptPacket.Rendering? packet = null, string? outline = null, string? typedReference = null)
+        PromptPacket.Rendering? packet = null, string? outline = null, string? typedReference = null, string? packetJson = null)
     {
         var main = Path.Combine(projectDir, "src", "main", "java");
         var platform = Directory.EnumerateFiles(Path.Combine(main, Path.Combine(cap.PlatformPackage.Split('.'))), "*.java", SearchOption.AllDirectories)
@@ -638,7 +665,7 @@ public static class ImplementStep
         if (packet is null)
         {
             sb.AppendLine("# Requirements packet (mlcpu.requirements-packet.v1, extracted from the COBOL source)");
-            sb.AppendLine(JsonNode.Parse(File.ReadAllText(packetPath))!.ToJsonString());
+            sb.AppendLine(JsonNode.Parse(packetJson ?? File.ReadAllText(packetPath))!.ToJsonString());
         }
         else
         {

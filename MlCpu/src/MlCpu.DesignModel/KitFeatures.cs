@@ -23,8 +23,13 @@ public sealed class KitFeatures
     /// it a subprogram had no CALL port and had to re-implement its callees: FNLS0300 faked FNEM0200's EMI engine (round 3).
     /// </summary>
     public const string SubprogramCalls = "subprogram-calls";
+    /// <summary>
+    /// A record of more than 120 items lists, in the implementation prompt, only the items the program's statements name
+    /// (PromptRecords): a J3S program's 935-item object heap made its prompt larger than Gemma 4's context.
+    /// </summary>
+    public const string PassThroughRecords = "pass-through-records";
 
-    public static readonly string[] Current = [ExamplesValues, PromptPacketCompact, ShadowFeedback, SubprogramCalls];
+    public static readonly string[] Current = [ExamplesValues, PromptPacketCompact, ShadowFeedback, SubprogramCalls, PassThroughRecords];
 
     readonly HashSet<string> set;
     public string Source { get; }
