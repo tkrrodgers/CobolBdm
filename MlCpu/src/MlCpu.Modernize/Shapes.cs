@@ -28,6 +28,11 @@ public sealed class Shapes
         /// <summary>More getters of a field under other names (a virtual method J3S inlined as that field).</summary>
         public List<(string Name, FieldDef Field)> ExtraGetters = [];
         public Func<FunctionDef, string> MethodName = f => f.MethodName;
+        /// <summary>A value class printed as a Java record: its components in canonical-constructor order, that constructor.</summary>
+        public List<FieldDef>? Components;
+        public FunctionDef? CanonicalCtor;
+        /// <summary>The record defines no toString: one with Object's format keeps the output (Class@hash).</summary>
+        public bool IdentityToString;
     }
 
     public sealed class Iface
@@ -374,6 +379,50 @@ public sealed class Shapes
                         if (x is EField f && f.F.Owner is { } o && TopOf(o) != from && !(f.Obj is EThis && !m.Fn.IsLambda)) Accessor(o, f.F);
                     });
             }
+        }
+    }
+
+    static readonly HashSet<string> RecordForbidden = new(StringComparer.Ordinal) { "clone", "finalize", "getClass", "hashCode", "notify", "notifyAll", "toString", "wait" };
+
+    /// <summary>
+    /// Value classes as Java records (design O2): a domain class with no superclass or subclass, every field final and
+    /// without setters, one constructor that only assigns each field from its own parameter of the same type (the
+    /// canonical constructor), and equals and hashCode of its own (value semantics, so a record's are not a change).
+    /// A zero-argument method named like a field must be its accessor; without toString the record keeps Object's.
+    /// </summary>
+    public void Records(TypeInference t, Func<ClassDef, bool> isException)
+    {
+        var withSubclasses = M.Classes.Values.Where(x => x.Super is not null).Select(x => x.Super!).ToHashSet();
+        foreach (var c in M.Classes.Values.Where(Emitted).OrderBy(x => x.FullName, StringComparer.Ordinal))
+        {
+            var s = Of(c);
+            if (c.Kind != ClassKind.Domain || s.IsEnum || s.IsAbstract || s.IsEnumBody || c.Super is not null || withSubclasses.Contains(c) || isException(c)) continue;
+            if (c.Fields.Count == 0 || c.Fields.Any(f => !s.FinalFields.Contains(f) || RecordForbidden.Contains(f.Name)) || Setters.ContainsKey(c)) continue;
+            var ctors = c.Functions.Where(f => f.IsCtor).ToList();
+            if (ctors.Count != 1 || !methods.TryGetValue(ctors[0], out var cm) || cm.L.Params.Count != c.Fields.Count) continue;
+            var order = new List<FieldDef>();
+            bool canonical = cm.Body.Count == c.Fields.Count;
+            for (int i = 0; canonical && i < cm.Body.Count; i++)
+            {
+                if (cm.Body[i] is not SAssign { Lhs: EField { Obj: EThis, F: var f }, Rhs: EVar { V: var p } } || !cm.L.Params.Contains(p) || order.Contains(f)) { canonical = false; break; }
+                // the component's type is the parameter's: the constructor takes exactly what the field holds
+                if (!Equals(t.JavaType(t.Of(f)), t.JavaType(t.Param(ctors[0], cm.L.Params.IndexOf(p))))) { canonical = false; break; }
+                order.Add(f);
+            }
+            if (!canonical || order.Count != c.Fields.Count) continue;
+            // components in the constructor's parameter order
+            order = order.OrderBy(f => cm.L.Params.IndexOf(((EVar)((SAssign)cm.Body.First(st => st is SAssign { Lhs: EField fe } && fe.F == f)).Rhs).V)).ToList();
+            bool HasMethod(string name, int arity) => c.Functions.Any(f => !f.IsStatic && f.MethodName == name && f.Params.Count == arity && methods.ContainsKey(f));
+            if (!HasMethod("equals", 1) || !HasMethod("hashCode", 0)) continue;
+            // a method named like a component is its accessor: no arguments, the field, public
+            bool clash = c.Functions.Any(f => !f.IsStatic && !f.IsCtor && order.Any(o => o.Name == MethodName(f)) && (f.Params.Count > 0 || s.Private.Contains(f)
+                || !methods.TryGetValue(f, out var fm) || fm.Body is not [SReturn { E: EField { Obj: EThis } rf }] || rf.F.Name != MethodName(f)));
+            if (clash || s.ExtraGetters.Any(g => order.Any(o => o.Name == g.Name && o != g.Field))) continue;
+            // a static method of a component's name would clash with its accessor
+            if (c.Functions.Any(f => f.IsStatic && f.Params.Count == 0 && order.Any(o => o.Name == MethodName(f)))) continue;
+            s.Components = order;
+            s.CanonicalCtor = ctors[0];
+            s.IdentityToString = !HasMethod("toString", 0);
         }
     }
 

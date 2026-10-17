@@ -32,6 +32,16 @@ import java.util.Arrays;
 public final class Records {
     private Records() {}
 
+    /** A record image a dataset reads into and writes from: a record class of the record package. */
+    public interface Image {
+        /** The record image (a copy). */
+        byte[] bytes();
+
+        /** Replaces the image (a shorter one is padded with spaces). */
+        void bytes(byte[] image);
+    }
+
+    /** A record image of spaces. */
     public static byte[] blank(int length) {
         byte[] r = new byte[length];
         Arrays.fill(r, (byte) ' ');
@@ -85,6 +95,7 @@ public final class Records {
         return negative ? v.negate() : v;
     }
 
+    /** Stores a decimal as a leading separate sign and its low-order digits (a MOVE truncates high-order digits). */
     public static void putSignLeading(byte[] r, int off, int len, int scale, BigDecimal value) {
         BigInteger unscaled = value.setScale(scale, RoundingMode.DOWN).unscaledValue();
         r[off] = (byte) (unscaled.signum() < 0 ? '-' : '+');
@@ -102,6 +113,7 @@ public final class Records {
         return v;
     }
 
+    /** Stores a big-endian binary (COMP) field. */
     public static void putBinary(byte[] r, int off, int len, long value) {
         for (int i = len - 1; i >= 0; i--) {
             r[off + i] = (byte) value;
@@ -115,6 +127,7 @@ public final class Records {
         return LocalDate.of((int) (v / 10000), (int) (v / 100 % 100), (int) (v % 100));
     }
 
+    /** Stores a date as yyyyMMdd in an unsigned zoned field. */
     public static void putDate(byte[] r, int off, int len, LocalDate value) {
         putUnsigned(r, off, len, value.getYear() * 10000L + value.getMonthValue() * 100L + value.getDayOfMonth());
     }
@@ -124,6 +137,11 @@ public final class Records {
         if (s.isEmpty()) return false;
         for (int i = 0; i < s.length(); i++) if (s.charAt(i) < '0' || s.charAt(i) > '9') return false;
         return true;
+    }
+
+    /** A valid Y/N indicator: exactly "Y" or "N" (a record field's validation, x NOT = 'Y' AND x NOT = 'N'). */
+    public static boolean isYesNo(String s) {
+        return s.equals("Y") || s.equals("N");
     }
 
     /** Text that fits a field of n characters: truncated on the right, without trailing spaces. */
@@ -193,24 +211,57 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * The datasets of a batch step, by DD name: the path comes from the system property dd.NAME, else the environment
- * variable DD_NAME (as GnuCOBOL resolves ASSIGN names), else NAME in the working directory. Records are fixed length;
- * an input with line ends is read a line at a time (space padded), as a line-sequential dataset.
+ * The datasets of a batch step, by DD name: the path is the one bound for the run (the strangler), else the system
+ * property dd.NAME, else the environment variable DD_NAME (as GnuCOBOL resolves ASSIGN names), else NAME in the working
+ * directory. Records are fixed length; an input with line ends is read a line at a time (space padded), as a
+ * line-sequential dataset. When traced, every record written carries the request it belongs to: the number of records
+ * read so far from the step's most-read input (the shadow comparison groups differences by request).
  */
 public final class Datasets {
     private Datasets() {}
 
+    private static final Map<String, Path> BOUND = new HashMap<>();
+    private static final Map<String, Integer> READS = new HashMap<>();
+    private static final Map<String, List<Integer>> WRITES = new LinkedHashMap<>();
+    private static boolean tracing;
+
+    /** Binds DD names to paths for this run (before the step opens its files); tracing on or off. */
+    public static void bind(Map<String, Path> datasets, boolean trace) {
+        BOUND.clear();
+        BOUND.putAll(datasets);
+        READS.clear();
+        WRITES.clear();
+        tracing = trace;
+    }
+
+    /** The request of every record written, by output DD name (empty unless traced). */
+    public static Map<String, List<Integer>> trace() {
+        return WRITES;
+    }
+
+    /** The path of a DD name. */
     public static Path path(String dd) {
+        Path bound = BOUND.get(dd);
+        if (bound != null) return bound;
         String p = System.getProperty("dd." + dd);
         if (p == null) p = System.getenv("DD_" + dd);
         return Path.of(p == null ? dd : p);
     }
 
-    static List<byte[]> records(Path path, int lrecl) throws IOException {
+    /** The number of requests read so far: records read from the step's most-read input (traced runs). */
+    public static int requests() {
+        return READS.values().stream().max(Integer::compare).orElse(0);
+    }
+
+    /** The records of a dataset: lines (space padded to lrecl) when it has line ends, else fixed lrecl-byte records. */
+    public static List<byte[]> records(Path path, int lrecl) throws IOException {
         byte[] all = Files.readAllBytes(path);
         List<byte[]> out = new ArrayList<>();
         boolean lines = false;
@@ -247,15 +298,18 @@ public final class Datasets {
         private java.io.OutputStream output;
         private String status = "00";
 
+        /** The dataset of a DD name, of records of lrecl bytes. */
         public Sequential(String dd, int lrecl) {
             this.dd = dd;
             this.lrecl = lrecl;
         }
 
+        /** The file status of the last operation (00 ok, 10 end of file, 35 not found, 47/48 not open). */
         public String status() {
             return status;
         }
 
+        /** OPEN INPUT. */
         public void openInput() {
             try {
                 input = records(path(dd), lrecl);
@@ -266,34 +320,47 @@ public final class Datasets {
             }
         }
 
+        /** OPEN OUTPUT. */
         public void openOutput() {
             try {
                 output = Files.newOutputStream(path(dd));
+                if (tracing) WRITES.put(dd, new ArrayList<>());
                 status = "00";
             } catch (IOException e) {
                 status = "30";
             }
         }
 
-        /** The next record, or null at the end (status 10). */
-        public byte[] read() {
-            if (input == null) { status = "47"; return null; }
-            if (next >= input.size()) { status = "10"; return null; }
+        /** READ: the next record into the record (when given); false at the end (status 10). */
+        public boolean read(Records.Image into) {
+            if (input == null) { status = "47"; return false; }
+            if (next >= input.size()) { status = "10"; return false; }
             status = "00";
-            return input.get(next++).clone();
+            if (into != null) into.bytes(input.get(next).clone());
+            next++;
+            if (tracing) READS.merge(dd, 1, Integer::sum);
+            return true;
         }
 
+        /** WRITE: the record's characters (ISO-8859-1), space padded to the record length. */
+        public void write(String record) {
+            write(record.getBytes(StandardCharsets.ISO_8859_1));
+        }
+
+        /** WRITE: a record image, space padded to the record length. */
         public void write(byte[] record) {
             try {
                 byte[] r = Records.blank(lrecl);
                 System.arraycopy(record, 0, r, 0, Math.min(lrecl, record.length));
                 output.write(r);
                 status = "00";
+                if (tracing && WRITES.get(dd) != null) WRITES.get(dd).add(READS.values().stream().max(Integer::compare).orElse(0));
             } catch (IOException | NullPointerException e) {
                 status = "48";
             }
         }
 
+        /** CLOSE. */
         public void close() {
             try {
                 if (output != null) output.close();
@@ -315,6 +382,7 @@ public final class Datasets {
         private TreeMap<String, byte[]> records;
         private String status = "00";
 
+        /** The dataset of a DD name, of records of lrecl bytes keyed by keyLength bytes at keyOffset. */
         public Indexed(String dd, int lrecl, int keyOffset, int keyLength) {
             this.dd = dd;
             this.lrecl = lrecl;
@@ -322,10 +390,12 @@ public final class Datasets {
             this.keyLength = keyLength;
         }
 
+        /** The file status of the last operation (00 ok, 23 not found, 35 not found at open, 47 not open). */
         public String status() {
             return status;
         }
 
+        /** OPEN INPUT: loads the records by key. */
         public void openInput() {
             try {
                 records = new TreeMap<>();
@@ -337,14 +407,16 @@ public final class Datasets {
             }
         }
 
-        /** The record with the key, or null (status 23). */
-        public byte[] read(String key) {
-            if (records == null) { status = "47"; return null; }
+        /** READ by key into the record (when given); false when no record has the key (status 23). */
+        public boolean read(String key, Records.Image into) {
+            if (records == null) { status = "47"; return false; }
             byte[] r = records.get(Records.pad(key, keyLength));
             status = r == null ? "23" : "00";
-            return r == null ? null : r.clone();
+            if (r != null && into != null) into.bytes(r.clone());
+            return r != null;
         }
 
+        /** CLOSE. */
         public void close() {
             records = null;
             status = "00";
@@ -420,11 +492,13 @@ package PKG;
 public class Abend extends Error {
     private final int code;
 
+    /** An abend with its code (the step ends with return code 16). */
     public Abend(int code, String message) {
         super(message);
         this.code = code;
     }
 
+    /** The abend code (CEE3ABD's first argument). */
     public int code() {
         return code;
     }

@@ -131,19 +131,35 @@ public sealed class JavaWriter
         if (!shape.IsEnum && shape.Methods.Any(f => f.MethodName == "compareTo" && f.Params.Count == 1 && !f.IsStatic && T.JavaType(T.Param(f, 0)).Class == c))
             impls.Add("Comparable<" + c.SimpleName + ">");
         var impl = impls.Count > 0 ? " implements " + string.Join(", ", impls) : "";
-        o.Open($"{mods}{kind} {c.SimpleName}{ext}{impl} {{");
+        // a value class: a record of its components (the canonical constructor and the private final fields are Java's)
+        if (shape.Components is { } comps && !ExceptionRoots.Contains(c))
+            o.Open($"{mods}record {c.SimpleName}({string.Join(", ", comps.Select(f => TypeName(FieldType(f)) + " " + f.Name))}){impl} {{");
+        else o.Open($"{mods}{kind} {c.SimpleName}{ext}{impl} {{");
         if (shape.IsEnum) EnumConstants(c, shape);
         Fields(c, shape);
         foreach (var af in shape.AbstractMethods)
         {
             o.Nl();
             var aps = af.Params.Select((p, i) => TypeName(ParamType(af, i)) + " " + ParamName(af, i));
+            o.L(MethodDoc(af, "implemented by the subclasses"));
             o.L($"public abstract {(af.Ret is null ? "void" : TypeName(T.JavaType(T.Ret(af))))} {shapes.MethodName(af)}({string.Join(", ", aps)});");
         }
         foreach (var fn in shape.Methods)
         {
+            if (fn == shape.CanonicalCtor && shape.Components is not null && !ExceptionRoots.Contains(c)) continue;
             o.Nl();
             Method(fn);
+        }
+        if (shape.Components is not null && shape.IdentityToString && !ExceptionRoots.Contains(c))
+        {
+            o.Nl();
+            o.L($"/** Object's format, as the legacy class had no toString of its own (legacy {c.SimpleName}). */");
+            o.L("@Override");
+            o.L("public String toString() {");
+            o.Indent++;
+            o.L("return getClass().getName() + \"@\" + Integer.toHexString(hashCode());");
+            o.Indent--;
+            o.L("}");
         }
         foreach (var st in (shapes.Setters.GetValueOrDefault(c) ?? []).OrderBy(f => FieldOrder(c, f)))
         {
@@ -157,6 +173,7 @@ public sealed class JavaWriter
         foreach (var (gname, g) in shape.Getters.Select(g => (shape.GetterName[g], g)).Concat(shape.ExtraGetters).OrderBy(x => FieldOrder(c, x.Item2)).ThenBy(x => x.Item1, StringComparer.Ordinal))
         {
             o.Nl();
+            o.L($"/** The {g.Name} field (legacy {g.CobolName}). */");
             o.L($"public {TypeName(FieldType(g))} {gname}() {{");
             o.Indent++;
             o.L($"return {g.Name};");
@@ -218,8 +235,10 @@ public sealed class JavaWriter
             var init = shape.StaticInit.TryGetValue(f, out var e) ? " = " + Expr(e) : "";
             o.L($"{(shape.FinalStatics.Contains(f) ? "public static final" : "static")} {TypeName(FieldType(f))} {f.Name}{init};");
         }
-        foreach (var f in c.Fields)
-            o.L($"{(shape.FinalFields.Contains(f) ? "private final" : "private")} {TypeName(FieldType(f))} {f.Name};");
+        // a record's fields are its components
+        if (shape.Components is null || ExceptionRoots.Contains(c))
+            foreach (var f in c.Fields)
+                o.L($"{(shape.FinalFields.Contains(f) ? "private final" : "private")} {TypeName(FieldType(f))} {f.Name};");
         if (c.Statics.Count + c.Fields.Count > 0 && shape.Methods.Count > 0) { }
     }
 
@@ -251,7 +270,7 @@ public sealed class JavaWriter
             ps.Add(TypeName(ParamType(fn, i)) + " " + nm);
         }
         var shape = shapes.Of(current!);
-        o.L("/** " + Esc(fn.Signature) + (fn.SrcAbbr is null ? "" : $" (legacy {fn.SrcAbbr}:{fn.SrcFrom}-{fn.SrcTo}, {fn.Program.Id} {fn.Id})") + " */");
+        o.L(MethodDoc(fn, null));
         string head;
         if (fn.IsClinit) head = "static";
         else if (fn.IsCtor) head = (shape.IsEnum ? "" : "public ") + current!.SimpleName + "(" + string.Join(", ", ps) + ")";
@@ -518,6 +537,24 @@ public sealed class JavaWriter
 
     bool Labeled(string label) => cur is not null && Passes.All(cur.Body).Any(x => x is SBreak { Label: var b } && b == label || x is SContinue { Label: var c } && c == label);
 
+    /// <summary>A method's Javadoc: its signature and its legacy provenance (the source lines when J3S recorded them, the program and function).</summary>
+    static string MethodDoc(FunctionDef fn, string? note) =>
+        "/** " + Esc(fn.Signature) + (note is null ? "" : ": " + note)
+        + (fn.SrcAbbr is null ? $" (legacy {fn.Program.Id} {fn.Id})" : $" (legacy {fn.SrcAbbr}:{fn.SrcFrom}-{fn.SrcTo}, {fn.Program.Id} {fn.Id})") + " */";
+
+    /// <summary>A Y/N indicator field (read as is, or its padded characters trimmed): the field read through its boolean accessor; else null.</summary>
+    ERecordField? FlagField(Expr e)
+    {
+        var rf = e switch
+        {
+            ERecordField { Padded: false } f => f,
+            ECall { Name: "stripTrailing", Recv: ERecordField { Padded: true } p, Args.Count: 0 } => p,
+            _ => null,
+        };
+        if (rf is null || App is null || Prog is null || rf.RefStart != 0 || !rf.Item.IsLeaf || App.RecordOf(Prog, rf.Item) is not { } r || !r.Rc.Flags.Contains(rf.Item.Name)) return null;
+        return new ERecordField(rf.Item) { Index = rf.Index, Type = JType.Bool };
+    }
+
     void SiteAt(int line, string site)
     {
         if (markAll || current is not null && M.IsCalculationClass(current)) SourceMap.Add((currentFile, -line, site));
@@ -662,6 +699,11 @@ public sealed class JavaWriter
                 when vf.Item.Scale == vs && vm == (long)Math.Pow(10, vs):
                 return (RecordField(vf), 16);
             // a trimmed record field compared with a literal: COBOL pads the shorter operand, so trailing spaces do not count
+            // a Y/N indicator compared with 'Y': the record's boolean accessor
+            case ECall { Name: "equals", Recv: { } yr, Args: [ELit { Value: "Y" }] } when FlagField(yr) is { } yf:
+                return (RecordField(yf), 16);
+            case ECall { Name: "equals", Recv: ELit { Value: "Y" }, Args: [{ } ya] } when FlagField(ya) is { } yf2:
+                return (RecordField(yf2), 16);
             case ECall { Name: "equals", Recv: ERecordField { Padded: false, Type.Name: "java.lang.String" } ef, Args: [ELit { Value: string el }] } when el != el.TrimEnd():
                 return el.TrimEnd().Length == 0 ? (RecordField(ef) + ".isEmpty()", 16) : (RecordField(ef) + ".equals(" + Literal(ELit.Str(el.TrimEnd())) + ")", 16);
             case ECall { Name: "equals", Recv: ELit { Value: string el2 }, Args: [ERecordField { Padded: false, Type.Name: "java.lang.String" } ef2] } when el2 != el2.TrimEnd():
@@ -671,6 +713,11 @@ public sealed class JavaWriter
             case ENew n: return (New(n), 16);
             case EUnary u when u.Op == "!" && u.E is EInstanceOf io: return ("!(" + Expr(io, 0) + ")", 14);
             case EUnary u: return (u.Op + Expr(u.E, 14), 14);
+            // a Y/N indicator compared with 'Y' (a job function's string comparison): the record's boolean accessor
+            case EBinary { Op: "==" or "!=", L: { } fl, R: ELit { Value: "Y" } } fb when FlagField(fl) is { } ff:
+                return fb.Op == "==" ? (RecordField(ff), 16) : ("!" + RecordField(ff), 14);
+            case EBinary { Op: "==" or "!=", L: ELit { Value: "Y" }, R: { } fr } fb2 when FlagField(fr) is { } ff2:
+                return fb2.Op == "==" ? (RecordField(ff2), 16) : ("!" + RecordField(ff2), 14);
             case EBinary b when b.Op is "==C" or "!=C":
                 // same class (J3S compares class ids; the left side may be null, the right is the receiver)
                 return b.Op == "==C"
@@ -1009,6 +1056,7 @@ public sealed class JavaWriter
             var name = shapes.MethodName(fn);
             var ps = fn.Params.Select((p, k) => TypeName(T.JavaType(T.Param(fn, k))) + " " + ParamName(fn, k));
             var ret = fn.Ret is null ? "void" : TypeName(T.JavaType(T.Ret(fn)));
+            o.L(MethodDoc(fn, "dispatched to the implementations"));
             o.L($"{ret} {name}({string.Join(", ", ps)});");
         }
         o.Close();

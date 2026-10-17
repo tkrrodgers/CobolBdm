@@ -161,6 +161,8 @@ public sealed class ClassicLift
         if (ap.Promoted.TryGetValue(it, out var pf))
         {
             Expr v = new EProgField(pf.Name, pf.Type) { Type = pf.Type };
+            // a Y/N flag read as a value (copied into a code): its letter
+            if (pf.Type.Name == "boolean") return new ECond(v, ELit.Str("Y"), ELit.Str("N")) { Type = JType.String };
             if (n.Start is not null) return JdkStatic("java.lang.String", "valueOf", JType.String, RefMod(PadText(v, it), n));
             return v;
         }
@@ -271,6 +273,7 @@ public sealed class ClassicLift
     {
         switch (c.K)
         {
+            case "and" or "or" when YesNoValidation(c) is { } valid: return valid;
             case "and": return FunctionLifter.And(Cond(c.L!), Cond(c.R!));
             case "or": return FunctionLifter.Or(Cond(c.L!), Cond(c.R!));
             case "not": return FunctionLifter.Not(Cond(c.L!));
@@ -294,6 +297,30 @@ public sealed class ClassicLift
 
     Expr Opaque(string what) { Residue.Add($"{P.Id} {what}"); return new EOpaque(what); }
 
+    /// <summary>x NOT = 'Y' AND x NOT = 'N' (x = 'Y' OR x = 'N'): the field's character is (not) a valid Y/N indicator.</summary>
+    Expr? YesNoValidation(Node c)
+    {
+        static (Node? F, string? L) Side(Node? n) => n is { K: "rel", L: { K: "ref" } f, R: { K: "str", V: "Y" or "N" } l } ? (f, l.V) : (null, null);
+        var (fa, la) = Side(c.L);
+        var (fb, lb) = Side(c.R);
+        string op = c.K == "and" ? "ne" : "eq";
+        if (fa is null || fb is null || la == lb || c.L!.Op != op || c.R!.Op != op || fa.Start is not null || fb.Start is not null || Item(fa) is not { } ia || ia != Item(fb)) return null;
+        Expr valid = JdkStatic(A.PlatformPackage + ".Records", "isYesNo", JType.Bool, Text(fa));
+        return op == "ne" ? FunctionLifter.Not(valid) : valid;
+    }
+
+    /// <summary>A Y/N work flag compared with 'Y' or 'N': the boolean or its negation.</summary>
+    Expr? FlagTest(Node c)
+    {
+        Node? f = null, l = null;
+        if (c.L is { K: "ref" } && c.R is { K: "str", V: "Y" or "N" }) (f, l) = (c.L, c.R);
+        else if (c.R is { K: "ref" } && c.L is { K: "str", V: "Y" or "N" }) (f, l) = (c.R, c.L);
+        if (f is null || l is null || Item(f) is not { } it || !ap.Promoted.TryGetValue(it, out var pf) || pf.Type.Name != "boolean") return null;
+        Expr field = new EProgField(pf.Name, JType.Bool) { Type = JType.Bool };
+        Expr test = l.V == "Y" ? field : FunctionLifter.Not(field);
+        return c.Op == "ne" ? FunctionLifter.Not(test) : test;
+    }
+
     /// <summary>The characters of an operand (a class test reads the field's bytes).</summary>
     Expr Text(Node n)
     {
@@ -308,6 +335,12 @@ public sealed class ClassicLift
     Expr Cond88(DataItem c88, Node n)
     {
         var parent = c88.Parent!;
+        // an 88 of a Y/N work flag: the boolean
+        if (ap.Promoted.TryGetValue(parent, out var pf) && pf.Type.Name == "boolean" && c88.Values is [(var yv, null)])
+        {
+            Expr field = new EProgField(pf.Name, JType.Bool) { Type = JType.Bool };
+            return yv.Text == "Y" ? field : FunctionLifter.Not(field);
+        }
         var pref = new Node { K = "ref", V = parent.Name, Id = parent.Id, Args = n.Args };
         Expr? acc = null;
         foreach (var (lo, hi) in c88.Values)
@@ -326,6 +359,7 @@ public sealed class ClassicLift
     Expr Rel(Node c)
     {
         var op = c.Op switch { "eq" => "==", "ne" => "!=", "lt" => "<", "le" => "<=", "gt" => ">", "ge" => ">=", _ => "==" };
+        if (c.Op is "eq" or "ne" && FlagTest(c) is { } flag) return flag;
         // JX-C = id in a handler: the exception's class
         if (Exception is not null && c.L is { K: "ref" } jl && Item(jl) is { } jit && jit.Name.Equals("JX-C", StringComparison.OrdinalIgnoreCase) && c.R is { K: "num" } idn)
         {
@@ -373,6 +407,15 @@ public sealed class ClassicLift
     /// <summary>A value into an item, converted the way MOVE converts (numeric, alphanumeric, edited, group).</summary>
     void Store(Node d, DataItem it, Node src, List<St> o)
     {
+        // MOVE 'Y' / 'N' TO a Y/N work flag
+        if (ap.Promoted.TryGetValue(it, out var bf) && bf.Type.Name == "boolean")
+        {
+            if (src is { K: "str", V: "Y" or "N" }) o.Add(new SAssign(Target(d, it), ELit.Bool(src.V == "Y")));
+            else if (src.K == "ref" && Item(src) is { } sf && ap.Promoted.TryGetValue(sf, out var spf) && spf.Type.Name == "boolean")
+                o.Add(new SAssign(Target(d, it), new EProgField(spf.Name, JType.Bool) { Type = JType.Bool }));
+            else Res("flag " + it.Name + " set from " + src.K, new Stmt());
+            return;
+        }
         var srcItem = src.K == "ref" ? Item(src) : null;
         bool srcNumeric = NumericOperand(src);
         // a group, a filler, a reference modification: characters
@@ -682,27 +725,25 @@ public sealed class ClassicLift
     {
         var f = FileOf(s.Str("file") ?? "");
         if (f is null) { Res("READ " + s.Str("file"), s); return; }
-        var rec = NewTemp(JType.Of("byte[]"), "record");
+        // READ [INTO]: the record class reads the image (the bytes stay in the record package)
+        var into = s.Get("into") is { } i ? Item(i) : f.Records.FirstOrDefault();
+        Expr target = into is not null && A.RecordOf(ap, into) is { } r ? new EProgField(r.Instance, JType.Of(r.Rc.Name)) : ELit.Null;
+        var found = NewTemp(JType.Bool, "found");
         Expr read;
         if (f.Organization == "INDEXED")
         {
             // a keyed read: the key is the record key field's value
             var keyItem = f.RecordKey is null ? null : P.ItemsByName.GetValueOrDefault(f.RecordKey);
             var key = keyItem is null ? ELit.Str("") : Read(new Node { K = "ref", V = keyItem.Name, Id = keyItem.Id });
-            read = Jdk(FileField(f), "read", JType.Of("byte[]"), key);
+            read = Jdk(FileField(f), "read", JType.Bool, key, target);
         }
-        else read = Jdk(FileField(f), "read", JType.Of("byte[]"));
-        o.Add(new SAssign(new EVar(rec), read));
+        else read = Jdk(FileField(f), "read", JType.Bool, target);
+        o.Add(new SAssign(new EVar(found), read));
         Status(f, o);
-        var into = s.Get("into") is { } i ? Item(i) : f.Records.FirstOrDefault();
-        var got = new List<St>();
-        if (into is not null && A.RecordOf(ap, into) is { } r)
-            got.Add(new SExpr(Jdk(new EProgField(r.Instance, JType.Of(r.Rc.Name)), "bytes", JType.Void, new EVar(rec))));
-        got.AddRange(Block(s.Blocks?.GetValueOrDefault("NOT-AT-END") ?? s.Blocks?.GetValueOrDefault("NOT-INVALID") ?? []));
+        var got = Block(s.Blocks?.GetValueOrDefault("NOT-AT-END") ?? s.Blocks?.GetValueOrDefault("NOT-INVALID") ?? []);
         var miss = Block(s.Blocks?.GetValueOrDefault("AT-END") ?? s.Blocks?.GetValueOrDefault("INVALID") ?? []);
-        var isNull = new EBinary("==", new EVar(rec), ELit.Null) { Type = JType.Bool };
-        if (miss.Count > 0) o.Add(new SIf(isNull, miss, got));
-        else if (got.Count > 0) o.Add(new SIf(FunctionLifter.Not(isNull), got, []));
+        if (miss.Count > 0) o.Add(new SIf(FunctionLifter.Not(new EVar(found)), miss, got));
+        else if (got.Count > 0) o.Add(new SIf(new EVar(found), got, []));
     }
 
     void Write(Stmt s, List<St> o)
@@ -712,7 +753,7 @@ public sealed class ClassicLift
         var f = P.Model.Files.FirstOrDefault(x => x.Records.Any(r => r == recItem || r.Name == recItem?.Name));
         if (f is null) { Res("WRITE " + recNode?.V, s); return; }
         var from = s.Get("from") ?? recNode!;
-        o.Add(new SExpr(Jdk(FileField(f), "write", JType.Void, Jdk(Text(from), "getBytes", JType.Of("byte[]"), new EStaticJdk("java.nio.charset.StandardCharsets", "ISO_8859_1", JType.Of("java.nio.charset.Charset"))))));
+        o.Add(new SExpr(Jdk(FileField(f), "write", JType.Void, Text(from))));
         Status(f, o);
     }
 

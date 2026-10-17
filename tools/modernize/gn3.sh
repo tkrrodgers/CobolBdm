@@ -10,7 +10,8 @@ if [ "${1:-}" = "--one" ]; then
   # one scenario: --one <estate> <scenario dir> <oracle dir> <currency> <out dir>
   EST=$2; d=$3; ORACLE=$4; CURR=$5; OUT=$6
   PKG=${PKG:-org.apache.fineract.batch}
-  CP="$EST/build/classes;$EST/src/main/resources"
+  if [ -d "$EST/build/classes/java/main" ]; then CP="$EST/build/classes/java/main;$EST/build/resources/main"
+  else CP="$EST/build/classes;$EST/src/main/resources"; fi
   s=$(basename "$d"); w="$OUT/$s"; mkdir -p "$w"
   if [ -f "$d/LOAN.REQUEST.txt" ]; then
     java -XX:-OmitStackTraceInFastThrow -cp "$CP" -Ddd.RUNCTL="$d/RUN.CONTROL.txt" -Ddd.LOANREQ="$d/LOAN.REQUEST.txt" -Ddd.CURRFILE="$CURR" \
