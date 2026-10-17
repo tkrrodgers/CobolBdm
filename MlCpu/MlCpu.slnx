@@ -8,6 +8,7 @@
     <Project Path="src/MlCpu.DesignModel/MlCpu.DesignModel.csproj" />
     <Project Path="src/MlCpu.Host/MlCpu.Host.csproj" />
     <Project Path="src/MlCpu.JavaBridge/MlCpu.JavaBridge.csproj" />
+    <Project Path="src/MlCpu.Modernize/MlCpu.Modernize.csproj" />
     <Project Path="src/MlCpu.SemanticKb.Cli/MlCpu.SemanticKb.Cli.csproj" />
     <Project Path="src/MlCpu.SemanticKb/MlCpu.SemanticKb.csproj" />
     <Project Path="src/MlCpu.Templates/MlCpu.Templates.csproj" />
