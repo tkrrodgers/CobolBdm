@@ -2942,3 +2942,4 @@ The weights sum to 1.00. Leaves weighted under 0.02 (`cobol.arith.remainder`, `c
     - review this document;
     - decide or accept the defaults of O1–O14;
     - run M0's installs.
+- **2026-10-18. Implementation moved.** The harness is built in its own repository, `C:\Users\Tomrodgers\Gemma4ExpertPilot`, and the living design (revision 2, with Appendix E listing every change) is `PilotGemma4TrainingHarness.md` there. This copy stays as revision 1.
