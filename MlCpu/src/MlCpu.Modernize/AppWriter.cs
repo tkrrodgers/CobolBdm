@@ -161,6 +161,18 @@ public sealed class AppWriter
             var text = "    /** " + Esc(doc) + " */\n" + W.MethodText(am.M, am.Head, 1, imps, path, sites);
             methodTexts.Add((text, sites));
         }
+        // a model edit's imports, fields and methods for a program class (the class: its file's)
+        var fqcn = path.EndsWith(".java") ? path[..^5].Replace('/', '.') : path;
+        foreach (var e in W.Edits?.For("add-import", fqcn) ?? [])
+        {
+            imps.Add(System.Text.RegularExpressions.Regex.Replace(e.Text.Trim(), @"^import\s+|;$", ""));
+            W.Edits!.Applied(e);
+        }
+        foreach (var e in (W.Edits?.For("add-field", fqcn) ?? []).Concat(W.Edits?.For("add-method", fqcn) ?? []))
+        {
+            methodTexts.Add((JavaWriter.EditDoc(e, 1) + string.Concat(ModelEdits.Lines(e.Text).Select(l => "    " + l + "\n")), []));
+            W.Edits!.Applied(e);
+        }
         var header = Header(A.AppPackage, imps);
         int line = header.Count(c => c == '\n') + bodyText.Count(c => c == '\n') + 1;
         var all = new StringBuilder(header).Append(bodyText);
@@ -251,6 +263,23 @@ public sealed class AppWriter
             var name = rc.Accessors[it.Name];
             L("");
             foreach (var line in Accessors(rc, it, name, imps)) L("    " + line);
+        }
+        // a model edit's imports, fields and methods for a (top-level) record class
+        if (indent == 0 && W.Edits is { } edits)
+        {
+            var fqcn = A.RecordPackage + "." + rc.Name;
+            foreach (var e in edits.For("add-import", fqcn))
+            {
+                imps.Add(System.Text.RegularExpressions.Regex.Replace(e.Text.Trim(), @"^import\s+|;$", ""));
+                edits.Applied(e);
+            }
+            foreach (var e in edits.For("add-field", fqcn).Concat(edits.For("add-method", fqcn)))
+            {
+                L("");
+                L(JavaWriter.EditDoc(e, 1).TrimEnd('\n'));
+                foreach (var line in ModelEdits.Lines(e.Text)) L("    " + line);
+                edits.Applied(e);
+            }
         }
         L("}");
         return sb.ToString();

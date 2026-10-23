@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MlCpu.Modernize;
 
@@ -25,6 +26,39 @@ public sealed class JavaWriter
     public AppProgram? Prog { get; set; }
     /// <summary>Record every statement's legacy site (program classes too, not only calculation classes).</summary>
     bool markAll;
+    /// <summary>The model edits applied while printing (opt-in, <see cref="ModelEdits"/>); null: the model as recovered.</summary>
+    public ModelEdits? Edits { get; init; }
+    /// <summary>The enum constant whose body is being printed, and its enum (a model edit names them).</summary>
+    string? constant, constantOf;
+
+    /// <summary>A model edit's Java at the current indentation, <paramref name="suffix"/> after its last line.</summary>
+    void Emit(ModelEdits.Edit e, string suffix = "")
+    {
+        var lines = ModelEdits.Lines(e.Text);
+        for (int i = 0; i < lines.Count; i++) o.L(lines[i] + (i == lines.Count - 1 ? suffix : ""));
+        Edits!.Applied(e);
+    }
+
+    /// <summary>
+    /// A replaced method's recovered body printed into nothing: the imports it needs stay (the file's other code, and the
+    /// replacement, may use them), its text and its legacy sites go.
+    /// </summary>
+    void ImportsOf(Method m)
+    {
+        var saved = o;
+        int mark = SourceMap.Count;
+        o = new Out { Indent = saved.Indent, OnSite = (_, _) => { } };
+        Declarations(m.Body);
+        foreach (var st in Passes.All(m.Body)) foreach (var v in VarsOf(st)) if (!v.IsThis && !m.L.Captured.ContainsValue(v)) NameOf(v);
+        Block(m.Body);
+        o = saved;
+        if (SourceMap.Count > mark) SourceMap.RemoveRange(mark, SourceMap.Count - mark);
+    }
+
+    static string EditDoc(ModelEdits.Edit e) => $"/** Model edit {e.No}{(e.Note is { Length: > 0 } n ? ": " + n : "")}. */";
+
+    /// <summary>A model edit's doc line at an indentation (a program class's members, AppWriter).</summary>
+    public static string EditDoc(ModelEdits.Edit e, int indent) => new string(' ', indent * 4) + EditDoc(e) + "\n";
 
     public JavaWriter(Model m, TypeInference t, Dictionary<FunctionDef, Method> methods, Shapes shapes)
     {
@@ -100,6 +134,11 @@ public sealed class JavaWriter
         o = body;
         Class(c, false);
         o = saved;
+        foreach (var e in Edits?.For("add-import", c.FullName) ?? [])
+        {
+            imports.Add(Regex.Replace(e.Text.Trim(), @"^import\s+|;$", ""));
+            Edits!.Applied(e);
+        }
         var head = new StringBuilder();
         if (c.Package.Length > 0) head.Append("package ").Append(c.Package).Append(";\n\n");
         var imps = imports.Where(i => !i.StartsWith("java.lang.") || i.Count(ch => ch == '.') > 2).Where(i => Pkg(i) != c.Package).Order(StringComparer.Ordinal).ToList();
@@ -133,7 +172,12 @@ public sealed class JavaWriter
         var impl = impls.Count > 0 ? " implements " + string.Join(", ", impls) : "";
         // a value class: a record of its components (the canonical constructor and the private final fields are Java's)
         if (shape.Components is { } comps && !ExceptionRoots.Contains(c))
-            o.Open($"{mods}record {c.SimpleName}({string.Join(", ", comps.Select(f => TypeName(FieldType(f)) + " " + f.Name))}){impl} {{");
+        {
+            // components a model edit adds, after the recovered ones
+            var more = Edits?.For("add-component", c.FullName).ToList() ?? [];
+            foreach (var e in more) Edits!.Applied(e);
+            o.Open($"{mods}record {c.SimpleName}({string.Join(", ", comps.Select(f => TypeName(FieldType(f)) + " " + f.Name).Concat(more.Select(e => e.Text.Trim().TrimEnd(',', ';'))))}){impl} {{");
+        }
         else o.Open($"{mods}{kind} {c.SimpleName}{ext}{impl} {{");
         if (shape.IsEnum) EnumConstants(c, shape);
         Fields(c, shape);
@@ -149,6 +193,12 @@ public sealed class JavaWriter
             if (fn == shape.CanonicalCtor && shape.Components is not null && !ExceptionRoots.Contains(c)) continue;
             o.Nl();
             Method(fn);
+        }
+        foreach (var e in Edits?.For("add-method", c.FullName) ?? [])
+        {
+            o.Nl();
+            o.L(EditDoc(e));
+            Emit(e);
         }
         if (shape.Components is not null && shape.IdentityToString && !ExceptionRoots.Contains(c))
         {
@@ -202,16 +252,18 @@ public sealed class JavaWriter
     {
         var parts = new List<string>();
         int k = 0;
+        var extra = Edits?.For("add-enum-constant", c.FullName).ToList() ?? [];
         foreach (var (name, args) in shape.EnumValues)
         {
             var head = args.Count == 0 ? name : name + "(" + string.Join(", ", args.Select(a => Expr(a))) + ")";
-            bool last = ++k == shape.EnumValues.Count;
+            bool last = ++k == shape.EnumValues.Count && extra.Count == 0;
             if (shape.EnumBodies.TryGetValue(name, out var body))
             {
                 // a constant with a body: the anonymous subclass's methods
                 o.Open(head + " {");
                 var saved = current;
                 current = body;
+                constant = name; constantOf = c.FullName;
                 bool first = true;
                 foreach (var fn in shapes.Of(body).Methods.Where(f => !f.IsCtor))
                 {
@@ -219,11 +271,18 @@ public sealed class JavaWriter
                     first = false;
                     Method(fn);
                 }
+                constant = null; constantOf = null;
                 current = saved;
                 o.Close(last ? "};" : "},");
                 continue;
             }
             o.L(head + (last ? ";" : ","));
+        }
+        // constants a model edit adds, after the recovered ones
+        for (int x = 0; x < extra.Count; x++)
+        {
+            o.L(EditDoc(extra[x]));
+            Emit(extra[x] with { Text = extra[x].Text.TrimEnd().TrimEnd(';', ',') }, x == extra.Count - 1 ? ";" : ",");
         }
         o.Nl();
     }
@@ -239,6 +298,11 @@ public sealed class JavaWriter
         if (shape.Components is null || ExceptionRoots.Contains(c))
             foreach (var f in c.Fields)
                 o.L($"{(shape.FinalFields.Contains(f) ? "private final" : "private")} {TypeName(FieldType(f))} {f.Name};");
+        foreach (var e in Edits?.For("add-field", c.FullName) ?? [])
+        {
+            o.L(EditDoc(e));
+            Emit(e);
+        }
         if (c.Statics.Count + c.Fields.Count > 0 && shape.Methods.Count > 0) { }
     }
 
@@ -281,6 +345,18 @@ public sealed class JavaWriter
             head = vis + (fn.IsStatic ? "static " : "") + ret + " " + shape.MethodName(fn) + "(" + string.Join(", ", ps) + ")";
         }
         o.Open(head + " {");
+        // a model edit's body in place of the recovered one: the signature (the call sites) stays the model's
+        var owner = constantOf ?? current!.FullName;
+        if (Edits is not null && !fn.IsClinit
+            && Edits.Replacement(owner, constant, (fn.IsCtor ? current!.SimpleName : shape.MethodName(fn)) + "(" + string.Join(", ", fn.Params.Select((_, i) => TypeName(ParamType(fn, i)))) + ")") is { } edit)
+        {
+            ImportsOf(m);
+            o.L("// " + EditDoc(edit)[4..^3]);
+            Emit(edit);
+            o.Close();
+            cur = null;
+            return;
+        }
         Declarations(m.Body);
         foreach (var st in Passes.All(m.Body)) foreach (var v in VarsOf(st)) if (!v.IsThis && !m.L.Captured.ContainsValue(v)) NameOf(v);
         Block(m.Body);
@@ -926,15 +1002,31 @@ public sealed class JavaWriter
         markAll = true;
         int mark = SourceMap.Count;
         var ps = new List<string>();
+        var pts = new List<string>();
         for (int i = 0; i < m.L.Params.Count; i++)
         {
             var p = m.L.Params[i];
             names[p] = Unique(p.Name);
             // a parameter of a synthesized method has its type; a job function's comes from inference
             var pt = m.Fn.Params.Count == 0 && p.Type is { } vt ? vt : ParamType(m.Fn, i);
-            ps.Add(TypeName(pt) + " " + names[p]);
+            pts.Add(TypeName(pt));
+            ps.Add(pts[^1] + " " + names[p]);
         }
         o.Open(head + "(" + string.Join(", ", ps) + ") {");
+        // a model edit's body in place of a program class's method (the class: its file's)
+        if (Edits?.Replacement(file.EndsWith(".java") ? file[..^5].Replace('/', '.') : file, null, head.Split(' ')[^1] + "(" + string.Join(", ", pts) + ")") is { } edit)
+        {
+            ImportsOf(m);
+            o.L("// " + EditDoc(edit)[4..^3]);
+            Emit(edit);
+            o.Close();
+            for (int k = mark; k < SourceMap.Count; k++) sites.Add((-SourceMap[k].Line, SourceMap[k].Site));
+            SourceMap.RemoveRange(mark, SourceMap.Count - mark);
+            markAll = false;
+            var edited = o.Sb.ToString();
+            o = savedO; imports = savedImports; cur = savedCur; current = savedCurrent; currentFile = savedFile;
+            return edited;
+        }
         Declarations(m.Body);
         foreach (var st in Passes.All(m.Body)) foreach (var v in VarsOf(st)) if (!v.IsThis && !m.L.Captured.ContainsValue(v)) NameOf(v);
         Block(m.Body);

@@ -2,7 +2,10 @@ using MlCpu.Modernize;
 
 if (args.Length >= 3 && args[0] == "lift")
 {
-    var r = Modernizer.Run(args[1], args[2]);
+    // lift <project> <out> [--model-edits <file>]: the model's edits applied while it is printed (ModelEdits.cs)
+    var at = Array.IndexOf(args, "--model-edits");
+    var edits = at > 2 && at + 1 < args.Length ? ModelEdits.Load(args[at + 1]) : null;
+    var r = Modernizer.Run(args[1], args[2], null, edits);
     return r.Residue == 0 ? 0 : 1;
 }
 if (args.Length >= 2 && args[0] == "gn2")
@@ -30,7 +33,7 @@ if (args.Length >= 2 && args[0] == "census") return Probe2.Run(args[1]);
 if (args.Length >= 2 && args[0] == "probe") return Probe.Run(args[1], args.Length > 2 ? args[2] : null, args.Length > 3 ? args[3] : null);
 Console.Error.WriteLine("""
     MlCpu.Modernize
-      lift <project dir> <out dir>      COBOL estate -> modern Java (SemanticModernization.md)
+      lift <project dir> <out dir> [--model-edits <file>]   COBOL estate -> modern Java (SemanticModernization.md); edits: ModelEdits.cs
       gn2 <estate dir> [--original <src root>]...   the modernity rules R1-R7 (modernize/gn2.json, metrics.json)
       lift1 <project dir> <Mnnnn>...    one function: low IR and structured IR
       liftall <project dir> <file>      every function: residue census

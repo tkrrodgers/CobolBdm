@@ -9,7 +9,8 @@ public static class Modernizer
 {
     public sealed record Result(int Functions, int Lifted, int Residue, int Files, string OutDir);
 
-    public static Result Run(string project, string outDir, Action<string>? log = null)
+    /// <param name="edits">Model edits applied while the model is printed (opt-in, <see cref="ModelEdits"/>).</param>
+    public static Result Run(string project, string outDir, Action<string>? log = null, ModelEdits? edits = null)
     {
         log ??= Console.WriteLine;
         var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -87,7 +88,7 @@ public static class Modernizer
                 log($"TYPE {v.Name} in {dict.Values.FirstOrDefault(mm => mm.L.Vars.Contains(v))?.Fn.Id}: C[{string.Join(",", r.C.Select(c => c.SimpleName))}] J[{string.Join(",", r.J)}] Req[{string.Join(",", r.Req.Select(c => c.SimpleName))}] Decl {r.Decl} DeclName {r.DeclName} -> {types.JavaType(r)}");
             }
         log($"types solved ({sw.ElapsedMilliseconds} ms)");
-        var writer = new JavaWriter(m, types, dict, shapes) { App = app };
+        var writer = new JavaWriter(m, types, dict, shapes) { App = app, Edits = edits };
         var files = writer.Files();
         var appWriter = new AppWriter(app, writer, appMethods, jobObjects);
         foreach (var (path, text) in appWriter.Files()) files[path] = text;
@@ -99,9 +100,10 @@ public static class Modernizer
             Directory.CreateDirectory(Path.GetDirectoryName(full)!);
             File.WriteAllText(full, text, new UTF8Encoding(false));
         }
-        var all = residue.Concat(writer.Residue).Concat(appWriter.Residue).Order(StringComparer.Ordinal).ToList();
+        var all = residue.Concat(writer.Residue).Concat(appWriter.Residue).Concat(edits?.Unapplied() ?? []).Order(StringComparer.Ordinal).ToList();
         var meta = Path.Combine(outDir, "modernize");
         Directory.CreateDirectory(meta);
+        if (edits is not null) File.WriteAllText(Path.Combine(meta, "model-edits.json"), edits.Report());
         File.WriteAllText(Path.Combine(meta, "residue.json"), JsonSerializer.Serialize(all, new JsonSerializerOptions { WriteIndented = true }));
         // the legacy sites of the statements: provenance of every statement; the reject mapping reads only the calculation
         // classes' (oracle A takes the first stack frame in a calculation class, never one of the job adapter)
