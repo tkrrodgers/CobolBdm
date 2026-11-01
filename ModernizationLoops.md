@@ -66,3 +66,5 @@ Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 reg
 Scope note (02:00): loop 1's kernel substitution is approved as **estate-scoped reachable equivalence**. RoundingKernel is not claimed equivalent for arbitrary inputs: for S/P with a digit count below -9968, legacy continues with the retained WS-SHIFT, which is defined, call-history-dependent behaviour. Loop 2 adds a fail-closed frontier and negative tests. Rule for all kernel replacements: "equivalent on the gated domain, frontier elsewhere".
 
 Loop 3 prepared (03:40): kontor-zins J3S estate, G2 6/6 byte-identical, packaged (loops/L3-kontor-zins.md). Loop 4 in preparation: Joda-Money with J3S emulations on feature/l3-target.
+
+Loop 4 prepared (05:20): Joda-Money J3S estate, G2 6/6 byte-identical, 65 programs / 65.8K lines (loops/L4-joda-money.md). J3S emulations on feature/l3-target 21735cd (G0 569,713 records with 0 differences, 11/11 mutants caught). **Open J3S bug for Tomrodgers:** Object `==` ignores the value for boxed values; reachability in Fineract not yet analysed.
