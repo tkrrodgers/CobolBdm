@@ -35,8 +35,8 @@ Each loop's iteration 0 is the current generator's output on the estate, audited
 
 | Baseline | Report | Re-run when |
 |---|---|---|
-| loanamorti, iteration 7 | `20261031-202101-3ae043` (1.6 A, PASS); 1.1 reference `20261031-193948-bbd188` | Every loop |
-| fineract-xl final (end of loop 0) | Set when loop 0 is approved | Every loop that changes a shared generator pass |
+| loanamorti | `20261031-220151-e020cf` (1.6 A; generator at loop-0 approval). Earlier: 3ae043, bbd188 | Every loop |
+| fineract-xl final | `20261031-220149-f58389` (15.0 B) | Every loop |
 | Each approved loop's final report | Added on approval | Every later loop |
 
 ## 4. Protocol on the hub
@@ -53,4 +53,7 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 
 | Loop | Estate | Iteration-0 report | Final report | Regression check | Approved |
 |---|---|---|---|---|---|
-| 0 | fineract-xl | `20261031-200550-7bab1a` (1.1 re-audit of iteration 4) | | | |
+| 0 | fineract-xl | `20261031-200550-7bab1a` (36.0 C) | `20261031-220149-f58389` (15.0 B, PASS; GN4 46/46, gn4err 21/21) | loanamorti `20261031-220151-e020cf` 1.6 A, change 0 | **Approved 22:05** (lead verified the audit and the lane diff) |
+| 1 | fineract-cobol (+cr) | pending (pipeline audits "loop1 iter0") | | | Handed off 22:05 |
+
+Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
