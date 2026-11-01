@@ -59,8 +59,8 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 | 0 | fineract-xl | `20261031-200550-7bab1a` (36.0 C) | `20261031-220149-f58389` (15.0 B, PASS; GN4 46/46, gn4err 21/21) | loanamorti `20261031-220151-e020cf` 1.6 A, change 0 | **Approved 22:05** (lead verified the audit and the lane diff) |
 | 1 | fineract-cobol (+cr) | `20261031-221108-aa8538` (93.2 F) | `20261101-013204-d1d187` (12.4 B, PASS; GN4 58/58); cr `a11124` 12.4 B, GN4 58/58. Kernels replaced by java.time / RoundingMode behind differential gates (21.1M and 2.08M cases, 0 differences, mutants caught) | loanamorti `049263` 1.6, fineract-xl `1858b3` 15.0: change 0 | **Approved 01:55** (lead verified the audit and the compat-lane logic) |
 | 2 | fineract-legacy | `20261101-015654-c489dc` (42.9, after a one-line crash fix) | `20261101-063817-9435ca` (14.4 B, PASS; strict parity 58/58 + 13/13 + 640/640 under the runtime-diagnostics profile sha256 14f228c5, the user's option A; no exclusion) | all 4 green (cobol/cr -0.1, others 0) | **Final 06:40** (approved 04:55) with residual risk: about 10 input-dependent rewrites not exercised, 79 partly covered (carry-over: domain inputs) |
-| 3 | kontor-zins (J3S-T, new) | `20261101-071428-591197` (8.0 A) | m1 `20261101-081528-274242` (0.0 A; GN4 25/25 strict) | 5 green (loanamorti 0.8, xl 14.5, others 0.0) | Released 06:40; m1 accepted 08:55; exit after the FSJBDEC store emulation (decision a): pow boundaries 227/228 and 192/193 |
-| 4 | Joda-Money (J3S-T, new) | pending | | | Prepared 05:20; follows loop 3 |
+| 3 | kontor-zins (J3S-T, new) | `20261101-071428-591197` (8.0 A) | `20261101-093251-b2dcf1` (0.0 A; GN4 56/56 strict under v2.1; exact FSJBDEC store emulation, 31 capacity boundaries, 20 mutants) | 5 anchors held (loanamorti 0.0, xl 14.5, others 0.0) | **Approved 10:30** |
+| 4 | Joda-Money (J3S-T, new) | pending ("loop4 iter0" after onboarding) | | | Released 10:30 |
 
 Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
 
