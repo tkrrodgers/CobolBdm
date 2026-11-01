@@ -14,6 +14,8 @@ import java.util.Set;
 public final class Main {
     private static final String USAGE = """
         usage: jobol-audit <estate-dir|file.java> [options]
+               jobol-audit compare --original DIR --modern DIR [--cobol DIR] [--out DIR]   (see compare --help)
+               jobol-audit compare-gaps --report FILE [--report FILE ...] [--catalogue FILE] [--out DIR]
           --out DIR          write jobol-report.json/.md/.sarif to DIR (default: ./jobol-out)
           --format LIST      comma list of json,md,sarif (default: all)
           --config FILE      lane globs, rule overrides and gate (default: built-in, see --print-config)
@@ -31,6 +33,8 @@ public final class Main {
     }
 
     static int run(String[] args) {
+        if (args.length > 0 && args[0].equals("compare")) return Compare.run(java.util.Arrays.copyOfRange(args, 1, args.length));
+        if (args.length > 0 && args[0].equals("compare-gaps")) return Gaps.run(java.util.Arrays.copyOfRange(args, 1, args.length));
         Path target = null;
         Path out = Path.of("jobol-out");
         Path configFile = null;

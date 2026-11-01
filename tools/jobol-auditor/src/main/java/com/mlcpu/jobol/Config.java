@@ -28,6 +28,11 @@ public final class Config {
     public List<String> cobolPrefixes = new ArrayList<>();
     public List<String> moneyWords = new ArrayList<>();
     public List<String> excludeDirs = new ArrayList<>();
+    /**
+     * compare: modern-only types matching these globs (besides the compat, faithful and test lanes) are pipeline
+     * infrastructure (the generated job/application layer), not gaps.
+     */
+    public List<String> compareInfrastructureGlobs = new ArrayList<>();
 
     public static final class ZoneGlobs {
         public String zone;

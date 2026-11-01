@@ -1,0 +1,3009 @@
+{
+  "tool": "jobol-audit compare-gaps",
+  "version": "1.0.0",
+  "estates": [
+    {
+      "name": "joda-money",
+      "report": "C:/Users/Tomrodgers/Source/CobolBdm-jobol/tools/jobol-auditor/compare/joda-money/compare-report.json",
+      "apiPct": 33.8,
+      "apiReachedPct": 93.3,
+      "namesPct": 84.2,
+      "signaturesPct": 34.4,
+      "signaturesReachedPct": 97.4,
+      "matched": 9,
+      "originalOnly": 0,
+      "modernOnlyInfrastructure": 36,
+      "modernOnlyLombok": 0,
+      "modernOnlyOther": 0,
+      "gaps": 235
+    },
+    {
+      "name": "kontor-zins",
+      "report": "C:/Users/Tomrodgers/Source/CobolBdm-jobol/tools/jobol-auditor/compare/kontor-zins/compare-report.json",
+      "apiPct": 64.3,
+      "apiReachedPct": 79.4,
+      "namesPct": 91.8,
+      "signaturesPct": 65.9,
+      "signaturesReachedPct": 87.1,
+      "matched": 5,
+      "originalOnly": 0,
+      "modernOnlyInfrastructure": 37,
+      "modernOnlyLombok": 0,
+      "modernOnlyOther": 0,
+      "gaps": 35
+    },
+    {
+      "name": "loanamorti",
+      "report": "C:/Users/Tomrodgers/Source/CobolBdm-jobol/tools/jobol-auditor/compare/loanamorti/compare-report.json",
+      "apiPct": 74.5,
+      "apiReachedPct": 90.9,
+      "namesPct": 90.8,
+      "signaturesPct": 77.8,
+      "signaturesReachedPct": 96.3,
+      "matched": 17,
+      "originalOnly": 1,
+      "modernOnlyInfrastructure": 37,
+      "modernOnlyLombok": 0,
+      "modernOnlyOther": 0,
+      "gaps": 100
+    },
+    {
+      "name": "fineract-xl",
+      "report": "C:/Users/Tomrodgers/Source/CobolBdm-jobol/tools/jobol-auditor/compare/fineract-xl/compare-report.json",
+      "apiPct": 43.4,
+      "apiReachedPct": 83.7,
+      "namesPct": 72.8,
+      "signaturesPct": 47.6,
+      "signaturesReachedPct": 90.8,
+      "matched": 67,
+      "originalOnly": 0,
+      "modernOnlyInfrastructure": 50,
+      "modernOnlyLombok": 2,
+      "modernOnlyOther": 0,
+      "gaps": 1916
+    }
+  ],
+  "patterns": [
+    {
+      "id": "G01",
+      "title": "Truncated identifiers the estate can complete",
+      "closability": "a",
+      "description": "A field, parameter, local, method or constant whose modern spelling is the original with its tail cut (`totalFeeChargesChar` for `totalFeeChargesCharged`, `termInMont`). Exactly one identifier elsewhere in the modern estate extends the cut name and it is the original (unique-correct), or several do and the original is one of them (ambiguous-correct). Cut lengths cluster at 10–11 characters (frame locals and parameters) and spread over 14–24 for fields (the 30-character COBOL name, less the prefix).",
+      "hypothesis": "Complete a cut name to the identifier it flows to or from: a parameter stored into a field takes the field's name, a field returned by a getter takes the property name, and an argument passed to a parameter takes the parameter's name. Only when no data-flow link exists, take the unique estate identifier the cut name is a prefix of. With several candidates, decide only by data flow, never by prefix length.",
+      "evidence": "The full spelling survives elsewhere in the COBOL-derived estate: FRAME comments give full method names (`addTotalFeeChargesCharged`), getter and setter names give property names, and assignment `this.loanTermInDays = loanTermIn` links a cut parameter to a full field.",
+      "matches": [
+        "NAME.TRUNCATED.UNIQUE_CORRECT",
+        "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+        "NAME.TRUNCATED_NUMBERED.UNIQUE_CORRECT",
+        "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_CORRECT"
+      ],
+      "counts": {
+        "joda-money": 3,
+        "kontor-zins": 1,
+        "loanamorti": 3,
+        "fineract-xl": 201
+      },
+      "total": 208,
+      "codes": {
+        "NAME.TRUNCATED.AMBIGUOUS_CORRECT": {
+          "joda-money": 2,
+          "fineract-xl": 90
+        },
+        "NAME.TRUNCATED.UNIQUE_CORRECT": {
+          "joda-money": 1,
+          "kontor-zins": 1,
+          "loanamorti": 3,
+          "fineract-xl": 104
+        },
+        "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_CORRECT": {
+          "fineract-xl": 7
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "registerCurrency(String,int,int,List,boolean)",
+          "original": "countryCodes",
+          "modern": "countryCode",
+          "detail": "param, completion ambiguous-correct"
+        },
+        {
+          "estate": "joda-money",
+          "code": "NAME.TRUNCATED.UNIQUE_CORRECT",
+          "type": "org.joda.money.BigMoney",
+          "member": "getCurrencyUnit()",
+          "original": "getCurrencyUnit",
+          "modern": "getCurrency",
+          "detail": "method, completion unique-correct"
+        },
+        {
+          "estate": "joda-money",
+          "code": "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "registerCurrency(String,int,int,boolean)",
+          "original": "countryCodes",
+          "modern": "countryCode",
+          "detail": "local, completion ambiguous-correct"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "NAME.TRUNCATED.UNIQUE_CORRECT",
+          "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+          "member": "validate()",
+          "original": "totalPrincipal",
+          "modern": "totalPrinci",
+          "detail": "local, completion unique-correct"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "NAME.TRUNCATED.UNIQUE_CORRECT",
+          "type": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+          "member": "overPaymentAmount(BigDecimal)",
+          "original": "overPaymentAmount",
+          "modern": "overPayment",
+          "detail": "param, completion unique-correct"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "NAME.TRUNCATED.UNIQUE_CORRECT",
+          "type": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+          "member": "debtPaymentAmount(BigDecimal)",
+          "original": "debtPaymentAmount",
+          "modern": "debtPayment",
+          "detail": "param, completion unique-correct"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "NAME.TRUNCATED.UNIQUE_CORRECT",
+          "type": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+          "member": "loanBalanceAmount(BigDecimal)",
+          "original": "loanBalanceAmount",
+          "modern": "loanBalance",
+          "detail": "param, completion unique-correct"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+          "type": "org.apache.fineract.infrastructure.core.exception.AbstractPlatformDomainRuleException",
+          "member": "<init>(String,String,Object[])",
+          "original": "defaultUserMessage",
+          "modern": "defaultUser",
+          "detail": "param, completion ambiguous-correct"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+          "type": "org.apache.fineract.infrastructure.core.exception.AbstractPlatformException",
+          "member": "<init>(String,String,Object[])",
+          "original": "defaultUserMessage",
+          "modern": "defaultUser",
+          "detail": "param, completion ambiguous-correct"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+          "type": "org.apache.fineract.organisation.monetary.data.CurrencyData",
+          "member": "<init>(String,String,int,Integer,String,String)",
+          "original": "inMultiplesOf",
+          "modern": "inMultiples",
+          "detail": "param, completion ambiguous-correct"
+        }
+      ]
+    },
+    {
+      "id": "G02",
+      "title": "Truncated identifiers with no or a misleading completion",
+      "closability": "b",
+      "description": "Cut names that no estate identifier completes (`amountToAd` for `amountToAdd`, `actualPayme`, `disbursementDueDat`, `EARLY_PAYMENT_AMOUNT_IS` for `..._NEGATIVE`), or that a prefix match would complete to the wrong word (unique-wrong, ambiguous-wrong). This is the largest name gap. A counter appended to a cut stem (`scheduleModel2` for `scheduleModelCopy`, `paidAmounts2`) marks two cut names that collided.",
+      "hypothesis": "Prefix completion with a lexicon (English and banking words): external knowledge, for example a dictionary or a language model limited to completions of the cut stem that are type-compatible. Never apply estate-prefix completion when it is unique-wrong: in fineract-xl it would be wrong 98+21 times. When unsure, keep the cut name. Completing both names of a collision removes the counter.",
+      "evidence": "None in the COBOL: the cut data name (12 characters for a local or parameter, the 30-character name for a field) is all that J3S keeps, and the estate does not spell the word out anywhere.",
+      "matches": [
+        "NAME.TRUNCATED.NONE",
+        "NAME.TRUNCATED.UNIQUE_WRONG",
+        "NAME.TRUNCATED.AMBIGUOUS_WRONG",
+        "NAME.TRUNCATED_NUMBERED.NONE",
+        "NAME.TRUNCATED_NUMBERED.UNIQUE_WRONG",
+        "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_WRONG"
+      ],
+      "counts": {
+        "joda-money": 28,
+        "kontor-zins": 3,
+        "loanamorti": 17,
+        "fineract-xl": 522
+      },
+      "total": 570,
+      "codes": {
+        "NAME.TRUNCATED.AMBIGUOUS_WRONG": {
+          "fineract-xl": 50
+        },
+        "NAME.TRUNCATED.NONE": {
+          "joda-money": 28,
+          "kontor-zins": 3,
+          "loanamorti": 15,
+          "fineract-xl": 332
+        },
+        "NAME.TRUNCATED.UNIQUE_WRONG": {
+          "fineract-xl": 98
+        },
+        "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_WRONG": {
+          "loanamorti": 1,
+          "fineract-xl": 21
+        },
+        "NAME.TRUNCATED_NUMBERED.UNIQUE_WRONG": {
+          "loanamorti": 1,
+          "fineract-xl": 21
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "org.joda.money.BigMoney",
+          "member": "convertedTo(CurrencyUnit,BigDecimal)",
+          "original": "conversionMultipler",
+          "modern": "conversionM",
+          "detail": "param, completion none"
+        },
+        {
+          "estate": "joda-money",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "of(String)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "detail": "param, completion none"
+        },
+        {
+          "estate": "joda-money",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "org.joda.money.CurrencyUnitDataProvider",
+          "member": "registerCountry(String,String)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "detail": "param, completion none"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "de.manikouchakian.kontorzins.Annuity",
+          "member": "schedule(LoanTerms)",
+          "original": "actualPayment",
+          "modern": "actualPayme",
+          "detail": "local, completion none"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+          "member": "validate()",
+          "original": "expectedDebt",
+          "modern": "expectedDeb",
+          "detail": "local, completion none"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+          "member": "validate()",
+          "original": "expectedMonth",
+          "modern": "expectedMon",
+          "detail": "local, completion none"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+          "original": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+          "modern": "ANNUAL_PAYMENT_LOAN_A",
+          "detail": "field, completion none"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+          "member": "calculate(Loan)",
+          "original": "amortizationBuilder",
+          "modern": "amortization",
+          "detail": "local, completion none"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "NAME.TRUNCATED.NONE",
+          "type": "paqua.loan.amortization.api.impl.message.Messages",
+          "member": "EARLY_PAYMENT_AMOUNT_IS_NEGATIVE",
+          "original": "EARLY_PAYMENT_AMOUNT_IS_NEGATIVE",
+          "modern": "EARLY_PAYMENT_AMOUNT_IS",
+          "detail": "constant, completion none"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.TRUNCATED.AMBIGUOUS_WRONG",
+          "type": "org.apache.fineract.infrastructure.core.exception.AbstractPlatformException",
+          "member": "filterThrowableCause(Object[])",
+          "original": "defaultUserMessageArgs",
+          "modern": "defaultUser",
+          "detail": "param, completion ambiguous-wrong"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.TRUNCATED.AMBIGUOUS_WRONG",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleParams",
+          "member": "<init>(int,int,int,LocalDate,LocalDate,Money,Money,Money,Money,Money,Money,Money,Map,Map,Map,Money,Map,Money,Money,Money,List,Collection,LoanRepaymentScheduleTransactionProcessor,LocalDate,boolean,CurrencyData,boolean,MathContext)",
+          "original": "totalOutstandingInterestPaymentDueToGrace",
+          "modern": "totalOutstanding",
+          "detail": "param, completion ambiguous-wrong"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.TRUNCATED.AMBIGUOUS_WRONG",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.DefaultScheduledDateGenerator",
+          "member": "generateNextRepaymentDate(LocalDate,LoanApplicationTerms,boolean)",
+          "original": "isFirstRepayment",
+          "modern": "isFirstRep",
+          "detail": "param, completion ambiguous-wrong"
+        }
+      ]
+    },
+    {
+      "id": "G03",
+      "title": "COBOL abbreviations left unexpanded",
+      "closability": "a",
+      "description": "Word-by-word abbreviations: enum constants `CAP_INC` (CAPITALIZED_INCOME), `INT_RATE_CHANGE`, `PRIN_GRACE_LIFTED`, `DISB_DATE`, and fields `downPaymentPct` and `disbursedAmountPctF` (`disbursedAmountPercentageForDownPayment`). Most are words the generator's own abbreviation table (MODERNIZATION.md: CAP, INC, INT, PRIN, DISB...) already expands for fields and variables.",
+      "hypothesis": "Apply the learned abbreviation table to enum constants and static constant names too. Learn new pairs such as PCT and PERCENTAGE from FRAME method names that contain both forms.",
+      "evidence": "The learned abbreviation table (paragraph names beside method names). For PCT, the full spelling is in a reached getter's FRAME (`getDisbursedAmountPercentageForDownPayment`).",
+      "matches": [
+        "NAME.ABBREVIATED"
+      ],
+      "counts": {
+        "joda-money": 1,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 18
+      },
+      "total": 19,
+      "codes": {
+        "NAME.ABBREVIATED": {
+          "joda-money": 1,
+          "fineract-xl": 18
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "NAME.ABBREVIATED",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "currenciesByNumericCode",
+          "original": "currenciesByNumericCode",
+          "modern": "CURRENCIES_BY_NUMERIC_C",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.ABBREVIATED",
+          "type": "org.apache.fineract.infrastructure.core.service.MathUtil",
+          "member": "percentageOf(BigDecimal,BigDecimal,MathContext)",
+          "original": "percentage",
+          "modern": "pct",
+          "detail": "param"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.ABBREVIATED",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplicationTerms",
+          "member": "disbursedAmountPercentageForDownPayment",
+          "original": "disbursedAmountPercentageForDownPayment",
+          "modern": "disbursedAmountPctF",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.ABBREVIATED",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplicationTerms.Builder",
+          "member": "downPaymentPercentage",
+          "original": "downPaymentPercentage",
+          "modern": "downPaymentPct",
+          "detail": "field"
+        }
+      ]
+    },
+    {
+      "id": "G04",
+      "title": "Accessors invented in the wrong style",
+      "closability": "a",
+      "description": "Where J3S never compiled an accessor, the generator invents one in the bean style even when the estate uses record-style accessors. kontor-zins `Schedule.installments()` becomes `getInstallments()`. Invented getters also carry cut field names (`getDisbursedAmountPctF`) or a doubled prefix (`isIsInterestRecalculationE`).",
+      "hypothesis": "Name invented accessors in the convention of the reached accessors of the same type, falling back to the estate's convention. Build the name from the completed field name. Never prefix `is` to a name that already starts with `is`.",
+      "evidence": "The reached accessors' FRAME names give the estate's convention (`LoanTerms.principal()`, `Installment.month()`), and the field's full name (G01).",
+      "matches": [
+        "NAME.ACCESSOR_STYLE",
+        "METHOD.EXTRA_ACCESSOR"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 4,
+        "loanamorti": 1,
+        "fineract-xl": 15
+      },
+      "total": 20,
+      "codes": {
+        "METHOD.EXTRA_ACCESSOR": {
+          "fineract-xl": 9
+        },
+        "NAME.ACCESSOR_STYLE": {
+          "kontor-zins": 4,
+          "loanamorti": 1,
+          "fineract-xl": 6
+        }
+      },
+      "examples": [
+        {
+          "estate": "kontor-zins",
+          "code": "NAME.ACCESSOR_STYLE",
+          "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+          "member": "installments()",
+          "original": "installments",
+          "modern": "getInstallments",
+          "detail": "method"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "NAME.ACCESSOR_STYLE",
+          "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+          "member": "totalInterest()",
+          "original": "totalInterest",
+          "modern": "getTotalInterest",
+          "detail": "method"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "NAME.ACCESSOR_STYLE",
+          "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+          "member": "totalPaid()",
+          "original": "totalPaid",
+          "modern": "getTotalPaid",
+          "detail": "method"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "NAME.ACCESSOR_STYLE",
+          "type": "paqua.loan.amortization.dto.LoanAmortization",
+          "member": "getEarlyPayments()",
+          "original": "getEarlyPayments",
+          "modern": "earlyPayments",
+          "detail": "method"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_ACCESSOR",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplicationTerms",
+          "member": "getVariationsDataWrappe()",
+          "original": "",
+          "modern": "Object getVariationsDataWrappe()",
+          "detail": "source public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_ACCESSOR",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProgressiveLoanInterestScheduleModel",
+          "member": "getInstallmentAmountI()",
+          "original": "",
+          "modern": "Integer getInstallmentAmountI()",
+          "detail": "source public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_ACCESSOR",
+          "type": "org.apache.fineract.portfolio.loanproduct.data.LoanConfigurationDetails",
+          "member": "getInterestPaymentGrace()",
+          "original": "",
+          "modern": "Integer getInterestPaymentGrace()",
+          "detail": "source public"
+        }
+      ]
+    },
+    {
+      "id": "G05",
+      "title": "Counter names where the original has none",
+      "closability": "a",
+      "description": "A counter appended to an otherwise exact name (`countryCode3`, `daysInYear3`). These are rare.",
+      "hypothesis": "Add a counter only when the name actually clashes in the same Java scope. Otherwise keep the base name.",
+      "evidence": "The base name is exact, so the counter comes from the generator's scope de-duplication, not from the COBOL.",
+      "matches": [
+        "NAME.NUMBERED"
+      ],
+      "counts": {
+        "joda-money": 1,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 5
+      },
+      "total": 6,
+      "codes": {
+        "NAME.NUMBERED": {
+          "joda-money": 1,
+          "fineract-xl": 5
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "NAME.NUMBERED",
+          "type": "org.joda.money.CurrencyUnitDataProvider",
+          "member": "registerCountry(String,String)",
+          "original": "countryCode",
+          "modern": "countryCode3",
+          "detail": "param"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.NUMBERED",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ProgressiveLoanScheduleGenerator",
+          "member": "processDisbursements(LoanApplicationTerms,List,LoanScheduleParams,ProgressiveLoanInterestScheduleModel,List,BigDecimal,boolean,MathContext)",
+          "original": "maxOutstandingBalance",
+          "modern": "money",
+          "detail": "local"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.NUMBERED",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "payInterest(ProgressiveLoanInterestScheduleModel,LocalDate,LocalDate,LocalDate,Money)",
+          "original": "repaymentPeriod",
+          "modern": "repaymentPeriod3",
+          "detail": "local"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.NUMBERED",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "rateFactorByRepaymentEveryDay(BigDecimal,BigDecimal,BigDecimal,BigDecimal,BigDecimal,MathContext)",
+          "original": "daysInYear",
+          "modern": "daysInYear3",
+          "detail": "param"
+        }
+      ]
+    },
+    {
+      "id": "G06",
+      "title": "Other renames and word-case changes",
+      "closability": "c",
+      "description": "Word case or separator changes (`calculatedEMI` to `calculatedEmi`, `intToEnumMap` to `INT_TO_ENUM_MAP`) and a few renames (`rp`, `list`, `repaymentEvery` for `repayEvery`, where the abbreviation table over-expanded). Some renames pair two locals by type and are alignment noise.",
+      "hypothesis": "Low value. At most, do not expand an abbreviation the estate itself uses in reached FRAME names (`repayEvery`).",
+      "evidence": "Case does not survive COBOL's upper-case names.",
+      "matches": [
+        "NAME.CASE",
+        "NAME.RENAMED"
+      ],
+      "counts": {
+        "joda-money": 2,
+        "kontor-zins": 0,
+        "loanamorti": 1,
+        "fineract-xl": 18
+      },
+      "total": 21,
+      "codes": {
+        "NAME.CASE": {
+          "joda-money": 2,
+          "fineract-xl": 12
+        },
+        "NAME.RENAMED": {
+          "loanamorti": 1,
+          "fineract-xl": 6
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "NAME.CASE",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "currenciesByCode",
+          "original": "currenciesByCode",
+          "modern": "CURRENCIES_BY_CODE",
+          "detail": "field"
+        },
+        {
+          "estate": "joda-money",
+          "code": "NAME.CASE",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "currenciesByCountry",
+          "original": "currenciesByCountry",
+          "modern": "CURRENCIES_BY_COUNTRY",
+          "detail": "field"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "NAME.RENAMED",
+          "type": "paqua.loan.amortization.dto.EarlyPayment",
+          "member": "<init>(BigDecimal,EarlyPaymentStrategy,EarlyPaymentRepeatingStrategy,Map)",
+          "original": "type",
+          "modern": "strategy",
+          "detail": "param"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.CASE",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplicationTerms",
+          "member": "holidayDetailDTO",
+          "original": "holidayDetailDTO",
+          "modern": "holidayDetailDto",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.CASE",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "calculateAdjustedEqualAmortizationValues(Money,Money,Money,Integer,Integer,MonetaryCurrency)",
+          "original": "calculatedEMI",
+          "modern": "calculatedEmi",
+          "detail": "local"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "NAME.CASE",
+          "type": "org.apache.fineract.portfolio.loanproduct.domain.LoanPreCloseInterestCalculationStrategy",
+          "member": "intToEnumMap",
+          "original": "intToEnumMap",
+          "modern": "INT_TO_ENUM_MAP",
+          "detail": "field"
+        }
+      ]
+    },
+    {
+      "id": "G07",
+      "title": "Generic type arguments erased to Object",
+      "closability": "a",
+      "description": "`Map<LocalDate,Money>` becomes `Map<Object,Object>`, `Set<Integer>` becomes `Set<Object>`, and `Supplier<? extends T>` becomes `Supplier<Object>`, in fields, parameters and returns. Generic arguments are dropped or changed (`List<T>` to `List<?>`). The modern code then casts at every use.",
+      "hypothesis": "Type a collection by its frame `X>` token for the last argument and by the unique cast type at its use sites for the others. Remove the casts that become redundant.",
+      "evidence": "FRAME parameter lists keep the last type argument as a dangling `>` (`Money>` for `Map<LocalDate,Money>`). The modern code's own casts at get, put and iteration sites (`(LocalDate) k`) give the others.",
+      "matches": [
+        "TYPEREF.GENERIC_TO_OBJECT_KNOWN",
+        "TYPEREF.GENERIC_DROPPED",
+        "TYPEREF.GENERIC_CHANGED"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 27
+      },
+      "total": 27,
+      "codes": {
+        "TYPEREF.GENERIC_CHANGED": {
+          "fineract-xl": 6
+        },
+        "TYPEREF.GENERIC_DROPPED": {
+          "fineract-xl": 5
+        },
+        "TYPEREF.GENERIC_TO_OBJECT_KNOWN": {
+          "fineract-xl": 16
+        }
+      },
+      "examples": [
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.GENERIC_CHANGED",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "generateAdditionalRepaymentPeriodDueDates(ProgressiveLoanInterestScheduleModel,int,int,Function)",
+          "original": "Function<Long,LocalDate>",
+          "modern": "Function<Integer,LocalDate>",
+          "detail": "param 4"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.GENERIC_CHANGED",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProgressiveLoanInterestScheduleModel",
+          "member": "resolveRepaymentPeriodLengthGeneratorFunction(LocalDate)",
+          "original": "Function<Long,LocalDate>",
+          "modern": "Function<Integer,LocalDate>",
+          "detail": "return"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.GENERIC_DROPPED",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.RepaymentPeriod",
+          "member": "calculatedDueInterestCalculation",
+          "original": "Memo<Money>",
+          "modern": "Memo",
+          "detail": "field"
+        }
+      ]
+    },
+    {
+      "id": "G08",
+      "title": "Generic type parameters lost",
+      "closability": "b",
+      "description": "Generic classes and methods become monomorphic: `Memo<T>` and `<T> generateInterestScheduleModel(List<T>, Function<T,LocalDate>, ...)` lose their type parameter.",
+      "hypothesis": "Introduce a type variable where one Object-typed slot is cast to different types at different call sites. This needs type inference beyond the COBOL evidence, so the type parameter's existence is an external judgement. Low frequency.",
+      "evidence": "COBOL is monomorphic. Only the different cast types at each instantiation hint at a parameter.",
+      "matches": [
+        "GENERICS.TYPE_PARAMETERS_LOST"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 4
+      },
+      "total": 4,
+      "codes": {
+        "GENERICS.TYPE_PARAMETERS_LOST": {
+          "fineract-xl": 4
+        }
+      },
+      "examples": [
+        {
+          "estate": "fineract-xl",
+          "code": "GENERICS.TYPE_PARAMETERS_LOST",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "generateInterestScheduleModel(List,Function,Function,ILoanConfigurationDetails,Integer,MathContext)",
+          "original": "<T>",
+          "modern": "",
+          "detail": "method"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "GENERICS.TYPE_PARAMETERS_LOST",
+          "type": "org.apache.fineract.portfolio.util.Memo",
+          "member": "",
+          "original": "<T>",
+          "modern": "",
+          "detail": "type"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "GENERICS.TYPE_PARAMETERS_LOST",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "updateModel(ProgressiveLoanInterestScheduleModel,List,Function,Function)",
+          "original": "<T>",
+          "modern": "",
+          "detail": "method"
+        }
+      ]
+    },
+    {
+      "id": "G09",
+      "title": "Types outside the J3S closure become Object",
+      "closability": "a",
+      "description": "Fields and parameters whose type J3S never compiled are declared `Object` (`LoanCharge`, `LoanRepaymentScheduleTransactionProcessor`, `LoanCapitalizedIncomeType`). The name is lost even though the COBOL carries it.",
+      "hypothesis": "Declare an opaque boundary type with the frame's simple name (an empty interface in a boundary package, documented as outside the estate) instead of `Object`, or at least keep the name in the declaration.",
+      "evidence": "FRAME parameter lists name the simple type (`LoanScheduleParams.<init>(..., LoanRepaymentScheduleTransactionProcessor, ...)`).",
+      "matches": [
+        "TYPEREF.TO_OBJECT_EXTERNAL",
+        "TYPEREF.GENERIC_TO_OBJECT_EXTERNAL"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 48
+      },
+      "total": 48,
+      "codes": {
+        "TYPEREF.GENERIC_TO_OBJECT_EXTERNAL": {
+          "fineract-xl": 7
+        },
+        "TYPEREF.TO_OBJECT_EXTERNAL": {
+          "fineract-xl": 41
+        }
+      },
+      "examples": [
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.GENERIC_TO_OBJECT_EXTERNAL",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleParams",
+          "member": "<init>(int,int,int,LocalDate,LocalDate,Money,Money,Money,Money,Money,Money,Money,Map,Map,Map,Money,Map,Money,Money,Money,List,Collection,LoanRepaymentScheduleTransactionProcessor,LocalDate,boolean,CurrencyData,boolean,MathContext)",
+          "original": "List<LoanRepaymentScheduleInstallment>",
+          "modern": "List<Object>",
+          "detail": "param 21"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.GENERIC_TO_OBJECT_EXTERNAL",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleModelRepaymentPeriod",
+          "member": "loanCompoundingDetails",
+          "original": "Set<InterestRecalculationAdditionalDetailData>",
+          "modern": "Set<Object>",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.GENERIC_TO_OBJECT_EXTERNAL",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ProgressiveLoanScheduleGenerator",
+          "member": "cumulativeFeeChargesDueWithin(LocalDate,LocalDate,Set,CurrencyData,PrincipalInterest,Money,Money,boolean,boolean,MathContext)",
+          "original": "Set<LoanCharge>",
+          "modern": "Set<Object>",
+          "detail": "param 3"
+        }
+      ]
+    },
+    {
+      "id": "G10",
+      "title": "Known types become Object",
+      "closability": "a",
+      "description": "Types the estate or the JDK declares are still typed `Object`, mostly fields that reached code only stores and never reads: `DisbursementData.note` and `linkAccountId` (String), `DateUtils.DEFAULT_DATE_FORMATTER` (DateTimeFormatter) and `BigMoney.PARSE_REGEX` (Pattern). Return types are affected too (`Money.zero(MonetaryCurrency)` returns `Object`).",
+      "hypothesis": "Type a field by the frame types of the parameters assigned to it, or by the result type of its initialiser call. Type a method's return by the declared type of what it returns.",
+      "evidence": "The constructor and setter FRAMEs that write the field carry the parameter type (`String`, `Money`). Static initialisers call a typed factory (`Pattern.compile`).",
+      "matches": [
+        "TYPEREF.TO_OBJECT_KNOWN"
+      ],
+      "counts": {
+        "joda-money": 1,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 36
+      },
+      "total": 37,
+      "codes": {
+        "TYPEREF.TO_OBJECT_KNOWN": {
+          "joda-money": 1,
+          "fineract-xl": 36
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "TYPEREF.TO_OBJECT_KNOWN",
+          "type": "org.joda.money.BigMoney",
+          "member": "PARSE_REGEX",
+          "original": "Pattern",
+          "modern": "Object",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.TO_OBJECT_KNOWN",
+          "type": "org.apache.fineract.infrastructure.core.exception.AbstractPlatformException",
+          "member": "findThrowableCause(Object[])",
+          "original": "Throwable",
+          "modern": "Object",
+          "detail": "return"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.TO_OBJECT_KNOWN",
+          "type": "org.apache.fineract.infrastructure.core.service.DateUtils",
+          "member": "DEFAULT_DATETIME_FORMAT",
+          "original": "String",
+          "modern": "Object",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.TO_OBJECT_KNOWN",
+          "type": "org.apache.fineract.organisation.monetary.domain.Money",
+          "member": "of(MonetaryCurrency,BigDecimal)",
+          "original": "Money",
+          "modern": "Object",
+          "detail": "return"
+        }
+      ]
+    },
+    {
+      "id": "G11",
+      "title": "Interface types replaced by an implementation",
+      "closability": "a",
+      "description": "Parameters, fields and returns declared with an implementation instead of the original interface or supertype: `ILoanConfigurationDetails` becomes `LoanConfigurationDetails`, and the `LoanAmortizationCalculator` returned by the factories becomes `LoanAmortizationCalculatorImpl` or `AnnualPaymentLoanCalculator`.",
+      "hypothesis": "Declare a parameter with its frame type whenever the estate declares that type, even when one implementation flows in. Do the same for fields assigned from such parameters.",
+      "evidence": "FRAME parameter lists print the declared type (`shouldRecalculateTillInstallmentDueDate(ILoanConfigurationDetails, boolean)`). The generator already recovers `ILoanConfigurationDetails` from dispatch.",
+      "matches": [
+        "TYPEREF.INTERFACE_TO_IMPL",
+        "TYPEREF.SUPERTYPE_TO_SUBTYPE"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 3,
+        "fineract-xl": 13
+      },
+      "total": 16,
+      "codes": {
+        "TYPEREF.INTERFACE_TO_IMPL": {
+          "loanamorti": 3,
+          "fineract-xl": 13
+        }
+      },
+      "examples": [
+        {
+          "estate": "loanamorti",
+          "code": "TYPEREF.INTERFACE_TO_IMPL",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+          "member": "create()",
+          "original": "LoanAmortizationCalculator",
+          "modern": "LoanAmortizationCalculatorImpl",
+          "detail": "return"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "TYPEREF.INTERFACE_TO_IMPL",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+          "original": "LoanAmortizationCalculator",
+          "modern": "AnnualPaymentLoanCalculator",
+          "detail": "field"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "TYPEREF.INTERFACE_TO_IMPL",
+          "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+          "member": "create()",
+          "original": "LoanAmortizationCalculator",
+          "modern": "AnnualPaymentLoanCalculator",
+          "detail": "return"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.INTERFACE_TO_IMPL",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplicationTerms",
+          "member": "toLoanConfigurationDetails()",
+          "original": "ILoanConfigurationDetails",
+          "modern": "LoanConfigurationDetails",
+          "detail": "return"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.INTERFACE_TO_IMPL",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ProgressiveLoanScheduleGenerator",
+          "member": "emiCalculator",
+          "original": "EMICalculator",
+          "modern": "ProgressiveEMICalculator",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.INTERFACE_TO_IMPL",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "buildLoanApplicationTerms(ILoanConfigurationDetails,LocalDate,Money,MathContext)",
+          "original": "ILoanConfigurationDetails",
+          "modern": "LoanConfigurationDetails",
+          "detail": "param 1"
+        }
+      ]
+    },
+    {
+      "id": "G12",
+      "title": "Primitive width, boxing and varargs drift",
+      "closability": "a",
+      "description": "`short` becomes `int` (joda `CurrencyUnit.numericCode` and `decimalPlaces`), `Integer` becomes `int` (`periodNumber()`), and `Object...` becomes `Object[]` (MathUtil, AbstractPlatformException).",
+      "hypothesis": "Map PICTURE sizes to the narrowest Java primitive J3S could have produced, and keep the boxed type where the item has a null flag. Make a trailing array parameter varargs when every call site builds a fresh array.",
+      "evidence": "PIC S9(4) COMP against S9(9)/S9(10) COMP gives short against int. The `-C` null-flag item beside a numeric item gives a boxed type. Frames print varargs as arrays (`BigDecimal[]`), so restoring varargs needs the JDK convention (class b for that subcase).",
+      "matches": [
+        "TYPEREF.NUMERIC_CHANGED",
+        "TYPEREF.BOXING",
+        "TYPEREF.VARARGS_TO_ARRAY"
+      ],
+      "counts": {
+        "joda-money": 4,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 6
+      },
+      "total": 10,
+      "codes": {
+        "TYPEREF.BOXING": {
+          "fineract-xl": 2
+        },
+        "TYPEREF.NUMERIC_CHANGED": {
+          "joda-money": 4
+        },
+        "TYPEREF.VARARGS_TO_ARRAY": {
+          "fineract-xl": 4
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "TYPEREF.NUMERIC_CHANGED",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "<init>(String,short,short)",
+          "original": "short",
+          "modern": "int",
+          "detail": "param 2"
+        },
+        {
+          "estate": "joda-money",
+          "code": "TYPEREF.NUMERIC_CHANGED",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "<init>(String,short,short)",
+          "original": "short",
+          "modern": "int",
+          "detail": "param 3"
+        },
+        {
+          "estate": "joda-money",
+          "code": "TYPEREF.NUMERIC_CHANGED",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "decimalPlaces",
+          "original": "short",
+          "modern": "int",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.BOXING",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanSchedulePlanDownPaymentPeriod",
+          "member": "periodNumber()",
+          "original": "Integer",
+          "modern": "int",
+          "detail": "return"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.BOXING",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanSchedulePlanRepaymentPeriod",
+          "member": "periodNumber()",
+          "original": "Integer",
+          "modern": "int",
+          "detail": "return"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.VARARGS_TO_ARRAY",
+          "type": "org.apache.fineract.infrastructure.core.exception.AbstractPlatformDomainRuleException",
+          "member": "<init>(String,String,Object[])",
+          "original": "Object...",
+          "modern": "Object[]",
+          "detail": "param 3"
+        }
+      ]
+    },
+    {
+      "id": "G13",
+      "title": "Collection interface drift",
+      "closability": "b",
+      "description": "The declared collection interface changes: `ConcurrentMap` becomes `Map`, `Collection` becomes `List`, and `Temporal` becomes `LocalDate`.",
+      "hypothesis": "Choose the narrowest JDK interface that the operations used on the value need (JDK knowledge): `ConcurrentMap` when `putIfAbsent` or `computeIfAbsent` is used, and `Collection` when only iteration and `size` are.",
+      "evidence": "Frames print only the last type argument, not the outer collection type. The JDK emulation program (`JConcurrentHashMap`, `JArrayList`) names the implementation, not the declared interface.",
+      "matches": [
+        "TYPEREF.COLLECTION_CHANGED",
+        "TYPEREF.OTHER"
+      ],
+      "counts": {
+        "joda-money": 3,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 6
+      },
+      "total": 9,
+      "codes": {
+        "TYPEREF.COLLECTION_CHANGED": {
+          "joda-money": 3,
+          "fineract-xl": 3
+        },
+        "TYPEREF.OTHER": {
+          "fineract-xl": 3
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "TYPEREF.COLLECTION_CHANGED",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "currenciesByCode",
+          "original": "ConcurrentMap<String,CurrencyUnit>",
+          "modern": "Map<String,CurrencyUnit>",
+          "detail": "field"
+        },
+        {
+          "estate": "joda-money",
+          "code": "TYPEREF.COLLECTION_CHANGED",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "currenciesByCountry",
+          "original": "ConcurrentMap<String,CurrencyUnit>",
+          "modern": "Map<String,CurrencyUnit>",
+          "detail": "field"
+        },
+        {
+          "estate": "joda-money",
+          "code": "TYPEREF.COLLECTION_CHANGED",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "currenciesByNumericCode",
+          "original": "ConcurrentMap<Integer,CurrencyUnit>",
+          "modern": "Map<Integer,CurrencyUnit>",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.COLLECTION_CHANGED",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ProgressiveLoanScheduleGenerator",
+          "member": "updatePeriodsWithCharges(CurrencyData,LoanScheduleParams,Collection,Set,MathContext)",
+          "original": "Collection<LoanScheduleModelPeriod>",
+          "modern": "List<LoanScheduleModelPeriod>",
+          "detail": "param 3"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.COLLECTION_CHANGED",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProgressiveLoanInterestScheduleModel",
+          "member": "<init>(List,TreeSet,ILoanConfigurationDetails,Integer,MathContext,boolean)",
+          "original": "TreeSet<InterestRate>",
+          "modern": "NavigableSet<InterestRate>",
+          "detail": "param 2"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPEREF.OTHER",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.DefaultScheduledDateGenerator",
+          "member": "adjustDate(Temporal,Temporal,PeriodFrequencyType)",
+          "original": "Temporal",
+          "modern": "LocalDate",
+          "detail": "param 1"
+        }
+      ]
+    },
+    {
+      "id": "G14",
+      "title": "JDK interfaces lost",
+      "closability": "b",
+      "description": "`Comparable<BigMoneyProvider>`, `Comparable<CurrencyUnit>` and `Serializable` are dropped, along with the `serialVersionUID` constants (joda-money, loanamorti DTOs).",
+      "hypothesis": "Implement `Comparable<X>` when a public `int compareTo(X)` exists (a JDK convention). Serializable cannot be recovered from the evidence; at most, use a policy for DTO-like types.",
+      "evidence": "`compareTo(X)` FRAMEs exist (`BigMoney.compareTo(BigMoneyProvider)`). Serializable and serialVersionUID leave no trace in the COBOL.",
+      "matches": [
+        "SUPERTYPE.JDK_INTERFACE_LOST",
+        "FIELD.MISSING_SERIAL_VERSION"
+      ],
+      "counts": {
+        "joda-money": 11,
+        "kontor-zins": 0,
+        "loanamorti": 10,
+        "fineract-xl": 2
+      },
+      "total": 23,
+      "codes": {
+        "FIELD.MISSING_SERIAL_VERSION": {
+          "joda-money": 5,
+          "loanamorti": 5,
+          "fineract-xl": 1
+        },
+        "SUPERTYPE.JDK_INTERFACE_LOST": {
+          "joda-money": 6,
+          "loanamorti": 5,
+          "fineract-xl": 1
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "FIELD.MISSING_SERIAL_VERSION",
+          "type": "org.joda.money.BigMoney",
+          "member": "serialVersionUID",
+          "original": "static final long serialVersionUID",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "joda-money",
+          "code": "FIELD.MISSING_SERIAL_VERSION",
+          "type": "org.joda.money.CurrencyMismatchException",
+          "member": "serialVersionUID",
+          "original": "static final long serialVersionUID",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "joda-money",
+          "code": "FIELD.MISSING_SERIAL_VERSION",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "serialVersionUID",
+          "original": "static final long serialVersionUID",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "FIELD.MISSING_SERIAL_VERSION",
+          "type": "paqua.loan.amortization.dto.EarlyPayment",
+          "member": "serialVersionUID",
+          "original": "static final long serialVersionUID",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "FIELD.MISSING_SERIAL_VERSION",
+          "type": "paqua.loan.amortization.dto.Loan",
+          "member": "serialVersionUID",
+          "original": "static final long serialVersionUID",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "FIELD.MISSING_SERIAL_VERSION",
+          "type": "paqua.loan.amortization.dto.LoanAmortization",
+          "member": "serialVersionUID",
+          "original": "static final long serialVersionUID",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.MISSING_SERIAL_VERSION",
+          "type": "org.apache.fineract.organisation.monetary.data.CurrencyData",
+          "member": "serialVersionUID",
+          "original": "static final long serialVersionUID",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "SUPERTYPE.JDK_INTERFACE_LOST",
+          "type": "org.apache.fineract.organisation.monetary.data.CurrencyData",
+          "member": "",
+          "original": "Serializable",
+          "modern": "",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "G15",
+      "title": "Domain interfaces and superclasses lost: concrete classes only",
+      "closability": "a",
+      "description": "Domain interfaces disappear from `implements` (`LoanAmortizationCalculator`, `RepeatableEarlyPayment`, `BigMoneyProvider` on Money, `LoanScheduleGenerator`, `ApiFacingEnum`, `LoanPrincipalRelatedDataHolder`). Exception superclasses fall back to `RuntimeException` (`CurrencyMismatchException extends IllegalArgumentException`), and an abstract class becomes concrete (`CurrencyUnitDataProvider`).",
+      "hypothesis": "When an estate type is named in frame parameter or return types and has no CLASS program of its own, declare it an interface whose methods are the ones called on it. Make the classes whose instances reach it implement it. Take an exception's superclass from the catch sites that include its class id. Keep a class abstract when it is never instantiated and has subclasses.",
+      "evidence": "Interface simple names appear in FRAME parameter types (`BigMoney.of(BigMoneyProvider)`), and the classes whose instances flow there implement them. The generator already recovers `ILoanConfigurationDetails` from dispatch. Exception class ids and catch-site tests give subtyping. A class with no `NEW` site and with subclasses is abstract.",
+      "matches": [
+        "SUPERTYPE.INTERFACE_LOST",
+        "SUPERTYPE.EXTENDS_LOST",
+        "SUPERTYPE.ADDED",
+        "SUPERTYPE.ARGS_CHANGED",
+        "TYPE.KIND_ABSTRACT_TO_CLASS",
+        "TYPE.KIND_INTERFACE_TO_CLASS"
+      ],
+      "counts": {
+        "joda-money": 6,
+        "kontor-zins": 0,
+        "loanamorti": 3,
+        "fineract-xl": 3
+      },
+      "total": 12,
+      "codes": {
+        "SUPERTYPE.ADDED": {
+          "joda-money": 2
+        },
+        "SUPERTYPE.EXTENDS_LOST": {
+          "joda-money": 2
+        },
+        "SUPERTYPE.INTERFACE_LOST": {
+          "joda-money": 1,
+          "loanamorti": 3,
+          "fineract-xl": 3
+        },
+        "TYPE.KIND_ABSTRACT_TO_CLASS": {
+          "joda-money": 1
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "SUPERTYPE.ADDED",
+          "type": "org.joda.money.CurrencyMismatchException",
+          "member": "",
+          "original": "",
+          "modern": "RuntimeException",
+          "detail": ""
+        },
+        {
+          "estate": "joda-money",
+          "code": "SUPERTYPE.ADDED",
+          "type": "org.joda.money.IllegalCurrencyException",
+          "member": "",
+          "original": "",
+          "modern": "RuntimeException",
+          "detail": ""
+        },
+        {
+          "estate": "joda-money",
+          "code": "SUPERTYPE.EXTENDS_LOST",
+          "type": "org.joda.money.CurrencyMismatchException",
+          "member": "",
+          "original": "IllegalArgumentException",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "loanamorti",
+          "code": "SUPERTYPE.INTERFACE_LOST",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "",
+          "original": "LoanAmortizationCalculator",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "loanamorti",
+          "code": "SUPERTYPE.INTERFACE_LOST",
+          "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+          "member": "",
+          "original": "LoanAmortizationCalculator",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "loanamorti",
+          "code": "SUPERTYPE.INTERFACE_LOST",
+          "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+          "member": "",
+          "original": "RepeatableEarlyPayment",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "SUPERTYPE.INTERFACE_LOST",
+          "type": "org.apache.fineract.portfolio.common.domain.DaysInYearCustomStrategyType",
+          "member": "",
+          "original": "ApiFacingEnum<DaysInYearCustomStrategyType>",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "SUPERTYPE.INTERFACE_LOST",
+          "type": "org.apache.fineract.portfolio.loanaccount.data.DisbursementData",
+          "member": "",
+          "original": "LoanPrincipalRelatedDataHolder",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "SUPERTYPE.INTERFACE_LOST",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ProgressiveLoanScheduleGenerator",
+          "member": "",
+          "original": "LoanScheduleGenerator",
+          "modern": "",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "G16",
+      "title": "Streams, lambdas and method references lowered to loops",
+      "closability": "b",
+      "description": "Over the comparable code of fineract-xl, `stream()` calls fall from 79 to 0, method references from 56 to 0 and lambdas from 153 to 88, while loops rise from 40 to 111 (ProgressiveEMICalculator alone: −120 stream, lambda and reference uses, +47 loops). loanamorti shows the same in LoanAmortizationCalculatorImpl.",
+      "hypothesis": "Raise canonical loop shapes back to the Stream API using JDK knowledge: accumulate into a new list (map, filter, toList), exit early on a boolean (anyMatch, allMatch), sum or reduce, and a min or max scan (min with a Comparator). A lambda frame whose body is a single call becomes a method reference. Do it only when the loop has no other side effects.",
+      "evidence": "J3S lambda frames (`FRAME OF M0998-LSP-LAMBDA lambda LSP:50`) with their SRC line spans, and the iterator loops over the JDK emulation programs (`JArrayListItr`).",
+      "matches": [
+        "IDIOM.STREAM_LOST",
+        "IDIOM.LAMBDA_LOST",
+        "IDIOM.METHODREF_LOST",
+        "IDIOM.FUNCTIONAL_LOST",
+        "IDIOM.STREAM_TO_LOOP"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 4,
+        "fineract-xl": 15
+      },
+      "total": 19,
+      "codes": {
+        "IDIOM.LAMBDA_LOST": {
+          "loanamorti": 1,
+          "fineract-xl": 4
+        },
+        "IDIOM.METHODREF_LOST": {
+          "loanamorti": 1,
+          "fineract-xl": 4
+        },
+        "IDIOM.STREAM_LOST": {
+          "loanamorti": 1,
+          "fineract-xl": 4
+        },
+        "IDIOM.STREAM_TO_LOOP": {
+          "loanamorti": 1,
+          "fineract-xl": 3
+        }
+      },
+      "examples": [
+        {
+          "estate": "loanamorti",
+          "code": "IDIOM.LAMBDA_LOST",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "",
+          "original": "3",
+          "modern": "1",
+          "detail": "-2"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "IDIOM.METHODREF_LOST",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "",
+          "original": "2",
+          "modern": "0",
+          "detail": "-2"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "IDIOM.STREAM_LOST",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "",
+          "original": "3",
+          "modern": "0",
+          "detail": "-3"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.LAMBDA_LOST",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ProgressiveLoanScheduleGenerator",
+          "member": "",
+          "original": "5",
+          "modern": "2",
+          "detail": "-3"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.LAMBDA_LOST",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "",
+          "original": "113",
+          "modern": "70",
+          "detail": "-43"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.LAMBDA_LOST",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProgressiveLoanInterestScheduleModel",
+          "member": "",
+          "original": "21",
+          "modern": "7",
+          "detail": "-14"
+        }
+      ]
+    },
+    {
+      "id": "G17",
+      "title": "Switch expressions and pattern matching not restored",
+      "closability": "a",
+      "description": "Over the comparable code of fineract-xl, switch expressions fall from 10 to 0 (ProgressiveEMICalculator 6, DaysInMonthType, DaysInYearType, InterestPeriod, ProgressiveLoanInterestScheduleModel). `instanceof` pattern variables are also lost (joda BigMoney and Money, fineract LoanSchedulePlan and Memo).",
+      "hypothesis": "This is a Java-level rewrite that needs no original. Turn a switch or if chain whose branches all assign one variable, or all return, into a switch expression. Turn `instanceof T` followed by `(T) x` into a pattern variable.",
+      "evidence": "The EVALUATE shape: every WHEN assigns the same target or returns. A type test followed by a cast of the same reference.",
+      "matches": [
+        "IDIOM.SWITCHEXPR_LOST",
+        "IDIOM.PATTERNMATCH_LOST",
+        "IDIOM.VAR_LOST",
+        "IDIOM.TEXTBLOCK_LOST"
+      ],
+      "counts": {
+        "joda-money": 2,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 7
+      },
+      "total": 9,
+      "codes": {
+        "IDIOM.PATTERNMATCH_LOST": {
+          "joda-money": 2,
+          "fineract-xl": 2
+        },
+        "IDIOM.SWITCHEXPR_LOST": {
+          "fineract-xl": 5
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "IDIOM.PATTERNMATCH_LOST",
+          "type": "org.joda.money.BigMoney",
+          "member": "",
+          "original": "1",
+          "modern": "0",
+          "detail": "-1"
+        },
+        {
+          "estate": "joda-money",
+          "code": "IDIOM.PATTERNMATCH_LOST",
+          "type": "org.joda.money.Money",
+          "member": "",
+          "original": "1",
+          "modern": "0",
+          "detail": "-1"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.PATTERNMATCH_LOST",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanSchedulePlan",
+          "member": "",
+          "original": "3",
+          "modern": "0",
+          "detail": "-3"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.PATTERNMATCH_LOST",
+          "type": "org.apache.fineract.portfolio.util.Memo",
+          "member": "",
+          "original": "1",
+          "modern": "0",
+          "detail": "-1"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.SWITCHEXPR_LOST",
+          "type": "org.apache.fineract.portfolio.common.domain.DaysInMonthType",
+          "member": "",
+          "original": "1",
+          "modern": "0",
+          "detail": "-1"
+        }
+      ]
+    },
+    {
+      "id": "G18",
+      "title": "Optional returned as nullable or sentinel",
+      "closability": "c",
+      "description": "The data does not support this as a recurring gap. There is one instance in fineract-xl, and over the comparable code the modern side uses Optional more than the original did (39 against 80 in fineract-xl). Original Optional-returning methods were mostly never compiled by J3S.",
+      "hypothesis": "No rule needed now. Re-measure when more Optional-heavy code is reached.",
+      "evidence": "The JOptional emulation program shows where Optional was used.",
+      "matches": [
+        "IDIOM.OPTIONAL_LOST",
+        "IDIOM.OPTIONAL_TO_NULL",
+        "TYPEREF.OPTIONAL_UNWRAPPED",
+        "TYPEREF.OPTIONAL_LOST"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 1
+      },
+      "total": 1,
+      "codes": {
+        "IDIOM.OPTIONAL_LOST": {
+          "fineract-xl": 1
+        }
+      },
+      "examples": [
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.OPTIONAL_LOST",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProcessedTransactionData",
+          "member": "",
+          "original": "2",
+          "modern": "1",
+          "detail": "-1"
+        }
+      ]
+    },
+    {
+      "id": "G19",
+      "title": "Records lowered to classes",
+      "closability": "a",
+      "description": "Original records become classes with the same members: kontor-zins `LoanTerms` and `Installment`. Both have a compact constructor that validates and normalises (`principal = Rounding.money(principal)`), and `LoanTerms` has a static constant.",
+      "hypothesis": "Extend record recovery to constructors with a validation or normalisation prologue (emit a compact constructor) and to classes with static members.",
+      "evidence": "All instance fields are final and assigned once from the constructor parameters in declaration order, and the accessors are named exactly as the fields. The generator already turns such classes into records elsewhere (G20).",
+      "matches": [
+        "TYPE.KIND_RECORD_TO_CLASS",
+        "IDIOM.RECORD_LOST"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 4,
+        "loanamorti": 0,
+        "fineract-xl": 0
+      },
+      "total": 4,
+      "codes": {
+        "IDIOM.RECORD_LOST": {
+          "kontor-zins": 2
+        },
+        "TYPE.KIND_RECORD_TO_CLASS": {
+          "kontor-zins": 2
+        }
+      },
+      "examples": [
+        {
+          "estate": "kontor-zins",
+          "code": "IDIOM.RECORD_LOST",
+          "type": "de.manikouchakian.kontorzins.model.Installment",
+          "member": "",
+          "original": "1",
+          "modern": "0",
+          "detail": "-1"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "IDIOM.RECORD_LOST",
+          "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+          "member": "",
+          "original": "1",
+          "modern": "0",
+          "detail": "-1"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "TYPE.KIND_RECORD_TO_CLASS",
+          "type": "de.manikouchakian.kontorzins.model.Installment",
+          "member": "",
+          "original": "record",
+          "modern": "class",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "G20",
+      "title": "Classes promoted to records",
+      "closability": "c",
+      "description": "The reverse divergence: original final classes become records (joda `CurrencyUnit` and `Money`; loanamorti `Loan`, `EarlyPayment`, `LoanAmortization` and `MonthlyPayment`; fineract `LoanSchedulePlan*` periods and `PeriodDueDetails`). It is arguably more modern, but it adds record accessors to the API, some with cut component names (`totalDisbursedAmou()`, `totalOutstandingLoanBa()`: G01 and G02).",
+      "hypothesis": "Keep the rule, but complete the component names (G01) before promotion, and do not promote public library types whose original API used getters, when the estate is a library.",
+      "evidence": "Records are a modernisation choice, not a gap.",
+      "matches": [
+        "TYPE.KIND_CLASS_TO_RECORD",
+        "METHOD.EXTRA_RECORD"
+      ],
+      "counts": {
+        "joda-money": 6,
+        "kontor-zins": 0,
+        "loanamorti": 23,
+        "fineract-xl": 39
+      },
+      "total": 68,
+      "codes": {
+        "METHOD.EXTRA_RECORD": {
+          "joda-money": 4,
+          "loanamorti": 19,
+          "fineract-xl": 33
+        },
+        "TYPE.KIND_CLASS_TO_RECORD": {
+          "joda-money": 2,
+          "loanamorti": 4,
+          "fineract-xl": 6
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "METHOD.EXTRA_RECORD",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "code()",
+          "original": "",
+          "modern": "String code()",
+          "detail": "record public"
+        },
+        {
+          "estate": "joda-money",
+          "code": "METHOD.EXTRA_RECORD",
+          "type": "org.joda.money.Money",
+          "member": "money()",
+          "original": "",
+          "modern": "BigMoney money()",
+          "detail": "record public"
+        },
+        {
+          "estate": "joda-money",
+          "code": "TYPE.KIND_CLASS_TO_RECORD",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "",
+          "original": "class",
+          "modern": "record",
+          "detail": ""
+        },
+        {
+          "estate": "loanamorti",
+          "code": "METHOD.EXTRA_RECORD",
+          "type": "paqua.loan.amortization.dto.EarlyPayment",
+          "member": "additionalParameters()",
+          "original": "",
+          "modern": "Map<EarlyPaymentAdditionalParameters,String> additionalParameters()",
+          "detail": "record public"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "METHOD.EXTRA_RECORD",
+          "type": "paqua.loan.amortization.dto.Loan",
+          "member": "amount()",
+          "original": "",
+          "modern": "BigDecimal amount()",
+          "detail": "record public"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "METHOD.EXTRA_RECORD",
+          "type": "paqua.loan.amortization.dto.LoanAmortization",
+          "member": "monthlyPaymentAmount()",
+          "original": "",
+          "modern": "BigDecimal monthlyPaymentAmount()",
+          "detail": "record public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_RECORD",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanSchedulePlan",
+          "member": "currency()",
+          "original": "",
+          "modern": "CurrencyData currency()",
+          "detail": "record public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_RECORD",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanSchedulePlanDisbursementPeriod",
+          "member": "outstandingLoanBalance()",
+          "original": "",
+          "modern": "BigDecimal outstandingLoanBalance()",
+          "detail": "record public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_RECORD",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanSchedulePlanDownPaymentPeriod",
+          "member": "outstandingLoanBalance()",
+          "original": "",
+          "modern": "BigDecimal outstandingLoanBalance()",
+          "detail": "record public"
+        }
+      ]
+    },
+    {
+      "id": "G21",
+      "title": "Visibility widened",
+      "closability": "a",
+      "description": "Private static fields become public (`LOGGER`, `MC`, `MONTHS_PER_YEAR`, `PARSE_REGEX`, `COUNTRY_REGEX_LINE`), and package or private constructors and methods become public (`Money(BigMoney)`, `LoanScheduleModelDisbursementPeriod(...)`).",
+      "hypothesis": "Give each member the least visibility that satisfies its cross-type references in the generated estate, and keep constants used by one type private.",
+      "evidence": "The cross-program references in the COBOL: ENTRY lists (FA-ENTRY) and the programs that touch a static item. A static used only inside its own program is private.",
+      "matches": [
+        "MEMBER.VISIBILITY_WIDENED_*",
+        "TYPE.VISIBILITY_WIDENED"
+      ],
+      "counts": {
+        "joda-money": 15,
+        "kontor-zins": 2,
+        "loanamorti": 10,
+        "fineract-xl": 70
+      },
+      "total": 97,
+      "codes": {
+        "MEMBER.VISIBILITY_WIDENED_CTOR": {
+          "joda-money": 3,
+          "fineract-xl": 13
+        },
+        "MEMBER.VISIBILITY_WIDENED_METHOD": {
+          "joda-money": 4,
+          "loanamorti": 4,
+          "fineract-xl": 48
+        },
+        "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD": {
+          "joda-money": 7,
+          "kontor-zins": 2,
+          "loanamorti": 4,
+          "fineract-xl": 7
+        },
+        "TYPE.VISIBILITY_WIDENED": {
+          "joda-money": 1,
+          "loanamorti": 2,
+          "fineract-xl": 2
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "MEMBER.VISIBILITY_WIDENED_CTOR",
+          "type": "org.joda.money.BigMoney",
+          "member": "<init>(CurrencyUnit,BigDecimal)",
+          "original": "package",
+          "modern": "public",
+          "detail": "constructor"
+        },
+        {
+          "estate": "joda-money",
+          "code": "MEMBER.VISIBILITY_WIDENED_CTOR",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "<init>(String,short,short)",
+          "original": "package",
+          "modern": "public",
+          "detail": "constructor"
+        },
+        {
+          "estate": "joda-money",
+          "code": "MEMBER.VISIBILITY_WIDENED_CTOR",
+          "type": "org.joda.money.Money",
+          "member": "<init>(BigMoney)",
+          "original": "package",
+          "modern": "public",
+          "detail": "constructor"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+          "type": "de.manikouchakian.kontorzins.Annuity",
+          "member": "MC",
+          "original": "private",
+          "modern": "public",
+          "detail": "field"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+          "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+          "member": "MONTHS_PER_YEAR",
+          "original": "private",
+          "modern": "public",
+          "detail": "field"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "MEMBER.VISIBILITY_WIDENED_METHOD",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "extractOnlySingleEarlyPayments(Loan)",
+          "original": "private",
+          "modern": "public",
+          "detail": "method"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "MEMBER.VISIBILITY_WIDENED_METHOD",
+          "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+          "member": "log(EarlyPayment,EarlyPaymentRepeatingStrategy)",
+          "original": "package",
+          "modern": "public",
+          "detail": "method"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+          "original": "private",
+          "modern": "public",
+          "detail": "field"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "MEMBER.VISIBILITY_WIDENED_CTOR",
+          "type": "org.apache.fineract.infrastructure.core.exception.AbstractPlatformDomainRuleException",
+          "member": "<init>(String,String,Object[])",
+          "original": "protected",
+          "modern": "public",
+          "detail": "constructor"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "MEMBER.VISIBILITY_WIDENED_CTOR",
+          "type": "org.apache.fineract.infrastructure.core.exception.AbstractPlatformException",
+          "member": "<init>(String,String,Object[])",
+          "original": "protected",
+          "modern": "public",
+          "detail": "constructor"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "MEMBER.VISIBILITY_WIDENED_CTOR",
+          "type": "org.apache.fineract.organisation.monetary.domain.Money",
+          "member": "<init>(CurrencyData,BigDecimal,MathContext)",
+          "original": "private",
+          "modern": "public",
+          "detail": "constructor"
+        }
+      ]
+    },
+    {
+      "id": "G22",
+      "title": "Visibility narrowed",
+      "closability": "b",
+      "description": "Public API methods that reached code calls only from inside their class become private: fineract `Money.isLessThanZero`, `MathUtil.isGreaterThanZero` and `ProgressiveLoanScheduleGenerator.generate`, and joda `BigMoney.getScale`. In a closed application this is harmless. In a library such as joda-money it breaks the API.",
+      "hypothesis": "Use an external policy input: library or application, or an API manifest. By default, do not narrow a public method of a public type below the visibility its name and the estate's convention suggest.",
+      "evidence": "ENTRY tables list only the reached callers. The original intent is not in the COBOL.",
+      "matches": [
+        "MEMBER.VISIBILITY_NARROWED_*",
+        "TYPE.VISIBILITY_NARROWED"
+      ],
+      "counts": {
+        "joda-money": 2,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 58
+      },
+      "total": 60,
+      "codes": {
+        "MEMBER.VISIBILITY_NARROWED_CTOR": {
+          "fineract-xl": 4
+        },
+        "MEMBER.VISIBILITY_NARROWED_FIELD": {
+          "fineract-xl": 4
+        },
+        "MEMBER.VISIBILITY_NARROWED_METHOD": {
+          "joda-money": 2,
+          "fineract-xl": 48
+        },
+        "MEMBER.VISIBILITY_NARROWED_STATIC_FIELD": {
+          "fineract-xl": 2
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "MEMBER.VISIBILITY_NARROWED_METHOD",
+          "type": "org.joda.money.BigMoney",
+          "member": "getScale()",
+          "original": "public",
+          "modern": "private",
+          "detail": "method"
+        },
+        {
+          "estate": "joda-money",
+          "code": "MEMBER.VISIBILITY_NARROWED_METHOD",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "registerCurrency(String,int,int,List,boolean)",
+          "original": "public",
+          "modern": "private",
+          "detail": "method"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "MEMBER.VISIBILITY_NARROWED_CTOR",
+          "type": "org.apache.fineract.portfolio.common.domain.DaysInYearCustomStrategyType",
+          "member": "<init>(String,String)",
+          "original": "public",
+          "modern": "private",
+          "detail": "constructor"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "MEMBER.VISIBILITY_NARROWED_CTOR",
+          "type": "org.apache.fineract.portfolio.loanaccount.domain.reaging.LoanReAgeInterestHandlingType",
+          "member": "<init>(String,String)",
+          "original": "public",
+          "modern": "private",
+          "detail": "constructor"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "MEMBER.VISIBILITY_NARROWED_CTOR",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanScheduleProcessingType",
+          "member": "<init>(String)",
+          "original": "public",
+          "modern": "private",
+          "detail": "constructor"
+        }
+      ]
+    },
+    {
+      "id": "G23",
+      "title": "final lost on classes",
+      "closability": "a",
+      "description": "Final original classes are emitted non-final: utility classes (`Annuity`, `Rounding`, `MathUtil`), value classes (`Schedule`, `LoanScheduleParams`) and nested builders.",
+      "hypothesis": "Make classes with no subclass in the estate final, and always make classes with only static members and a private constructor final. For library estates this over-approximates; it is acceptable.",
+      "evidence": "Closed world: no other program extends or dispatches to a subclass of the type.",
+      "matches": [
+        "TYPE.FINAL_LOST",
+        "FIELD.FINAL_LOST"
+      ],
+      "counts": {
+        "joda-money": 2,
+        "kontor-zins": 3,
+        "loanamorti": 5,
+        "fineract-xl": 17
+      },
+      "total": 27,
+      "codes": {
+        "FIELD.FINAL_LOST": {
+          "fineract-xl": 2
+        },
+        "TYPE.FINAL_LOST": {
+          "joda-money": 2,
+          "kontor-zins": 3,
+          "loanamorti": 5,
+          "fineract-xl": 15
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "TYPE.FINAL_LOST",
+          "type": "org.joda.money.BigMoney",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "joda-money",
+          "code": "TYPE.FINAL_LOST",
+          "type": "org.joda.money.MoneyUtils",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "TYPE.FINAL_LOST",
+          "type": "de.manikouchakian.kontorzins.Annuity",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "TYPE.FINAL_LOST",
+          "type": "de.manikouchakian.kontorzins.model.Rounding",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "TYPE.FINAL_LOST",
+          "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "loanamorti",
+          "code": "TYPE.FINAL_LOST",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "loanamorti",
+          "code": "TYPE.FINAL_LOST",
+          "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "loanamorti",
+          "code": "TYPE.FINAL_LOST",
+          "type": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+          "member": "",
+          "original": "final static",
+          "modern": "static",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.FINAL_LOST",
+          "type": "org.apache.fineract.infrastructure.core.service.DateUtils",
+          "member": "DEFAULT_DATETIME_FORMAT",
+          "original": "",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPE.FINAL_LOST",
+          "type": "org.apache.fineract.infrastructure.core.service.DateUtils",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPE.FINAL_LOST",
+          "type": "org.apache.fineract.infrastructure.core.service.MathUtil",
+          "member": "",
+          "original": "final",
+          "modern": "",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "G24",
+      "title": "Fields made final",
+      "closability": "c",
+      "description": "Original mutable fields become final (fineract-xl), either because their setters were never compiled (`FIELD.FINAL_ADDED_SETTER_UNREACHED`) or because reached code assigns them once.",
+      "hypothesis": "No rule: it is harmless, and arguably better.",
+      "evidence": "This is a consequence of the J3S reach.",
+      "matches": [
+        "FIELD.FINAL_ADDED",
+        "FIELD.FINAL_ADDED_SETTER_UNREACHED"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 64
+      },
+      "total": 64,
+      "codes": {
+        "FIELD.FINAL_ADDED": {
+          "fineract-xl": 44
+        },
+        "FIELD.FINAL_ADDED_SETTER_UNREACHED": {
+          "fineract-xl": 20
+        }
+      },
+      "examples": [
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.FINAL_ADDED",
+          "type": "org.apache.fineract.organisation.monetary.domain.MonetaryCurrency",
+          "member": "code",
+          "original": "",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.FINAL_ADDED",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.data.LoanScheduleParams",
+          "member": "loanTermInDays",
+          "original": "",
+          "modern": "",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.FINAL_ADDED",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.LoanApplicationTerms",
+          "member": "allowPartialPeriodInterestCalculation",
+          "original": "",
+          "modern": "",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "G25",
+      "title": "Named constants inlined",
+      "closability": "c",
+      "description": "Compile-time constants disappear and their literals appear in place: kontor-zins `MAX_MONTHS` (`months > 600`), `MONEY_SCALE` and `RATE_SCALE`.",
+      "hypothesis": "Not closable. At most, name a literal repeated across a type as a private constant, but the original name cannot be recovered.",
+      "evidence": "javac folds compile-time constants before J3S reads the bytecode, so the COBOL holds only the literal.",
+      "matches": [
+        "FIELD.MISSING_CONSTANT"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 3,
+        "loanamorti": 0,
+        "fineract-xl": 3
+      },
+      "total": 6,
+      "codes": {
+        "FIELD.MISSING_CONSTANT": {
+          "kontor-zins": 3,
+          "fineract-xl": 3
+        }
+      },
+      "examples": [
+        {
+          "estate": "kontor-zins",
+          "code": "FIELD.MISSING_CONSTANT",
+          "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+          "member": "MAX_MONTHS",
+          "original": "static final int MAX_MONTHS",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "FIELD.MISSING_CONSTANT",
+          "type": "de.manikouchakian.kontorzins.model.Rounding",
+          "member": "MONEY_SCALE",
+          "original": "static final int MONEY_SCALE",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "FIELD.MISSING_CONSTANT",
+          "type": "de.manikouchakian.kontorzins.model.Rounding",
+          "member": "RATE_SCALE",
+          "original": "static final int RATE_SCALE",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.MISSING_CONSTANT",
+          "type": "org.apache.fineract.infrastructure.core.service.DateUtils",
+          "member": "DEFAULT_DATETIME_FORMATTER",
+          "original": "static final DateTimeFormatter DEFAULT_DATETIME_FORMATTER",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.MISSING_CONSTANT",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProgressiveLoanInterestScheduleModel",
+          "member": "modelVersion",
+          "original": "static final String modelVersion",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.MISSING_CONSTANT",
+          "type": "org.apache.fineract.infrastructure.core.service.DateUtils",
+          "member": "DEFAULT_DATE_FORMAT",
+          "original": "static final String DEFAULT_DATE_FORMAT",
+          "modern": "",
+          "detail": "source"
+        }
+      ]
+    },
+    {
+      "id": "G26",
+      "title": "Exception messages dropped",
+      "closability": "c",
+      "description": "`throw new IllegalArgumentException(\"principal must not be null\")` becomes `throw new IllegalArgumentException()`: kontor-zins LoanTerms 7 to 0, Schedule 6 to 0, joda CurrencyUnit 10 to 3 and BigMoney 4 to 1, fineract ProgressiveEMICalculator 14 to 4.",
+      "hypothesis": "Not closable in the generator. It needs J3S to carry the message literal.",
+      "evidence": "None. J3S maps exceptions to class ids (`JO-SIMPLE-NAME`) and does not keep the message literal.",
+      "matches": [
+        "IDIOM.EXCEPTION_MESSAGE_LOST"
+      ],
+      "counts": {
+        "joda-money": 3,
+        "kontor-zins": 5,
+        "loanamorti": 0,
+        "fineract-xl": 5
+      },
+      "total": 13,
+      "codes": {
+        "IDIOM.EXCEPTION_MESSAGE_LOST": {
+          "joda-money": 3,
+          "kontor-zins": 5,
+          "fineract-xl": 5
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "org.joda.money.BigMoney",
+          "member": "",
+          "original": "with message 4",
+          "modern": "with message 1, bare 2",
+          "detail": ""
+        },
+        {
+          "estate": "joda-money",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "",
+          "original": "with message 10",
+          "modern": "with message 3, bare 6",
+          "detail": ""
+        },
+        {
+          "estate": "joda-money",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+          "member": "",
+          "original": "with message 1",
+          "modern": "with message 0, bare 1",
+          "detail": ""
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "de.manikouchakian.kontorzins.Annuity",
+          "member": "",
+          "original": "with message 6",
+          "modern": "with message 0, bare 6",
+          "detail": ""
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "de.manikouchakian.kontorzins.model.Installment",
+          "member": "",
+          "original": "with message 4",
+          "modern": "with message 0, bare 4",
+          "detail": ""
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+          "member": "",
+          "original": "with message 7",
+          "modern": "with message 0, bare 7",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "org.apache.fineract.infrastructure.core.service.DateUtils",
+          "member": "",
+          "original": "with message 1",
+          "modern": "with message 0, bare 1",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "org.apache.fineract.organisation.monetary.domain.Money",
+          "member": "",
+          "original": "with message 2",
+          "modern": "with message 0, bare 9",
+          "detail": ""
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "IDIOM.EXCEPTION_MESSAGE_LOST",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.ProgressiveEMICalculator",
+          "member": "",
+          "original": "with message 14",
+          "modern": "with message 4, bare 12",
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "G27",
+      "title": "Not compiled by J3S (out of scope)",
+      "closability": "c",
+      "description": "Methods, builders and nested types with no J3S frame, and methods whose frame J3S compiled as dead code (`* J3S: no object of ProcessedTransactionData is ever created`), which the generator emits as a `JX-DEAD` throw stub (`METHOD.DEAD_STUB`; their signatures count as preserved). This is the bulk of the \"missing\" API: joda-money has 107 public methods and 24 accessors, and fineract-xl has 344 public methods, 169 accessors and 114 Lombok members. It is not a generator gap: the estate's jobs never call them.",
+      "hypothesis": "Widen the J3S entry set (more job scenarios, or an API-driven entry list) when the full API matters. Nothing to do in the generator.",
+      "evidence": "The FRAME comments are exhaustive for what J3S compiled.",
+      "matches": [
+        "METHOD.UNREACHED_*",
+        "TYPE.UNREACHED_*",
+        "BUILDER.UNREACHED",
+        "METHOD.DEAD_STUB"
+      ],
+      "counts": {
+        "joda-money": 143,
+        "kontor-zins": 10,
+        "loanamorti": 13,
+        "fineract-xl": 700
+      },
+      "total": 866,
+      "codes": {
+        "BUILDER.UNREACHED": {
+          "loanamorti": 1,
+          "fineract-xl": 2
+        },
+        "METHOD.DEAD_STUB": {
+          "fineract-xl": 5
+        },
+        "METHOD.UNREACHED_ACCESSOR": {
+          "joda-money": 24,
+          "fineract-xl": 169
+        },
+        "METHOD.UNREACHED_API": {
+          "joda-money": 107,
+          "kontor-zins": 1,
+          "loanamorti": 4,
+          "fineract-xl": 344
+        },
+        "METHOD.UNREACHED_CTOR": {
+          "joda-money": 3,
+          "kontor-zins": 2,
+          "loanamorti": 5,
+          "fineract-xl": 12
+        },
+        "METHOD.UNREACHED_LOMBOK": {
+          "fineract-xl": 116
+        },
+        "METHOD.UNREACHED_OBJECT": {
+          "joda-money": 1,
+          "kontor-zins": 1,
+          "loanamorti": 2,
+          "fineract-xl": 2
+        },
+        "METHOD.UNREACHED_PRIVATE": {
+          "joda-money": 8,
+          "fineract-xl": 50
+        },
+        "METHOD.UNREACHED_RECORD": {
+          "kontor-zins": 6
+        },
+        "TYPE.UNREACHED_CLASS": {
+          "loanamorti": 1
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "METHOD.UNREACHED_ACCESSOR",
+          "type": "org.joda.money.BigMoney",
+          "member": "getAmountMajor()",
+          "original": "BigDecimal getAmountMajor()",
+          "modern": "",
+          "detail": "source public"
+        },
+        {
+          "estate": "joda-money",
+          "code": "METHOD.UNREACHED_ACCESSOR",
+          "type": "org.joda.money.CurrencyMismatchException",
+          "member": "getFirstCurrency()",
+          "original": "CurrencyUnit getFirstCurrency()",
+          "modern": "",
+          "detail": "source public"
+        },
+        {
+          "estate": "joda-money",
+          "code": "METHOD.UNREACHED_ACCESSOR",
+          "type": "org.joda.money.CurrencyUnit",
+          "member": "getNumeric3Code()",
+          "original": "String getNumeric3Code()",
+          "modern": "",
+          "detail": "source public"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "METHOD.UNREACHED_API",
+          "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+          "member": "terms()",
+          "original": "LoanTerms terms()",
+          "modern": "",
+          "detail": "source public"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "METHOD.UNREACHED_CTOR",
+          "type": "de.manikouchakian.kontorzins.Annuity",
+          "member": "<init>()",
+          "original": "<init>()",
+          "modern": "",
+          "detail": "source private"
+        },
+        {
+          "estate": "kontor-zins",
+          "code": "METHOD.UNREACHED_CTOR",
+          "type": "de.manikouchakian.kontorzins.model.Rounding",
+          "member": "<init>()",
+          "original": "<init>()",
+          "modern": "",
+          "detail": "source private"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "BUILDER.UNREACHED",
+          "type": "paqua.loan.amortization.dto.EarlyPayment",
+          "member": "",
+          "original": "explicit",
+          "modern": "none",
+          "detail": ""
+        },
+        {
+          "estate": "loanamorti",
+          "code": "METHOD.UNREACHED_API",
+          "type": "paqua.loan.amortization.dto.EarlyPayment",
+          "member": "builder()",
+          "original": "EarlyPaymentBuilder builder()",
+          "modern": "",
+          "detail": "source public"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "METHOD.UNREACHED_API",
+          "type": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+          "member": "amount(double)",
+          "original": "LoanBuilder amount(double)",
+          "modern": "",
+          "detail": "source public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "BUILDER.UNREACHED",
+          "type": "org.apache.fineract.organisation.monetary.data.CurrencyData",
+          "member": "",
+          "original": "lombok @Builder",
+          "modern": "none",
+          "detail": "Builder,Data,NoArgsConstructor,AllArgsConstructor"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "BUILDER.UNREACHED",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProcessedTransactionData",
+          "member": "",
+          "original": "lombok @Builder",
+          "modern": "none",
+          "detail": "Getter,Builder"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.DEAD_STUB",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.ProgressiveLoanScheduleGenerator",
+          "member": "calculateInstallmentCharge(PrincipalInterest,Money,LoanCharge,MathContext)",
+          "original": "Money calculateInstallmentCharge(PrincipalInterest,Money,LoanCharge,MathContext)",
+          "modern": "Object calculateInstallmentCharge(PrincipalInterest,Money,Object,MathContext)",
+          "detail": "body is a JX-DEAD throw"
+        }
+      ]
+    },
+    {
+      "id": "G28",
+      "title": "Extra constructors, fields and helpers",
+      "closability": "c",
+      "description": "Members modern Java has and the original does not: explicit default constructors (private `<init>()` in enums and utility classes), a few extra public methods (`Money.currency()`), and record-promotion and Lombok-expansion leftovers. Private helpers split out differently are not observed: `METHOD.EXTRA_PRIVATE` is zero in all four estates.",
+      "hypothesis": "Low value. Omit an explicit no-argument constructor when it is the implicit one.",
+      "evidence": "These come from the generator's choices.",
+      "matches": [
+        "METHOD.EXTRA_CTOR",
+        "METHOD.EXTRA_PRIVATE",
+        "METHOD.EXTRA_PACKAGE",
+        "METHOD.EXTRA_API",
+        "FIELD.EXTRA",
+        "FIELD.EXTRA_CONSTANT",
+        "TYPE.MODERN_ONLY_*",
+        "ENUM.CONSTANT_EXTRA"
+      ],
+      "counts": {
+        "joda-money": 2,
+        "kontor-zins": 0,
+        "loanamorti": 7,
+        "fineract-xl": 8
+      },
+      "total": 17,
+      "codes": {
+        "METHOD.EXTRA_API": {
+          "loanamorti": 1,
+          "fineract-xl": 1
+        },
+        "METHOD.EXTRA_CTOR": {
+          "joda-money": 2,
+          "loanamorti": 6,
+          "fineract-xl": 7
+        }
+      },
+      "examples": [
+        {
+          "estate": "joda-money",
+          "code": "METHOD.EXTRA_CTOR",
+          "type": "org.joda.money.CurrencyUnitDataProvider",
+          "member": "<init>()",
+          "original": "",
+          "modern": "<init>()",
+          "detail": "source public"
+        },
+        {
+          "estate": "joda-money",
+          "code": "METHOD.EXTRA_CTOR",
+          "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+          "member": "<init>()",
+          "original": "",
+          "modern": "<init>()",
+          "detail": "source public"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "METHOD.EXTRA_API",
+          "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+          "member": "getRepeated(Loan,int,EarlyPayment)",
+          "original": "",
+          "modern": "Map<Integer,EarlyPayment> getRepeated(Loan,int,EarlyPayment)",
+          "detail": "source public"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "METHOD.EXTRA_CTOR",
+          "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+          "member": "<init>()",
+          "original": "",
+          "modern": "<init>()",
+          "detail": "source public"
+        },
+        {
+          "estate": "loanamorti",
+          "code": "METHOD.EXTRA_CTOR",
+          "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+          "member": "<init>()",
+          "original": "",
+          "modern": "<init>()",
+          "detail": "source public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_API",
+          "type": "org.apache.fineract.organisation.monetary.domain.Money",
+          "member": "currency()",
+          "original": "",
+          "modern": "CurrencyData currency()",
+          "detail": "source public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_CTOR",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.DefaultScheduledDateGenerator",
+          "member": "<init>()",
+          "original": "",
+          "modern": "<init>()",
+          "detail": "source public"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "METHOD.EXTRA_CTOR",
+          "type": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.EmbeddableProgressiveLoanScheduleGenerator.NoopInterestScheduleModelRepositoryWrapper",
+          "member": "<init>()",
+          "original": "",
+          "modern": "<init>()",
+          "detail": "source public"
+        }
+      ]
+    },
+    {
+      "id": "G29",
+      "title": "Reached members lost (not observed)",
+      "closability": "c",
+      "description": "This is the check that the generator loses nothing J3S compiled: reached methods missing, overloads collapsed, fields, enum constants and builders lost, and reached types missing. Reached methods and overloads are zero in all four estates. The few `FIELD.MISSING` (fineract `ProcessedTransactionData.transactionType`, `transactionDate` and `reAgeParameter`) belong to a type J3S never instantiates (G27).",
+      "hypothesis": "Keep this at zero as a regression check.",
+      "evidence": "None needed.",
+      "matches": [
+        "METHOD.MISSING_*",
+        "OVERLOAD.COLLAPSED",
+        "FIELD.MISSING",
+        "ENUM.CONSTANT_MISSING",
+        "BUILDER.LOST",
+        "TYPE.MISSING_*"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 3
+      },
+      "total": 3,
+      "codes": {
+        "FIELD.MISSING": {
+          "fineract-xl": 3
+        }
+      },
+      "examples": [
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.MISSING",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProcessedTransactionData",
+          "member": "reAgeParameter",
+          "original": "final LoanReAgeParameterData reAgeParameter",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.MISSING",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProcessedTransactionData",
+          "member": "transactionDate",
+          "original": "final LocalDate transactionDate",
+          "modern": "",
+          "detail": "source"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "FIELD.MISSING",
+          "type": "org.apache.fineract.portfolio.loanproduct.calc.data.ProcessedTransactionData",
+          "member": "transactionType",
+          "original": "final LoanTransactionType transactionType",
+          "modern": "",
+          "detail": "source"
+        }
+      ]
+    },
+    {
+      "id": "G30",
+      "title": "Types moved to another package",
+      "closability": "c",
+      "description": "A recovered type is placed in the package of its implementation or user: `ILoanConfigurationDetails` moves from `loanproduct.domain` to `loanproduct.data`, and `InterestScheduleModelRepositoryWrapper` from `loanaccount.service` to `loanschedule.domain`.",
+      "hypothesis": "Not closable from the evidence, and of little importance.",
+      "evidence": "Frames print simple names only, so the package of a type J3S never compiled is unknown.",
+      "matches": [
+        "TYPE.MOVED",
+        "TYPE.RELOCATED"
+      ],
+      "counts": {
+        "joda-money": 0,
+        "kontor-zins": 0,
+        "loanamorti": 0,
+        "fineract-xl": 2
+      },
+      "total": 2,
+      "codes": {
+        "TYPE.MOVED": {
+          "fineract-xl": 2
+        }
+      },
+      "examples": [
+        {
+          "estate": "fineract-xl",
+          "code": "TYPE.MOVED",
+          "type": "org.apache.fineract.portfolio.loanaccount.service.InterestScheduleModelRepositoryWrapper",
+          "member": "",
+          "original": "org.apache.fineract.portfolio.loanaccount.service.InterestScheduleModelRepositoryWrapper",
+          "modern": "org.apache.fineract.portfolio.loanaccount.loanschedule.domain.InterestScheduleModelRepositoryWrapper",
+          "detail": "package org.apache.fineract.portfolio.loanaccount.service -> org.apache.fineract.portfolio.loanaccount.loanschedule.domain"
+        },
+        {
+          "estate": "fineract-xl",
+          "code": "TYPE.MOVED",
+          "type": "org.apache.fineract.portfolio.loanproduct.domain.ILoanConfigurationDetails",
+          "member": "",
+          "original": "org.apache.fineract.portfolio.loanproduct.domain.ILoanConfigurationDetails",
+          "modern": "org.apache.fineract.portfolio.loanproduct.data.ILoanConfigurationDetails",
+          "detail": "package org.apache.fineract.portfolio.loanproduct.domain -> org.apache.fineract.portfolio.loanproduct.data"
+        }
+      ]
+    }
+  ],
+  "unclassified": {},
+  "codes": {
+    "BUILDER.UNREACHED": {
+      "loanamorti": 1,
+      "fineract-xl": 2
+    },
+    "FIELD.FINAL_ADDED": {
+      "fineract-xl": 44
+    },
+    "FIELD.FINAL_ADDED_SETTER_UNREACHED": {
+      "fineract-xl": 20
+    },
+    "FIELD.FINAL_LOST": {
+      "fineract-xl": 2
+    },
+    "FIELD.MISSING": {
+      "fineract-xl": 3
+    },
+    "FIELD.MISSING_CONSTANT": {
+      "kontor-zins": 3,
+      "fineract-xl": 3
+    },
+    "FIELD.MISSING_SERIAL_VERSION": {
+      "joda-money": 5,
+      "loanamorti": 5,
+      "fineract-xl": 1
+    },
+    "GENERICS.TYPE_PARAMETERS_LOST": {
+      "fineract-xl": 4
+    },
+    "IDIOM.EXCEPTION_MESSAGE_LOST": {
+      "joda-money": 3,
+      "kontor-zins": 5,
+      "fineract-xl": 5
+    },
+    "IDIOM.LAMBDA_LOST": {
+      "loanamorti": 1,
+      "fineract-xl": 4
+    },
+    "IDIOM.METHODREF_LOST": {
+      "loanamorti": 1,
+      "fineract-xl": 4
+    },
+    "IDIOM.OPTIONAL_LOST": {
+      "fineract-xl": 1
+    },
+    "IDIOM.PATTERNMATCH_LOST": {
+      "joda-money": 2,
+      "fineract-xl": 2
+    },
+    "IDIOM.RECORD_LOST": {
+      "kontor-zins": 2
+    },
+    "IDIOM.STREAM_LOST": {
+      "loanamorti": 1,
+      "fineract-xl": 4
+    },
+    "IDIOM.STREAM_TO_LOOP": {
+      "loanamorti": 1,
+      "fineract-xl": 3
+    },
+    "IDIOM.SWITCHEXPR_LOST": {
+      "fineract-xl": 5
+    },
+    "MEMBER.VISIBILITY_NARROWED_CTOR": {
+      "fineract-xl": 4
+    },
+    "MEMBER.VISIBILITY_NARROWED_FIELD": {
+      "fineract-xl": 4
+    },
+    "MEMBER.VISIBILITY_NARROWED_METHOD": {
+      "joda-money": 2,
+      "fineract-xl": 48
+    },
+    "MEMBER.VISIBILITY_NARROWED_STATIC_FIELD": {
+      "fineract-xl": 2
+    },
+    "MEMBER.VISIBILITY_WIDENED_CTOR": {
+      "joda-money": 3,
+      "fineract-xl": 13
+    },
+    "MEMBER.VISIBILITY_WIDENED_METHOD": {
+      "joda-money": 4,
+      "loanamorti": 4,
+      "fineract-xl": 48
+    },
+    "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD": {
+      "joda-money": 7,
+      "kontor-zins": 2,
+      "loanamorti": 4,
+      "fineract-xl": 7
+    },
+    "METHOD.DEAD_STUB": {
+      "fineract-xl": 5
+    },
+    "METHOD.EXTRA_ACCESSOR": {
+      "fineract-xl": 9
+    },
+    "METHOD.EXTRA_API": {
+      "loanamorti": 1,
+      "fineract-xl": 1
+    },
+    "METHOD.EXTRA_CTOR": {
+      "joda-money": 2,
+      "loanamorti": 6,
+      "fineract-xl": 7
+    },
+    "METHOD.EXTRA_RECORD": {
+      "joda-money": 4,
+      "loanamorti": 19,
+      "fineract-xl": 33
+    },
+    "METHOD.UNREACHED_ACCESSOR": {
+      "joda-money": 24,
+      "fineract-xl": 169
+    },
+    "METHOD.UNREACHED_API": {
+      "joda-money": 107,
+      "kontor-zins": 1,
+      "loanamorti": 4,
+      "fineract-xl": 344
+    },
+    "METHOD.UNREACHED_CTOR": {
+      "joda-money": 3,
+      "kontor-zins": 2,
+      "loanamorti": 5,
+      "fineract-xl": 12
+    },
+    "METHOD.UNREACHED_LOMBOK": {
+      "fineract-xl": 116
+    },
+    "METHOD.UNREACHED_OBJECT": {
+      "joda-money": 1,
+      "kontor-zins": 1,
+      "loanamorti": 2,
+      "fineract-xl": 2
+    },
+    "METHOD.UNREACHED_PRIVATE": {
+      "joda-money": 8,
+      "fineract-xl": 50
+    },
+    "METHOD.UNREACHED_RECORD": {
+      "kontor-zins": 6
+    },
+    "NAME.ABBREVIATED": {
+      "joda-money": 1,
+      "fineract-xl": 18
+    },
+    "NAME.ACCESSOR_STYLE": {
+      "kontor-zins": 4,
+      "loanamorti": 1,
+      "fineract-xl": 6
+    },
+    "NAME.CASE": {
+      "joda-money": 2,
+      "fineract-xl": 12
+    },
+    "NAME.NUMBERED": {
+      "joda-money": 1,
+      "fineract-xl": 5
+    },
+    "NAME.RENAMED": {
+      "loanamorti": 1,
+      "fineract-xl": 6
+    },
+    "NAME.TRUNCATED.AMBIGUOUS_CORRECT": {
+      "joda-money": 2,
+      "fineract-xl": 90
+    },
+    "NAME.TRUNCATED.AMBIGUOUS_WRONG": {
+      "fineract-xl": 50
+    },
+    "NAME.TRUNCATED.NONE": {
+      "joda-money": 28,
+      "kontor-zins": 3,
+      "loanamorti": 15,
+      "fineract-xl": 332
+    },
+    "NAME.TRUNCATED.UNIQUE_CORRECT": {
+      "joda-money": 1,
+      "kontor-zins": 1,
+      "loanamorti": 3,
+      "fineract-xl": 104
+    },
+    "NAME.TRUNCATED.UNIQUE_WRONG": {
+      "fineract-xl": 98
+    },
+    "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_CORRECT": {
+      "fineract-xl": 7
+    },
+    "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_WRONG": {
+      "loanamorti": 1,
+      "fineract-xl": 21
+    },
+    "NAME.TRUNCATED_NUMBERED.UNIQUE_WRONG": {
+      "loanamorti": 1,
+      "fineract-xl": 21
+    },
+    "SUPERTYPE.ADDED": {
+      "joda-money": 2
+    },
+    "SUPERTYPE.EXTENDS_LOST": {
+      "joda-money": 2
+    },
+    "SUPERTYPE.INTERFACE_LOST": {
+      "joda-money": 1,
+      "loanamorti": 3,
+      "fineract-xl": 3
+    },
+    "SUPERTYPE.JDK_INTERFACE_LOST": {
+      "joda-money": 6,
+      "loanamorti": 5,
+      "fineract-xl": 1
+    },
+    "TYPE.FINAL_LOST": {
+      "joda-money": 2,
+      "kontor-zins": 3,
+      "loanamorti": 5,
+      "fineract-xl": 15
+    },
+    "TYPE.KIND_ABSTRACT_TO_CLASS": {
+      "joda-money": 1
+    },
+    "TYPE.KIND_CLASS_TO_RECORD": {
+      "joda-money": 2,
+      "loanamorti": 4,
+      "fineract-xl": 6
+    },
+    "TYPE.KIND_RECORD_TO_CLASS": {
+      "kontor-zins": 2
+    },
+    "TYPE.MOVED": {
+      "fineract-xl": 2
+    },
+    "TYPE.UNREACHED_CLASS": {
+      "loanamorti": 1
+    },
+    "TYPE.VISIBILITY_WIDENED": {
+      "joda-money": 1,
+      "loanamorti": 2,
+      "fineract-xl": 2
+    },
+    "TYPEREF.BOXING": {
+      "fineract-xl": 2
+    },
+    "TYPEREF.COLLECTION_CHANGED": {
+      "joda-money": 3,
+      "fineract-xl": 3
+    },
+    "TYPEREF.GENERIC_CHANGED": {
+      "fineract-xl": 6
+    },
+    "TYPEREF.GENERIC_DROPPED": {
+      "fineract-xl": 5
+    },
+    "TYPEREF.GENERIC_TO_OBJECT_EXTERNAL": {
+      "fineract-xl": 7
+    },
+    "TYPEREF.GENERIC_TO_OBJECT_KNOWN": {
+      "fineract-xl": 16
+    },
+    "TYPEREF.INTERFACE_TO_IMPL": {
+      "loanamorti": 3,
+      "fineract-xl": 13
+    },
+    "TYPEREF.NUMERIC_CHANGED": {
+      "joda-money": 4
+    },
+    "TYPEREF.OTHER": {
+      "fineract-xl": 3
+    },
+    "TYPEREF.TO_OBJECT_EXTERNAL": {
+      "fineract-xl": 41
+    },
+    "TYPEREF.TO_OBJECT_KNOWN": {
+      "joda-money": 1,
+      "fineract-xl": 36
+    },
+    "TYPEREF.VARARGS_TO_ARRAY": {
+      "fineract-xl": 4
+    }
+  }
+}

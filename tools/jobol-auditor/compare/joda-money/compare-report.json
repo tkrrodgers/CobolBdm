@@ -1,0 +1,4434 @@
+{
+  "tool": "jobol-audit compare",
+  "version": "1.0.0",
+  "estate": "joda-money",
+  "originalRoots": [
+    "C:/Users/Tomrodgers/JavaToCOBOLTest/claude-in-app/workspace/packages/jodaorg-joda-money-39d5bbf/source/src/main/java"
+  ],
+  "modernRoot": "C:/Users/Tomrodgers/Source/ModernizedJava/joda-money-loop4-iter6/src/main/java",
+  "cobolRoot": "C:/Users/Tomrodgers/Source/CobolBdm/projects/joda-money/source",
+  "scope": "reached",
+  "summary": {
+    "originalTypes": 9,
+    "outOfScope": 14,
+    "matched": 9,
+    "matchedByFqn": 9,
+    "matchedMoved": 0,
+    "originalOnly": 0,
+    "modernOnlyInfrastructure": 36,
+    "modernOnlyOther": 0,
+    "modernOnlyLombok": 0,
+    "api": {
+      "total": 207,
+      "kept": 70,
+      "pct": 33.8
+    },
+    "apiReached": {
+      "total": 75,
+      "kept": 70,
+      "pct": 93.3
+    },
+    "names": {
+      "total": 222,
+      "kept": 187,
+      "pct": 84.2
+    },
+    "signatures": {
+      "total": 221,
+      "kept": 76,
+      "pct": 34.4
+    },
+    "signaturesReached": {
+      "total": 78,
+      "kept": 76,
+      "pct": 97.4
+    },
+    "nameClasses": {
+      "field": {
+        "abbreviated": 1,
+        "case": 2,
+        "exact": 19
+      },
+      "local": {
+        "exact": 34,
+        "truncated": 5
+      },
+      "method": {
+        "exact": 77,
+        "truncated": 1
+      },
+      "param": {
+        "exact": 57,
+        "numbered": 1,
+        "truncated": 25
+      }
+    },
+    "truncatedLengths": {
+      "10": 11,
+      "11": 20
+    },
+    "truncationCompletion": {
+      "ambiguous-correct": 2,
+      "none": 28,
+      "unique-correct": 1
+    },
+    "idioms": {
+      "bigdecimal": {
+        "original": 49,
+        "modern": 59,
+        "originalAll": 125
+      },
+      "biginteger": {
+        "original": 2,
+        "modern": 0,
+        "originalAll": 2
+      },
+      "collection": {
+        "original": 1,
+        "modern": 2,
+        "originalAll": 10
+      },
+      "exceptionBare": {
+        "original": 0,
+        "modern": 9,
+        "originalAll": 0
+      },
+      "exceptionWithArgs": {
+        "original": 16,
+        "modern": 4,
+        "originalAll": 29
+      },
+      "interface": {
+        "original": 1,
+        "modern": 1,
+        "originalAll": 1
+      },
+      "list": {
+        "original": 14,
+        "modern": 14,
+        "originalAll": 15
+      },
+      "loop": {
+        "original": 9,
+        "modern": 9,
+        "originalAll": 16
+      },
+      "map": {
+        "original": 4,
+        "modern": 5,
+        "originalAll": 4
+      },
+      "nullCheck": {
+        "original": 14,
+        "modern": 14,
+        "originalAll": 36
+      },
+      "patternMatch": {
+        "original": 2,
+        "modern": 0,
+        "originalAll": 2
+      },
+      "record": {
+        "original": 0,
+        "modern": 2,
+        "originalAll": 0
+      },
+      "set": {
+        "original": 3,
+        "modern": 3,
+        "originalAll": 3
+      },
+      "switchExpr": {
+        "original": 0,
+        "modern": 0,
+        "originalAll": 1
+      },
+      "var": {
+        "original": 33,
+        "modern": 0,
+        "originalAll": 70
+      }
+    },
+    "typeUses": {
+      "ArrayList": {
+        "original": 4,
+        "modern": 4,
+        "originalAll": 4
+      },
+      "BigDecimal": {
+        "original": 33,
+        "modern": 41,
+        "originalAll": 75
+      },
+      "BigInteger": {
+        "original": 2,
+        "modern": 0,
+        "originalAll": 2
+      },
+      "Collections": {
+        "original": 1,
+        "modern": 2,
+        "originalAll": 1
+      },
+      "ConcurrentHashMap": {
+        "original": 1,
+        "modern": 1,
+        "originalAll": 1
+      },
+      "ConcurrentMap": {
+        "original": 3,
+        "modern": 0,
+        "originalAll": 3
+      },
+      "HashSet": {
+        "original": 1,
+        "modern": 1,
+        "originalAll": 1
+      },
+      "Iterable": {
+        "original": 0,
+        "modern": 0,
+        "originalAll": 8
+      },
+      "Iterator": {
+        "original": 0,
+        "modern": 0,
+        "originalAll": 1
+      },
+      "List": {
+        "original": 10,
+        "modern": 10,
+        "originalAll": 11
+      },
+      "Map": {
+        "original": 0,
+        "modern": 4,
+        "originalAll": 0
+      },
+      "RoundingMode": {
+        "original": 16,
+        "modern": 18,
+        "originalAll": 50
+      },
+      "Set": {
+        "original": 2,
+        "modern": 2,
+        "originalAll": 2
+      }
+    },
+    "originalStructure": {
+      "types": 9,
+      "loc": 1238,
+      "methods": 221,
+      "avgMethodLines": 5.3,
+      "maxMethodLines": 48,
+      "branches": 130,
+      "constructors": 8,
+      "factories": 38,
+      "builders": 0,
+      "equalsHashCode": 3,
+      "toStrings": 3
+    },
+    "modernStructure": {
+      "types": 9,
+      "loc": 556,
+      "methods": 78,
+      "avgMethodLines": 6.3,
+      "maxMethodLines": 41,
+      "branches": 69,
+      "constructors": 7,
+      "factories": 9,
+      "builders": 0,
+      "equalsHashCode": 3,
+      "toStrings": 2
+    },
+    "gapCounts": {
+      "FIELD.MISSING_SERIAL_VERSION": 5,
+      "IDIOM.EXCEPTION_MESSAGE_LOST": 3,
+      "IDIOM.PATTERNMATCH_LOST": 2,
+      "MEMBER.VISIBILITY_NARROWED_METHOD": 2,
+      "MEMBER.VISIBILITY_WIDENED_CTOR": 3,
+      "MEMBER.VISIBILITY_WIDENED_METHOD": 4,
+      "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD": 7,
+      "METHOD.EXTRA_CTOR": 2,
+      "METHOD.EXTRA_RECORD": 4,
+      "METHOD.UNREACHED_ACCESSOR": 24,
+      "METHOD.UNREACHED_API": 107,
+      "METHOD.UNREACHED_CTOR": 3,
+      "METHOD.UNREACHED_OBJECT": 1,
+      "METHOD.UNREACHED_PRIVATE": 8,
+      "NAME.ABBREVIATED": 1,
+      "NAME.CASE": 2,
+      "NAME.NUMBERED": 1,
+      "NAME.TRUNCATED.AMBIGUOUS_CORRECT": 2,
+      "NAME.TRUNCATED.NONE": 28,
+      "NAME.TRUNCATED.UNIQUE_CORRECT": 1,
+      "SUPERTYPE.ADDED": 2,
+      "SUPERTYPE.EXTENDS_LOST": 2,
+      "SUPERTYPE.INTERFACE_LOST": 1,
+      "SUPERTYPE.JDK_INTERFACE_LOST": 6,
+      "TYPE.FINAL_LOST": 2,
+      "TYPE.KIND_ABSTRACT_TO_CLASS": 1,
+      "TYPE.KIND_CLASS_TO_RECORD": 2,
+      "TYPE.VISIBILITY_WIDENED": 1,
+      "TYPEREF.COLLECTION_CHANGED": 3,
+      "TYPEREF.NUMERIC_CHANGED": 4,
+      "TYPEREF.TO_OBJECT_KNOWN": 1
+    }
+  },
+  "matched": [
+    {
+      "original": "org.joda.money.BigMoney",
+      "modern": "org.joda.money.BigMoney",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/BigMoney.java",
+      "modernFile": "org/joda/money/BigMoney.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [
+        "BigMoneyProvider",
+        "Comparable<BigMoneyProvider>",
+        "Serializable"
+      ],
+      "supertypesModern": [
+        "BigMoneyProvider"
+      ],
+      "supertypesLost": [
+        "Comparable<BigMoneyProvider>",
+        "Serializable"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 4,
+        "modern": 3,
+        "matched": 3,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": [
+          {
+            "original": "static final Pattern PARSE_REGEX",
+            "modern": "static final Object PARSE_REGEX",
+            "changes": [
+              "type Pattern -> Object",
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "methods": {
+        "original": 88,
+        "modern": 30,
+        "matched": 30,
+        "missing": [
+          "<init>()",
+          "BigDecimal getAmountMajor()",
+          "BigDecimal getAmountMinor()",
+          "BigMoney abs()",
+          "BigMoney checkCurrencyEqual(BigMoneyProvider)",
+          "BigMoney convertRetainScale(CurrencyUnit,BigDecimal,RoundingMode)",
+          "BigMoney dividedBy(double,RoundingMode)",
+          "BigMoney dividedBy(long,RoundingMode)",
+          "BigMoney minus(BigMoneyProvider)",
+          "BigMoney minus(Iterable<? extends BigMoneyProvider>)",
+          "BigMoney minus(double)",
+          "BigMoney minusMajor(long)",
+          "BigMoney minusMinor(long)",
+          "BigMoney minusRetainScale(BigMoneyProvider,RoundingMode)",
+          "BigMoney minusRetainScale(double,RoundingMode)",
+          "BigMoney multipliedBy(double)",
+          "BigMoney multipliedBy(long)",
+          "BigMoney multiplyRetainScale(double,RoundingMode)",
+          "BigMoney of(CurrencyUnit,double)",
+          "BigMoney ofMajor(CurrencyUnit,long)",
+          "BigMoney ofMinor(CurrencyUnit,long)",
+          "BigMoney ofScale(CurrencyUnit,BigDecimal,int)",
+          "BigMoney ofScale(CurrencyUnit,BigDecimal,int,RoundingMode)",
+          "BigMoney ofScale(CurrencyUnit,long,int)",
+          "BigMoney parse(String)",
+          "BigMoney plus(BigMoneyProvider)",
+          "BigMoney plus(Iterable<? extends BigMoneyProvider>)",
+          "BigMoney plus(double)",
+          "BigMoney plusMajor(long)",
+          "BigMoney plusMinor(long)",
+          "BigMoney plusRetainScale(BigMoneyProvider,RoundingMode)",
+          "BigMoney plusRetainScale(double,RoundingMode)",
+          "BigMoney total(BigMoneyProvider...)",
+          "BigMoney total(CurrencyUnit,BigMoneyProvider...)",
+          "BigMoney total(CurrencyUnit,Iterable<? extends BigMoneyProvider>)",
+          "BigMoney total(Iterable<? extends BigMoneyProvider>)",
+          "BigMoney with(BigDecimal)",
+          "BigMoney withAmount(BigDecimal)",
+          "BigMoney withAmount(double)",
+          "BigMoney withCurrencyScale()",
+          "BigMoney withCurrencyUnit(CurrencyUnit)",
+          "BigMoney withScale(int)",
+          "BigMoney zero(CurrencyUnit)",
+          "BigMoney zero(CurrencyUnit,int)",
+          "Money toMoney()",
+          "Object writeReplace()",
+          "String toString()",
+          "boolean isCurrencyScale()",
+          "boolean isGreaterThanOrEqual(BigMoneyProvider)",
+          "boolean isLessThanOrEqual(BigMoneyProvider)",
+          "boolean isNegativeOrZero()",
+          "boolean isPositiveOrZero()",
+          "int getAmountMajorInt()",
+          "int getAmountMinorInt()",
+          "int getMinorPart()",
+          "long getAmountMajorLong()",
+          "long getAmountMinorLong()",
+          "void readObject(ObjectInputStream)"
+        ],
+        "extra": [],
+        "changed": [
+          {
+            "original": "<init>(CurrencyUnit,BigDecimal)",
+            "modern": "<init>(CurrencyUnit,BigDecimal)",
+            "changes": [
+              "visibility package -> public"
+            ]
+          },
+          {
+            "original": "int getScale()",
+            "modern": "int getScale()",
+            "changes": [
+              "visibility public -> private"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 82,
+        "kept": 27,
+        "pct": 32.9
+      },
+      "signatures": {
+        "total": 88,
+        "kept": 29,
+        "pct": 33.0
+      },
+      "names": {
+        "field:exact": 3,
+        "local:exact": 11,
+        "local:truncated": 1,
+        "method:exact": 29,
+        "method:truncated": 1,
+        "param:exact": 21,
+        "param:truncated": 9
+      },
+      "renames": [
+        {
+          "element": "local",
+          "member": "rounded(int,RoundingMode)",
+          "original": "currentScale",
+          "modern": "currentScal",
+          "kind": "truncated"
+        },
+        {
+          "element": "method",
+          "member": "getCurrencyUnit()",
+          "original": "getCurrencyUnit",
+          "modern": "getCurrency",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "convertedTo(CurrencyUnit,BigDecimal)",
+          "original": "conversionMultipler",
+          "modern": "conversionM",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "dividedBy(BigDecimal,RoundingMode)",
+          "original": "valueToDivideBy",
+          "modern": "valueToDiv",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "minus(BigDecimal)",
+          "original": "amountToSubtract",
+          "modern": "amountToSu",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "minusRetainScale(BigDecimal,RoundingMode)",
+          "original": "amountToSubtract",
+          "modern": "amountToSu",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "multipliedBy(BigDecimal)",
+          "original": "valueToMultiplyBy",
+          "modern": "valueToMul",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "multiplyRetainScale(BigDecimal,RoundingMode)",
+          "original": "valueToMultiplyBy",
+          "modern": "valueToMul",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "of(BigMoneyProvider)",
+          "original": "moneyProvider",
+          "modern": "moneyProvid",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "plus(BigDecimal)",
+          "original": "amountToAdd",
+          "modern": "amountToAd",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "plusRetainScale(BigDecimal,RoundingMode)",
+          "original": "amountToAdd",
+          "modern": "amountToAd",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 34,
+          "modern": 43,
+          "originalAll": 80
+        },
+        "biginteger": {
+          "original": 2,
+          "modern": 0,
+          "originalAll": 2
+        },
+        "collection": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 5
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 2,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 4,
+          "modern": 1,
+          "originalAll": 10
+        },
+        "loop": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 5
+        },
+        "nullCheck": {
+          "original": 3,
+          "modern": 0,
+          "originalAll": 3
+        },
+        "patternMatch": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "var": {
+          "original": 14,
+          "modern": 0,
+          "originalAll": 44
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 26,
+          "modern": 33,
+          "originalAll": 57
+        },
+        "BigInteger": {
+          "original": 2,
+          "modern": 0,
+          "originalAll": 2
+        },
+        "Iterable": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 4
+        },
+        "Iterator": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "RoundingMode": {
+          "original": 8,
+          "modern": 10,
+          "originalAll": 23
+        }
+      },
+      "originalStructure": {
+        "loc": 505,
+        "methods": 88,
+        "avgMethodLines": 5.7,
+        "maxMethodLines": 17,
+        "branches": 49
+      },
+      "modernStructure": {
+        "loc": 187,
+        "methods": 30,
+        "avgMethodLines": 6.0,
+        "maxMethodLines": 17,
+        "branches": 19
+      },
+      "constructorsOriginal": [
+        "package <init>(CurrencyUnit,BigDecimal)",
+        "private <init>()"
+      ],
+      "constructorsModern": [
+        "public <init>(CurrencyUnit,BigDecimal)"
+      ],
+      "factoriesOriginal": [
+        "BigMoney of(BigMoneyProvider)",
+        "BigMoney of(CurrencyUnit,BigDecimal)",
+        "BigMoney of(CurrencyUnit,double)",
+        "BigMoney ofMajor(CurrencyUnit,long)",
+        "BigMoney ofMinor(CurrencyUnit,long)",
+        "BigMoney ofScale(CurrencyUnit,BigDecimal,int)",
+        "BigMoney ofScale(CurrencyUnit,BigDecimal,int,RoundingMode)",
+        "BigMoney ofScale(CurrencyUnit,long,int)",
+        "BigMoney parse(String)",
+        "BigMoney total(BigMoneyProvider...)",
+        "BigMoney total(CurrencyUnit,BigMoneyProvider...)",
+        "BigMoney total(CurrencyUnit,Iterable<? extends BigMoneyProvider>)",
+        "BigMoney total(Iterable<? extends BigMoneyProvider>)",
+        "BigMoney zero(CurrencyUnit)",
+        "BigMoney zero(CurrencyUnit,int)"
+      ],
+      "factoriesModern": [
+        "BigMoney of(BigMoneyProvider)",
+        "BigMoney of(CurrencyUnit,BigDecimal)"
+      ],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "hashCode": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "none"
+        }
+      },
+      "distance": 18.0,
+      "distancePerMember": 0.2
+    },
+    {
+      "original": "org.joda.money.BigMoneyProvider",
+      "modern": "org.joda.money.BigMoneyProvider",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/BigMoneyProvider.java",
+      "modernFile": "org/joda/money/BigMoneyProvider.java",
+      "kind": {
+        "original": "interface",
+        "modern": "interface"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 1,
+        "modern": 1,
+        "matched": 1,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 1,
+        "kept": 1,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 1,
+        "kept": 1,
+        "pct": 100.0
+      },
+      "names": {
+        "method:exact": 1
+      },
+      "renames": [],
+      "idioms": {
+        "interface": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 3,
+        "methods": 1,
+        "avgMethodLines": 1.0,
+        "maxMethodLines": 1,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 3,
+        "methods": 1,
+        "avgMethodLines": 1.0,
+        "maxMethodLines": 1,
+        "branches": 0
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 0.0,
+      "distancePerMember": 0.0
+    },
+    {
+      "original": "org.joda.money.CurrencyMismatchException",
+      "modern": "org.joda.money.CurrencyMismatchException",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/CurrencyMismatchException.java",
+      "modernFile": "org/joda/money/CurrencyMismatchException.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": ""
+      },
+      "supertypesOriginal": [
+        "IllegalArgumentException"
+      ],
+      "supertypesModern": [
+        "RuntimeException"
+      ],
+      "supertypesLost": [
+        "IllegalArgumentException"
+      ],
+      "supertypesAdded": [
+        "RuntimeException"
+      ],
+      "lombok": [],
+      "fields": {
+        "original": 3,
+        "modern": 2,
+        "matched": 2,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 3,
+        "modern": 1,
+        "matched": 1,
+        "missing": [
+          "CurrencyUnit getFirstCurrency()",
+          "CurrencyUnit getSecondCurrency()"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 3,
+        "kept": 1,
+        "pct": 33.3
+      },
+      "signatures": {
+        "total": 3,
+        "kept": 1,
+        "pct": 33.3
+      },
+      "names": {
+        "field:exact": 2,
+        "method:exact": 1,
+        "param:exact": 2
+      },
+      "renames": [],
+      "idioms": {
+        "nullCheck": {
+          "original": 2,
+          "modern": 0,
+          "originalAll": 2
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 18,
+        "methods": 3,
+        "avgMethodLines": 4.3,
+        "maxMethodLines": 7,
+        "branches": 2
+      },
+      "modernStructure": {
+        "loc": 8,
+        "methods": 1,
+        "avgMethodLines": 4.0,
+        "maxMethodLines": 4,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "public <init>(CurrencyUnit,CurrencyUnit)"
+      ],
+      "constructorsModern": [
+        "public <init>(CurrencyUnit,CurrencyUnit)"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 6.0,
+      "distancePerMember": 1.0
+    },
+    {
+      "original": "org.joda.money.CurrencyUnit",
+      "modern": "org.joda.money.CurrencyUnit",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/CurrencyUnit.java",
+      "modernFile": "org/joda/money/CurrencyUnit.java",
+      "kind": {
+        "original": "class",
+        "modern": "record"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [
+        "Comparable<CurrencyUnit>",
+        "Serializable"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "Comparable<CurrencyUnit>",
+        "Serializable"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 15,
+        "modern": 14,
+        "matched": 14,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": [
+          {
+            "original": "final short decimalPlaces",
+            "modern": "final int decimalPlaces",
+            "changes": [
+              "type short -> int"
+            ]
+          },
+          {
+            "original": "final short numericCode",
+            "modern": "final int numericCode",
+            "changes": [
+              "type short -> int"
+            ]
+          },
+          {
+            "original": "static final ConcurrentMap<Integer,CurrencyUnit> currenciesByNumericCode",
+            "modern": "static final Map<Integer,CurrencyUnit> CURRENCIES_BY_NUMERIC_C",
+            "changes": [
+              "name currenciesByNumericCode -> CURRENCIES_BY_NUMERIC_C",
+              "type ConcurrentMap<Integer,CurrencyUnit> -> Map<Integer,CurrencyUnit>",
+              "visibility private -> public"
+            ]
+          },
+          {
+            "original": "static final ConcurrentMap<String,CurrencyUnit> currenciesByCode",
+            "modern": "static final Map<String,CurrencyUnit> CURRENCIES_BY_CODE",
+            "changes": [
+              "name currenciesByCode -> CURRENCIES_BY_CODE",
+              "type ConcurrentMap<String,CurrencyUnit> -> Map<String,CurrencyUnit>",
+              "visibility private -> public"
+            ]
+          },
+          {
+            "original": "static final ConcurrentMap<String,CurrencyUnit> currenciesByCountry",
+            "modern": "static final Map<String,CurrencyUnit> CURRENCIES_BY_COUNTRY",
+            "changes": [
+              "name currenciesByCountry -> CURRENCIES_BY_COUNTRY",
+              "type ConcurrentMap<String,CurrencyUnit> -> Map<String,CurrencyUnit>",
+              "visibility private -> public"
+            ]
+          },
+          {
+            "original": "static final Pattern CODE",
+            "modern": "static final Pattern CODE",
+            "changes": [
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "methods": {
+        "original": 28,
+        "modern": 20,
+        "matched": 17,
+        "missing": [
+          "Currency toCurrency()",
+          "CurrencyUnit of(Currency)",
+          "CurrencyUnit of(Locale)",
+          "CurrencyUnit ofNumericCode(String)",
+          "CurrencyUnit registerCurrency(String,int,int,List<String>)",
+          "Object writeReplace()",
+          "String getNumeric3Code()",
+          "String getSymbol()",
+          "String getSymbol(Locale)",
+          "int compareTo(CurrencyUnit)",
+          "void readObject(ObjectInputStream)"
+        ],
+        "extra": [
+          "String code() [record]",
+          "int decimalPlaces() [record]",
+          "int numericCode() [record]"
+        ],
+        "changed": [
+          {
+            "original": "<init>(String,short,short)",
+            "modern": "<init>(String,int,int)",
+            "changes": [
+              "parameter types String,short,short -> String,int,int",
+              "visibility package -> public"
+            ]
+          },
+          {
+            "original": "CurrencyUnit registerCurrency(String,int,int,List<String>,boolean)",
+            "modern": "CurrencyUnit registerCurrency(String,int,int,List<String>,boolean)",
+            "changes": [
+              "visibility public -> private"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 32,
+        "kept": 22,
+        "pct": 68.8
+      },
+      "signatures": {
+        "total": 28,
+        "kept": 16,
+        "pct": 57.1
+      },
+      "names": {
+        "field:abbreviated": 1,
+        "field:case": 2,
+        "field:exact": 11,
+        "local:exact": 6,
+        "local:truncated": 1,
+        "method:exact": 17,
+        "param:exact": 11,
+        "param:truncated": 7
+      },
+      "renames": [
+        {
+          "element": "field",
+          "member": "currenciesByCode",
+          "original": "currenciesByCode",
+          "modern": "CURRENCIES_BY_CODE",
+          "kind": "case"
+        },
+        {
+          "element": "field",
+          "member": "currenciesByCountry",
+          "original": "currenciesByCountry",
+          "modern": "CURRENCIES_BY_COUNTRY",
+          "kind": "case"
+        },
+        {
+          "element": "field",
+          "member": "currenciesByNumericCode",
+          "original": "currenciesByNumericCode",
+          "modern": "CURRENCIES_BY_NUMERIC_C",
+          "kind": "abbreviated"
+        },
+        {
+          "element": "local",
+          "member": "registerCurrency(String,int,int,boolean)",
+          "original": "countryCodes",
+          "modern": "countryCode",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "of(String)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "ofNumericCode(int)",
+          "original": "numericCurrencyCode",
+          "modern": "numericCurr",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "registerCurrency(String,int,int,List,boolean)",
+          "original": "countryCodes",
+          "modern": "countryCode",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "registerCurrency(String,int,int,List,boolean)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "registerCurrency(String,int,int,List,boolean)",
+          "original": "numericCurrencyCode",
+          "modern": "numericCurr",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "registerCurrency(String,int,int,boolean)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "registerCurrency(String,int,int,boolean)",
+          "original": "numericCurrencyCode",
+          "modern": "numericCurr",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "collection": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 6,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 10,
+          "modern": 3,
+          "originalAll": 13
+        },
+        "list": {
+          "original": 6,
+          "modern": 6,
+          "originalAll": 7
+        },
+        "loop": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 4
+        },
+        "map": {
+          "original": 4,
+          "modern": 5,
+          "originalAll": 4
+        },
+        "nullCheck": {
+          "original": 4,
+          "modern": 3,
+          "originalAll": 5
+        },
+        "record": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        },
+        "set": {
+          "original": 3,
+          "modern": 3,
+          "originalAll": 3
+        },
+        "switchExpr": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "var": {
+          "original": 5,
+          "modern": 0,
+          "originalAll": 7
+        }
+      },
+      "typeUses": {
+        "ArrayList": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "Collections": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "ConcurrentHashMap": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "ConcurrentMap": {
+          "original": 3,
+          "modern": 0,
+          "originalAll": 3
+        },
+        "HashSet": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "List": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 5
+        },
+        "Map": {
+          "original": 0,
+          "modern": 4,
+          "originalAll": 0
+        },
+        "Set": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        }
+      },
+      "originalStructure": {
+        "loc": 252,
+        "methods": 28,
+        "avgMethodLines": 7.8,
+        "maxMethodLines": 48,
+        "branches": 36
+      },
+      "modernStructure": {
+        "loc": 148,
+        "methods": 16,
+        "avgMethodLines": 7.3,
+        "maxMethodLines": 41,
+        "branches": 23
+      },
+      "constructorsOriginal": [
+        "package <init>(String,short,short)"
+      ],
+      "constructorsModern": [
+        "public <init>(String,int,int) [record]"
+      ],
+      "factoriesOriginal": [
+        "CurrencyUnit of(Currency)",
+        "CurrencyUnit of(Locale)",
+        "CurrencyUnit of(String)",
+        "CurrencyUnit ofCountry(String)",
+        "CurrencyUnit ofNumericCode(String)",
+        "CurrencyUnit ofNumericCode(int)",
+        "CurrencyUnit registerCurrency(String,int,int,List<String>)",
+        "CurrencyUnit registerCurrency(String,int,int,List<String>,boolean)",
+        "CurrencyUnit registerCurrency(String,int,int,boolean)"
+      ],
+      "factoriesModern": [
+        "CurrencyUnit of(String)",
+        "CurrencyUnit ofCountry(String)",
+        "CurrencyUnit ofNumericCode(int)",
+        "CurrencyUnit registerCurrency(String,int,int,List<String>,boolean)",
+        "CurrencyUnit registerCurrency(String,int,int,boolean)"
+      ],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "hashCode": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "explicit"
+        }
+      },
+      "distance": 35.5,
+      "distancePerMember": 0.83
+    },
+    {
+      "original": "org.joda.money.CurrencyUnitDataProvider",
+      "modern": "org.joda.money.CurrencyUnitDataProvider",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/CurrencyUnitDataProvider.java",
+      "modernFile": "org/joda/money/CurrencyUnitDataProvider.java",
+      "kind": {
+        "original": "abstract",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 3,
+        "modern": 3,
+        "matched": 2,
+        "missing": [
+          "void registerCurrencies()"
+        ],
+        "extra": [
+          "<init>()"
+        ],
+        "changed": [
+          {
+            "original": "void registerCountry(String,String)",
+            "modern": "void registerCountry(String,String)",
+            "changes": [
+              "visibility protected -> public"
+            ]
+          },
+          {
+            "original": "void registerCurrency(String,int,int)",
+            "modern": "void registerCurrency(String,int,int)",
+            "changes": [
+              "visibility protected -> public"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 3,
+        "kept": 0,
+        "pct": 0.0
+      },
+      "signatures": {
+        "total": 3,
+        "kept": 2,
+        "pct": 66.7
+      },
+      "names": {
+        "method:exact": 2,
+        "param:exact": 1,
+        "param:numbered": 1,
+        "param:truncated": 3
+      },
+      "renames": [
+        {
+          "element": "param",
+          "member": "registerCountry(String,String)",
+          "original": "countryCode",
+          "modern": "countryCode3",
+          "kind": "numbered"
+        },
+        {
+          "element": "param",
+          "member": "registerCountry(String,String)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "registerCurrency(String,int,int)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "registerCurrency(String,int,int)",
+          "original": "numericCurrencyCode",
+          "modern": "numericCurr",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {},
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 9,
+        "methods": 3,
+        "avgMethodLines": 2.3,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 10,
+        "methods": 3,
+        "avgMethodLines": 2.7,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [
+        "public <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 9.0,
+      "distancePerMember": 3.0
+    },
+    {
+      "original": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "modern": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/DefaultCurrencyUnitDataProvider.java",
+      "modernFile": "org/joda/money/DefaultCurrencyUnitDataProvider.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "package",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": ""
+      },
+      "supertypesOriginal": [
+        "CurrencyUnitDataProvider"
+      ],
+      "supertypesModern": [
+        "CurrencyUnitDataProvider"
+      ],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 2,
+        "modern": 2,
+        "matched": 2,
+        "missing": [],
+        "extra": [],
+        "changed": [
+          {
+            "original": "static final Pattern COUNTRY_REGEX_LINE",
+            "modern": "static final Pattern COUNTRY_REGEX_LINE",
+            "changes": [
+              "visibility private -> public"
+            ]
+          },
+          {
+            "original": "static final Pattern CURRENCY_REGEX_LINE",
+            "modern": "static final Pattern CURRENCY_REGEX_LINE",
+            "changes": [
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "methods": {
+        "original": 5,
+        "modern": 6,
+        "matched": 5,
+        "missing": [],
+        "extra": [
+          "<init>()"
+        ],
+        "changed": [
+          {
+            "original": "void registerCurrencies()",
+            "modern": "void registerCurrencies()",
+            "changes": [
+              "visibility protected -> public"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 0,
+        "kept": 0,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 5,
+        "kept": 5,
+        "pct": 100.0
+      },
+      "names": {
+        "field:exact": 2,
+        "local:exact": 17,
+        "local:truncated": 2,
+        "method:exact": 5,
+        "param:exact": 4
+      },
+      "renames": [
+        {
+          "element": "local",
+          "member": "parseCountries(List)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "kind": "truncated"
+        },
+        {
+          "element": "local",
+          "member": "parseCurrencies(List)",
+          "original": "currencyCode",
+          "modern": "currencyCod",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "collection": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "list": {
+          "original": 8,
+          "modern": 8,
+          "originalAll": 8
+        },
+        "loop": {
+          "original": 5,
+          "modern": 5,
+          "originalAll": 5
+        },
+        "nullCheck": {
+          "original": 3,
+          "modern": 11,
+          "originalAll": 3
+        },
+        "var": {
+          "original": 13,
+          "modern": 0,
+          "originalAll": 13
+        }
+      },
+      "typeUses": {
+        "ArrayList": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "Collections": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        },
+        "List": {
+          "original": 6,
+          "modern": 6,
+          "originalAll": 6
+        }
+      },
+      "originalStructure": {
+        "loc": 63,
+        "methods": 5,
+        "avgMethodLines": 11.8,
+        "maxMethodLines": 16,
+        "branches": 8
+      },
+      "modernStructure": {
+        "loc": 112,
+        "methods": 6,
+        "avgMethodLines": 17.3,
+        "maxMethodLines": 39,
+        "branches": 23
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [
+        "public <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 6.0,
+      "distancePerMember": 0.86
+    },
+    {
+      "original": "org.joda.money.IllegalCurrencyException",
+      "modern": "org.joda.money.IllegalCurrencyException",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/IllegalCurrencyException.java",
+      "modernFile": "org/joda/money/IllegalCurrencyException.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": ""
+      },
+      "supertypesOriginal": [
+        "IllegalArgumentException"
+      ],
+      "supertypesModern": [
+        "RuntimeException"
+      ],
+      "supertypesLost": [
+        "IllegalArgumentException"
+      ],
+      "supertypesAdded": [
+        "RuntimeException"
+      ],
+      "lombok": [],
+      "fields": {
+        "original": 1,
+        "modern": 0,
+        "matched": 0,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 1,
+        "modern": 1,
+        "matched": 1,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 1,
+        "kept": 1,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 1,
+        "kept": 1,
+        "pct": 100.0
+      },
+      "names": {
+        "method:exact": 1,
+        "param:exact": 1
+      },
+      "renames": [],
+      "idioms": {},
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 6,
+        "methods": 1,
+        "avgMethodLines": 3.0,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 4,
+        "methods": 1,
+        "avgMethodLines": 2.0,
+        "maxMethodLines": 2,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "public <init>(String)"
+      ],
+      "constructorsModern": [
+        "public <init>(String)"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 6.0,
+      "distancePerMember": 3.0
+    },
+    {
+      "original": "org.joda.money.Money",
+      "modern": "org.joda.money.Money",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/Money.java",
+      "modernFile": "org/joda/money/Money.java",
+      "kind": {
+        "original": "class",
+        "modern": "record"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [
+        "BigMoneyProvider",
+        "Comparable<BigMoneyProvider>",
+        "Serializable"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "BigMoneyProvider",
+        "Comparable<BigMoneyProvider>",
+        "Serializable"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 2,
+        "modern": 1,
+        "matched": 1,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 77,
+        "modern": 21,
+        "matched": 20,
+        "missing": [
+          "<init>()",
+          "BigDecimal getAmountMajor()",
+          "BigDecimal getAmountMinor()",
+          "Money abs()",
+          "Money dividedBy(double,RoundingMode)",
+          "Money dividedBy(long,RoundingMode)",
+          "Money minus(BigDecimal)",
+          "Money minus(Iterable<Money>)",
+          "Money minus(Money)",
+          "Money minus(double)",
+          "Money minus(double,RoundingMode)",
+          "Money minusMajor(long)",
+          "Money minusMinor(long)",
+          "Money multipliedBy(double,RoundingMode)",
+          "Money multipliedBy(long)",
+          "Money of(BigMoneyProvider)",
+          "Money of(CurrencyUnit,BigDecimal)",
+          "Money of(CurrencyUnit,double)",
+          "Money of(CurrencyUnit,double,RoundingMode)",
+          "Money ofMajor(CurrencyUnit,long)",
+          "Money ofMinor(CurrencyUnit,long)",
+          "Money parse(String)",
+          "Money plus(BigDecimal)",
+          "Money plus(Iterable<Money>)",
+          "Money plus(Money)",
+          "Money plus(double)",
+          "Money plus(double,RoundingMode)",
+          "Money plusMajor(long)",
+          "Money plusMinor(long)",
+          "Money total(CurrencyUnit,Iterable<Money>)",
+          "Money total(CurrencyUnit,Money...)",
+          "Money total(Iterable<Money>)",
+          "Money total(Money...)",
+          "Money withAmount(BigDecimal)",
+          "Money withAmount(BigDecimal,RoundingMode)",
+          "Money withAmount(double)",
+          "Money withAmount(double,RoundingMode)",
+          "Money withCurrencyUnit(CurrencyUnit)",
+          "Money withCurrencyUnit(CurrencyUnit,RoundingMode)",
+          "Money zero(CurrencyUnit)",
+          "Object writeReplace()",
+          "boolean isEqual(BigMoneyProvider)",
+          "boolean isGreaterThan(BigMoneyProvider)",
+          "boolean isGreaterThanOrEqual(BigMoneyProvider)",
+          "boolean isLessThan(BigMoneyProvider)",
+          "boolean isLessThanOrEqual(BigMoneyProvider)",
+          "boolean isNegativeOrZero()",
+          "boolean isPositiveOrZero()",
+          "boolean isSameCurrency(BigMoneyProvider)",
+          "int compareTo(BigMoneyProvider)",
+          "int getAmountMajorInt()",
+          "int getAmountMinorInt()",
+          "int getMinorPart()",
+          "int getScale()",
+          "long getAmountMajorLong()",
+          "long getAmountMinorLong()",
+          "void readObject(ObjectInputStream)"
+        ],
+        "extra": [
+          "BigMoney money() [record]"
+        ],
+        "changed": [
+          {
+            "original": "<init>(BigMoney)",
+            "modern": "<init>(BigMoney)",
+            "changes": [
+              "visibility package -> public"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 72,
+        "kept": 18,
+        "pct": 25.0
+      },
+      "signatures": {
+        "total": 77,
+        "kept": 20,
+        "pct": 26.0
+      },
+      "names": {
+        "field:exact": 1,
+        "local:truncated": 1,
+        "method:exact": 20,
+        "param:exact": 15,
+        "param:truncated": 6
+      },
+      "renames": [
+        {
+          "element": "local",
+          "member": "of(CurrencyUnit,BigDecimal,RoundingMode)",
+          "original": "scaledAmount",
+          "modern": "scaledAmoun",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "convertedTo(CurrencyUnit,BigDecimal,RoundingMode)",
+          "original": "conversionMultipler",
+          "modern": "conversionM",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "dividedBy(BigDecimal,RoundingMode)",
+          "original": "valueToDivideBy",
+          "modern": "valueToDiv",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "minus(BigDecimal,RoundingMode)",
+          "original": "amountToSubtract",
+          "modern": "amountToSu",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "multipliedBy(BigDecimal,RoundingMode)",
+          "original": "valueToMultiplyBy",
+          "modern": "valueToMul",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "of(BigMoneyProvider,RoundingMode)",
+          "original": "moneyProvider",
+          "modern": "moneyProvid",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "plus(BigDecimal,RoundingMode)",
+          "original": "amountToAdd",
+          "modern": "amountToAd",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 15,
+          "modern": 16,
+          "originalAll": 45
+        },
+        "collection": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 4
+        },
+        "exceptionWithArgs": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 4
+        },
+        "loop": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 2
+        },
+        "nullCheck": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "patternMatch": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "record": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        },
+        "var": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 6
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 7,
+          "modern": 8,
+          "originalAll": 18
+        },
+        "Iterable": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 4
+        },
+        "RoundingMode": {
+          "original": 8,
+          "modern": 8,
+          "originalAll": 27
+        }
+      },
+      "originalStructure": {
+        "loc": 286,
+        "methods": 77,
+        "avgMethodLines": 3.7,
+        "maxMethodLines": 13,
+        "branches": 9
+      },
+      "modernStructure": {
+        "loc": 80,
+        "methods": 19,
+        "avgMethodLines": 4.1,
+        "maxMethodLines": 14,
+        "branches": 4
+      },
+      "constructorsOriginal": [
+        "package <init>(BigMoney)",
+        "private <init>()"
+      ],
+      "constructorsModern": [
+        "public <init>(BigMoney) [record]"
+      ],
+      "factoriesOriginal": [
+        "Money of(BigMoneyProvider)",
+        "Money of(BigMoneyProvider,RoundingMode)",
+        "Money of(CurrencyUnit,BigDecimal)",
+        "Money of(CurrencyUnit,BigDecimal,RoundingMode)",
+        "Money of(CurrencyUnit,double)",
+        "Money of(CurrencyUnit,double,RoundingMode)",
+        "Money ofMajor(CurrencyUnit,long)",
+        "Money ofMinor(CurrencyUnit,long)",
+        "Money parse(String)",
+        "Money total(CurrencyUnit,Iterable<Money>)",
+        "Money total(CurrencyUnit,Money...)",
+        "Money total(Iterable<Money>)",
+        "Money total(Money...)",
+        "Money zero(CurrencyUnit)"
+      ],
+      "factoriesModern": [
+        "Money of(BigMoneyProvider,RoundingMode)",
+        "Money of(CurrencyUnit,BigDecimal,RoundingMode)"
+      ],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "hashCode": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "explicit"
+        }
+      },
+      "distance": 20.3,
+      "distancePerMember": 0.26
+    },
+    {
+      "original": "org.joda.money.MoneyUtils",
+      "modern": "org.joda.money.MoneyUtils",
+      "alignment": "fqn",
+      "originalFile": "org/joda/money/MoneyUtils.java",
+      "modernFile": "org/joda/money/MoneyUtils.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 15,
+        "modern": 1,
+        "matched": 1,
+        "missing": [
+          "<init>()",
+          "BigMoney add(BigMoney,BigMoney)",
+          "BigMoney max(BigMoney,BigMoney)",
+          "BigMoney min(BigMoney,BigMoney)",
+          "BigMoney subtract(BigMoney,BigMoney)",
+          "Money add(Money,Money)",
+          "Money max(Money,Money)",
+          "Money min(Money,Money)",
+          "Money subtract(Money,Money)",
+          "boolean isNegative(BigMoneyProvider)",
+          "boolean isNegativeOrZero(BigMoneyProvider)",
+          "boolean isPositive(BigMoneyProvider)",
+          "boolean isPositiveOrZero(BigMoneyProvider)",
+          "boolean isZero(BigMoneyProvider)"
+        ],
+        "extra": [],
+        "changed": [
+          {
+            "original": "void checkNotNull(Object,String)",
+            "modern": "void checkNotNull(Object,String)",
+            "changes": [
+              "visibility package -> public"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 13,
+        "kept": 0,
+        "pct": 0.0
+      },
+      "signatures": {
+        "total": 15,
+        "kept": 1,
+        "pct": 6.7
+      },
+      "names": {
+        "method:exact": 1,
+        "param:exact": 2
+      },
+      "renames": [],
+      "idioms": {
+        "exceptionWithArgs": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "nullCheck": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 22
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 96,
+        "methods": 15,
+        "avgMethodLines": 6.3,
+        "maxMethodLines": 9,
+        "branches": 26
+      },
+      "modernStructure": {
+        "loc": 4,
+        "methods": 1,
+        "avgMethodLines": 2.0,
+        "maxMethodLines": 2,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "private <init>()"
+      ],
+      "constructorsModern": [],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 2.0,
+      "distancePerMember": 0.13
+    }
+  ],
+  "originalOnly": [],
+  "outOfScope": [
+    "org.joda.money.Ser",
+    "org.joda.money.format.AmountPrinterParser",
+    "org.joda.money.format.GroupingStyle",
+    "org.joda.money.format.LiteralPrinterParser",
+    "org.joda.money.format.MoneyAmountStyle",
+    "org.joda.money.format.MoneyFormatException",
+    "org.joda.money.format.MoneyFormatter",
+    "org.joda.money.format.MoneyFormatterBuilder",
+    "org.joda.money.format.MoneyParseContext",
+    "org.joda.money.format.MoneyParser",
+    "org.joda.money.format.MoneyPrintContext",
+    "org.joda.money.format.MoneyPrinter",
+    "org.joda.money.format.MultiPrinterParser",
+    "org.joda.money.format.SignedPrinterParser"
+  ],
+  "modernOnly": [
+    {
+      "fqn": "org.joda.money.batch.Fsem0100Job",
+      "kind": "class",
+      "file": "org/joda/money/batch/Fsem0100Job.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "org.joda.money.batch.Jmle0100Batch",
+      "kind": "class",
+      "file": "org/joda/money/batch/Jmle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "org.joda.money.batch.Jmle0100Batch.CounterOverflow",
+      "kind": "class",
+      "file": "org/joda/money/batch/Jmle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "org.joda.money.batch.Jmle0100Batch.EventSequence",
+      "kind": "class",
+      "file": "org/joda/money/batch/Jmle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "org.joda.money.batch.Jmle0100Batch.RejectCode",
+      "kind": "enum",
+      "file": "org/joda/money/batch/Jmle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "org.joda.money.batch.Jmle0100Batch.RunTotals",
+      "kind": "record",
+      "file": "org/joda/money/batch/Jmle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.Abend",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/Abend.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.DatasetException",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/DatasetException.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.Datasets",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.Datasets.Handle",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.Datasets.Indexed",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.Datasets.Sequential",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.DecimalLimit",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/DecimalLimit.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.Jmle0100Report",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/Jmle0100Report.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.JobAdapter",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/JobAdapter.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.LegacySites",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/LegacySites.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.Records",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/Records.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.Records.Image",
+      "kind": "interface",
+      "file": "org/joda/money/batch/platform/Records.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.platform.RunReport",
+      "kind": "class",
+      "file": "org/joda/money/batch/platform/RunReport.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.record.EventOutRecord",
+      "kind": "class",
+      "file": "org/joda/money/batch/record/EventOutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.record.EventRecord",
+      "kind": "class",
+      "file": "org/joda/money/batch/record/EventRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.record.EventRecord.RecType",
+      "kind": "enum",
+      "file": "org/joda/money/batch/record/EventRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.record.Jmle0100DateRecord",
+      "kind": "class",
+      "file": "org/joda/money/batch/record/Jmle0100DateRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.record.OutRecord",
+      "kind": "class",
+      "file": "org/joda/money/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.record.OutRecord.OutFunc",
+      "kind": "enum",
+      "file": "org/joda/money/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.record.OutRecord.OutStatus",
+      "kind": "enum",
+      "file": "org/joda/money/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.record.RunControlRecord",
+      "kind": "class",
+      "file": "org/joda/money/batch/record/RunControlRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.LegacyStep",
+      "kind": "class",
+      "file": "org/joda/money/batch/strangler/LegacyStep.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.ModernStep",
+      "kind": "class",
+      "file": "org/joda/money/batch/strangler/ModernStep.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.Shadow",
+      "kind": "class",
+      "file": "org/joda/money/batch/strangler/Shadow.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.Shadow.Difference",
+      "kind": "record",
+      "file": "org/joda/money/batch/strangler/Shadow.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.StepPort",
+      "kind": "interface",
+      "file": "org/joda/money/batch/strangler/StepPort.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.Steps",
+      "kind": "class",
+      "file": "org/joda/money/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.Steps.Field",
+      "kind": "record",
+      "file": "org/joda/money/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.Steps.Step",
+      "kind": "record",
+      "file": "org/joda/money/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "org.joda.money.batch.strangler.Strangler",
+      "kind": "class",
+      "file": "org/joda/money/batch/strangler/Strangler.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    }
+  ],
+  "topByDistance": [
+    {
+      "original": "org.joda.money.CurrencyUnit",
+      "modern": "org.joda.money.CurrencyUnit",
+      "distance": 35.5,
+      "distancePerMember": 0.83,
+      "top": "supertypes 6.0, field types 5.0, kind 5.0"
+    },
+    {
+      "original": "org.joda.money.Money",
+      "modern": "org.joda.money.Money",
+      "distance": 20.3,
+      "distancePerMember": 0.26,
+      "top": "supertypes 9.0, kind 5.0, missing fields 2.0"
+    },
+    {
+      "original": "org.joda.money.BigMoney",
+      "modern": "org.joda.money.BigMoney",
+      "distance": 18.0,
+      "distancePerMember": 0.2,
+      "top": "supertypes 6.0, names 3.5, idioms 2.0"
+    },
+    {
+      "original": "org.joda.money.CurrencyUnitDataProvider",
+      "modern": "org.joda.money.CurrencyUnitDataProvider",
+      "distance": 9.0,
+      "distancePerMember": 3.0,
+      "top": "kind 5.0, member flags 2.0, extra methods 1.0"
+    },
+    {
+      "original": "org.joda.money.CurrencyMismatchException",
+      "modern": "org.joda.money.CurrencyMismatchException",
+      "distance": 6.0,
+      "distancePerMember": 1.0,
+      "top": "supertypes 4.0, missing fields 2.0"
+    },
+    {
+      "original": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "modern": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "distance": 6.0,
+      "distancePerMember": 0.86,
+      "top": "visibility 2.0, extra methods 1.0, field flags 1.0"
+    },
+    {
+      "original": "org.joda.money.IllegalCurrencyException",
+      "modern": "org.joda.money.IllegalCurrencyException",
+      "distance": 6.0,
+      "distancePerMember": 3.0,
+      "top": "supertypes 4.0, missing fields 2.0"
+    },
+    {
+      "original": "org.joda.money.MoneyUtils",
+      "modern": "org.joda.money.MoneyUtils",
+      "distance": 2.0,
+      "distancePerMember": 0.13,
+      "top": "member flags 1.0, modifiers 1.0"
+    },
+    {
+      "original": "org.joda.money.BigMoneyProvider",
+      "modern": "org.joda.money.BigMoneyProvider",
+      "distance": 0.0,
+      "distancePerMember": 0.0,
+      "top": ""
+    }
+  ],
+  "gaps": [
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "org.joda.money.BigMoney",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "org.joda.money.CurrencyMismatchException",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "org.joda.money.IllegalCurrencyException",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "org.joda.money.Money",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "IDIOM.EXCEPTION_MESSAGE_LOST",
+      "type": "org.joda.money.BigMoney",
+      "member": "",
+      "original": "with message 4",
+      "modern": "with message 1, bare 2",
+      "detail": ""
+    },
+    {
+      "pattern": "IDIOM.EXCEPTION_MESSAGE_LOST",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "",
+      "original": "with message 10",
+      "modern": "with message 3, bare 6",
+      "detail": ""
+    },
+    {
+      "pattern": "IDIOM.EXCEPTION_MESSAGE_LOST",
+      "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "member": "",
+      "original": "with message 1",
+      "modern": "with message 0, bare 1",
+      "detail": ""
+    },
+    {
+      "pattern": "IDIOM.PATTERNMATCH_LOST",
+      "type": "org.joda.money.BigMoney",
+      "member": "",
+      "original": "1",
+      "modern": "0",
+      "detail": "-1"
+    },
+    {
+      "pattern": "IDIOM.PATTERNMATCH_LOST",
+      "type": "org.joda.money.Money",
+      "member": "",
+      "original": "1",
+      "modern": "0",
+      "detail": "-1"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_NARROWED_METHOD",
+      "type": "org.joda.money.BigMoney",
+      "member": "getScale()",
+      "original": "public",
+      "modern": "private",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_NARROWED_METHOD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "registerCurrency(String,int,int,List,boolean)",
+      "original": "public",
+      "modern": "private",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_CTOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "<init>(CurrencyUnit,BigDecimal)",
+      "original": "package",
+      "modern": "public",
+      "detail": "constructor"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_CTOR",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "<init>(String,short,short)",
+      "original": "package",
+      "modern": "public",
+      "detail": "constructor"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_CTOR",
+      "type": "org.joda.money.Money",
+      "member": "<init>(BigMoney)",
+      "original": "package",
+      "modern": "public",
+      "detail": "constructor"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_METHOD",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "registerCountry(String,String)",
+      "original": "protected",
+      "modern": "public",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_METHOD",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "registerCurrency(String,int,int)",
+      "original": "protected",
+      "modern": "public",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_METHOD",
+      "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "member": "registerCurrencies()",
+      "original": "protected",
+      "modern": "public",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_METHOD",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "checkNotNull(Object,String)",
+      "original": "package",
+      "modern": "public",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "org.joda.money.BigMoney",
+      "member": "PARSE_REGEX",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "CODE",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByCode",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByCountry",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByNumericCode",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "member": "COUNTRY_REGEX_LINE",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "member": "CURRENCY_REGEX_LINE",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "METHOD.EXTRA_CTOR",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "<init>()",
+      "original": "",
+      "modern": "<init>()",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_CTOR",
+      "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "member": "<init>()",
+      "original": "",
+      "modern": "<init>()",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "code()",
+      "original": "",
+      "modern": "String code()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "decimalPlaces()",
+      "original": "",
+      "modern": "int decimalPlaces()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "numericCode()",
+      "original": "",
+      "modern": "int numericCode()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "org.joda.money.Money",
+      "member": "money()",
+      "original": "",
+      "modern": "BigMoney money()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "getAmountMajor()",
+      "original": "BigDecimal getAmountMajor()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "getAmountMajorInt()",
+      "original": "int getAmountMajorInt()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "getAmountMajorLong()",
+      "original": "long getAmountMajorLong()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "getAmountMinor()",
+      "original": "BigDecimal getAmountMinor()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "getAmountMinorInt()",
+      "original": "int getAmountMinorInt()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "getAmountMinorLong()",
+      "original": "long getAmountMinorLong()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "getMinorPart()",
+      "original": "int getMinorPart()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "isCurrencyScale()",
+      "original": "boolean isCurrencyScale()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "isNegativeOrZero()",
+      "original": "boolean isNegativeOrZero()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "isPositiveOrZero()",
+      "original": "boolean isPositiveOrZero()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.CurrencyMismatchException",
+      "member": "getFirstCurrency()",
+      "original": "CurrencyUnit getFirstCurrency()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.CurrencyMismatchException",
+      "member": "getSecondCurrency()",
+      "original": "CurrencyUnit getSecondCurrency()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "getNumeric3Code()",
+      "original": "String getNumeric3Code()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "getSymbol()",
+      "original": "String getSymbol()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "getAmountMajor()",
+      "original": "BigDecimal getAmountMajor()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "getAmountMajorInt()",
+      "original": "int getAmountMajorInt()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "getAmountMajorLong()",
+      "original": "long getAmountMajorLong()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "getAmountMinor()",
+      "original": "BigDecimal getAmountMinor()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "getAmountMinorInt()",
+      "original": "int getAmountMinorInt()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "getAmountMinorLong()",
+      "original": "long getAmountMinorLong()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "getMinorPart()",
+      "original": "int getMinorPart()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "getScale()",
+      "original": "int getScale()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "isNegativeOrZero()",
+      "original": "boolean isNegativeOrZero()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_ACCESSOR",
+      "type": "org.joda.money.Money",
+      "member": "isPositiveOrZero()",
+      "original": "boolean isPositiveOrZero()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "abs()",
+      "original": "BigMoney abs()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "convertRetainScale(CurrencyUnit,BigDecimal,RoundingMode)",
+      "original": "BigMoney convertRetainScale(CurrencyUnit,BigDecimal,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "dividedBy(double,RoundingMode)",
+      "original": "BigMoney dividedBy(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "dividedBy(long,RoundingMode)",
+      "original": "BigMoney dividedBy(long,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "isGreaterThanOrEqual(BigMoneyProvider)",
+      "original": "boolean isGreaterThanOrEqual(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "isLessThanOrEqual(BigMoneyProvider)",
+      "original": "boolean isLessThanOrEqual(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "minus(BigMoneyProvider)",
+      "original": "BigMoney minus(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "minus(Iterable)",
+      "original": "BigMoney minus(Iterable<? extends BigMoneyProvider>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "minus(double)",
+      "original": "BigMoney minus(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "minusMajor(long)",
+      "original": "BigMoney minusMajor(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "minusMinor(long)",
+      "original": "BigMoney minusMinor(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "minusRetainScale(BigMoneyProvider,RoundingMode)",
+      "original": "BigMoney minusRetainScale(BigMoneyProvider,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "minusRetainScale(double,RoundingMode)",
+      "original": "BigMoney minusRetainScale(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "multipliedBy(double)",
+      "original": "BigMoney multipliedBy(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "multipliedBy(long)",
+      "original": "BigMoney multipliedBy(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "multiplyRetainScale(double,RoundingMode)",
+      "original": "BigMoney multiplyRetainScale(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "of(CurrencyUnit,double)",
+      "original": "BigMoney of(CurrencyUnit,double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "ofMajor(CurrencyUnit,long)",
+      "original": "BigMoney ofMajor(CurrencyUnit,long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "ofMinor(CurrencyUnit,long)",
+      "original": "BigMoney ofMinor(CurrencyUnit,long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "ofScale(CurrencyUnit,BigDecimal,int)",
+      "original": "BigMoney ofScale(CurrencyUnit,BigDecimal,int)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "ofScale(CurrencyUnit,BigDecimal,int,RoundingMode)",
+      "original": "BigMoney ofScale(CurrencyUnit,BigDecimal,int,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "ofScale(CurrencyUnit,long,int)",
+      "original": "BigMoney ofScale(CurrencyUnit,long,int)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "parse(String)",
+      "original": "BigMoney parse(String)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "plus(BigMoneyProvider)",
+      "original": "BigMoney plus(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "plus(Iterable)",
+      "original": "BigMoney plus(Iterable<? extends BigMoneyProvider>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "plus(double)",
+      "original": "BigMoney plus(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "plusMajor(long)",
+      "original": "BigMoney plusMajor(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "plusMinor(long)",
+      "original": "BigMoney plusMinor(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "plusRetainScale(BigMoneyProvider,RoundingMode)",
+      "original": "BigMoney plusRetainScale(BigMoneyProvider,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "plusRetainScale(double,RoundingMode)",
+      "original": "BigMoney plusRetainScale(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "toMoney()",
+      "original": "Money toMoney()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "total(BigMoneyProvider[])",
+      "original": "BigMoney total(BigMoneyProvider...)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "total(CurrencyUnit,BigMoneyProvider[])",
+      "original": "BigMoney total(CurrencyUnit,BigMoneyProvider...)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "total(CurrencyUnit,Iterable)",
+      "original": "BigMoney total(CurrencyUnit,Iterable<? extends BigMoneyProvider>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "total(Iterable)",
+      "original": "BigMoney total(Iterable<? extends BigMoneyProvider>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "withAmount(BigDecimal)",
+      "original": "BigMoney withAmount(BigDecimal)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "withAmount(double)",
+      "original": "BigMoney withAmount(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "withCurrencyScale()",
+      "original": "BigMoney withCurrencyScale()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "withCurrencyUnit(CurrencyUnit)",
+      "original": "BigMoney withCurrencyUnit(CurrencyUnit)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "withScale(int)",
+      "original": "BigMoney withScale(int)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "zero(CurrencyUnit)",
+      "original": "BigMoney zero(CurrencyUnit)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.BigMoney",
+      "member": "zero(CurrencyUnit,int)",
+      "original": "BigMoney zero(CurrencyUnit,int)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "compareTo(CurrencyUnit)",
+      "original": "int compareTo(CurrencyUnit)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "getSymbol(Locale)",
+      "original": "String getSymbol(Locale)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "of(Currency)",
+      "original": "CurrencyUnit of(Currency)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "of(Locale)",
+      "original": "CurrencyUnit of(Locale)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "ofNumericCode(String)",
+      "original": "CurrencyUnit ofNumericCode(String)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "registerCurrency(String,int,int,List)",
+      "original": "CurrencyUnit registerCurrency(String,int,int,List<String>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "toCurrency()",
+      "original": "Currency toCurrency()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "registerCurrencies()",
+      "original": "void registerCurrencies()",
+      "modern": "",
+      "detail": "source protected"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "abs()",
+      "original": "Money abs()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "compareTo(BigMoneyProvider)",
+      "original": "int compareTo(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "dividedBy(double,RoundingMode)",
+      "original": "Money dividedBy(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "dividedBy(long,RoundingMode)",
+      "original": "Money dividedBy(long,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "isEqual(BigMoneyProvider)",
+      "original": "boolean isEqual(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "isGreaterThan(BigMoneyProvider)",
+      "original": "boolean isGreaterThan(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "isGreaterThanOrEqual(BigMoneyProvider)",
+      "original": "boolean isGreaterThanOrEqual(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "isLessThan(BigMoneyProvider)",
+      "original": "boolean isLessThan(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "isLessThanOrEqual(BigMoneyProvider)",
+      "original": "boolean isLessThanOrEqual(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "isSameCurrency(BigMoneyProvider)",
+      "original": "boolean isSameCurrency(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "minus(BigDecimal)",
+      "original": "Money minus(BigDecimal)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "minus(Iterable)",
+      "original": "Money minus(Iterable<Money>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "minus(Money)",
+      "original": "Money minus(Money)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "minus(double)",
+      "original": "Money minus(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "minus(double,RoundingMode)",
+      "original": "Money minus(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "minusMajor(long)",
+      "original": "Money minusMajor(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "minusMinor(long)",
+      "original": "Money minusMinor(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "multipliedBy(double,RoundingMode)",
+      "original": "Money multipliedBy(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "multipliedBy(long)",
+      "original": "Money multipliedBy(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "of(BigMoneyProvider)",
+      "original": "Money of(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "of(CurrencyUnit,BigDecimal)",
+      "original": "Money of(CurrencyUnit,BigDecimal)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "of(CurrencyUnit,double)",
+      "original": "Money of(CurrencyUnit,double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "of(CurrencyUnit,double,RoundingMode)",
+      "original": "Money of(CurrencyUnit,double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "ofMajor(CurrencyUnit,long)",
+      "original": "Money ofMajor(CurrencyUnit,long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "ofMinor(CurrencyUnit,long)",
+      "original": "Money ofMinor(CurrencyUnit,long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "parse(String)",
+      "original": "Money parse(String)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "plus(BigDecimal)",
+      "original": "Money plus(BigDecimal)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "plus(Iterable)",
+      "original": "Money plus(Iterable<Money>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "plus(Money)",
+      "original": "Money plus(Money)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "plus(double)",
+      "original": "Money plus(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "plus(double,RoundingMode)",
+      "original": "Money plus(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "plusMajor(long)",
+      "original": "Money plusMajor(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "plusMinor(long)",
+      "original": "Money plusMinor(long)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "total(CurrencyUnit,Iterable)",
+      "original": "Money total(CurrencyUnit,Iterable<Money>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "total(CurrencyUnit,Money[])",
+      "original": "Money total(CurrencyUnit,Money...)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "total(Iterable)",
+      "original": "Money total(Iterable<Money>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "total(Money[])",
+      "original": "Money total(Money...)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "withAmount(BigDecimal)",
+      "original": "Money withAmount(BigDecimal)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "withAmount(BigDecimal,RoundingMode)",
+      "original": "Money withAmount(BigDecimal,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "withAmount(double)",
+      "original": "Money withAmount(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "withAmount(double,RoundingMode)",
+      "original": "Money withAmount(double,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "withCurrencyUnit(CurrencyUnit)",
+      "original": "Money withCurrencyUnit(CurrencyUnit)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "withCurrencyUnit(CurrencyUnit,RoundingMode)",
+      "original": "Money withCurrencyUnit(CurrencyUnit,RoundingMode)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.Money",
+      "member": "zero(CurrencyUnit)",
+      "original": "Money zero(CurrencyUnit)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "add(BigMoney,BigMoney)",
+      "original": "BigMoney add(BigMoney,BigMoney)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "add(Money,Money)",
+      "original": "Money add(Money,Money)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "isNegative(BigMoneyProvider)",
+      "original": "boolean isNegative(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "isNegativeOrZero(BigMoneyProvider)",
+      "original": "boolean isNegativeOrZero(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "isPositive(BigMoneyProvider)",
+      "original": "boolean isPositive(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "isPositiveOrZero(BigMoneyProvider)",
+      "original": "boolean isPositiveOrZero(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "isZero(BigMoneyProvider)",
+      "original": "boolean isZero(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "max(BigMoney,BigMoney)",
+      "original": "BigMoney max(BigMoney,BigMoney)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "max(Money,Money)",
+      "original": "Money max(Money,Money)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "min(BigMoney,BigMoney)",
+      "original": "BigMoney min(BigMoney,BigMoney)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "min(Money,Money)",
+      "original": "Money min(Money,Money)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "subtract(BigMoney,BigMoney)",
+      "original": "BigMoney subtract(BigMoney,BigMoney)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "subtract(Money,Money)",
+      "original": "Money subtract(Money,Money)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "org.joda.money.BigMoney",
+      "member": "<init>()",
+      "original": "<init>()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "org.joda.money.Money",
+      "member": "<init>()",
+      "original": "<init>()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "<init>()",
+      "original": "<init>()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_OBJECT",
+      "type": "org.joda.money.BigMoney",
+      "member": "toString()",
+      "original": "String toString()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_PRIVATE",
+      "type": "org.joda.money.BigMoney",
+      "member": "checkCurrencyEqual(BigMoneyProvider)",
+      "original": "BigMoney checkCurrencyEqual(BigMoneyProvider)",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_PRIVATE",
+      "type": "org.joda.money.BigMoney",
+      "member": "readObject(ObjectInputStream)",
+      "original": "void readObject(ObjectInputStream)",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_PRIVATE",
+      "type": "org.joda.money.BigMoney",
+      "member": "with(BigDecimal)",
+      "original": "BigMoney with(BigDecimal)",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_PRIVATE",
+      "type": "org.joda.money.BigMoney",
+      "member": "writeReplace()",
+      "original": "Object writeReplace()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_PRIVATE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "readObject(ObjectInputStream)",
+      "original": "void readObject(ObjectInputStream)",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_PRIVATE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "writeReplace()",
+      "original": "Object writeReplace()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_PRIVATE",
+      "type": "org.joda.money.Money",
+      "member": "readObject(ObjectInputStream)",
+      "original": "void readObject(ObjectInputStream)",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_PRIVATE",
+      "type": "org.joda.money.Money",
+      "member": "writeReplace()",
+      "original": "Object writeReplace()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "NAME.ABBREVIATED",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByNumericCode",
+      "original": "currenciesByNumericCode",
+      "modern": "CURRENCIES_BY_NUMERIC_C",
+      "detail": "field"
+    },
+    {
+      "pattern": "NAME.CASE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByCode",
+      "original": "currenciesByCode",
+      "modern": "CURRENCIES_BY_CODE",
+      "detail": "field"
+    },
+    {
+      "pattern": "NAME.CASE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByCountry",
+      "original": "currenciesByCountry",
+      "modern": "CURRENCIES_BY_COUNTRY",
+      "detail": "field"
+    },
+    {
+      "pattern": "NAME.NUMBERED",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "registerCountry(String,String)",
+      "original": "countryCode",
+      "modern": "countryCode3",
+      "detail": "param"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "registerCurrency(String,int,int,List,boolean)",
+      "original": "countryCodes",
+      "modern": "countryCode",
+      "detail": "param, completion ambiguous-correct"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "registerCurrency(String,int,int,boolean)",
+      "original": "countryCodes",
+      "modern": "countryCode",
+      "detail": "local, completion ambiguous-correct"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "convertedTo(CurrencyUnit,BigDecimal)",
+      "original": "conversionMultipler",
+      "modern": "conversionM",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "dividedBy(BigDecimal,RoundingMode)",
+      "original": "valueToDivideBy",
+      "modern": "valueToDiv",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "minus(BigDecimal)",
+      "original": "amountToSubtract",
+      "modern": "amountToSu",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "minusRetainScale(BigDecimal,RoundingMode)",
+      "original": "amountToSubtract",
+      "modern": "amountToSu",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "multipliedBy(BigDecimal)",
+      "original": "valueToMultiplyBy",
+      "modern": "valueToMul",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "multiplyRetainScale(BigDecimal,RoundingMode)",
+      "original": "valueToMultiplyBy",
+      "modern": "valueToMul",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "of(BigMoneyProvider)",
+      "original": "moneyProvider",
+      "modern": "moneyProvid",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "plus(BigDecimal)",
+      "original": "amountToAdd",
+      "modern": "amountToAd",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "plusRetainScale(BigDecimal,RoundingMode)",
+      "original": "amountToAdd",
+      "modern": "amountToAd",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.BigMoney",
+      "member": "rounded(int,RoundingMode)",
+      "original": "currentScale",
+      "modern": "currentScal",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "of(String)",
+      "original": "currencyCode",
+      "modern": "currencyCod",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "ofNumericCode(int)",
+      "original": "numericCurrencyCode",
+      "modern": "numericCurr",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "registerCurrency(String,int,int,List,boolean)",
+      "original": "currencyCode",
+      "modern": "currencyCod",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "registerCurrency(String,int,int,List,boolean)",
+      "original": "numericCurrencyCode",
+      "modern": "numericCurr",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "registerCurrency(String,int,int,boolean)",
+      "original": "currencyCode",
+      "modern": "currencyCod",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "registerCurrency(String,int,int,boolean)",
+      "original": "numericCurrencyCode",
+      "modern": "numericCurr",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "registerCountry(String,String)",
+      "original": "currencyCode",
+      "modern": "currencyCod",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "registerCurrency(String,int,int)",
+      "original": "currencyCode",
+      "modern": "currencyCod",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "registerCurrency(String,int,int)",
+      "original": "numericCurrencyCode",
+      "modern": "numericCurr",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "member": "parseCountries(List)",
+      "original": "currencyCode",
+      "modern": "currencyCod",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "member": "parseCurrencies(List)",
+      "original": "currencyCode",
+      "modern": "currencyCod",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.Money",
+      "member": "convertedTo(CurrencyUnit,BigDecimal,RoundingMode)",
+      "original": "conversionMultipler",
+      "modern": "conversionM",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.Money",
+      "member": "dividedBy(BigDecimal,RoundingMode)",
+      "original": "valueToDivideBy",
+      "modern": "valueToDiv",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.Money",
+      "member": "minus(BigDecimal,RoundingMode)",
+      "original": "amountToSubtract",
+      "modern": "amountToSu",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.Money",
+      "member": "multipliedBy(BigDecimal,RoundingMode)",
+      "original": "valueToMultiplyBy",
+      "modern": "valueToMul",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.Money",
+      "member": "of(BigMoneyProvider,RoundingMode)",
+      "original": "moneyProvider",
+      "modern": "moneyProvid",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.Money",
+      "member": "of(CurrencyUnit,BigDecimal,RoundingMode)",
+      "original": "scaledAmount",
+      "modern": "scaledAmoun",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "org.joda.money.Money",
+      "member": "plus(BigDecimal,RoundingMode)",
+      "original": "amountToAdd",
+      "modern": "amountToAd",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.UNIQUE_CORRECT",
+      "type": "org.joda.money.BigMoney",
+      "member": "getCurrencyUnit()",
+      "original": "getCurrencyUnit",
+      "modern": "getCurrency",
+      "detail": "method, completion unique-correct"
+    },
+    {
+      "pattern": "SUPERTYPE.ADDED",
+      "type": "org.joda.money.CurrencyMismatchException",
+      "member": "",
+      "original": "",
+      "modern": "RuntimeException",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.ADDED",
+      "type": "org.joda.money.IllegalCurrencyException",
+      "member": "",
+      "original": "",
+      "modern": "RuntimeException",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.EXTENDS_LOST",
+      "type": "org.joda.money.CurrencyMismatchException",
+      "member": "",
+      "original": "IllegalArgumentException",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.EXTENDS_LOST",
+      "type": "org.joda.money.IllegalCurrencyException",
+      "member": "",
+      "original": "IllegalArgumentException",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.INTERFACE_LOST",
+      "type": "org.joda.money.Money",
+      "member": "",
+      "original": "BigMoneyProvider",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "org.joda.money.BigMoney",
+      "member": "",
+      "original": "Comparable<BigMoneyProvider>",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "org.joda.money.BigMoney",
+      "member": "",
+      "original": "Serializable",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "",
+      "original": "Comparable<CurrencyUnit>",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "",
+      "original": "Serializable",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "org.joda.money.Money",
+      "member": "",
+      "original": "Comparable<BigMoneyProvider>",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "org.joda.money.Money",
+      "member": "",
+      "original": "Serializable",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "org.joda.money.BigMoney",
+      "member": "",
+      "original": "final",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "org.joda.money.MoneyUtils",
+      "member": "",
+      "original": "final",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_ABSTRACT_TO_CLASS",
+      "type": "org.joda.money.CurrencyUnitDataProvider",
+      "member": "",
+      "original": "abstract",
+      "modern": "class",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_CLASS_TO_RECORD",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "",
+      "original": "class",
+      "modern": "record",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_CLASS_TO_RECORD",
+      "type": "org.joda.money.Money",
+      "member": "",
+      "original": "class",
+      "modern": "record",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.VISIBILITY_WIDENED",
+      "type": "org.joda.money.DefaultCurrencyUnitDataProvider",
+      "member": "",
+      "original": "package",
+      "modern": "public",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPEREF.COLLECTION_CHANGED",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByCode",
+      "original": "ConcurrentMap<String,CurrencyUnit>",
+      "modern": "Map<String,CurrencyUnit>",
+      "detail": "field"
+    },
+    {
+      "pattern": "TYPEREF.COLLECTION_CHANGED",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByCountry",
+      "original": "ConcurrentMap<String,CurrencyUnit>",
+      "modern": "Map<String,CurrencyUnit>",
+      "detail": "field"
+    },
+    {
+      "pattern": "TYPEREF.COLLECTION_CHANGED",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "currenciesByNumericCode",
+      "original": "ConcurrentMap<Integer,CurrencyUnit>",
+      "modern": "Map<Integer,CurrencyUnit>",
+      "detail": "field"
+    },
+    {
+      "pattern": "TYPEREF.NUMERIC_CHANGED",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "<init>(String,short,short)",
+      "original": "short",
+      "modern": "int",
+      "detail": "param 2"
+    },
+    {
+      "pattern": "TYPEREF.NUMERIC_CHANGED",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "<init>(String,short,short)",
+      "original": "short",
+      "modern": "int",
+      "detail": "param 3"
+    },
+    {
+      "pattern": "TYPEREF.NUMERIC_CHANGED",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "decimalPlaces",
+      "original": "short",
+      "modern": "int",
+      "detail": "field"
+    },
+    {
+      "pattern": "TYPEREF.NUMERIC_CHANGED",
+      "type": "org.joda.money.CurrencyUnit",
+      "member": "numericCode",
+      "original": "short",
+      "modern": "int",
+      "detail": "field"
+    },
+    {
+      "pattern": "TYPEREF.TO_OBJECT_KNOWN",
+      "type": "org.joda.money.BigMoney",
+      "member": "PARSE_REGEX",
+      "original": "Pattern",
+      "modern": "Object",
+      "detail": "field"
+    }
+  ],
+  "parseErrors": [],
+  "notes": []
+}

@@ -1,0 +1,1601 @@
+{
+  "tool": "jobol-audit compare",
+  "version": "1.0.0",
+  "estate": "kontor-zins",
+  "originalRoots": [
+    "C:/Users/Tomrodgers/JavaToCOBOLTest/claude-in-app/workspace/packages/manikouchakian-kontor-zins-b507fe6/source/src/main/java"
+  ],
+  "modernRoot": "C:/Users/Tomrodgers/Source/CobolBdm/work/loop4/regress/kontor-zins-m5/src/main/java",
+  "cobolRoot": "C:/Users/Tomrodgers/Source/CobolBdm/projects/kontor-zins/source",
+  "scope": "reached",
+  "summary": {
+    "originalTypes": 5,
+    "outOfScope": 0,
+    "matched": 5,
+    "matchedByFqn": 5,
+    "matchedMoved": 0,
+    "originalOnly": 0,
+    "modernOnlyInfrastructure": 37,
+    "modernOnlyOther": 0,
+    "modernOnlyLombok": 0,
+    "api": {
+      "total": 42,
+      "kept": 27,
+      "pct": 64.3
+    },
+    "apiReached": {
+      "total": 34,
+      "kept": 27,
+      "pct": 79.4
+    },
+    "names": {
+      "total": 97,
+      "kept": 89,
+      "pct": 91.8
+    },
+    "signatures": {
+      "total": 41,
+      "kept": 27,
+      "pct": 65.9
+    },
+    "signaturesReached": {
+      "total": 31,
+      "kept": 27,
+      "pct": 87.1
+    },
+    "nameClasses": {
+      "field": {
+        "exact": 17
+      },
+      "local": {
+        "exact": 19,
+        "truncated": 4
+      },
+      "method": {
+        "accessor_style": 4,
+        "exact": 27
+      },
+      "param": {
+        "exact": 26
+      }
+    },
+    "truncatedLengths": {
+      "11": 4
+    },
+    "truncationCompletion": {
+      "none": 3,
+      "unique-correct": 1
+    },
+    "idioms": {
+      "bigdecimal": {
+        "original": 66,
+        "modern": 78,
+        "originalAll": 66
+      },
+      "exceptionBare": {
+        "original": 0,
+        "modern": 25,
+        "originalAll": 0
+      },
+      "exceptionWithArgs": {
+        "original": 25,
+        "modern": 0,
+        "originalAll": 25
+      },
+      "list": {
+        "original": 6,
+        "modern": 6,
+        "originalAll": 6
+      },
+      "loop": {
+        "original": 3,
+        "modern": 3,
+        "originalAll": 3
+      },
+      "nullCheck": {
+        "original": 13,
+        "modern": 13,
+        "originalAll": 13
+      },
+      "record": {
+        "original": 2,
+        "modern": 0,
+        "originalAll": 2
+      }
+    },
+    "typeUses": {
+      "ArrayList": {
+        "original": 1,
+        "modern": 1,
+        "originalAll": 1
+      },
+      "BigDecimal": {
+        "original": 55,
+        "modern": 67,
+        "originalAll": 55
+      },
+      "List": {
+        "original": 5,
+        "modern": 5,
+        "originalAll": 5
+      },
+      "MathContext": {
+        "original": 4,
+        "modern": 4,
+        "originalAll": 4
+      },
+      "RoundingMode": {
+        "original": 7,
+        "modern": 7,
+        "originalAll": 7
+      }
+    },
+    "originalStructure": {
+      "types": 5,
+      "loc": 251,
+      "methods": 27,
+      "avgMethodLines": 9.3,
+      "maxMethodLines": 36,
+      "branches": 38,
+      "constructors": 5,
+      "factories": 1,
+      "builders": 0,
+      "equalsHashCode": 2,
+      "toStrings": 3
+    },
+    "modernStructure": {
+      "types": 5,
+      "loc": 285,
+      "methods": 31,
+      "avgMethodLines": 8.0,
+      "maxMethodLines": 28,
+      "branches": 39,
+      "constructors": 3,
+      "factories": 1,
+      "builders": 0,
+      "equalsHashCode": 0,
+      "toStrings": 0
+    },
+    "gapCounts": {
+      "FIELD.MISSING_CONSTANT": 3,
+      "IDIOM.EXCEPTION_MESSAGE_LOST": 5,
+      "IDIOM.RECORD_LOST": 2,
+      "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD": 2,
+      "METHOD.UNREACHED_API": 1,
+      "METHOD.UNREACHED_CTOR": 2,
+      "METHOD.UNREACHED_OBJECT": 1,
+      "METHOD.UNREACHED_RECORD": 6,
+      "NAME.ACCESSOR_STYLE": 4,
+      "NAME.TRUNCATED.NONE": 3,
+      "NAME.TRUNCATED.UNIQUE_CORRECT": 1,
+      "TYPE.FINAL_LOST": 3,
+      "TYPE.KIND_RECORD_TO_CLASS": 2
+    }
+  },
+  "matched": [
+    {
+      "original": "de.manikouchakian.kontorzins.Annuity",
+      "modern": "de.manikouchakian.kontorzins.Annuity",
+      "alignment": "fqn",
+      "originalFile": "de/manikouchakian/kontorzins/Annuity.java",
+      "modernFile": "de/manikouchakian/kontorzins/Annuity.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 1,
+        "modern": 1,
+        "matched": 1,
+        "missing": [],
+        "extra": [],
+        "changed": [
+          {
+            "original": "static final MathContext MC",
+            "modern": "static final MathContext MC",
+            "changes": [
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "methods": {
+        "original": 4,
+        "modern": 3,
+        "matched": 3,
+        "missing": [
+          "<init>()"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 3,
+        "kept": 3,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 4,
+        "kept": 3,
+        "pct": 75.0
+      },
+      "names": {
+        "field:exact": 1,
+        "local:exact": 12,
+        "local:truncated": 1,
+        "method:exact": 3,
+        "param:exact": 5
+      },
+      "renames": [
+        {
+          "element": "local",
+          "member": "schedule(LoanTerms)",
+          "original": "actualPayment",
+          "modern": "actualPayme",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 23,
+          "modern": 23,
+          "originalAll": 23
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 6,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 6,
+          "modern": 0,
+          "originalAll": 6
+        },
+        "list": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "loop": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "nullCheck": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 4
+        }
+      },
+      "typeUses": {
+        "ArrayList": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "BigDecimal": {
+          "original": 18,
+          "modern": 18,
+          "originalAll": 18
+        },
+        "List": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "MathContext": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "RoundingMode": {
+          "original": 3,
+          "modern": 3,
+          "originalAll": 3
+        }
+      },
+      "originalStructure": {
+        "loc": 59,
+        "methods": 4,
+        "avgMethodLines": 18.0,
+        "maxMethodLines": 36,
+        "branches": 11
+      },
+      "modernStructure": {
+        "loc": 61,
+        "methods": 3,
+        "avgMethodLines": 18.3,
+        "maxMethodLines": 27,
+        "branches": 11
+      },
+      "constructorsOriginal": [
+        "private <init>()"
+      ],
+      "constructorsModern": [],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 4.8,
+      "distancePerMember": 0.95
+    },
+    {
+      "original": "de.manikouchakian.kontorzins.model.Installment",
+      "modern": "de.manikouchakian.kontorzins.model.Installment",
+      "alignment": "fqn",
+      "originalFile": "de/manikouchakian/kontorzins/model/Installment.java",
+      "modernFile": "de/manikouchakian/kontorzins/model/Installment.java",
+      "kind": {
+        "original": "record",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 5,
+        "modern": 5,
+        "matched": 5,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 11,
+        "modern": 8,
+        "matched": 8,
+        "missing": [
+          "String toString() [record]",
+          "boolean equals(Object) [record]",
+          "int hashCode() [record]"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 10,
+        "kept": 7,
+        "pct": 70.0
+      },
+      "signatures": {
+        "total": 11,
+        "kept": 8,
+        "pct": 72.7
+      },
+      "names": {
+        "field:exact": 5,
+        "local:exact": 1,
+        "method:exact": 8,
+        "param:exact": 7
+      },
+      "renames": [],
+      "idioms": {
+        "bigdecimal": {
+          "original": 7,
+          "modern": 15,
+          "originalAll": 7
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 4,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 4,
+          "modern": 0,
+          "originalAll": 4
+        },
+        "nullCheck": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "record": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 7,
+          "modern": 15,
+          "originalAll": 7
+        }
+      },
+      "originalStructure": {
+        "loc": 34,
+        "methods": 3,
+        "avgMethodLines": 9.3,
+        "maxMethodLines": 16,
+        "branches": 4
+      },
+      "modernStructure": {
+        "loc": 52,
+        "methods": 8,
+        "avgMethodLines": 5.6,
+        "maxMethodLines": 18,
+        "branches": 4
+      },
+      "constructorsOriginal": [
+        "public <init>(int,BigDecimal,BigDecimal,BigDecimal,BigDecimal)"
+      ],
+      "constructorsModern": [
+        "public <init>(int,BigDecimal,BigDecimal,BigDecimal,BigDecimal)"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "record",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "record",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "record",
+          "modern": "none"
+        }
+      },
+      "distance": 7.5,
+      "distancePerMember": 0.47
+    },
+    {
+      "original": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "modern": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "alignment": "fqn",
+      "originalFile": "de/manikouchakian/kontorzins/model/LoanTerms.java",
+      "modernFile": "de/manikouchakian/kontorzins/model/LoanTerms.java",
+      "kind": {
+        "original": "record",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 5,
+        "modern": 4,
+        "matched": 4,
+        "missing": [
+          "static final int MAX_MONTHS"
+        ],
+        "extra": [],
+        "changed": [
+          {
+            "original": "static final BigDecimal MONTHS_PER_YEAR",
+            "modern": "static final BigDecimal MONTHS_PER_YEAR",
+            "changes": [
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "methods": {
+        "original": 10,
+        "modern": 7,
+        "matched": 7,
+        "missing": [
+          "String toString() [record]",
+          "boolean equals(Object) [record]",
+          "int hashCode() [record]"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 11,
+        "kept": 7,
+        "pct": 63.6
+      },
+      "signatures": {
+        "total": 10,
+        "kept": 7,
+        "pct": 70.0
+      },
+      "names": {
+        "field:exact": 4,
+        "method:exact": 7,
+        "param:exact": 6
+      },
+      "renames": [],
+      "idioms": {
+        "bigdecimal": {
+          "original": 7,
+          "modern": 11,
+          "originalAll": 7
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 7,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 7,
+          "modern": 0,
+          "originalAll": 7
+        },
+        "nullCheck": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "record": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 7,
+          "modern": 11,
+          "originalAll": 7
+        }
+      },
+      "originalStructure": {
+        "loc": 38,
+        "methods": 4,
+        "avgMethodLines": 9.3,
+        "maxMethodLines": 25,
+        "branches": 7
+      },
+      "modernStructure": {
+        "loc": 55,
+        "methods": 7,
+        "avgMethodLines": 6.6,
+        "maxMethodLines": 25,
+        "branches": 7
+      },
+      "constructorsOriginal": [
+        "public <init>(BigDecimal,BigDecimal,int)"
+      ],
+      "constructorsModern": [
+        "public <init>(BigDecimal,BigDecimal,int)"
+      ],
+      "factoriesOriginal": [
+        "LoanTerms ofYears(BigDecimal,BigDecimal,int)"
+      ],
+      "factoriesModern": [
+        "LoanTerms ofYears(BigDecimal,BigDecimal,int)"
+      ],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "record",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "record",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "record",
+          "modern": "none"
+        }
+      },
+      "distance": 11.5,
+      "distancePerMember": 0.77
+    },
+    {
+      "original": "de.manikouchakian.kontorzins.model.Rounding",
+      "modern": "de.manikouchakian.kontorzins.model.Rounding",
+      "alignment": "fqn",
+      "originalFile": "de/manikouchakian/kontorzins/model/Rounding.java",
+      "modernFile": "de/manikouchakian/kontorzins/model/Rounding.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 4,
+        "modern": 2,
+        "matched": 2,
+        "missing": [
+          "static final int MONEY_SCALE",
+          "static final int RATE_SCALE"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 4,
+        "modern": 3,
+        "matched": 3,
+        "missing": [
+          "<init>()"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 7,
+        "kept": 5,
+        "pct": 71.4
+      },
+      "signatures": {
+        "total": 4,
+        "kept": 3,
+        "pct": 75.0
+      },
+      "names": {
+        "field:exact": 2,
+        "method:exact": 3,
+        "param:exact": 4
+      },
+      "renames": [],
+      "idioms": {
+        "bigdecimal": {
+          "original": 12,
+          "modern": 12,
+          "originalAll": 12
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 2,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 2,
+          "modern": 0,
+          "originalAll": 2
+        },
+        "nullCheck": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 4
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 6,
+          "modern": 6,
+          "originalAll": 6
+        },
+        "MathContext": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "RoundingMode": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 4
+        }
+      },
+      "originalStructure": {
+        "loc": 23,
+        "methods": 4,
+        "avgMethodLines": 4.5,
+        "maxMethodLines": 6,
+        "branches": 4
+      },
+      "modernStructure": {
+        "loc": 26,
+        "methods": 3,
+        "avgMethodLines": 6.0,
+        "maxMethodLines": 6,
+        "branches": 4
+      },
+      "constructorsOriginal": [
+        "private <init>()"
+      ],
+      "constructorsModern": [],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 6.0,
+      "distancePerMember": 0.75
+    },
+    {
+      "original": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "modern": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "alignment": "fqn",
+      "originalFile": "de/manikouchakian/kontorzins/schedule/Schedule.java",
+      "modernFile": "de/manikouchakian/kontorzins/schedule/Schedule.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 5,
+        "modern": 5,
+        "matched": 5,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 12,
+        "modern": 10,
+        "matched": 10,
+        "missing": [
+          "LoanTerms terms()",
+          "String toString()"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 11,
+        "kept": 5,
+        "pct": 45.5
+      },
+      "signatures": {
+        "total": 12,
+        "kept": 6,
+        "pct": 50.0
+      },
+      "names": {
+        "field:exact": 5,
+        "local:exact": 6,
+        "local:truncated": 3,
+        "method:accessor_style": 4,
+        "method:exact": 6,
+        "param:exact": 4
+      },
+      "renames": [
+        {
+          "element": "local",
+          "member": "validate()",
+          "original": "expectedDebt",
+          "modern": "expectedDeb",
+          "kind": "truncated"
+        },
+        {
+          "element": "local",
+          "member": "validate()",
+          "original": "expectedMonth",
+          "modern": "expectedMon",
+          "kind": "truncated"
+        },
+        {
+          "element": "local",
+          "member": "validate()",
+          "original": "totalPrincipal",
+          "modern": "totalPrinci",
+          "kind": "truncated"
+        },
+        {
+          "element": "method",
+          "member": "installments()",
+          "original": "installments",
+          "modern": "getInstallments",
+          "kind": "accessor_style"
+        },
+        {
+          "element": "method",
+          "member": "totalInterest()",
+          "original": "totalInterest",
+          "modern": "getTotalInterest",
+          "kind": "accessor_style"
+        },
+        {
+          "element": "method",
+          "member": "totalPaid()",
+          "original": "totalPaid",
+          "modern": "getTotalPaid",
+          "kind": "accessor_style"
+        },
+        {
+          "element": "method",
+          "member": "totalPrincipal()",
+          "original": "totalPrincipal",
+          "modern": "getTotalPrincipal",
+          "kind": "accessor_style"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 17,
+          "modern": 17,
+          "originalAll": 17
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 6,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 6,
+          "modern": 0,
+          "originalAll": 6
+        },
+        "list": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 4
+        },
+        "loop": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "nullCheck": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 17,
+          "modern": 17,
+          "originalAll": 17
+        },
+        "List": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 4
+        }
+      },
+      "originalStructure": {
+        "loc": 97,
+        "methods": 12,
+        "avgMethodLines": 8.0,
+        "maxMethodLines": 27,
+        "branches": 12
+      },
+      "modernStructure": {
+        "loc": 91,
+        "methods": 10,
+        "avgMethodLines": 8.4,
+        "maxMethodLines": 28,
+        "branches": 13
+      },
+      "constructorsOriginal": [
+        "public <init>(LoanTerms,List<Installment>)"
+      ],
+      "constructorsModern": [
+        "public <init>(LoanTerms,List<Installment>)"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "none"
+        }
+      },
+      "distance": 8.8,
+      "distancePerMember": 0.51
+    }
+  ],
+  "originalOnly": [],
+  "outOfScope": [],
+  "modernOnly": [
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.Fsem0100Job",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/Fsem0100Job.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.Kzle0100Batch",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/Kzle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.Kzle0100Batch.CounterOverflow",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/Kzle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.Kzle0100Batch.EventSequence",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/Kzle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.Kzle0100Batch.RejectCode",
+      "kind": "enum",
+      "file": "de/manikouchakian/kontorzins/batch/Kzle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.Kzle0100Batch.RunTotals",
+      "kind": "record",
+      "file": "de/manikouchakian/kontorzins/batch/Kzle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.Abend",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/Abend.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.DatasetException",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/DatasetException.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.Datasets",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.Datasets.Handle",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.Datasets.Indexed",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.Datasets.Sequential",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.DecimalLimit",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/DecimalLimit.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.DecimalLimit.PowSites",
+      "kind": "record",
+      "file": "de/manikouchakian/kontorzins/batch/platform/DecimalLimit.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.JobAdapter",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/JobAdapter.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.Kzle0100Report",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/Kzle0100Report.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.LegacySites",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/LegacySites.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.Records",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/Records.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.Records.Image",
+      "kind": "interface",
+      "file": "de/manikouchakian/kontorzins/batch/platform/Records.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.platform.RunReport",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/platform/RunReport.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.record.EventOutRecord",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/record/EventOutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.record.EventRecord",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/record/EventRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.record.EventRecord.RecType",
+      "kind": "enum",
+      "file": "de/manikouchakian/kontorzins/batch/record/EventRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.record.Kzle0100DateRecord",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/record/Kzle0100DateRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.record.OutRecord",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.record.OutRecord.OutFunc",
+      "kind": "enum",
+      "file": "de/manikouchakian/kontorzins/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.record.OutRecord.OutStatus",
+      "kind": "enum",
+      "file": "de/manikouchakian/kontorzins/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.record.RunControlRecord",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/record/RunControlRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.LegacyStep",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/LegacyStep.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.ModernStep",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/ModernStep.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.Shadow",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/Shadow.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.Shadow.Difference",
+      "kind": "record",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/Shadow.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.StepPort",
+      "kind": "interface",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/StepPort.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.Steps",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.Steps.Field",
+      "kind": "record",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.Steps.Step",
+      "kind": "record",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "de.manikouchakian.kontorzins.batch.strangler.Strangler",
+      "kind": "class",
+      "file": "de/manikouchakian/kontorzins/batch/strangler/Strangler.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    }
+  ],
+  "topByDistance": [
+    {
+      "original": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "modern": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "distance": 11.5,
+      "distancePerMember": 0.77,
+      "top": "kind 5.0, idioms 4.0, missing fields 2.0"
+    },
+    {
+      "original": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "modern": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "distance": 8.8,
+      "distancePerMember": 0.51,
+      "top": "names 4.8, idioms 3.0, modifiers 1.0"
+    },
+    {
+      "original": "de.manikouchakian.kontorzins.model.Installment",
+      "modern": "de.manikouchakian.kontorzins.model.Installment",
+      "distance": 7.5,
+      "distancePerMember": 0.47,
+      "top": "kind 5.0, idioms 2.5"
+    },
+    {
+      "original": "de.manikouchakian.kontorzins.model.Rounding",
+      "modern": "de.manikouchakian.kontorzins.model.Rounding",
+      "distance": 6.0,
+      "distancePerMember": 0.75,
+      "top": "missing fields 4.0, idioms 1.0, modifiers 1.0"
+    },
+    {
+      "original": "de.manikouchakian.kontorzins.Annuity",
+      "modern": "de.manikouchakian.kontorzins.Annuity",
+      "distance": 4.8,
+      "distancePerMember": 0.95,
+      "top": "idioms 3.0, modifiers 1.0, field flags 0.5"
+    }
+  ],
+  "gaps": [
+    {
+      "pattern": "FIELD.MISSING_CONSTANT",
+      "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "member": "MAX_MONTHS",
+      "original": "static final int MAX_MONTHS",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_CONSTANT",
+      "type": "de.manikouchakian.kontorzins.model.Rounding",
+      "member": "MONEY_SCALE",
+      "original": "static final int MONEY_SCALE",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_CONSTANT",
+      "type": "de.manikouchakian.kontorzins.model.Rounding",
+      "member": "RATE_SCALE",
+      "original": "static final int RATE_SCALE",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "IDIOM.EXCEPTION_MESSAGE_LOST",
+      "type": "de.manikouchakian.kontorzins.Annuity",
+      "member": "",
+      "original": "with message 6",
+      "modern": "with message 0, bare 6",
+      "detail": ""
+    },
+    {
+      "pattern": "IDIOM.EXCEPTION_MESSAGE_LOST",
+      "type": "de.manikouchakian.kontorzins.model.Installment",
+      "member": "",
+      "original": "with message 4",
+      "modern": "with message 0, bare 4",
+      "detail": ""
+    },
+    {
+      "pattern": "IDIOM.EXCEPTION_MESSAGE_LOST",
+      "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "member": "",
+      "original": "with message 7",
+      "modern": "with message 0, bare 7",
+      "detail": ""
+    },
+    {
+      "pattern": "IDIOM.EXCEPTION_MESSAGE_LOST",
+      "type": "de.manikouchakian.kontorzins.model.Rounding",
+      "member": "",
+      "original": "with message 2",
+      "modern": "with message 0, bare 2",
+      "detail": ""
+    },
+    {
+      "pattern": "IDIOM.EXCEPTION_MESSAGE_LOST",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "",
+      "original": "with message 6",
+      "modern": "with message 0, bare 6",
+      "detail": ""
+    },
+    {
+      "pattern": "IDIOM.RECORD_LOST",
+      "type": "de.manikouchakian.kontorzins.model.Installment",
+      "member": "",
+      "original": "1",
+      "modern": "0",
+      "detail": "-1"
+    },
+    {
+      "pattern": "IDIOM.RECORD_LOST",
+      "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "member": "",
+      "original": "1",
+      "modern": "0",
+      "detail": "-1"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "de.manikouchakian.kontorzins.Annuity",
+      "member": "MC",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "member": "MONTHS_PER_YEAR",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "terms()",
+      "original": "LoanTerms terms()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "de.manikouchakian.kontorzins.Annuity",
+      "member": "<init>()",
+      "original": "<init>()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "de.manikouchakian.kontorzins.model.Rounding",
+      "member": "<init>()",
+      "original": "<init>()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_OBJECT",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "toString()",
+      "original": "String toString()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_RECORD",
+      "type": "de.manikouchakian.kontorzins.model.Installment",
+      "member": "equals(Object)",
+      "original": "boolean equals(Object)",
+      "modern": "",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_RECORD",
+      "type": "de.manikouchakian.kontorzins.model.Installment",
+      "member": "hashCode()",
+      "original": "int hashCode()",
+      "modern": "",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_RECORD",
+      "type": "de.manikouchakian.kontorzins.model.Installment",
+      "member": "toString()",
+      "original": "String toString()",
+      "modern": "",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_RECORD",
+      "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "member": "equals(Object)",
+      "original": "boolean equals(Object)",
+      "modern": "",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_RECORD",
+      "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "member": "hashCode()",
+      "original": "int hashCode()",
+      "modern": "",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_RECORD",
+      "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "member": "toString()",
+      "original": "String toString()",
+      "modern": "",
+      "detail": "record public"
+    },
+    {
+      "pattern": "NAME.ACCESSOR_STYLE",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "installments()",
+      "original": "installments",
+      "modern": "getInstallments",
+      "detail": "method"
+    },
+    {
+      "pattern": "NAME.ACCESSOR_STYLE",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "totalInterest()",
+      "original": "totalInterest",
+      "modern": "getTotalInterest",
+      "detail": "method"
+    },
+    {
+      "pattern": "NAME.ACCESSOR_STYLE",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "totalPaid()",
+      "original": "totalPaid",
+      "modern": "getTotalPaid",
+      "detail": "method"
+    },
+    {
+      "pattern": "NAME.ACCESSOR_STYLE",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "totalPrincipal()",
+      "original": "totalPrincipal",
+      "modern": "getTotalPrincipal",
+      "detail": "method"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "de.manikouchakian.kontorzins.Annuity",
+      "member": "schedule(LoanTerms)",
+      "original": "actualPayment",
+      "modern": "actualPayme",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "validate()",
+      "original": "expectedDebt",
+      "modern": "expectedDeb",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "validate()",
+      "original": "expectedMonth",
+      "modern": "expectedMon",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.UNIQUE_CORRECT",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "validate()",
+      "original": "totalPrincipal",
+      "modern": "totalPrinci",
+      "detail": "local, completion unique-correct"
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "de.manikouchakian.kontorzins.Annuity",
+      "member": "",
+      "original": "final",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "de.manikouchakian.kontorzins.model.Rounding",
+      "member": "",
+      "original": "final",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "de.manikouchakian.kontorzins.schedule.Schedule",
+      "member": "",
+      "original": "final",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_RECORD_TO_CLASS",
+      "type": "de.manikouchakian.kontorzins.model.Installment",
+      "member": "",
+      "original": "record",
+      "modern": "class",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_RECORD_TO_CLASS",
+      "type": "de.manikouchakian.kontorzins.model.LoanTerms",
+      "member": "",
+      "original": "record",
+      "modern": "class",
+      "detail": ""
+    }
+  ],
+  "parseErrors": [],
+  "notes": []
+}

@@ -35,5 +35,6 @@
   "cobolPrefixes": ["ws", "dw", "ls", "lk", "fd", "wk", "sw", "ds", "wa", "lw", "wc"],
   "moneyWords": ["amount", "amt", "balance", "bal", "rate", "interest", "int", "principal", "fee", "fees",
     "price", "total", "payment", "pmt", "charge", "cost", "tax", "emi", "premium", "credit", "debit", "money", "cash"],
+  "compareInfrastructureGlobs": ["**/batch/**"],
   "excludeDirs": ["build", ".gradle", "bin", "obj", "out", "target", "node_modules", ".git", ".idea", ".vs"]
 }

@@ -1,0 +1,4130 @@
+{
+  "tool": "jobol-audit compare",
+  "version": "1.0.0",
+  "estate": "loanamorti",
+  "originalRoots": [
+    "C:/Users/Tomrodgers/JavaToCOBOLTest/claude-in-app/workspace/packages/artyompanfutov-loan-amortization-calculator-74c5d4f/source/src/main/java"
+  ],
+  "modernRoot": "C:/Users/Tomrodgers/Source/CobolBdm/work/loop4/regress/loanamorti-m5/src/main/java",
+  "cobolRoot": "C:/Users/Tomrodgers/Source/CobolBdm/projects/loanamorti-74c5d4f-065118/source",
+  "scope": "reached",
+  "summary": {
+    "originalTypes": 18,
+    "outOfScope": 2,
+    "matched": 17,
+    "matchedByFqn": 17,
+    "matchedMoved": 0,
+    "originalOnly": 1,
+    "modernOnlyInfrastructure": 37,
+    "modernOnlyOther": 0,
+    "modernOnlyLombok": 0,
+    "api": {
+      "total": 94,
+      "kept": 70,
+      "pct": 74.5
+    },
+    "apiReached": {
+      "total": 77,
+      "kept": 70,
+      "pct": 90.9
+    },
+    "names": {
+      "total": 239,
+      "kept": 217,
+      "pct": 90.8
+    },
+    "signatures": {
+      "total": 99,
+      "kept": 77,
+      "pct": 77.8
+    },
+    "signaturesReached": {
+      "total": 80,
+      "kept": 77,
+      "pct": 96.3
+    },
+    "nameClasses": {
+      "constant": {
+        "exact": 8,
+        "truncated": 4
+      },
+      "field": {
+        "exact": 41,
+        "truncated": 1
+      },
+      "local": {
+        "exact": 27,
+        "truncated": 4,
+        "truncated_numbered": 2
+      },
+      "method": {
+        "accessor_style": 1,
+        "exact": 79
+      },
+      "param": {
+        "exact": 62,
+        "renamed": 1,
+        "truncated": 9
+      }
+    },
+    "truncatedLengths": {
+      "10": 4,
+      "11": 8,
+      "12": 1,
+      "21": 2,
+      "23": 2,
+      "24": 1
+    },
+    "truncationCompletion": {
+      "ambiguous-wrong": 1,
+      "none": 15,
+      "unique-correct": 3,
+      "unique-wrong": 1
+    },
+    "idioms": {
+      "bigdecimal": {
+        "original": 99,
+        "modern": 91,
+        "originalAll": 113
+      },
+      "collection": {
+        "original": 3,
+        "modern": 3,
+        "originalAll": 3
+      },
+      "enum": {
+        "original": 5,
+        "modern": 5,
+        "originalAll": 5
+      },
+      "exceptionBare": {
+        "original": 0,
+        "modern": 1,
+        "originalAll": 0
+      },
+      "exceptionWithArgs": {
+        "original": 6,
+        "modern": 6,
+        "originalAll": 8
+      },
+      "lambda": {
+        "original": 3,
+        "modern": 1,
+        "originalAll": 3
+      },
+      "list": {
+        "original": 7,
+        "modern": 6,
+        "originalAll": 8
+      },
+      "loop": {
+        "original": 4,
+        "modern": 6,
+        "originalAll": 4
+      },
+      "map": {
+        "original": 28,
+        "modern": 32,
+        "originalAll": 33
+      },
+      "methodRef": {
+        "original": 2,
+        "modern": 0,
+        "originalAll": 2
+      },
+      "nullCheck": {
+        "original": 19,
+        "modern": 20,
+        "originalAll": 21
+      },
+      "optional": {
+        "original": 0,
+        "modern": 2,
+        "originalAll": 0
+      },
+      "record": {
+        "original": 0,
+        "modern": 4,
+        "originalAll": 0
+      },
+      "set": {
+        "original": 1,
+        "modern": 2,
+        "originalAll": 1
+      },
+      "stream": {
+        "original": 3,
+        "modern": 0,
+        "originalAll": 3
+      },
+      "time": {
+        "original": 16,
+        "modern": 14,
+        "originalAll": 18
+      }
+    },
+    "typeUses": {
+      "ArrayList": {
+        "original": 1,
+        "modern": 1,
+        "originalAll": 1
+      },
+      "BigDecimal": {
+        "original": 92,
+        "modern": 84,
+        "originalAll": 106
+      },
+      "Collections": {
+        "original": 3,
+        "modern": 3,
+        "originalAll": 3
+      },
+      "Collectors": {
+        "original": 1,
+        "modern": 0,
+        "originalAll": 1
+      },
+      "HashMap": {
+        "original": 2,
+        "modern": 3,
+        "originalAll": 4
+      },
+      "List": {
+        "original": 6,
+        "modern": 5,
+        "originalAll": 7
+      },
+      "LocalDate": {
+        "original": 16,
+        "modern": 14,
+        "originalAll": 18
+      },
+      "Map": {
+        "original": 26,
+        "modern": 29,
+        "originalAll": 29
+      },
+      "Optional": {
+        "original": 0,
+        "modern": 2,
+        "originalAll": 0
+      },
+      "RoundingMode": {
+        "original": 7,
+        "modern": 7,
+        "originalAll": 7
+      },
+      "Set": {
+        "original": 1,
+        "modern": 2,
+        "originalAll": 1
+      }
+    },
+    "originalStructure": {
+      "types": 18,
+      "loc": 745,
+      "methods": 99,
+      "avgMethodLines": 6.7,
+      "maxMethodLines": 100,
+      "branches": 63,
+      "constructors": 15,
+      "factories": 0,
+      "builders": 4,
+      "equalsHashCode": 4,
+      "toStrings": 7
+    },
+    "modernStructure": {
+      "types": 17,
+      "loc": 518,
+      "methods": 82,
+      "avgMethodLines": 5.2,
+      "maxMethodLines": 52,
+      "branches": 67,
+      "constructors": 15,
+      "factories": 0,
+      "builders": 3,
+      "equalsHashCode": 4,
+      "toStrings": 4
+    },
+    "gapCounts": {
+      "BUILDER.UNREACHED": 1,
+      "FIELD.MISSING_SERIAL_VERSION": 5,
+      "IDIOM.LAMBDA_LOST": 1,
+      "IDIOM.METHODREF_LOST": 1,
+      "IDIOM.STREAM_LOST": 1,
+      "IDIOM.STREAM_TO_LOOP": 1,
+      "MEMBER.VISIBILITY_WIDENED_METHOD": 4,
+      "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD": 4,
+      "METHOD.EXTRA_API": 1,
+      "METHOD.EXTRA_CTOR": 6,
+      "METHOD.EXTRA_RECORD": 19,
+      "METHOD.UNREACHED_API": 4,
+      "METHOD.UNREACHED_CTOR": 5,
+      "METHOD.UNREACHED_OBJECT": 2,
+      "NAME.ACCESSOR_STYLE": 1,
+      "NAME.RENAMED": 1,
+      "NAME.TRUNCATED.NONE": 15,
+      "NAME.TRUNCATED.UNIQUE_CORRECT": 3,
+      "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_WRONG": 1,
+      "NAME.TRUNCATED_NUMBERED.UNIQUE_WRONG": 1,
+      "SUPERTYPE.INTERFACE_LOST": 3,
+      "SUPERTYPE.JDK_INTERFACE_LOST": 5,
+      "TYPE.FINAL_LOST": 5,
+      "TYPE.KIND_CLASS_TO_RECORD": 4,
+      "TYPE.UNREACHED_CLASS": 1,
+      "TYPE.VISIBILITY_WIDENED": 2,
+      "TYPEREF.INTERFACE_TO_IMPL": 3
+    }
+  },
+  "matched": [
+    {
+      "original": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+      "modern": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/api/impl/LoanAmortizationCalculatorFactory.java",
+      "modernFile": "paqua/loan/amortization/api/impl/LoanAmortizationCalculatorFactory.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 2,
+        "modern": 1,
+        "matched": 1,
+        "missing": [
+          "<init>()"
+        ],
+        "extra": [],
+        "changed": [
+          {
+            "original": "LoanAmortizationCalculator create()",
+            "modern": "LoanAmortizationCalculatorImpl create()",
+            "changes": [
+              "return LoanAmortizationCalculator -> LoanAmortizationCalculatorImpl"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 1,
+        "kept": 0,
+        "pct": 0.0
+      },
+      "signatures": {
+        "total": 2,
+        "kept": 0,
+        "pct": 0.0
+      },
+      "names": {
+        "method:exact": 1
+      },
+      "renames": [],
+      "idioms": {
+        "exceptionWithArgs": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 8,
+        "methods": 2,
+        "avgMethodLines": 3.0,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 5,
+        "methods": 1,
+        "avgMethodLines": 3.0,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "private <init>()"
+      ],
+      "constructorsModern": [],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 3.0,
+      "distancePerMember": 1.5
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "modern": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/api/impl/LoanAmortizationCalculatorImpl.java",
+      "modernFile": "paqua/loan/amortization/api/impl/LoanAmortizationCalculatorImpl.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "package",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": ""
+      },
+      "supertypesOriginal": [
+        "LoanAmortizationCalculator"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "LoanAmortizationCalculator"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 2,
+        "modern": 2,
+        "matched": 2,
+        "missing": [],
+        "extra": [],
+        "changed": [
+          {
+            "original": "static final LoanAmortizationCalculator ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+            "modern": "static final AnnualPaymentLoanCalculator ANNUAL_PAYMENT_LOAN_A",
+            "changes": [
+              "name ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR -> ANNUAL_PAYMENT_LOAN_A",
+              "type LoanAmortizationCalculator -> AnnualPaymentLoanCalculator",
+              "visibility private -> public"
+            ]
+          },
+          {
+            "original": "static final Logger LOGGER",
+            "modern": "static final Logger LOGGER",
+            "changes": [
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "methods": {
+        "original": 4,
+        "modern": 5,
+        "matched": 4,
+        "missing": [],
+        "extra": [
+          "<init>()"
+        ],
+        "changed": [
+          {
+            "original": "Map<Integer,EarlyPayment> extractOnlySingleEarlyPayments(Loan)",
+            "modern": "Map<Integer,EarlyPayment> extractOnlySingleEarlyPayments(Loan)",
+            "changes": [
+              "visibility private -> public"
+            ]
+          },
+          {
+            "original": "void validate(Loan)",
+            "modern": "void validate(Loan)",
+            "changes": [
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 0,
+        "kept": 0,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 4,
+        "kept": 4,
+        "pct": 100.0
+      },
+      "names": {
+        "field:exact": 1,
+        "field:truncated": 1,
+        "local:exact": 2,
+        "local:truncated": 1,
+        "method:exact": 4,
+        "param:exact": 4
+      },
+      "renames": [
+        {
+          "element": "field",
+          "member": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+          "original": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+          "modern": "ANNUAL_PAYMENT_LOAN_A",
+          "kind": "truncated"
+        },
+        {
+          "element": "local",
+          "member": "getLoanWithImplementedEarlyPaymentStrategy(Loan)",
+          "original": "allEarlyPayments",
+          "modern": "allEarlyPa",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 3,
+          "modern": 3,
+          "originalAll": 3
+        },
+        "exceptionBare": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        },
+        "exceptionWithArgs": {
+          "original": 6,
+          "modern": 6,
+          "originalAll": 6
+        },
+        "lambda": {
+          "original": 3,
+          "modern": 1,
+          "originalAll": 3
+        },
+        "loop": {
+          "original": 1,
+          "modern": 3,
+          "originalAll": 1
+        },
+        "map": {
+          "original": 7,
+          "modern": 14,
+          "originalAll": 7
+        },
+        "methodRef": {
+          "original": 2,
+          "modern": 0,
+          "originalAll": 2
+        },
+        "nullCheck": {
+          "original": 9,
+          "modern": 10,
+          "originalAll": 9
+        },
+        "optional": {
+          "original": 0,
+          "modern": 2,
+          "originalAll": 0
+        },
+        "set": {
+          "original": 1,
+          "modern": 2,
+          "originalAll": 1
+        },
+        "stream": {
+          "original": 3,
+          "modern": 0,
+          "originalAll": 3
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 3,
+          "modern": 3,
+          "originalAll": 3
+        },
+        "Collectors": {
+          "original": 1,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "HashMap": {
+          "original": 1,
+          "modern": 2,
+          "originalAll": 1
+        },
+        "Map": {
+          "original": 6,
+          "modern": 12,
+          "originalAll": 6
+        },
+        "Optional": {
+          "original": 0,
+          "modern": 2,
+          "originalAll": 0
+        },
+        "Set": {
+          "original": 1,
+          "modern": 2,
+          "originalAll": 1
+        }
+      },
+      "originalStructure": {
+        "loc": 76,
+        "methods": 4,
+        "avgMethodLines": 21.3,
+        "maxMethodLines": 43,
+        "branches": 15
+      },
+      "modernStructure": {
+        "loc": 72,
+        "methods": 5,
+        "avgMethodLines": 12.8,
+        "maxMethodLines": 25,
+        "branches": 21
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [
+        "public <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 14.8,
+      "distancePerMember": 2.46
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "modern": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/api/impl/annual/AnnualPaymentLoanCalculator.java",
+      "modernFile": "paqua/loan/amortization/api/impl/annual/AnnualPaymentLoanCalculator.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "package",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": ""
+      },
+      "supertypesOriginal": [
+        "LoanAmortizationCalculator"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "LoanAmortizationCalculator"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 1,
+        "modern": 1,
+        "matched": 1,
+        "missing": [],
+        "extra": [],
+        "changed": [
+          {
+            "original": "static final Logger LOGGER",
+            "modern": "static final Logger LOGGER",
+            "changes": [
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "methods": {
+        "original": 8,
+        "modern": 9,
+        "matched": 8,
+        "missing": [],
+        "extra": [
+          "<init>()"
+        ],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 0,
+        "kept": 0,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 8,
+        "kept": 8,
+        "pct": 100.0
+      },
+      "names": {
+        "field:exact": 1,
+        "local:exact": 19,
+        "local:truncated": 3,
+        "local:truncated_numbered": 2,
+        "method:exact": 8,
+        "param:exact": 14,
+        "param:truncated": 6
+      },
+      "renames": [
+        {
+          "element": "local",
+          "member": "calculate(Loan)",
+          "original": "additionalPaymentsWithRemainingLoanBalance",
+          "modern": "additionalP2",
+          "kind": "truncated_numbered"
+        },
+        {
+          "element": "local",
+          "member": "calculate(Loan)",
+          "original": "amortizationBuilder",
+          "modern": "amortization",
+          "kind": "truncated"
+        },
+        {
+          "element": "local",
+          "member": "calculate(Loan)",
+          "original": "lastPaymentNumber",
+          "modern": "lastPayment2",
+          "kind": "truncated_numbered"
+        },
+        {
+          "element": "local",
+          "member": "calculate(Loan)",
+          "original": "overPaidInterestAmount",
+          "modern": "overPaidIn",
+          "kind": "truncated"
+        },
+        {
+          "element": "local",
+          "member": "calculate(Loan)",
+          "original": "principalAmount",
+          "modern": "principalAm",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "calculateInterestAmount(Loan,BigDecimal,BigDecimal,LocalDate)",
+          "original": "currentLoanBalance",
+          "modern": "currentLoan",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "getInterestAmountByBalanceAndMonthlyInterestRate(BigDecimal,BigDecimal)",
+          "original": "currentLoanBalance",
+          "modern": "currentLoan",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "getInterestAmountByBalanceRateAndDays(BigDecimal,BigDecimal,int,int)",
+          "original": "annualInterestRate",
+          "modern": "annualInter",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "getInterestAmountByBalanceRateAndDays(BigDecimal,BigDecimal,int,int)",
+          "original": "currentLoanBalance",
+          "modern": "currentLoan",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "getInterestAmountByBalanceRateAndDays(BigDecimal,BigDecimal,int,int)",
+          "original": "daysInMonth",
+          "modern": "daysInMont",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "getTotalAmountOfEarlyPaymentsWithLoanBalanceUntilPayment(Loan,BigDecimal,int)",
+          "original": "untilThisPayment",
+          "modern": "untilThisP",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 48,
+          "modern": 50,
+          "originalAll": 48
+        },
+        "collection": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "list": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "loop": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "map": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "nullCheck": {
+          "original": 6,
+          "modern": 6,
+          "originalAll": 6
+        },
+        "time": {
+          "original": 6,
+          "modern": 6,
+          "originalAll": 6
+        }
+      },
+      "typeUses": {
+        "ArrayList": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "BigDecimal": {
+          "original": 41,
+          "modern": 43,
+          "originalAll": 41
+        },
+        "Collections": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "List": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "LocalDate": {
+          "original": 6,
+          "modern": 6,
+          "originalAll": 6
+        },
+        "Map": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 2
+        },
+        "RoundingMode": {
+          "original": 7,
+          "modern": 7,
+          "originalAll": 7
+        }
+      },
+      "originalStructure": {
+        "loc": 137,
+        "methods": 8,
+        "avgMethodLines": 20.6,
+        "maxMethodLines": 100,
+        "branches": 17
+      },
+      "modernStructure": {
+        "loc": 106,
+        "methods": 9,
+        "avgMethodLines": 11.1,
+        "maxMethodLines": 52,
+        "branches": 17
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [
+        "public <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 9.3,
+      "distancePerMember": 1.03
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+      "modern": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/api/impl/annual/AnnualPaymentLoanCalculatorFactory.java",
+      "modernFile": "paqua/loan/amortization/api/impl/annual/AnnualPaymentLoanCalculatorFactory.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": ""
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 2,
+        "modern": 1,
+        "matched": 1,
+        "missing": [
+          "<init>()"
+        ],
+        "extra": [],
+        "changed": [
+          {
+            "original": "LoanAmortizationCalculator create()",
+            "modern": "AnnualPaymentLoanCalculator create()",
+            "changes": [
+              "return LoanAmortizationCalculator -> AnnualPaymentLoanCalculator"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 1,
+        "kept": 0,
+        "pct": 0.0
+      },
+      "signatures": {
+        "total": 2,
+        "kept": 0,
+        "pct": 0.0
+      },
+      "names": {
+        "method:exact": 1
+      },
+      "renames": [],
+      "idioms": {
+        "exceptionWithArgs": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 8,
+        "methods": 2,
+        "avgMethodLines": 3.0,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 5,
+        "methods": 1,
+        "avgMethodLines": 3.0,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "private <init>()"
+      ],
+      "constructorsModern": [],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 3.0,
+      "distancePerMember": 1.5
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.message.Messages",
+      "modern": "paqua.loan.amortization.api.impl.message.Messages",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/api/impl/message/Messages.java",
+      "modernFile": "paqua/loan/amortization/api/impl/message/Messages.java",
+      "kind": {
+        "original": "enum",
+        "modern": "enum"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 1,
+        "modern": 1,
+        "matched": 1,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 2,
+        "modern": 2,
+        "matched": 2,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 5,
+        "modern": 5,
+        "matched": 5,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 6,
+        "kept": 3,
+        "pct": 50.0
+      },
+      "signatures": {
+        "total": 2,
+        "kept": 2,
+        "pct": 100.0
+      },
+      "names": {
+        "constant:exact": 2,
+        "constant:truncated": 3,
+        "field:exact": 1,
+        "method:exact": 2,
+        "param:exact": 1
+      },
+      "renames": [
+        {
+          "element": "constant",
+          "member": "EARLY_PAYMENT_AMOUNT_IS_NEGATIVE",
+          "original": "EARLY_PAYMENT_AMOUNT_IS_NEGATIVE",
+          "modern": "EARLY_PAYMENT_AMOUNT_IS",
+          "kind": "truncated"
+        },
+        {
+          "element": "constant",
+          "member": "EARLY_PAYMENT_NUMBER_IS_NEGATIVE",
+          "original": "EARLY_PAYMENT_NUMBER_IS_NEGATIVE",
+          "modern": "EARLY_PAYMENT_NUMBER_IS",
+          "kind": "truncated"
+        },
+        {
+          "element": "constant",
+          "member": "EARLY_PAYMENT_STRATEGY_IS_NULL",
+          "original": "EARLY_PAYMENT_STRATEGY_IS_NULL",
+          "modern": "EARLY_PAYMENT_STRATEGY_I",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "enum": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 14,
+        "methods": 2,
+        "avgMethodLines": 3.0,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 14,
+        "methods": 2,
+        "avgMethodLines": 3.0,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "private <init>(String)"
+      ],
+      "constructorsModern": [
+        "private <init>(String)"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 3.0,
+      "distancePerMember": 0.38
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "modern": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/api/impl/repeating/EarlyPaymentRepeatingStrategy.java",
+      "modernFile": "paqua/loan/amortization/api/impl/repeating/EarlyPaymentRepeatingStrategy.java",
+      "kind": {
+        "original": "enum",
+        "modern": "enum"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [
+        "RepeatableEarlyPayment"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "RepeatableEarlyPayment"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 1,
+        "modern": 1,
+        "matched": 1,
+        "missing": [],
+        "extra": [],
+        "changed": [
+          {
+            "original": "static final Logger LOGGER",
+            "modern": "static final Logger LOGGER",
+            "changes": [
+              "visibility private -> public"
+            ]
+          }
+        ]
+      },
+      "methods": {
+        "original": 2,
+        "modern": 4,
+        "matched": 2,
+        "missing": [],
+        "extra": [
+          "<init>()",
+          "Map<Integer,EarlyPayment> getRepeated(Loan,int,EarlyPayment)"
+        ],
+        "changed": [
+          {
+            "original": "Map<Integer,EarlyPayment> repeat(EarlyPayment,int,int)",
+            "modern": "Map<Integer,EarlyPayment> repeat(EarlyPayment,int,int)",
+            "changes": [
+              "visibility package -> public"
+            ]
+          },
+          {
+            "original": "void log(EarlyPayment,EarlyPaymentRepeatingStrategy)",
+            "modern": "void log(EarlyPayment,EarlyPaymentRepeatingStrategy)",
+            "changes": [
+              "visibility package -> public"
+            ]
+          }
+        ]
+      },
+      "enumConstants": {
+        "original": 3,
+        "modern": 3,
+        "matched": 3,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 3,
+        "kept": 3,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 2,
+        "kept": 2,
+        "pct": 100.0
+      },
+      "names": {
+        "constant:exact": 3,
+        "field:exact": 1,
+        "local:exact": 2,
+        "method:exact": 2,
+        "param:exact": 5
+      },
+      "renames": [],
+      "idioms": {
+        "collection": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "enum": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "loop": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "map": {
+          "original": 6,
+          "modern": 7,
+          "originalAll": 6
+        }
+      },
+      "typeUses": {
+        "Collections": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "HashMap": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "Map": {
+          "original": 5,
+          "modern": 6,
+          "originalAll": 5
+        }
+      },
+      "originalStructure": {
+        "loc": 47,
+        "methods": 2,
+        "avgMethodLines": 8.0,
+        "maxMethodLines": 13,
+        "branches": 1
+      },
+      "modernStructure": {
+        "loc": 39,
+        "methods": 4,
+        "avgMethodLines": 3.5,
+        "maxMethodLines": 8,
+        "branches": 1
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [
+        "private <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 7.0,
+      "distancePerMember": 1.17
+    },
+    {
+      "original": "paqua.loan.amortization.dto.EarlyPayment",
+      "modern": "paqua.loan.amortization.dto.EarlyPayment",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/EarlyPayment.java",
+      "modernFile": "paqua/loan/amortization/dto/EarlyPayment.java",
+      "kind": {
+        "original": "class",
+        "modern": "record"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": "final"
+      },
+      "supertypesOriginal": [
+        "Serializable"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "Serializable"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 5,
+        "modern": 4,
+        "matched": 4,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 9,
+        "modern": 12,
+        "matched": 8,
+        "missing": [
+          "EarlyPaymentBuilder builder()"
+        ],
+        "extra": [
+          "BigDecimal amount() [record]",
+          "EarlyPaymentRepeatingStrategy repeatingStrategy() [record]",
+          "EarlyPaymentStrategy strategy() [record]",
+          "Map<EarlyPaymentAdditionalParameters,String> additionalParameters() [record]"
+        ],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 9,
+        "kept": 8,
+        "pct": 88.9
+      },
+      "signatures": {
+        "total": 9,
+        "kept": 8,
+        "pct": 88.9
+      },
+      "names": {
+        "field:exact": 4,
+        "local:exact": 1,
+        "method:exact": 8,
+        "param:exact": 4,
+        "param:renamed": 1
+      },
+      "renames": [
+        {
+          "element": "param",
+          "member": "<init>(BigDecimal,EarlyPaymentStrategy,EarlyPaymentRepeatingStrategy,Map)",
+          "original": "type",
+          "modern": "strategy",
+          "kind": "renamed"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "map": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "nullCheck": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "record": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "Map": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "originalStructure": {
+        "loc": 52,
+        "methods": 9,
+        "avgMethodLines": 5.0,
+        "maxMethodLines": 10,
+        "branches": 6
+      },
+      "modernStructure": {
+        "loc": 34,
+        "methods": 7,
+        "avgMethodLines": 4.6,
+        "maxMethodLines": 13,
+        "branches": 6
+      },
+      "constructorsOriginal": [
+        "public <init>(BigDecimal,EarlyPaymentStrategy,EarlyPaymentRepeatingStrategy,Map<EarlyPaymentAdditionalParameters,String>)"
+      ],
+      "constructorsModern": [
+        "public <init>(BigDecimal,EarlyPaymentStrategy,EarlyPaymentRepeatingStrategy,Map<EarlyPaymentAdditionalParameters,String>) [record]"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "explicit",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "hashCode": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "explicit"
+        }
+      },
+      "distance": 14.3,
+      "distancePerMember": 1.02
+    },
+    {
+      "original": "paqua.loan.amortization.dto.EarlyPaymentAdditionalParameters",
+      "modern": "paqua.loan.amortization.dto.EarlyPaymentAdditionalParameters",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/EarlyPaymentAdditionalParameters.java",
+      "modernFile": "paqua/loan/amortization/dto/EarlyPaymentAdditionalParameters.java",
+      "kind": {
+        "original": "enum",
+        "modern": "enum"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [
+        "Serializable"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "Serializable"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 0,
+        "modern": 1,
+        "matched": 0,
+        "missing": [],
+        "extra": [
+          "<init>()"
+        ],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 1,
+        "modern": 1,
+        "matched": 1,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 1,
+        "kept": 1,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 0,
+        "kept": 0,
+        "pct": 100.0
+      },
+      "names": {
+        "constant:exact": 1
+      },
+      "renames": [],
+      "idioms": {
+        "enum": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 3,
+        "methods": 0,
+        "avgMethodLines": 0.0,
+        "maxMethodLines": 0,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 5,
+        "methods": 1,
+        "avgMethodLines": 2.0,
+        "maxMethodLines": 2,
+        "branches": 0
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [
+        "private <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 3.5,
+      "distancePerMember": 3.5
+    },
+    {
+      "original": "paqua.loan.amortization.dto.EarlyPaymentStrategy",
+      "modern": "paqua.loan.amortization.dto.EarlyPaymentStrategy",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/EarlyPaymentStrategy.java",
+      "modernFile": "paqua/loan/amortization/dto/EarlyPaymentStrategy.java",
+      "kind": {
+        "original": "enum",
+        "modern": "enum"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 0,
+        "modern": 1,
+        "matched": 0,
+        "missing": [],
+        "extra": [
+          "<init>()"
+        ],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 2,
+        "modern": 2,
+        "matched": 2,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 2,
+        "kept": 2,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 0,
+        "kept": 0,
+        "pct": 100.0
+      },
+      "names": {
+        "constant:exact": 2
+      },
+      "renames": [],
+      "idioms": {
+        "enum": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 4,
+        "methods": 0,
+        "avgMethodLines": 0.0,
+        "maxMethodLines": 0,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 6,
+        "methods": 1,
+        "avgMethodLines": 2.0,
+        "maxMethodLines": 2,
+        "branches": 0
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [
+        "private <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 0.5,
+      "distancePerMember": 0.25
+    },
+    {
+      "original": "paqua.loan.amortization.dto.Loan",
+      "modern": "paqua.loan.amortization.dto.Loan",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/Loan.java",
+      "modernFile": "paqua/loan/amortization/dto/Loan.java",
+      "kind": {
+        "original": "class",
+        "modern": "record"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [
+        "Serializable"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "Serializable"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 6,
+        "modern": 5,
+        "matched": 5,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 10,
+        "modern": 15,
+        "matched": 10,
+        "missing": [],
+        "extra": [
+          "BigDecimal amount() [record]",
+          "BigDecimal rate() [record]",
+          "Integer term() [record]",
+          "LocalDate firstPaymentDate() [record]",
+          "Map<Integer,EarlyPayment> earlyPayments() [record]"
+        ],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 10,
+        "kept": 10,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 10,
+        "kept": 10,
+        "pct": 100.0
+      },
+      "names": {
+        "field:exact": 5,
+        "local:exact": 1,
+        "method:exact": 10,
+        "param:exact": 6
+      },
+      "renames": [],
+      "idioms": {
+        "bigdecimal": {
+          "original": 6,
+          "modern": 4,
+          "originalAll": 6
+        },
+        "map": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "nullCheck": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "record": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        },
+        "time": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 6,
+          "modern": 4,
+          "originalAll": 6
+        },
+        "LocalDate": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "Map": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "originalStructure": {
+        "loc": 59,
+        "methods": 10,
+        "avgMethodLines": 5.1,
+        "maxMethodLines": 11,
+        "branches": 7
+      },
+      "modernStructure": {
+        "loc": 40,
+        "methods": 9,
+        "avgMethodLines": 4.2,
+        "maxMethodLines": 13,
+        "branches": 7
+      },
+      "constructorsOriginal": [
+        "public <init>(BigDecimal,BigDecimal,Integer,Map<Integer,EarlyPayment>,LocalDate)"
+      ],
+      "constructorsModern": [
+        "public <init>(BigDecimal,BigDecimal,Integer,Map<Integer,EarlyPayment>,LocalDate) [record]"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "explicit",
+        "modern": "explicit"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "hashCode": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "explicit"
+        }
+      },
+      "distance": 15.0,
+      "distancePerMember": 0.94
+    },
+    {
+      "original": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "modern": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/Loan.java",
+      "modernFile": "paqua/loan/amortization/dto/Loan.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final static",
+        "modern": "static"
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 5,
+        "modern": 5,
+        "matched": 5,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 11,
+        "modern": 7,
+        "matched": 7,
+        "missing": [
+          "<init>(BigDecimal,BigDecimal,Integer,Map<Integer,EarlyPayment>,LocalDate)",
+          "LoanBuilder amount(double)",
+          "LoanBuilder earlyPayment(int,EarlyPayment)",
+          "LoanBuilder rate(double)"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 11,
+        "kept": 7,
+        "pct": 63.6
+      },
+      "signatures": {
+        "total": 11,
+        "kept": 7,
+        "pct": 63.6
+      },
+      "names": {
+        "field:exact": 5,
+        "method:exact": 7,
+        "param:exact": 5
+      },
+      "renames": [],
+      "idioms": {
+        "bigdecimal": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 8
+        },
+        "map": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 4
+        },
+        "nullCheck": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "time": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 8
+        },
+        "HashMap": {
+          "original": 0,
+          "modern": 0,
+          "originalAll": 1
+        },
+        "LocalDate": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "Map": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "originalStructure": {
+        "loc": 54,
+        "methods": 11,
+        "avgMethodLines": 4.4,
+        "maxMethodLines": 8,
+        "branches": 1
+      },
+      "modernStructure": {
+        "loc": 32,
+        "methods": 7,
+        "avgMethodLines": 3.6,
+        "maxMethodLines": 4,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "public <init>()",
+        "public <init>(BigDecimal,BigDecimal,Integer,Map<Integer,EarlyPayment>,LocalDate)"
+      ],
+      "constructorsModern": [
+        "public <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 1.0,
+      "distancePerMember": 0.06
+    },
+    {
+      "original": "paqua.loan.amortization.dto.LoanAmortization",
+      "modern": "paqua.loan.amortization.dto.LoanAmortization",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/LoanAmortization.java",
+      "modernFile": "paqua/loan/amortization/dto/LoanAmortization.java",
+      "kind": {
+        "original": "class",
+        "modern": "record"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [
+        "Serializable"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "Serializable"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 5,
+        "modern": 4,
+        "matched": 4,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 9,
+        "modern": 12,
+        "matched": 9,
+        "missing": [],
+        "extra": [
+          "BigDecimal monthlyPaymentAmount() [record]",
+          "BigDecimal overPaymentAmount() [record]",
+          "List<MonthlyPayment> monthlyPayments() [record]"
+        ],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 9,
+        "kept": 8,
+        "pct": 88.9
+      },
+      "signatures": {
+        "total": 9,
+        "kept": 8,
+        "pct": 88.9
+      },
+      "names": {
+        "field:exact": 4,
+        "local:exact": 1,
+        "method:accessor_style": 1,
+        "method:exact": 8,
+        "param:exact": 5
+      },
+      "renames": [
+        {
+          "element": "method",
+          "member": "getEarlyPayments()",
+          "original": "getEarlyPayments",
+          "modern": "earlyPayments",
+          "kind": "accessor_style"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 6,
+          "modern": 4,
+          "originalAll": 6
+        },
+        "list": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "map": {
+          "original": 3,
+          "modern": 1,
+          "originalAll": 3
+        },
+        "nullCheck": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "record": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 6,
+          "modern": 4,
+          "originalAll": 6
+        },
+        "List": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "Map": {
+          "original": 3,
+          "modern": 1,
+          "originalAll": 3
+        }
+      },
+      "originalStructure": {
+        "loc": 52,
+        "methods": 9,
+        "avgMethodLines": 5.0,
+        "maxMethodLines": 10,
+        "branches": 6
+      },
+      "modernStructure": {
+        "loc": 34,
+        "methods": 7,
+        "avgMethodLines": 4.6,
+        "maxMethodLines": 13,
+        "branches": 6
+      },
+      "constructorsOriginal": [
+        "public <init>(BigDecimal,BigDecimal,List<MonthlyPayment>,Map<Integer,EarlyPayment>)"
+      ],
+      "constructorsModern": [
+        "public <init>(BigDecimal,BigDecimal,List<MonthlyPayment>,Map<Integer,EarlyPayment>) [record]"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "explicit",
+        "modern": "explicit"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "hashCode": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "explicit"
+        }
+      },
+      "distance": 14.0,
+      "distancePerMember": 1.0
+    },
+    {
+      "original": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+      "modern": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/LoanAmortization.java",
+      "modernFile": "paqua/loan/amortization/dto/LoanAmortization.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final static",
+        "modern": "static"
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 4,
+        "modern": 4,
+        "matched": 4,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 8,
+        "modern": 6,
+        "matched": 6,
+        "missing": [
+          "<init>(BigDecimal,BigDecimal,List<MonthlyPayment>,Map<Integer,EarlyPayment>)",
+          "String toString()"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 8,
+        "kept": 6,
+        "pct": 75.0
+      },
+      "signatures": {
+        "total": 8,
+        "kept": 6,
+        "pct": 75.0
+      },
+      "names": {
+        "field:exact": 4,
+        "method:exact": 6,
+        "param:exact": 3,
+        "param:truncated": 1
+      },
+      "renames": [
+        {
+          "element": "param",
+          "member": "overPaymentAmount(BigDecimal)",
+          "original": "overPaymentAmount",
+          "modern": "overPayment",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 6
+        },
+        "list": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "map": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 4,
+          "modern": 4,
+          "originalAll": 6
+        },
+        "List": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        },
+        "Map": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "originalStructure": {
+        "loc": 42,
+        "methods": 8,
+        "avgMethodLines": 4.5,
+        "maxMethodLines": 9,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 27,
+        "methods": 6,
+        "avgMethodLines": 3.5,
+        "maxMethodLines": 4,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "public <init>()",
+        "public <init>(BigDecimal,BigDecimal,List<MonthlyPayment>,Map<Integer,EarlyPayment>)"
+      ],
+      "constructorsModern": [
+        "public <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "none"
+        }
+      },
+      "distance": 1.3,
+      "distancePerMember": 0.1
+    },
+    {
+      "original": "paqua.loan.amortization.dto.MonthlyPayment",
+      "modern": "paqua.loan.amortization.dto.MonthlyPayment",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/MonthlyPayment.java",
+      "modernFile": "paqua/loan/amortization/dto/MonthlyPayment.java",
+      "kind": {
+        "original": "class",
+        "modern": "record"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [
+        "Serializable"
+      ],
+      "supertypesModern": [],
+      "supertypesLost": [
+        "Serializable"
+      ],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 8,
+        "modern": 7,
+        "matched": 7,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 12,
+        "modern": 19,
+        "matched": 12,
+        "missing": [],
+        "extra": [
+          "BigDecimal additionalPaymentAmount() [record]",
+          "BigDecimal debtPaymentAmount() [record]",
+          "BigDecimal interestPaymentAmount() [record]",
+          "BigDecimal loanBalanceAmount() [record]",
+          "BigDecimal paymentAmount() [record]",
+          "Integer monthNumber() [record]",
+          "LocalDate paymentDate() [record]"
+        ],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 12,
+        "kept": 12,
+        "pct": 100.0
+      },
+      "signatures": {
+        "total": 12,
+        "kept": 12,
+        "pct": 100.0
+      },
+      "names": {
+        "field:exact": 7,
+        "local:exact": 1,
+        "method:exact": 12,
+        "param:exact": 8
+      },
+      "renames": [],
+      "idioms": {
+        "bigdecimal": {
+          "original": 15,
+          "modern": 10,
+          "originalAll": 15
+        },
+        "nullCheck": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        },
+        "record": {
+          "original": 0,
+          "modern": 1,
+          "originalAll": 0
+        },
+        "time": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 15,
+          "modern": 10,
+          "originalAll": 15
+        },
+        "LocalDate": {
+          "original": 3,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "originalStructure": {
+        "loc": 73,
+        "methods": 12,
+        "avgMethodLines": 5.3,
+        "maxMethodLines": 13,
+        "branches": 9
+      },
+      "modernStructure": {
+        "loc": 46,
+        "methods": 11,
+        "avgMethodLines": 4.0,
+        "maxMethodLines": 13,
+        "branches": 9
+      },
+      "constructorsOriginal": [
+        "public <init>(Integer,BigDecimal,BigDecimal,BigDecimal,BigDecimal,BigDecimal,LocalDate)"
+      ],
+      "constructorsModern": [
+        "public <init>(Integer,BigDecimal,BigDecimal,BigDecimal,BigDecimal,BigDecimal,LocalDate) [record]"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "explicit",
+        "modern": "explicit"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "hashCode": {
+          "original": "explicit",
+          "modern": "explicit"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "explicit"
+        }
+      },
+      "distance": 17.0,
+      "distancePerMember": 0.85
+    },
+    {
+      "original": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+      "modern": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/dto/MonthlyPayment.java",
+      "modernFile": "paqua/loan/amortization/dto/MonthlyPayment.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final static",
+        "modern": "static"
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 7,
+        "modern": 7,
+        "matched": 7,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 10,
+        "modern": 9,
+        "matched": 9,
+        "missing": [
+          "<init>(Integer,BigDecimal,BigDecimal,BigDecimal,BigDecimal,BigDecimal,LocalDate)"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 10,
+        "kept": 9,
+        "pct": 90.0
+      },
+      "signatures": {
+        "total": 10,
+        "kept": 9,
+        "pct": 90.0
+      },
+      "names": {
+        "field:exact": 7,
+        "method:exact": 9,
+        "param:exact": 5,
+        "param:truncated": 2
+      },
+      "renames": [
+        {
+          "element": "param",
+          "member": "debtPaymentAmount(BigDecimal)",
+          "original": "debtPaymentAmount",
+          "modern": "debtPayment",
+          "kind": "truncated"
+        },
+        {
+          "element": "param",
+          "member": "loanBalanceAmount(BigDecimal)",
+          "original": "loanBalanceAmount",
+          "modern": "loanBalance",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "bigdecimal": {
+          "original": 10,
+          "modern": 10,
+          "originalAll": 15
+        },
+        "time": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "typeUses": {
+        "BigDecimal": {
+          "original": 10,
+          "modern": 10,
+          "originalAll": 15
+        },
+        "LocalDate": {
+          "original": 2,
+          "modern": 2,
+          "originalAll": 3
+        }
+      },
+      "originalStructure": {
+        "loc": 51,
+        "methods": 10,
+        "avgMethodLines": 4.2,
+        "maxMethodLines": 9,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 42,
+        "methods": 9,
+        "avgMethodLines": 3.7,
+        "maxMethodLines": 4,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "public <init>()",
+        "public <init>(Integer,BigDecimal,BigDecimal,BigDecimal,BigDecimal,BigDecimal,LocalDate)"
+      ],
+      "constructorsModern": [
+        "public <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 1.5,
+      "distancePerMember": 0.09
+    },
+    {
+      "original": "paqua.loan.amortization.exception.ExceptionType",
+      "modern": "paqua.loan.amortization.exception.ExceptionType",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/exception/ExceptionType.java",
+      "modernFile": "paqua/loan/amortization/exception/ExceptionType.java",
+      "kind": {
+        "original": "enum",
+        "modern": "enum"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "final",
+        "modern": "final"
+      },
+      "supertypesOriginal": [],
+      "supertypesModern": [],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 0,
+        "modern": 1,
+        "matched": 0,
+        "missing": [],
+        "extra": [
+          "<init>()"
+        ],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 1,
+        "modern": 1,
+        "matched": 1,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 1,
+        "kept": 0,
+        "pct": 0.0
+      },
+      "signatures": {
+        "total": 0,
+        "kept": 0,
+        "pct": 100.0
+      },
+      "names": {
+        "constant:truncated": 1
+      },
+      "renames": [
+        {
+          "element": "constant",
+          "member": "INPUT_VERIFICATION_EXCEPTION",
+          "original": "INPUT_VERIFICATION_EXCEPTION",
+          "modern": "INPUT_VERIFICATION_EX",
+          "kind": "truncated"
+        }
+      ],
+      "idioms": {
+        "enum": {
+          "original": 1,
+          "modern": 1,
+          "originalAll": 1
+        }
+      },
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 3,
+        "methods": 0,
+        "avgMethodLines": 0.0,
+        "maxMethodLines": 0,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 5,
+        "methods": 1,
+        "avgMethodLines": 2.0,
+        "maxMethodLines": 2,
+        "branches": 0
+      },
+      "constructorsOriginal": [],
+      "constructorsModern": [
+        "private <init>()"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "none",
+          "modern": "none"
+        }
+      },
+      "distance": 1.5,
+      "distancePerMember": 1.5
+    },
+    {
+      "original": "paqua.loan.amortization.exception.LoanAmortizationCalculatorException",
+      "modern": "paqua.loan.amortization.exception.LoanAmortizationCalculatorException",
+      "alignment": "fqn",
+      "originalFile": "paqua/loan/amortization/exception/LoanAmortizationCalculatorException.java",
+      "modernFile": "paqua/loan/amortization/exception/LoanAmortizationCalculatorException.java",
+      "kind": {
+        "original": "class",
+        "modern": "class"
+      },
+      "visibility": {
+        "original": "public",
+        "modern": "public"
+      },
+      "modifiers": {
+        "original": "",
+        "modern": ""
+      },
+      "supertypesOriginal": [
+        "RuntimeException"
+      ],
+      "supertypesModern": [
+        "RuntimeException"
+      ],
+      "supertypesLost": [],
+      "supertypesAdded": [],
+      "lombok": [],
+      "fields": {
+        "original": 2,
+        "modern": 1,
+        "matched": 1,
+        "missing": [
+          "static final long serialVersionUID"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "methods": {
+        "original": 2,
+        "modern": 1,
+        "matched": 1,
+        "missing": [
+          "String toString()"
+        ],
+        "extra": [],
+        "changed": []
+      },
+      "enumConstants": {
+        "original": 0,
+        "modern": 0,
+        "matched": 0,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "api": {
+        "total": 2,
+        "kept": 1,
+        "pct": 50.0
+      },
+      "signatures": {
+        "total": 2,
+        "kept": 1,
+        "pct": 50.0
+      },
+      "names": {
+        "field:exact": 1,
+        "method:exact": 1,
+        "param:exact": 2
+      },
+      "renames": [],
+      "idioms": {},
+      "typeUses": {},
+      "originalStructure": {
+        "loc": 14,
+        "methods": 2,
+        "avgMethodLines": 5.0,
+        "maxMethodLines": 6,
+        "branches": 0
+      },
+      "modernStructure": {
+        "loc": 6,
+        "methods": 1,
+        "avgMethodLines": 3.0,
+        "maxMethodLines": 3,
+        "branches": 0
+      },
+      "constructorsOriginal": [
+        "public <init>(ExceptionType,String)"
+      ],
+      "constructorsModern": [
+        "public <init>(ExceptionType,String)"
+      ],
+      "factoriesOriginal": [],
+      "factoriesModern": [],
+      "builder": {
+        "original": "none",
+        "modern": "none"
+      },
+      "objectMethods": {
+        "equals": {
+          "original": "none",
+          "modern": "none"
+        },
+        "hashCode": {
+          "original": "none",
+          "modern": "none"
+        },
+        "toString": {
+          "original": "explicit",
+          "modern": "none"
+        }
+      },
+      "distance": 2.0,
+      "distancePerMember": 0.5
+    }
+  ],
+  "originalOnly": [
+    {
+      "fqn": "paqua.loan.amortization.dto.EarlyPayment.EarlyPaymentBuilder",
+      "kind": "class",
+      "file": "paqua/loan/amortization/dto/EarlyPayment.java",
+      "reachedByJ3s": true,
+      "apiMembers": 8,
+      "members": 12
+    }
+  ],
+  "outOfScope": [
+    "paqua.loan.amortization.api.LoanAmortizationCalculator",
+    "paqua.loan.amortization.api.impl.repeating.RepeatableEarlyPayment"
+  ],
+  "modernOnly": [
+    {
+      "fqn": "paqua.loan.amortization.batch.Fsem0100Job",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/Fsem0100Job.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.Lcle0100Batch",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/Lcle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.Lcle0100Batch.CounterOverflow",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/Lcle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.Lcle0100Batch.EventSequence",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/Lcle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.Lcle0100Batch.RejectCode",
+      "kind": "enum",
+      "file": "paqua/loan/amortization/batch/Lcle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.Lcle0100Batch.RunTotals",
+      "kind": "record",
+      "file": "paqua/loan/amortization/batch/Lcle0100Batch.java",
+      "category": "pipeline-infrastructure",
+      "reason": "glob:**/batch/**"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.Abend",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/Abend.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.DatasetException",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/DatasetException.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.Datasets",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.Datasets.Handle",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.Datasets.Indexed",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.Datasets.Sequential",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/Datasets.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.DecimalLimit",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/DecimalLimit.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.JobAdapter",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/JobAdapter.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.Lcle0100Report",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/Lcle0100Report.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.LegacySites",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/LegacySites.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.Records",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/Records.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.Records.Image",
+      "kind": "interface",
+      "file": "paqua/loan/amortization/batch/platform/Records.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.platform.RunReport",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/platform/RunReport.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.EventOutRecord",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/record/EventOutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.EventRecord",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/record/EventRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.EventRecord.EventType",
+      "kind": "enum",
+      "file": "paqua/loan/amortization/batch/record/EventRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.EventRecord.RecType",
+      "kind": "enum",
+      "file": "paqua/loan/amortization/batch/record/EventRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.Lcle0100DateRecord",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/record/Lcle0100DateRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.OutRecord",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.OutRecord.OutFunc",
+      "kind": "enum",
+      "file": "paqua/loan/amortization/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.OutRecord.OutStatus",
+      "kind": "enum",
+      "file": "paqua/loan/amortization/batch/record/OutRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.record.RunControlRecord",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/record/RunControlRecord.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.LegacyStep",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/strangler/LegacyStep.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.ModernStep",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/strangler/ModernStep.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.Shadow",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/strangler/Shadow.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.Shadow.Difference",
+      "kind": "record",
+      "file": "paqua/loan/amortization/batch/strangler/Shadow.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.StepPort",
+      "kind": "interface",
+      "file": "paqua/loan/amortization/batch/strangler/StepPort.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.Steps",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.Steps.Field",
+      "kind": "record",
+      "file": "paqua/loan/amortization/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.Steps.Step",
+      "kind": "record",
+      "file": "paqua/loan/amortization/batch/strangler/Steps.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    },
+    {
+      "fqn": "paqua.loan.amortization.batch.strangler.Strangler",
+      "kind": "class",
+      "file": "paqua/loan/amortization/batch/strangler/Strangler.java",
+      "category": "pipeline-infrastructure",
+      "reason": "lane:compat"
+    }
+  ],
+  "topByDistance": [
+    {
+      "original": "paqua.loan.amortization.dto.MonthlyPayment",
+      "modern": "paqua.loan.amortization.dto.MonthlyPayment",
+      "distance": 17.0,
+      "distancePerMember": 0.85,
+      "top": "extra methods 7.0, kind 5.0, supertypes 3.0"
+    },
+    {
+      "original": "paqua.loan.amortization.dto.Loan",
+      "modern": "paqua.loan.amortization.dto.Loan",
+      "distance": 15.0,
+      "distancePerMember": 0.94,
+      "top": "extra methods 5.0, kind 5.0, supertypes 3.0"
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "modern": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "distance": 14.8,
+      "distancePerMember": 2.46,
+      "top": "idioms 3.5, supertypes 3.0, member flags 2.0"
+    },
+    {
+      "original": "paqua.loan.amortization.dto.EarlyPayment",
+      "modern": "paqua.loan.amortization.dto.EarlyPayment",
+      "distance": 14.3,
+      "distancePerMember": 1.02,
+      "top": "kind 5.0, extra methods 4.0, supertypes 3.0"
+    },
+    {
+      "original": "paqua.loan.amortization.dto.LoanAmortization",
+      "modern": "paqua.loan.amortization.dto.LoanAmortization",
+      "distance": 14.0,
+      "distancePerMember": 1.0,
+      "top": "kind 5.0, extra methods 3.0, supertypes 3.0"
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "modern": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "distance": 9.3,
+      "distancePerMember": 1.03,
+      "top": "supertypes 3.0, names 2.8, visibility 2.0"
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "modern": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "distance": 7.0,
+      "distancePerMember": 1.17,
+      "top": "supertypes 3.0, member flags 2.0, extra methods 1.5"
+    },
+    {
+      "original": "paqua.loan.amortization.dto.EarlyPaymentAdditionalParameters",
+      "modern": "paqua.loan.amortization.dto.EarlyPaymentAdditionalParameters",
+      "distance": 3.5,
+      "distancePerMember": 3.5,
+      "top": "supertypes 3.0, extra methods 0.5"
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+      "modern": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+      "distance": 3.0,
+      "distancePerMember": 1.5,
+      "top": "signatures 2.0, modifiers 1.0"
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+      "modern": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+      "distance": 3.0,
+      "distancePerMember": 1.5,
+      "top": "signatures 2.0, modifiers 1.0"
+    },
+    {
+      "original": "paqua.loan.amortization.api.impl.message.Messages",
+      "modern": "paqua.loan.amortization.api.impl.message.Messages",
+      "distance": 3.0,
+      "distancePerMember": 0.38,
+      "top": "names 3.0"
+    },
+    {
+      "original": "paqua.loan.amortization.exception.LoanAmortizationCalculatorException",
+      "modern": "paqua.loan.amortization.exception.LoanAmortizationCalculatorException",
+      "distance": 2.0,
+      "distancePerMember": 0.5,
+      "top": "missing fields 2.0"
+    },
+    {
+      "original": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+      "modern": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+      "distance": 1.5,
+      "distancePerMember": 0.09,
+      "top": "modifiers 1.0, names 0.5"
+    },
+    {
+      "original": "paqua.loan.amortization.exception.ExceptionType",
+      "modern": "paqua.loan.amortization.exception.ExceptionType",
+      "distance": 1.5,
+      "distancePerMember": 1.5,
+      "top": "names 1.0, extra methods 0.5"
+    },
+    {
+      "original": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+      "modern": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+      "distance": 1.3,
+      "distancePerMember": 0.1,
+      "top": "modifiers 1.0, names 0.3"
+    },
+    {
+      "original": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "modern": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "distance": 1.0,
+      "distancePerMember": 0.06,
+      "top": "modifiers 1.0"
+    },
+    {
+      "original": "paqua.loan.amortization.dto.EarlyPaymentStrategy",
+      "modern": "paqua.loan.amortization.dto.EarlyPaymentStrategy",
+      "distance": 0.5,
+      "distancePerMember": 0.25,
+      "top": "extra methods 0.5"
+    }
+  ],
+  "gaps": [
+    {
+      "pattern": "BUILDER.UNREACHED",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "",
+      "original": "explicit",
+      "modern": "none",
+      "detail": ""
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "paqua.loan.amortization.dto.Loan",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "paqua.loan.amortization.dto.LoanAmortization",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "FIELD.MISSING_SERIAL_VERSION",
+      "type": "paqua.loan.amortization.exception.LoanAmortizationCalculatorException",
+      "member": "serialVersionUID",
+      "original": "static final long serialVersionUID",
+      "modern": "",
+      "detail": "source"
+    },
+    {
+      "pattern": "IDIOM.LAMBDA_LOST",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "",
+      "original": "3",
+      "modern": "1",
+      "detail": "-2"
+    },
+    {
+      "pattern": "IDIOM.METHODREF_LOST",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "",
+      "original": "2",
+      "modern": "0",
+      "detail": "-2"
+    },
+    {
+      "pattern": "IDIOM.STREAM_LOST",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "",
+      "original": "3",
+      "modern": "0",
+      "detail": "-3"
+    },
+    {
+      "pattern": "IDIOM.STREAM_TO_LOOP",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "",
+      "original": "streams+lambdas+method refs -7",
+      "modern": "loops +2",
+      "detail": ""
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_METHOD",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "extractOnlySingleEarlyPayments(Loan)",
+      "original": "private",
+      "modern": "public",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_METHOD",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "validate(Loan)",
+      "original": "private",
+      "modern": "public",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_METHOD",
+      "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "member": "log(EarlyPayment,EarlyPaymentRepeatingStrategy)",
+      "original": "package",
+      "modern": "public",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_METHOD",
+      "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "member": "repeat(EarlyPayment,int,int)",
+      "original": "package",
+      "modern": "public",
+      "detail": "method"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "LOGGER",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "LOGGER",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "MEMBER.VISIBILITY_WIDENED_STATIC_FIELD",
+      "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "member": "LOGGER",
+      "original": "private",
+      "modern": "public",
+      "detail": "field"
+    },
+    {
+      "pattern": "METHOD.EXTRA_API",
+      "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "member": "getRepeated(Loan,int,EarlyPayment)",
+      "original": "",
+      "modern": "Map<Integer,EarlyPayment> getRepeated(Loan,int,EarlyPayment)",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_CTOR",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "<init>()",
+      "original": "",
+      "modern": "<init>()",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_CTOR",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "<init>()",
+      "original": "",
+      "modern": "<init>()",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_CTOR",
+      "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "member": "<init>()",
+      "original": "",
+      "modern": "<init>()",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.EXTRA_CTOR",
+      "type": "paqua.loan.amortization.dto.EarlyPaymentAdditionalParameters",
+      "member": "<init>()",
+      "original": "",
+      "modern": "<init>()",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.EXTRA_CTOR",
+      "type": "paqua.loan.amortization.dto.EarlyPaymentStrategy",
+      "member": "<init>()",
+      "original": "",
+      "modern": "<init>()",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.EXTRA_CTOR",
+      "type": "paqua.loan.amortization.exception.ExceptionType",
+      "member": "<init>()",
+      "original": "",
+      "modern": "<init>()",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "additionalParameters()",
+      "original": "",
+      "modern": "Map<EarlyPaymentAdditionalParameters,String> additionalParameters()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "amount()",
+      "original": "",
+      "modern": "BigDecimal amount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "repeatingStrategy()",
+      "original": "",
+      "modern": "EarlyPaymentRepeatingStrategy repeatingStrategy()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "strategy()",
+      "original": "",
+      "modern": "EarlyPaymentStrategy strategy()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.Loan",
+      "member": "amount()",
+      "original": "",
+      "modern": "BigDecimal amount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.Loan",
+      "member": "earlyPayments()",
+      "original": "",
+      "modern": "Map<Integer,EarlyPayment> earlyPayments()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.Loan",
+      "member": "firstPaymentDate()",
+      "original": "",
+      "modern": "LocalDate firstPaymentDate()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.Loan",
+      "member": "rate()",
+      "original": "",
+      "modern": "BigDecimal rate()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.Loan",
+      "member": "term()",
+      "original": "",
+      "modern": "Integer term()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.LoanAmortization",
+      "member": "monthlyPaymentAmount()",
+      "original": "",
+      "modern": "BigDecimal monthlyPaymentAmount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.LoanAmortization",
+      "member": "monthlyPayments()",
+      "original": "",
+      "modern": "List<MonthlyPayment> monthlyPayments()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.LoanAmortization",
+      "member": "overPaymentAmount()",
+      "original": "",
+      "modern": "BigDecimal overPaymentAmount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "additionalPaymentAmount()",
+      "original": "",
+      "modern": "BigDecimal additionalPaymentAmount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "debtPaymentAmount()",
+      "original": "",
+      "modern": "BigDecimal debtPaymentAmount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "interestPaymentAmount()",
+      "original": "",
+      "modern": "BigDecimal interestPaymentAmount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "loanBalanceAmount()",
+      "original": "",
+      "modern": "BigDecimal loanBalanceAmount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "monthNumber()",
+      "original": "",
+      "modern": "Integer monthNumber()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "paymentAmount()",
+      "original": "",
+      "modern": "BigDecimal paymentAmount()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.EXTRA_RECORD",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "paymentDate()",
+      "original": "",
+      "modern": "LocalDate paymentDate()",
+      "detail": "record public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "builder()",
+      "original": "EarlyPaymentBuilder builder()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "member": "amount(double)",
+      "original": "LoanBuilder amount(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "member": "earlyPayment(int,EarlyPayment)",
+      "original": "LoanBuilder earlyPayment(int,EarlyPayment)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_API",
+      "type": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "member": "rate(double)",
+      "original": "LoanBuilder rate(double)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+      "member": "<init>()",
+      "original": "<init>()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+      "member": "<init>()",
+      "original": "<init>()",
+      "modern": "",
+      "detail": "source private"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "member": "<init>(BigDecimal,BigDecimal,Integer,Map,LocalDate)",
+      "original": "<init>(BigDecimal,BigDecimal,Integer,Map<Integer,EarlyPayment>,LocalDate)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+      "member": "<init>(BigDecimal,BigDecimal,List,Map)",
+      "original": "<init>(BigDecimal,BigDecimal,List<MonthlyPayment>,Map<Integer,EarlyPayment>)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_CTOR",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+      "member": "<init>(Integer,BigDecimal,BigDecimal,BigDecimal,BigDecimal,BigDecimal,LocalDate)",
+      "original": "<init>(Integer,BigDecimal,BigDecimal,BigDecimal,BigDecimal,BigDecimal,LocalDate)",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_OBJECT",
+      "type": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+      "member": "toString()",
+      "original": "String toString()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "METHOD.UNREACHED_OBJECT",
+      "type": "paqua.loan.amortization.exception.LoanAmortizationCalculatorException",
+      "member": "toString()",
+      "original": "String toString()",
+      "modern": "",
+      "detail": "source public"
+    },
+    {
+      "pattern": "NAME.ACCESSOR_STYLE",
+      "type": "paqua.loan.amortization.dto.LoanAmortization",
+      "member": "getEarlyPayments()",
+      "original": "getEarlyPayments",
+      "modern": "earlyPayments",
+      "detail": "method"
+    },
+    {
+      "pattern": "NAME.RENAMED",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "<init>(BigDecimal,EarlyPaymentStrategy,EarlyPaymentRepeatingStrategy,Map)",
+      "original": "type",
+      "modern": "strategy",
+      "detail": "param"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+      "original": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+      "modern": "ANNUAL_PAYMENT_LOAN_A",
+      "detail": "field, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "getLoanWithImplementedEarlyPaymentStrategy(Loan)",
+      "original": "allEarlyPayments",
+      "modern": "allEarlyPa",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "calculate(Loan)",
+      "original": "amortizationBuilder",
+      "modern": "amortization",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "calculate(Loan)",
+      "original": "overPaidInterestAmount",
+      "modern": "overPaidIn",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "calculate(Loan)",
+      "original": "principalAmount",
+      "modern": "principalAm",
+      "detail": "local, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "calculateInterestAmount(Loan,BigDecimal,BigDecimal,LocalDate)",
+      "original": "currentLoanBalance",
+      "modern": "currentLoan",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "getInterestAmountByBalanceAndMonthlyInterestRate(BigDecimal,BigDecimal)",
+      "original": "currentLoanBalance",
+      "modern": "currentLoan",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "getInterestAmountByBalanceRateAndDays(BigDecimal,BigDecimal,int,int)",
+      "original": "annualInterestRate",
+      "modern": "annualInter",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "getInterestAmountByBalanceRateAndDays(BigDecimal,BigDecimal,int,int)",
+      "original": "currentLoanBalance",
+      "modern": "currentLoan",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "getInterestAmountByBalanceRateAndDays(BigDecimal,BigDecimal,int,int)",
+      "original": "daysInMonth",
+      "modern": "daysInMont",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "getTotalAmountOfEarlyPaymentsWithLoanBalanceUntilPayment(Loan,BigDecimal,int)",
+      "original": "untilThisPayment",
+      "modern": "untilThisP",
+      "detail": "param, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.message.Messages",
+      "member": "EARLY_PAYMENT_AMOUNT_IS_NEGATIVE",
+      "original": "EARLY_PAYMENT_AMOUNT_IS_NEGATIVE",
+      "modern": "EARLY_PAYMENT_AMOUNT_IS",
+      "detail": "constant, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.message.Messages",
+      "member": "EARLY_PAYMENT_NUMBER_IS_NEGATIVE",
+      "original": "EARLY_PAYMENT_NUMBER_IS_NEGATIVE",
+      "modern": "EARLY_PAYMENT_NUMBER_IS",
+      "detail": "constant, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.api.impl.message.Messages",
+      "member": "EARLY_PAYMENT_STRATEGY_IS_NULL",
+      "original": "EARLY_PAYMENT_STRATEGY_IS_NULL",
+      "modern": "EARLY_PAYMENT_STRATEGY_I",
+      "detail": "constant, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.NONE",
+      "type": "paqua.loan.amortization.exception.ExceptionType",
+      "member": "INPUT_VERIFICATION_EXCEPTION",
+      "original": "INPUT_VERIFICATION_EXCEPTION",
+      "modern": "INPUT_VERIFICATION_EX",
+      "detail": "constant, completion none"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.UNIQUE_CORRECT",
+      "type": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+      "member": "overPaymentAmount(BigDecimal)",
+      "original": "overPaymentAmount",
+      "modern": "overPayment",
+      "detail": "param, completion unique-correct"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.UNIQUE_CORRECT",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+      "member": "debtPaymentAmount(BigDecimal)",
+      "original": "debtPaymentAmount",
+      "modern": "debtPayment",
+      "detail": "param, completion unique-correct"
+    },
+    {
+      "pattern": "NAME.TRUNCATED.UNIQUE_CORRECT",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+      "member": "loanBalanceAmount(BigDecimal)",
+      "original": "loanBalanceAmount",
+      "modern": "loanBalance",
+      "detail": "param, completion unique-correct"
+    },
+    {
+      "pattern": "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_WRONG",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "calculate(Loan)",
+      "original": "additionalPaymentsWithRemainingLoanBalance",
+      "modern": "additionalP2",
+      "detail": "local, completion ambiguous-wrong"
+    },
+    {
+      "pattern": "NAME.TRUNCATED_NUMBERED.UNIQUE_WRONG",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "calculate(Loan)",
+      "original": "lastPaymentNumber",
+      "modern": "lastPayment2",
+      "detail": "local, completion unique-wrong"
+    },
+    {
+      "pattern": "SUPERTYPE.INTERFACE_LOST",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "",
+      "original": "LoanAmortizationCalculator",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.INTERFACE_LOST",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "",
+      "original": "LoanAmortizationCalculator",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.INTERFACE_LOST",
+      "type": "paqua.loan.amortization.api.impl.repeating.EarlyPaymentRepeatingStrategy",
+      "member": "",
+      "original": "RepeatableEarlyPayment",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "",
+      "original": "Serializable",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "paqua.loan.amortization.dto.EarlyPaymentAdditionalParameters",
+      "member": "",
+      "original": "Serializable",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "paqua.loan.amortization.dto.Loan",
+      "member": "",
+      "original": "Serializable",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "paqua.loan.amortization.dto.LoanAmortization",
+      "member": "",
+      "original": "Serializable",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "SUPERTYPE.JDK_INTERFACE_LOST",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "",
+      "original": "Serializable",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+      "member": "",
+      "original": "final",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+      "member": "",
+      "original": "final",
+      "modern": "",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "paqua.loan.amortization.dto.Loan.LoanBuilder",
+      "member": "",
+      "original": "final static",
+      "modern": "static",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "paqua.loan.amortization.dto.LoanAmortization.LoanAmortizationBuilder",
+      "member": "",
+      "original": "final static",
+      "modern": "static",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.FINAL_LOST",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment.MonthlyPaymentBuilder",
+      "member": "",
+      "original": "final static",
+      "modern": "static",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_CLASS_TO_RECORD",
+      "type": "paqua.loan.amortization.dto.EarlyPayment",
+      "member": "",
+      "original": "class",
+      "modern": "record",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_CLASS_TO_RECORD",
+      "type": "paqua.loan.amortization.dto.Loan",
+      "member": "",
+      "original": "class",
+      "modern": "record",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_CLASS_TO_RECORD",
+      "type": "paqua.loan.amortization.dto.LoanAmortization",
+      "member": "",
+      "original": "class",
+      "modern": "record",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.KIND_CLASS_TO_RECORD",
+      "type": "paqua.loan.amortization.dto.MonthlyPayment",
+      "member": "",
+      "original": "class",
+      "modern": "record",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.UNREACHED_CLASS",
+      "type": "paqua.loan.amortization.dto.EarlyPayment.EarlyPaymentBuilder",
+      "member": "",
+      "original": "paqua.loan.amortization.dto.EarlyPayment.EarlyPaymentBuilder",
+      "modern": "",
+      "detail": "nested in EarlyPayment, 12 members"
+    },
+    {
+      "pattern": "TYPE.VISIBILITY_WIDENED",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "",
+      "original": "package",
+      "modern": "public",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPE.VISIBILITY_WIDENED",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculator",
+      "member": "",
+      "original": "package",
+      "modern": "public",
+      "detail": ""
+    },
+    {
+      "pattern": "TYPEREF.INTERFACE_TO_IMPL",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorFactory",
+      "member": "create()",
+      "original": "LoanAmortizationCalculator",
+      "modern": "LoanAmortizationCalculatorImpl",
+      "detail": "return"
+    },
+    {
+      "pattern": "TYPEREF.INTERFACE_TO_IMPL",
+      "type": "paqua.loan.amortization.api.impl.LoanAmortizationCalculatorImpl",
+      "member": "ANNUAL_PAYMENT_LOAN_AMORTIZATION_CALCULATOR",
+      "original": "LoanAmortizationCalculator",
+      "modern": "AnnualPaymentLoanCalculator",
+      "detail": "field"
+    },
+    {
+      "pattern": "TYPEREF.INTERFACE_TO_IMPL",
+      "type": "paqua.loan.amortization.api.impl.annual.AnnualPaymentLoanCalculatorFactory",
+      "member": "create()",
+      "original": "LoanAmortizationCalculator",
+      "modern": "AnnualPaymentLoanCalculator",
+      "detail": "return"
+    }
+  ],
+  "parseErrors": [],
+  "notes": []
+}
