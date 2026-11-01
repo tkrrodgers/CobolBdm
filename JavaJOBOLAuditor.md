@@ -293,7 +293,7 @@ The store now lives at `%USERPROFILE%\.jobol-hub`, which is not redirected. `ena
 | 2026-10-31 | Phase 2 hub enabled | Tomrodgers (chat) | §8 reviewed |
 | 2026-10-31 | Ruleset 1.1.0 adopted; 1.0 baselines superseded | Architect | §9 |
 | 2026-10-31 | **SYSOUT exclusion v2 approved** for GN4 parity: only the J3S END statistics block, plus trailing libcob implicit-CLOSE warnings. sha256 `faf2fc2c…f958`. Any change is a new version needing approval. | Tomrodgers (chat), architect recommendation | Exact allowlist, guard for FSEM0100 error/abend lines, position-scoped, per-case counts asserted, negative test |
-| 2026-10-31 | **31-digit decimal limit: preserve legacy abend 37** at the J3S decimal sites (lift-track item 0). Logged as a known legacy limitation for forward engineering; computing or rejecting such inputs is a separate business decision. | Tomrodgers (chat), architect recommendation | Negative test `fsem0100-abend-3500-months`: legacy abends at APLC:225, modern completed with RC 0 |
+| 2026-10-31 | **Decimal capacity limit: preserve legacy abend 37** at the J3S decimal sites (lift-track item 0). Corrected 21:35 from the pipeline's measurement: this is not ARITH(EXTEND)'s 31 digits but FSJBDEC's big-value capacity (at most 2223 base-1e9 limbs stored, 2225 per register). The loanamorti boundary is term 1331 (computes) / 1332 (abends at APLC:225). Logged as a known legacy limitation for forward engineering; computing or rejecting such inputs is a separate business decision. | Tomrodgers (chat), architect recommendation | Negative test `fsem0100-abend-3500-months`: legacy abends at APLC:225, modern completed with RC 0 |
 
 ## 11. Roadmap
 
