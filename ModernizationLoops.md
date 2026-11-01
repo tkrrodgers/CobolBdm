@@ -58,8 +58,8 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 |---|---|---|---|---|---|
 | 0 | fineract-xl | `20261031-200550-7bab1a` (36.0 C) | `20261031-220149-f58389` (15.0 B, PASS; GN4 46/46, gn4err 21/21) | loanamorti `20261031-220151-e020cf` 1.6 A, change 0 | **Approved 22:05** (lead verified the audit and the lane diff) |
 | 1 | fineract-cobol (+cr) | `20261031-221108-aa8538` (93.2 F) | `20261101-013204-d1d187` (12.4 B, PASS; GN4 58/58); cr `a11124` 12.4 B, GN4 58/58. Kernels replaced by java.time / RoundingMode behind differential gates (21.1M and 2.08M cases, 0 differences, mutants caught) | loanamorti `049263` 1.6, fineract-xl `1858b3` 15.0: change 0 | **Approved 01:55** (lead verified the audit and the compat-lane logic) |
-| 2 | fineract-legacy | `20261101-015654-c489dc` (42.9, after a one-line crash fix) | `20261101-044113-9a46c2` (14.4 B, PASS; GN4 58/58; 340 seeded cases, 327 PASS, 13 implicit-CLOSE handled by v3) | all 4 green (cobol/cr -0.1, others 0) | **Approved 04:55** with residual risk: about 10 input-dependent rewrites not exercised, 79 partly covered (carry-over: domain inputs) |
-| 3 | kontor-zins (J3S-T, new) | pending ("loop3 iter0" after onboarding) | | | Handed off 04:55 |
+| 2 | fineract-legacy | `20261101-015654-c489dc` (42.9, after a one-line crash fix) | `20261101-044113-9a46c2` (14.4 B, PASS; GN4 58/58; 340 seeded cases, 327 PASS, 13 implicit-CLOSE: now handled by preserving the diagnostics at the compat boundary (user decision); v3 withdrawn) | all 4 green (cobol/cr -0.1, others 0) | **Approved 04:55** with residual risk: about 10 input-dependent rewrites not exercised, 79 partly covered (carry-over: domain inputs) |
+| 3 | kontor-zins (J3S-T, new) | pending | | | Handed off 04:55; **on hold** until loop 2 strict parity is green (user decision) |
 
 Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
 
