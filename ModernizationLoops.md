@@ -75,3 +75,5 @@ Loop 2 residual coverage (07:15): an isolated FNEM0800 harness (native driver ag
 Forward backlog addition: kontor-zins pow store capacity, 228th MP at 5.25%/360 and 193rd at 24%/600 (abend 37 AT JBDO:67).
 
 **Correction (10:10):** fineract-xl's GN4 46/46 (loop 0 and the regressions since) checked SYSOUT only by ordered inclusion, plus datasets and RC, not line for line. Under the strict check, all 46 fail on 353 J3S FSGN0100 heap-statistics lines (prefix FSGN0100, hyphenated pool names) that v2/v2.1 do not cover. Datasets and RC match in every case. An FSGN0100-only statistics rule is pending Tomrodgers's approval. Until then, fineract-xl's SYSOUT parity is NOT proven. v2.1 (statistics-only, sha256 7d7905e2) is validated: KZ 50/50, loanamorti 7/7 + 21/21 with 0 exclusions, FN* 58/58 each.
+
+Loop 3 clarification (10:38): DecimalLimit.doRound implements the full native carry-retry loop. The surviving pow-doround-once mutant is a test-coverage gap (no fixture reaches a second pass), not a runtime frontier. FSGN0100 statistics policy pinned, sha256 972f9d8e; its policy tests pass; the fineract-xl 46 strict re-run is in progress.
