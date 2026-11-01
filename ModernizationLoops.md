@@ -35,11 +35,11 @@ Each loop's iteration 0 is the current generator's output on the estate, audited
 
 | Baseline | Report | Re-run when |
 |---|---|---|
-| loanamorti | `20261101-044117-48e0fa` (1.6 A; earlier 049263, e020cf, 3ae043, bbd188) | Every loop |
-| fineract-xl final | `20261101-044118-21a4ba` (15.0 B; earlier 1858b3, f58389) | Every loop |
-| fineract-cobol final | `20261101-044115-fa4b8d` (12.3 B) | Every loop |
-| fineract-cobol-cr final | `20261101-044116-02514a` (12.3 B) | Every loop |
-| fineract-legacy final | `20261101-044113-9a46c2` (14.4 B) | Every loop |
+| loanamorti | `20261101-063821-d01037` (1.6 A; earlier 049263, e020cf, 3ae043, bbd188) | Every loop |
+| fineract-xl final | `20261101-063822-989c7b` (15.0 B; earlier 1858b3, f58389) | Every loop |
+| fineract-cobol final | `20261101-063819-195b1b` (12.3 B) | Every loop |
+| fineract-cobol-cr final | `20261101-063820-ae8237` (12.3 B) | Every loop |
+| fineract-legacy final | `20261101-063817-9435ca` (14.4 B) | Every loop |
 | Each approved loop's final report | Added on approval | Every later loop |
 
 ## 4. Protocol on the hub
@@ -58,8 +58,9 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 |---|---|---|---|---|---|
 | 0 | fineract-xl | `20261031-200550-7bab1a` (36.0 C) | `20261031-220149-f58389` (15.0 B, PASS; GN4 46/46, gn4err 21/21) | loanamorti `20261031-220151-e020cf` 1.6 A, change 0 | **Approved 22:05** (lead verified the audit and the lane diff) |
 | 1 | fineract-cobol (+cr) | `20261031-221108-aa8538` (93.2 F) | `20261101-013204-d1d187` (12.4 B, PASS; GN4 58/58); cr `a11124` 12.4 B, GN4 58/58. Kernels replaced by java.time / RoundingMode behind differential gates (21.1M and 2.08M cases, 0 differences, mutants caught) | loanamorti `049263` 1.6, fineract-xl `1858b3` 15.0: change 0 | **Approved 01:55** (lead verified the audit and the compat-lane logic) |
-| 2 | fineract-legacy | `20261101-015654-c489dc` (42.9, after a one-line crash fix) | `20261101-044113-9a46c2` (14.4 B, PASS; GN4 58/58; 340 seeded cases, 327 PASS, 13 implicit-CLOSE: now handled by preserving the diagnostics at the compat boundary (user decision); v3 withdrawn) | all 4 green (cobol/cr -0.1, others 0) | **Approved 04:55** with residual risk: about 10 input-dependent rewrites not exercised, 79 partly covered (carry-over: domain inputs) |
-| 3 | kontor-zins (J3S-T, new) | pending | | | Handed off 04:55; **on hold** until loop 2 strict parity is green (user decision) |
+| 2 | fineract-legacy | `20261101-015654-c489dc` (42.9, after a one-line crash fix) | `20261101-063817-9435ca` (14.4 B, PASS; strict parity 58/58 + 13/13 + 640/640 under the runtime-diagnostics profile sha256 14f228c5, the user's option A; no exclusion) | all 4 green (cobol/cr -0.1, others 0) | **Final 06:40** (approved 04:55) with residual risk: about 10 input-dependent rewrites not exercised, 79 partly covered (carry-over: domain inputs) |
+| 3 | kontor-zins (J3S-T, new) | pending | | | Released 06:40 |
+| 4 | Joda-Money (J3S-T, new) | pending | | | Prepared 05:20; follows loop 3 |
 
 Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
 
