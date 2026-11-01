@@ -60,3 +60,5 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 | 2 | fineract-legacy | pending (pipeline audits "loop2 iter0") | | | Handed off 01:55 |
 
 Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
+
+Scope note (02:00): loop 1's kernel substitution is approved as **estate-scoped reachable equivalence**. RoundingKernel is not claimed equivalent for arbitrary inputs: for S/P with a digit count below -9968, legacy continues with the retained WS-SHIFT, which is defined, call-history-dependent behaviour. Loop 2 adds a fail-closed frontier and negative tests. Rule for all kernel replacements: "equivalent on the gated domain, frontier elsewhere".
