@@ -32,7 +32,7 @@ generated estate (Gradle project)            jobol.json (lanes, overrides, gate)
           v                                              v
   walk *.java (skip build/, bin/, ...) --> lane by glob --> JavaParser AST (Java 21)
                                                              |
-                                    Analyzer: 25 rules + metrics, per type declaration
+                                    Analyzer: 27 rules + metrics, per type declaration
                                                              |
                                 Scorer: JOBOL index 0..100 per type, grade A..F
                                                              |
@@ -77,9 +77,10 @@ Each finding carries the rule, severity, file, line, owning type, a message, and
 | JOB030 | yn-string-flags | MAJOR | `"Y"`/`"N"` compared, assigned, initialised or used as `case` labels |
 | JOB031 | file-status-codes | MAJOR | `"00"`, or `"10"`/`"23"`/`"35"`... compared against a status-like operand |
 | JOB032 | status-flag-fields | MINOR | ≥ 2 mutable status / end-of-file fields steering control flow |
+| JOB033 | string-code-sets | MAJOR | (1.1) `switch` over short string codes (`"H"`/`"P"`/`"E"`), or one condition comparing a value with ≥ 3 string literals |
 | JOB040 | picture-literals | MAJOR | edit masks (`ZZZ,ZZZ,ZZ9`, `ZZ9.99`) and PICTURE clauses (`X(10)`, `S9(7)V99`) |
 | JOB041 | floating-point-money | MAJOR | `double`/`float` amounts, balances, rates, interest, fees... (camelCase-token match) |
-| JOB042 | positional-strings | MINOR | `substring(literal, literal)`, `%-20s` / `%05d` fixed-width formatting |
+| JOB042 | positional-strings | MAJOR | `substring`/`raw`/`slice`/`subSequence` with literal offsets (also `244 + (k - 1) * 240`), `%-20s` / `%05d` fixed-width formatting (MAJOR, cap 3 since 1.1) |
 | JOB043 | string-dates | MINOR | dates/timestamps typed `String` (fields, locals, parameters, record components) |
 | JOB050 | priming-read | MINOR | `read(); while (...) { ...; read(); }` |
 | JOB051 | trailing-return | MINOR | `return;` as the last statement of a void method |
@@ -89,6 +90,7 @@ Each finding carries the rule, severity, file, line, owning type, a message, and
 | JOB055 | display-io | MINOR | `System.out/err.print*` outside `main` |
 | JOB056 | god-class | MAJOR | > 800 lines **with** shared state or paragraph methods, or > 2500 lines |
 | JOB057 | statement-translation-comments | MINOR | comments replaying `MOVE X TO Y`, `PERFORM P`, `[PARA:1:MOVE:L181]` |
+| JOB058 | repeated-size-guards | MAJOR | (1.1) `fits(x + 1, 9)`-style PIC 9(n) ON SIZE ERROR guards at ≥ 3 call sites in one type |
 
 Rules can be disabled, re-weighted, re-capped or re-laned per estate in `jobol.json` (`"rules": {"JOB055": {"enabled": false}}`). Overrides change `rulesetHash`, so reports with different rules are never compared as if equal.
 
@@ -262,7 +264,29 @@ Enabled on 2026-10-31 after approval in chat; `hub-config.json` records it.
 
 The store now lives at `%USERPROFILE%\.jobol-hub`, which is not redirected. `enable` refuses to run when the hub is already enabled but the key is not visible, so a session that cannot see the store can never create a second one. Inbox reads and acks are now logged.
 
-## 9. Roadmap
+## 9. Ruleset history
+
+| Version | Ruleset hash (default config) | Change | Why |
+|---|---|---|---|
+| 1.0.0 | `5b4a57962c17fb8b` | Initial 25 rules, calibrated on three estates | §6 |
+| 1.1.0 | `0018a27e11dbcfd2` | JOB033 and JOB058 added; JOB042 widened to `raw`/`slice` offsets and raised to MAJOR | See below |
+
+**Why 1.1.** In the first architect review over the hub, loanamorti iteration 4 restructured `Lcle0100Batch` from 100 to 0 under 1.0. Reading the code showed COBOL data representation that 1.0 could not see:
+- 21 byte-offset `event.raw(13, 1)` calls
+- `"H"`/`"P"`/`"E"` and `"S"`/`"R"` record-type and status strings switched on in place of enums
+- a 7-way rounding-mode `equals` chain
+- the PIC 9(9) overflow guard copied 8 times
+
+**Calibration.** Caps are 3 for JOB033 and JOB042, so data-representation smells alone grade a class D, never F. F stays reserved for structurally COBOL code. Results under 1.1:
+
+| Estate | `Lcle0100Batch` | Estate index |
+|---|---|---|
+| original loanamorti | 100 (F) | 40.1 (C) |
+| iteration 4 | 56 (D) | 22.2 (B), gate still passes |
+
+**Comparability.** 1.0 and 1.1 reports are not comparable: their ruleset hashes differ. Iteration 4 was re-audited under 1.1 as the new baseline.
+
+## 10. Roadmap
 
 - **Phase 1b.** An ArchUnit test template for estates: modern packages may not depend on `com.mlcpu.rt` or `..legacy..`. ArchUnit is already in the Gradle cache. Also a Gradle `jobolAudit` task in generated estates, so `gradle check` runs the gate.
 - **Phase 3: LLM rubric judge**, fed the deterministic report and never replacing it. Score 1–5 per worst-N class on business naming, cohesion, immutability, testability and truncated names. It must cite JOB findings, run at a fixed rubric version, and is kept advisory to the gate.

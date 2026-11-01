@@ -75,4 +75,19 @@ public class PostTranStep {
         tranDate = String.format("%-10s", tranDate);
         wsRunCount++;
     }
+
+    private void p4000Classify(int k) {
+        switch (record.substring(0, 1)) {
+            case "H" -> dwNum1 = true;
+            case "P" -> dwNum2 = true;
+            default -> dwNum3 = false;
+        }
+        if (wsEndOfFile.equals("A") || wsEndOfFile.equals("B") || wsEndOfFile.equals("C")) {
+            dwPosted = 0;
+        }
+        record = CobRt.raw(record, 244 + (k - 1) * 240, 240);
+        if (!CobRt.fits(dwRead + 1, 9)) dwRejects = 0;
+        if (!CobRt.fits(dwPosted + 1, 9)) dwRejects = 0;
+        if (!CobRt.fits(dwRejects + 1, 9)) dwRejects = 0;
+    }
 }

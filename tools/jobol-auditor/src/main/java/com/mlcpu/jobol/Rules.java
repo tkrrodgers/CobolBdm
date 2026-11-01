@@ -58,6 +58,9 @@ public final class Rules {
         new Spec("JOB031", "file-status-codes", Severity.MAJOR, M, 5,
             "Logic compares COBOL FILE STATUS strings ('00', '10', '23', '35') in modern code.",
             "Let the dataset adapter translate status codes into return values (Optional, end-of-stream) and exceptions; modern code never sees '00'."),
+        new Spec("JOB033", "string-code-sets", Severity.MAJOR, M, 3,
+            "Short string codes ('H'/'P'/'E', 'S'/'R', 'UP'/'DOWN'/...) are switched on or compared in chains: 88-level condition names kept as text.",
+            "Decode the code once at the record boundary into an enum (or a JDK enum such as RoundingMode.valueOf) and switch on the enum."),
         new Spec("JOB032", "status-flag-fields", Severity.MINOR, M, 1,
             "Several fields hold dataset status strings or end-of-file switches (dsX, eof, firstTime) that steer control flow.",
             "Iterate input with an Iterator/Stream/reader that signals the end itself; return results instead of setting status fields."),
@@ -67,8 +70,8 @@ public final class Rules {
         new Spec("JOB041", "floating-point-money", Severity.MAJOR, MC, 5,
             "Monetary values (amount, balance, rate, interest, fee...) are double/float.",
             "Use BigDecimal (or a Money value type) with an explicit scale and RoundingMode matching the COBOL ROUNDED/truncation rule."),
-        new Spec("JOB042", "positional-strings", Severity.MINOR, M, 5,
-            "Records are parsed or built by character position (substring(12, 20), %-20s padding) in modern code.",
+        new Spec("JOB042", "positional-strings", Severity.MAJOR, M, 3,
+            "Records are read or built by byte/character position in modern code (substring(12, 20), raw(13, 1), raw(244 + k * 240, 240), %-20s padding).",
             "Decode fixed-width records once in a compat codec into a Java record; the domain uses the typed fields."),
         new Spec("JOB043", "string-dates", Severity.MINOR, M, 5,
             "Dates and timestamps are carried as String (PIC X(10)/9(8) residue) instead of java.time types.",
@@ -96,7 +99,10 @@ public final class Rules {
             "Split by capability: input adapter, validation, calculation, output; keep each class small and focused."),
         new Spec("JOB057", "statement-translation-comments", Severity.MINOR, M, 3,
             "Comments replay COBOL statements line by line (MOVE X TO Y, PERFORM P, [PARA:1:MOVE:L181]).",
-            "Translate intent, not statements: one Javadoc citing the source paragraph is enough.")
+            "Translate intent, not statements: one Javadoc citing the source paragraph is enough."),
+        new Spec("JOB058", "repeated-size-guards", Severity.MAJOR, M, 1,
+            "PIC 9(n) ON SIZE ERROR emulation (if (!fits(x + 1, 9)) overflow()) is repeated at three or more call sites.",
+            "Put the capacity rule in the value type itself (a counter record whose increment throws at its limit), so call sites just count.")
     );
 
     public static final Map<String, Spec> BY_ID;

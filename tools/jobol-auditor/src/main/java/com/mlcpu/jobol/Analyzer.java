@@ -73,6 +73,8 @@ final class Analyzer {
         "contentEquals");
     private static final Set<String> PERFORM_CALLS = Set.of("perform", "performThru", "performRange", "performUntil",
         "goTo", "goTo_");
+    private static final Set<String> POSITIONAL_CALLS = Set.of("substring", "raw", "slice", "subSequence");
+    private static final Set<String> SIZE_GUARDS = Set.of("fits", "sizeError", "onSizeError", "checkSize");
     private static final Pattern PARAGRAPH_NAME = Pattern.compile(
         "^(?:p|para|sec)\\d+(?:_.*|[A-Z].*)?$|^(?:s|x)\\d{3,4}(?:_.*|[A-Z].*)?$|^.*_\\d{3,4}(?:_.*)?$|^[a-z]{0,2}\\d{4}[A-Z_].*$");
     private static final Pattern EDIT_MASK = Pattern.compile("^[Z9,.+\\-*$B0/]{3,}(?:CR|DB)?$");
@@ -107,6 +109,8 @@ final class Analyzer {
         final Map<String, Integer> signals = new TreeMap<>();
         int suppressed;
         int branches;
+        int sizeGuards;
+        int firstSizeGuard;
 
         Acc(TypeDeclaration<?> type, String name) {
             this.type = type;
@@ -196,13 +200,15 @@ final class Analyzer {
         } else if (n instanceof SwitchStmt sw) {
             a.branches++;
             visitSwitch(a, sw);
+            codeSwitch(a, sw, sw.getEntries());
         } else if (n instanceof LambdaExpr) {
             a.signal("lambda");
         } else if (n instanceof MethodReferenceExpr) {
             a.signal("methodRef");
-        } else if (n instanceof SwitchExpr) {
+        } else if (n instanceof SwitchExpr se) {
             a.signal("switchExpr");
             a.branches++;
+            codeSwitch(a, se, se.getEntries());
         } else if (n instanceof TextBlockLiteralExpr) {
             a.signal("textBlock");
         } else if (n instanceof VarType) {
@@ -213,7 +219,57 @@ final class Analyzer {
         } else if (n instanceof BinaryExpr be
             && (be.getOperator() == BinaryExpr.Operator.AND || be.getOperator() == BinaryExpr.Operator.OR)) {
             a.branches++;
+            if (!(be.getParentNode().orElse(null) instanceof BinaryExpr pb && isLogical(pb))) equalsChain(a, be);
         }
+    }
+
+    /** A switch whose labels are all short string codes ("H", "P", "E"; "S", "R") is an 88-level condition-name set. */
+    private void codeSwitch(Acc a, Node at, List<SwitchEntry> entries) {
+        List<String> codes = new ArrayList<>();
+        for (SwitchEntry e : entries) {
+            for (Expression l : e.getLabels()) {
+                if (!(l instanceof StringLiteralExpr s) || s.asString().length() > 3) return;
+                codes.add(s.asString());
+            }
+        }
+        if (codes.size() >= 2) {
+            add(a, line(at), "JOB033", "switch over string codes " + abbreviate(String.join("/", codes), 40) + " (an enum)");
+        }
+    }
+
+    /** One condition comparing the same value with three or more string literals (a code set spelled out). */
+    private void equalsChain(Acc a, BinaryExpr root) {
+        Map<String, List<String>> byReceiver = new TreeMap<>();
+        List<Expression> stack = new ArrayList<>(List.of(root));
+        while (!stack.isEmpty()) {
+            Expression e = stack.remove(stack.size() - 1);
+            if (e instanceof BinaryExpr b && isLogical(b)) {
+                stack.add(b.getLeft());
+                stack.add(b.getRight());
+            } else if (e instanceof com.github.javaparser.ast.expr.EnclosedExpr en) {
+                stack.add(en.getInner());
+            } else if (e instanceof UnaryExpr u && u.getOperator() == UnaryExpr.Operator.LOGICAL_COMPLEMENT) {
+                stack.add(u.getExpression());
+            } else if (e instanceof MethodCallExpr mc && mc.getNameAsString().equals("equals") && mc.getScope().isPresent()
+                && mc.getArguments().size() == 1 && mc.getArgument(0) instanceof StringLiteralExpr s) {
+                byReceiver.computeIfAbsent(mc.getScope().get().toString(), k -> new ArrayList<>()).add(s.asString());
+            }
+        }
+        for (Map.Entry<String, List<String>> e : byReceiver.entrySet()) {
+            if (e.getValue().size() >= 3) {
+                add(a, line(root), "JOB033", abbreviate(e.getKey(), 40) + " compared with " + e.getValue().size()
+                    + " string codes (" + abbreviate(String.join("/", e.getValue()), 40) + ")");
+            }
+        }
+    }
+
+    private static boolean isLogical(BinaryExpr b) {
+        return b.getOperator() == BinaryExpr.Operator.AND || b.getOperator() == BinaryExpr.Operator.OR;
+    }
+
+    /** A literal offset: 13, or arithmetic over one (244 + (k - 1) * 240). */
+    private static boolean isOffset(Expression e) {
+        return e instanceof IntegerLiteralExpr || (e instanceof BinaryExpr && e.findFirst(IntegerLiteralExpr.class).isPresent());
     }
 
     private void visitType(TypeDeclaration<?> t) {
@@ -240,9 +296,12 @@ final class Analyzer {
         if ((scope.equals("System.out") || scope.equals("System.err")) && name.startsWith("print") && !method.equals("main")) {
             add(a, line(mc), "JOB055", scope + "." + name + " in " + method + "()");
         }
-        if (name.equals("substring") && mc.getArguments().size() == 2
-            && mc.getArgument(0) instanceof IntegerLiteralExpr && mc.getArgument(1) instanceof IntegerLiteralExpr) {
+        if (POSITIONAL_CALLS.contains(name) && mc.getArguments().size() >= 2 && isOffset(mc.getArgument(0))
+            && mc.getArgument(1) instanceof IntegerLiteralExpr) {
             add(a, line(mc), "JOB042", "positional field access " + abbreviate(mc.toString(), 60));
+        }
+        if (SIZE_GUARDS.contains(name) && mc.getArguments().size() >= 2 && mc.getArgument(mc.getArguments().size() - 1) instanceof IntegerLiteralExpr) {
+            if (a.sizeGuards++ == 0) a.firstSizeGuard = line(mc);
         }
         if ((name.equals("format") || name.equals("formatted")) && !mc.getArguments().isEmpty()) {
             Expression first = name.equals("format") ? mc.getArgument(0) : mc.getScope().orElse(null);
@@ -430,6 +489,10 @@ final class Analyzer {
         }
         if (statusFields.size() >= 2) {
             add(a, line(t), "JOB032", statusFields.size() + " status/end-of-file fields steer control flow: " + list(statusFields));
+        }
+
+        if (a.sizeGuards >= 3) {
+            add(a, a.firstSizeGuard, "JOB058", "PIC 9(n) ON SIZE ERROR guard repeated " + a.sizeGuards + " times");
         }
 
         int loc = ownLines(t);

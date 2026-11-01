@@ -31,6 +31,9 @@ The modern lane must read as Java written by a Java developer who understood the
 | `String` dates (JOB043) | `LocalDate`/`LocalDateTime` at the record boundary |
 | labels and `break label` (JOB052), paragraph-numbered methods (JOB003), `perform(n, m)` (JOB002) | small named methods with early returns |
 | `System.out` DISPLAY (JOB055), `System.exit` ABEND (JOB053) | a logger or report port; exceptions mapped to an exit code in `main` only |
+| `"H"`/`"P"`/`"E"` record-type and status strings switched on or `equals`-chained (JOB033) | an enum decoded once at the record boundary; JDK enums such as `RoundingMode.valueOf` |
+| `raw(13, 1)` / `substring(0, 11)` byte offsets in business code (JOB042) | typed accessors on the record (`amountSign()`, `loanKey()`); offsets live only in the codec |
+| `if (!fits(x + 1, 9)) overflow()` at every counter (JOB058) | a counter value type whose increment enforces the PIC 9(n) limit |
 | `com.mlcpu.rt` / `CobolBase` / `Prog_*` in modern code (JOB001) | stay behind the strangler or compat adapter; modern code never sees `Area`/`CobField` |
 
 ## Checker rules

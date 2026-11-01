@@ -32,8 +32,8 @@ class AuditorTest {
         TypeReport t = type(r, "PostTranStep");
         Set<String> rules = t.findings().stream().map(Finding::rule).collect(Collectors.toSet());
         for (String expected : Set.of("JOB001", "JOB003", "JOB010", "JOB011", "JOB012", "JOB013", "JOB021", "JOB022",
-            "JOB030", "JOB031", "JOB032", "JOB040", "JOB041", "JOB042", "JOB043", "JOB050", "JOB051", "JOB052", "JOB053",
-            "JOB055", "JOB057")) {
+            "JOB030", "JOB031", "JOB032", "JOB033", "JOB040", "JOB041", "JOB042", "JOB043", "JOB050", "JOB051", "JOB052", "JOB053",
+            "JOB055", "JOB057", "JOB058")) {
             assertTrue(rules.contains(expected), "expected " + expected + " in " + rules);
         }
         assertEquals("F", t.grade());
