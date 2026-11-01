@@ -5,7 +5,8 @@
   "store": "~/.jobol-hub",
   "roles": {
     "pipeline": "Claude Code in VS Code: drives the COBOL-to-Java pipeline (GPT Sol 6.1 generator, Opus checker)",
-    "architect": "Claude desktop (Code tab): JOBOL architect and SME, reviews audits and recommends fixes"
+    "architect": "Claude desktop (Code tab): JOBOL architect and SME, reviews audits and recommends fixes",
+    "legacy": "Claude Code in VS Code (GPT Sol 6.1): Java-to-COBOL legitimizer; audits J3S COBOL realism and builds legacy-realistic estates (blind to the modernizer)"
   },
   "auditRoots": [
     "../..",
