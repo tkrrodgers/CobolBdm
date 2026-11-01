@@ -60,7 +60,7 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 | 1 | fineract-cobol (+cr) | `20261031-221108-aa8538` (93.2 F) | `20261101-013204-d1d187` (12.4 B, PASS; GN4 58/58); cr `a11124` 12.4 B, GN4 58/58. Kernels replaced by java.time / RoundingMode behind differential gates (21.1M and 2.08M cases, 0 differences, mutants caught) | loanamorti `049263` 1.6, fineract-xl `1858b3` 15.0: change 0 | **Approved 01:55** (lead verified the audit and the compat-lane logic) |
 | 2 | fineract-legacy | `20261101-015654-c489dc` (42.9, after a one-line crash fix) | `20261101-063817-9435ca` (14.4 B, PASS; strict parity 58/58 + 13/13 + 640/640 under the runtime-diagnostics profile sha256 14f228c5, the user's option A; no exclusion) | all 4 green (cobol/cr -0.1, others 0) | **Final 06:40** (approved 04:55) with residual risk: about 10 input-dependent rewrites not exercised, 79 partly covered (carry-over: domain inputs) |
 | 3 | kontor-zins (J3S-T, new) | `20261101-071428-591197` (8.0 A) | `20261101-093251-b2dcf1` (0.0 A; GN4 56/56 strict under v2.1; exact FSJBDEC store emulation, 31 capacity boundaries, 20 mutants) | 5 anchors held (loanamorti 0.0, xl 14.5, others 0.0) | **Approved 10:30** |
-| 4 | Joda-Money (J3S-T, new) | `20261101-105614-b6304d` (11.4 B, but residue 11 and 51 javac errors) | m1 `20261101-123426-c5f22d` (1.5 A; data+RC 39/39; strict SYSOUT pending the JMLE rule, approved 12:52) | 6 anchors 0.0 | Released 10:30; m1 12:42; exit after strict 39/39 |
+| 4 | Joda-Money (J3S-T, new) | `20261101-105614-b6304d` (11.4 B, but residue 11 and 51 javac errors) | `20261101-132556-203e70` (1.5 A; strict 41/41 under joda-statistics v1; real JDK regex/maps/resources, no emulation) | 6 anchors 0.0 | **Approved 13:30** |
 
 Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
 
@@ -81,3 +81,16 @@ Loop 3 clarification (10:38): DecimalLimit.doRound implements the full native ca
 fineract-xl strict SYSOUT (10:52): the 30 schedule cases PASS strict under the FSGN rule (972f9d8e); the 16 event cases await the user-approved FSLE rule. Loop 4 onboarded: fresh oracle 6/6 (12,845 records, 811 rejects, 65 programs). Joda-Money's HJC-2 pool scope is NOT authorized yet and will need a user decision if it arises.
 
 **Closed (11:03): fineract-xl strict SYSOUT proven, 46/46** (30 FSLS under FSGN rule 972f9d8e, 16 FSLE under FSLE rule 5a1159de; exactly 353 approved statistics lines each; the rest of SYSOUT exact; datasets 0 differences; RC equal). The v2.1/profile migration is verified on all estates: loanamorti 7/7 + 21/21 (implicit-CLOSE 2/2 compared, 0 excluded), FN* 58/58 each, KZ 50/50 and 56/56; the profile-off negative control fails as expected. Loop 4 (Joda-Money): onboarded 6/6; generator ownership handed to the loop 4 owner. HJC-2 pool scope not authorized (needs a user decision if needed).
+
+## Programme status (13:30): COMPLETE, 5 loops (0-4), 7 estates modernized
+| Estate | Final | Score | Strict parity |
+|---|---|---|---|
+| fineract-xl | f36f0c | 14.5 B | 46/46 (FSLS/FSLE statistics rules) |
+| loanamorti | 7edea1 | 0.0 A | 7/7 + 21/21 |
+| fineract-cobol | a3fb54 | 12.3 B | 58/58 |
+| fineract-cobol-cr | be10bb | 12.3 B | 58/58 |
+| fineract-legacy | e49f5b | 14.4 B | 58 + 13 + 640 |
+| kontor-zins | c2e23d | 0.0 A | 56/56 |
+| joda-money | 203e70 | 1.5 A | 41/41 |
+
+Disclosed risks: fineract-xl has 123 unchecked decimal ops and 106 unpreserved after-call JOBFAILs; loop 2 residual coverage; the joda replay gaps. Next estate: Tomrodgers decides (candidate: CardDemo, native COBOL, deferred).
