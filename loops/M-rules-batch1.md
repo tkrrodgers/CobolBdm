@@ -89,3 +89,13 @@ visibility, types and idioms. Behaviour is not lost.
 - G04 accessor style (20).
 - G16 streams (19, class b; style only, so the lowest priority).
 - Not pursued: G20, G24, G25, G26, G27, G28 (class c).
+
+## Outcomes
+- **R1 REJECTED (15:30).** G21 TRAIN 72 -> 10, TEST 25 -> 5; but G22 TRAIN 58 -> 108, TEST 2 -> 25, and reached-API
+  fidelity fell. Least access cannot recover the authors' API intent, so G21 and G22 are reclassified to (b): they need an
+  external API manifest. R1 stays opt-in only; the default is byte-identical.
+- **Finding (disclosed):** for J3S estates, the modernizer's class, package and method names come from the J3S CLASS/FRAME
+  provenance headers (pre-existing), which quote the original Java names. Name and structure fidelity on J3S estates are
+  therefore inflated relative to real legacy COBOL. The `legacy` session's estates (no such headers) will measure it.
+- **R3 narrowed** to `final` on classes only (G23). The record conversion is dropped (G19 is TRAIN-only, 4 instances, and
+  it conflicts with G20). The acceptance is pre-registered in the hub message of 15:30.
