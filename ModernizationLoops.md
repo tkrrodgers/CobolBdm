@@ -54,6 +54,6 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 | Loop | Estate | Iteration-0 report | Final report | Regression check | Approved |
 |---|---|---|---|---|---|
 | 0 | fineract-xl | `20261031-200550-7bab1a` (36.0 C) | `20261031-220149-f58389` (15.0 B, PASS; GN4 46/46, gn4err 21/21) | loanamorti `20261031-220151-e020cf` 1.6 A, change 0 | **Approved 22:05** (lead verified the audit and the lane diff) |
-| 1 | fineract-cobol (+cr) | pending (pipeline audits "loop1 iter0") | | | Handed off 22:05 |
+| 1 | fineract-cobol (+cr) | `20261031-221108-aa8538` (93.2 F, the same as the lead's dry run) | | | Handed off 22:05; in progress |
 
 Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
