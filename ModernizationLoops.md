@@ -59,7 +59,7 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 | 0 | fineract-xl | `20261031-200550-7bab1a` (36.0 C) | `20261031-220149-f58389` (15.0 B, PASS; GN4 46/46, gn4err 21/21) | loanamorti `20261031-220151-e020cf` 1.6 A, change 0 | **Approved 22:05** (lead verified the audit and the lane diff) |
 | 1 | fineract-cobol (+cr) | `20261031-221108-aa8538` (93.2 F) | `20261101-013204-d1d187` (12.4 B, PASS; GN4 58/58); cr `a11124` 12.4 B, GN4 58/58. Kernels replaced by java.time / RoundingMode behind differential gates (21.1M and 2.08M cases, 0 differences, mutants caught) | loanamorti `049263` 1.6, fineract-xl `1858b3` 15.0: change 0 | **Approved 01:55** (lead verified the audit and the compat-lane logic) |
 | 2 | fineract-legacy | `20261101-015654-c489dc` (42.9, after a one-line crash fix) | `20261101-063817-9435ca` (14.4 B, PASS; strict parity 58/58 + 13/13 + 640/640 under the runtime-diagnostics profile sha256 14f228c5, the user's option A; no exclusion) | all 4 green (cobol/cr -0.1, others 0) | **Final 06:40** (approved 04:55) with residual risk: about 10 input-dependent rewrites not exercised, 79 partly covered (carry-over: domain inputs) |
-| 3 | kontor-zins (J3S-T, new) | pending | | | Released 06:40 |
+| 3 | kontor-zins (J3S-T, new) | `20261101-071428-591197` (8.0 A) | m1 `20261101-081528-274242` (0.0 A; GN4 25/25 strict) | 5 green (loanamorti 0.8, xl 14.5, others 0.0) | Released 06:40; m1 accepted 08:55; exit after the FSJBDEC store emulation (decision a): pow boundaries 227/228 and 192/193 |
 | 4 | Joda-Money (J3S-T, new) | pending | | | Prepared 05:20; follows loop 3 |
 
 Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
@@ -71,3 +71,5 @@ Loop 3 prepared (03:40): kontor-zins J3S estate, G2 6/6 byte-identical, packaged
 Loop 4 prepared (05:20): Joda-Money J3S estate, G2 6/6 byte-identical, 65 programs / 65.8K lines (loops/L4-joda-money.md). J3S emulations on feature/l3-target 21735cd (G0 569,713 records with 0 differences, 11/11 mutants caught). **Open J3S bug for Tomrodgers:** Object `==` ignores the value for boxed values; reachability in Fineract not yet analysed.
 
 Loop 2 residual coverage (07:15): an isolated FNEM0800 harness (native driver against the frozen source, modern harness against the iter6 classes) gives 5/5 exact and executes LF230, LF227, LF228, LF250 and LF251. This is isolation evidence, not batch reachability. Remaining residuals: LF161/172, LF180/184, LF218, LF070/154/179.
+
+Forward backlog addition: kontor-zins pow store capacity, 228th MP at 5.25%/360 and 193rd at 24%/600 (abend 37 AT JBDO:67).
