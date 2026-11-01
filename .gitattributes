@@ -3,3 +3,5 @@
 # inputs into CRLF on a Windows checkout, and CRLF oracle outputs into LF elsewhere). Source code is normalized as usual.
 projects/** -text
 capabilities/** -text
+# Shell scripts run under bash on Windows too: keep LF.
+tools/jobol-auditor/*.sh text eol=lf
