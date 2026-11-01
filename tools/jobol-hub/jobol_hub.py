@@ -3,7 +3,7 @@
 and the architect session (Claude desktop) for running the deterministic JOBOL audit and exchanging review notes.
 
 It is an MCP server over stdio: no network listener. Messages and reports live in a per-user store
-(%LOCALAPPDATA%/JobolHub), each message HMAC-SHA256 signed with a key that only the user's account can read.
+(~/.jobol-hub, outside the AppData that packaged apps virtualize), each message HMAC-SHA256 signed with a key that only the user's account can read.
 
   python jobol_hub.py serve   [--config hub-config.json]   MCP server (what .mcp.json launches)
   python jobol_hub.py status  [--config ...]               print the configuration and inbox counts
@@ -61,11 +61,19 @@ class Hub:
         self.base = self.config_path.parent
         self.cfg = json.loads(self.config_path.read_text(encoding="utf-8"))
         self.enabled = bool(self.cfg.get("enabled"))
-        self.store = Path(os.path.expandvars(self.cfg.get("store", "%LOCALAPPDATA%/JobolHub"))).expanduser()
-        if not self.store.is_absolute():
-            self.store = (self.base / self.store).resolve()
+        self.store = self._store_path(self.cfg.get("store", "~/.jobol-hub"))
         self.roles = dict(self.cfg.get("roles", {}))
         self.audit_roots = [self._resolve(p) for p in self.cfg.get("auditRoots", [])]
+
+    def _store_path(self, spec: str) -> Path:
+        """The store is per user and absolute. A sandboxed shell may not pass %LOCALAPPDATA% through; then the
+        profile's AppData\\Local is used, so every session finds the same store and key (never one per checkout)."""
+        local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
+        spec = spec.replace("%LOCALAPPDATA%", local).replace("$LOCALAPPDATA", local)
+        p = Path(os.path.expandvars(spec)).expanduser()
+        if not p.is_absolute():
+            raise HubError(f"hub store {spec!r} must resolve to an absolute path")
+        return p.resolve()
 
     def _resolve(self, p: str) -> Path:
         q = Path(os.path.expandvars(p)).expanduser()
@@ -77,8 +85,13 @@ class Hub:
         if not self.enabled:
             raise HubError("The JOBOL hub is installed but disabled pending approval. "
                            "See tools/jobol-hub/README.md; enable with: python jobol_hub.py enable --approve --by <name>.")
-        if not (self.store / "secret.key").exists():
-            raise HubError(f"hub store {self.store} has no secret.key; run the enable command again")
+        key = self.store / "secret.key"
+        try:
+            key.read_bytes()
+        except OSError as e:
+            raise HubError(f"cannot read the hub key {key} ({e.__class__.__name__}). Do not re-run enable: that would "
+                           "start a second store. Check that this process sees the same user profile and is not "
+                           "sandboxed away from it, then tell the user.")
 
     def role(self, r: str, what: str) -> str:
         if r not in self.roles:
@@ -260,6 +273,7 @@ class Hub:
             if not ok:
                 msg["body"] = "[withheld: signature check failed; the file was not written by this hub]"
             out.append(msg)
+        self.log({"tool": "read_inbox", "role": role, "returned": len(out)})
         return {"role": role, "note": DATA_NOTE, "messages": out}
 
     def ack(self, role: str, message_id: str) -> dict:
@@ -273,6 +287,7 @@ class Hub:
         dst = self.store / "inbox" / role / "read" / src.name
         dst.parent.mkdir(parents=True, exist_ok=True)
         os.replace(src, dst)
+        self.log({"tool": "ack", "role": role, "id": message_id})
         return {"acked": message_id}
 
 
@@ -408,6 +423,11 @@ def mcp_entry(config_path: Path) -> dict:
 
 
 def enable(hub: Hub, by: str, project: Path) -> None:
+    key = hub.store / "secret.key"
+    if hub.enabled and not key.exists():
+        raise HubError(f"the hub is already enabled but {key} is not visible from this process: it would start a "
+                       "second store with a new key. Run enable from an unsandboxed shell of the same user, or "
+                       "disable first.")
     for d in [hub.store, *(hub.store / "inbox" / r for r in hub.roles), hub.store / "reports"]:
         d.mkdir(parents=True, exist_ok=True)
     restrict_to_user(hub.store)
@@ -467,20 +487,20 @@ def main(argv=None) -> int:
     ap.add_argument("--name")
     ap.add_argument("--all", action="store_true", help="inbox: include read messages")
     a = ap.parse_args(argv)
-    hub = Hub(Path(a.config))
-    if a.command == "serve":
-        serve(hub)
-        return 0
-    if a.command == "enable":
-        if not a.approve or not a.by:
-            print("enable needs --approve and --by <name>: Phase 2 is turned on only by an explicit approval.", file=sys.stderr)
-            return 2
-        enable(hub, a.by, Path(a.project).resolve())
-        return 0
-    if a.command == "disable":
-        disable(hub, Path(a.project).resolve(), a.purge)
-        return 0
     try:
+        hub = Hub(Path(a.config))
+        if a.command == "serve":
+            serve(hub)
+            return 0
+        if a.command == "enable":
+            if not a.approve or not a.by:
+                print("enable needs --approve and --by <name>: Phase 2 is turned on only by an explicit approval.", file=sys.stderr)
+                return 2
+            enable(hub, a.by, Path(a.project).resolve())
+            return 0
+        if a.command == "disable":
+            disable(hub, Path(a.project).resolve(), a.purge)
+            return 0
         if a.command == "status":
             out = hub.hub_status()
         elif a.command == "audit":

@@ -2,7 +2,7 @@
   "enabled": true,
   "approvedBy": "Tomrodgers (approved in chat 2026-10-31)",
   "approvedAt": "2026-10-31T18:30:18",
-  "store": "%LOCALAPPDATA%/JobolHub",
+  "store": "~/.jobol-hub",
   "roles": {
     "pipeline": "Claude Code in VS Code: drives the COBOL-to-Java pipeline (GPT Sol 6.1 generator, Opus checker)",
     "architect": "Claude desktop (Code tab): JOBOL architect and SME, reviews audits and recommends fixes"
