@@ -35,8 +35,10 @@ Each loop's iteration 0 is the current generator's output on the estate, audited
 
 | Baseline | Report | Re-run when |
 |---|---|---|
-| loanamorti | `20261031-220151-e020cf` (1.6 A; generator at loop-0 approval). Earlier: 3ae043, bbd188 | Every loop |
-| fineract-xl final | `20261031-220149-f58389` (15.0 B) | Every loop |
+| loanamorti | `20261101-013207-049263` (1.6 A; earlier e020cf, 3ae043, bbd188) | Every loop |
+| fineract-xl final | `20261101-013209-1858b3` (15.0 B; earlier f58389) | Every loop |
+| fineract-cobol final | `20261101-013204-d1d187` (12.4 B) | Every loop |
+| fineract-cobol-cr final | `20261101-013206-a11124` (12.4 B) | Every loop |
 | Each approved loop's final report | Added on approval | Every later loop |
 
 ## 4. Protocol on the hub
@@ -54,6 +56,7 @@ Session continuity: the pipeline session must keep a watcher on its hub inbox an
 | Loop | Estate | Iteration-0 report | Final report | Regression check | Approved |
 |---|---|---|---|---|---|
 | 0 | fineract-xl | `20261031-200550-7bab1a` (36.0 C) | `20261031-220149-f58389` (15.0 B, PASS; GN4 46/46, gn4err 21/21) | loanamorti `20261031-220151-e020cf` 1.6 A, change 0 | **Approved 22:05** (lead verified the audit and the lane diff) |
-| 1 | fineract-cobol (+cr) | `20261031-221108-aa8538` (93.2 F, the same as the lead's dry run) | | | Handed off 22:05; in progress |
+| 1 | fineract-cobol (+cr) | `20261031-221108-aa8538` (93.2 F) | `20261101-013204-d1d187` (12.4 B, PASS; GN4 58/58); cr `a11124` 12.4 B, GN4 58/58. Kernels replaced by java.time / RoundingMode behind differential gates (21.1M and 2.08M cases, 0 differences, mutants caught) | loanamorti `049263` 1.6, fineract-xl `1858b3` 15.0: change 0 | **Approved 01:55** (lead verified the audit and the compat-lane logic) |
+| 2 | fineract-legacy | pending (pipeline audits "loop2 iter0") | | | Handed off 01:55 |
 
 Forward backlog: FSJBDEC decimal capacity abend 37 (2223 stored limbs / 2225 register limbs / scale +-999,999,999 / 2500 stored values a loan). Measured boundaries: loanamorti term 1331/1332; store 312/313 CD events.
