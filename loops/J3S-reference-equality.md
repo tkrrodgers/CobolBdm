@@ -49,3 +49,11 @@ the key hash is one-to-one. That does not hold for Long (0L vs -1L) or BigDecima
    - a mutant that restores the C/I-only comparison, which must be caught.
 5. Docs: J3S.md section 3 (the census works on static types and misses Object-typed slots holding values) and section 17
    (remove "Found and left as they are").
+
+## Fixed (2026-11-01)
+Commit c738e10 on feature/l3-target (JavaToCOBOLTest-l3; not pushed, main untouched), 17 files.
+- Lower.java: the ANY comparison now decides by class id, and Objects.equals is an intrinsic used in place by the emulations.
+- G0 refeq cases and mutants are in config/j3s-g0-refeq.
+- Gates PASS: build, reproducibility, G1b, G1, G0, G0 runtime, G2 mini 28/28, event G2 16/16 (612,848 results); kontor-zins, joda-money and loan-amortization-calculator G2 6/6.
+- The Fineract regeneration changes only the equality sites, plus renumbering, WHEN order and frame sizes. One function moved: FSEAV02 is gone, 155 members.
+- The CobolBdm estates onboarded from the earlier J3S output are unaffected until they are regenerated.
