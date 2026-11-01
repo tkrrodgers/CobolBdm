@@ -1,0 +1,39 @@
+{
+  "zones": [
+    { "zone": "test", "globs": ["**/src/test/**", "**/test/java/**"] },
+    { "zone": "faithful", "globs": [
+      "**/com/mlcpu/rt/**",
+      "**/legacy/**",
+      "**/transpile/**",
+      "**/characterization/**",
+      "**/replay/**",
+      "**/Baseline_*.java",
+      "**/Prog_*.java",
+      "**/State_*.java"
+    ] },
+    { "zone": "compat", "globs": [
+      "**/batch/platform/**",
+      "**/batch/record/**",
+      "**/record/**",
+      "**/strangler/**",
+      "**/codec/**",
+      "**/compat/**",
+      "**/mapping/**",
+      "**/copybook/**",
+      "**/*Codec.java"
+    ] }
+  ],
+  "rules": {},
+  "gate": {
+    "maxEstateIndex": 25,
+    "failOnBlocker": true,
+    "worstGradeAllowed": "D",
+    "maxRegression": 0
+  },
+  "legacyRuntimePackages": ["com.mlcpu.rt"],
+  "legacyRuntimeTypes": ["CobolBase", "CobField", "Area", "CobRt", "CobolProgram", "ProgramState"],
+  "cobolPrefixes": ["ws", "dw", "ls", "lk", "fd", "wk", "sw", "ds", "wa", "lw", "wc"],
+  "moneyWords": ["amount", "amt", "balance", "bal", "rate", "interest", "int", "principal", "fee", "fees",
+    "price", "total", "payment", "pmt", "charge", "cost", "tax", "emi", "premium", "credit", "debit", "money", "cash"],
+  "excludeDirs": ["build", ".gradle", "bin", "obj", "out", "target", "node_modules", ".git", ".idea", ".vs"]
+}
