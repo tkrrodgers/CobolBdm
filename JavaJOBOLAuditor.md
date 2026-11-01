@@ -286,7 +286,16 @@ The store now lives at `%USERPROFILE%\.jobol-hub`, which is not redirected. `ena
 
 **Comparability.** 1.0 and 1.1 reports are not comparable: their ruleset hashes differ. Iteration 4 was re-audited under 1.1 as the new baseline.
 
-## 10. Roadmap
+## 10. Decisions log
+
+| Date | Decision | By | Basis |
+|---|---|---|---|
+| 2026-10-31 | Phase 2 hub enabled | Tomrodgers (chat) | §8 reviewed |
+| 2026-10-31 | Ruleset 1.1.0 adopted; 1.0 baselines superseded | Architect | §9 |
+| 2026-10-31 | **SYSOUT exclusion v2 approved** for GN4 parity: only the J3S END statistics block, plus trailing libcob implicit-CLOSE warnings. sha256 `faf2fc2c…f958`. Any change is a new version needing approval. | Tomrodgers (chat), architect recommendation | Exact allowlist, guard for FSEM0100 error/abend lines, position-scoped, per-case counts asserted, negative test |
+| 2026-10-31 | **31-digit decimal limit: preserve legacy abend 37** at the J3S decimal sites (lift-track item 0). Logged as a known legacy limitation for forward engineering; computing or rejecting such inputs is a separate business decision. | Tomrodgers (chat), architect recommendation | Negative test `fsem0100-abend-3500-months`: legacy abends at APLC:225, modern completed with RC 0 |
+
+## 11. Roadmap
 
 - **Phase 1b.** An ArchUnit test template for estates: modern packages may not depend on `com.mlcpu.rt` or `..legacy..`. ArchUnit is already in the Gradle cache. Also a Gradle `jobolAudit` task in generated estates, so `gradle check` runs the gate.
 - **Phase 3: LLM rubric judge**, fed the deterministic report and never replacing it. Score 1–5 per worst-N class on business naming, cohesion, immutability, testability and truncated names. It must cite JOB findings, run at a fixed rubric version, and is kept advisory to the gate.
