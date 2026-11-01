@@ -22,7 +22,7 @@ python tools/jobol-hub/jobol_hub.py enable --approve --by "<your name>"
 ```
 
 This command:
-1. creates `%LOCALAPPDATA%\JobolHub`, restricted to your account, with a new signing key
+1. creates `%USERPROFILE%\.jobol-hub`, restricted to your account, with a new signing key. The store is not in AppData: the Claude desktop app is a packaged app, and Windows redirects its AppData writes into a private folder that other programs cannot see.
 2. records the approval in `hub-config.json`
 3. registers `jobol-hub` in the repo's `.mcp.json`
 

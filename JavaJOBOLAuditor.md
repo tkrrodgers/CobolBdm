@@ -191,7 +191,7 @@ Both sessions run on the same Windows machine under the same user account. A VPN
 
 | VPN property | Hub mechanism |
 |---|---|
-| Private channel | No socket at all. Each session launches its own MCP server over **stdio**. The servers share a store at `%LOCALAPPDATA%\JobolHub`, with inheritance removed and ACL'd to the user and SYSTEM only (icacls). |
+| Private channel | No socket at all. Each session launches its own MCP server over **stdio**. The servers share a store at `%USERPROFILE%\.jobol-hub`, with inheritance removed and ACL'd to the user and SYSTEM only (icacls). |
 | Authentication / integrity | Every message is **HMAC-SHA256** signed with a 32-byte key in the store. Unsigned or altered messages are flagged `verified: false` and their bodies withheld. |
 | Access control | Only two roles. Audits run only on paths under `auditRoots` (the repo and `ModernizedJava`). Report and message ids are regex-validated, so there is no path traversal. Body ≤ 64 KB. |
 | Audit trail | Append-only `hub.log.jsonl` records every audit, message, enable and disable. |
@@ -256,7 +256,11 @@ Five tests run against temp stores only:
 - `audit_run` and its baseline with the real auditor; audit-root and report-id traversal guards
 - `enable` refuses without `--approve`, and `disable` removes registration and store
 
-The real config is `enabled: false`. No `%LOCALAPPDATA%\JobolHub` and no `.mcp.json` exist.
+Enabled on 2026-10-31 after approval in chat; `hub-config.json` records it.
+
+**Store location.** The store must not live under `%LOCALAPPDATA%`. The Claude desktop app is a packaged (MSIX) Windows app, so Windows silently redirects its writes there into `AppData\Local\Packages\Claude_<id>\LocalCache`. The first store, created from the desktop session, was therefore invisible to the VS Code session, which reported "signing key missing".
+
+The store now lives at `%USERPROFILE%\.jobol-hub`, which is not redirected. `enable` refuses to run when the hub is already enabled but the key is not visible, so a session that cannot see the store can never create a second one. Inbox reads and acks are now logged.
 
 ## 9. Roadmap
 
