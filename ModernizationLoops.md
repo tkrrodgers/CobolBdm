@@ -69,3 +69,5 @@ Scope note (02:00): loop 1's kernel substitution is approved as **estate-scoped 
 Loop 3 prepared (03:40): kontor-zins J3S estate, G2 6/6 byte-identical, packaged (loops/L3-kontor-zins.md). Loop 4 in preparation: Joda-Money with J3S emulations on feature/l3-target.
 
 Loop 4 prepared (05:20): Joda-Money J3S estate, G2 6/6 byte-identical, 65 programs / 65.8K lines (loops/L4-joda-money.md). J3S emulations on feature/l3-target 21735cd (G0 569,713 records with 0 differences, 11/11 mutants caught). **Open J3S bug for Tomrodgers:** Object `==` ignores the value for boxed values; reachability in Fineract not yet analysed.
+
+Loop 2 residual coverage (07:15): an isolated FNEM0800 harness (native driver against the frozen source, modern harness against the iter6 classes) gives 5/5 exact and executes LF230, LF227, LF228, LF250 and LF251. This is isolation evidence, not batch reachability. Remaining residuals: LF161/172, LF180/184, LF218, LF070/154/179.
