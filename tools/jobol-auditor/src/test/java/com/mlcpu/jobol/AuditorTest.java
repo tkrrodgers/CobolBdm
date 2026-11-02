@@ -124,4 +124,36 @@ class AuditorTest {
         assertEquals(java.util.List.of("ws", "tran", "amount"), Analyzer.tokens("wsTranAmount"));
         assertEquals(java.util.List.of("acct", "id"), Analyzer.tokens("acct_id"));
     }
+
+    @Test
+    void commentsAndBlankLinesNeverMoveSizesOrWeights(@TempDir Path tmp) throws Exception {
+        String code = "package modern.domain;\n\npublic final class Ledger {\n    private long total;\n\n"
+            + "    public long add(long amount) {\n        total += amount;\n        return total;\n    }\n}\n";
+        String documented = "package modern.domain;\n\n/** The general ledger. */\npublic final class Ledger {\n"
+            + "    /** Legacy: WS-TOTAL (GL0400) */\n    private long total;\n\n"
+            + "    /**\n     * Posts an amount.\n     *\n     * Legacy: 2000-POST (GL0400)\n     */\n"
+            + "    public long add(long amount) {\n        // running total\n\n        total += amount;\n        return total;\n    }\n}\n";
+        Path a = tmp.resolve("a/src/main/java/modern/domain");
+        Path b = tmp.resolve("b/src/main/java/modern/domain");
+        java.nio.file.Files.createDirectories(a);
+        java.nio.file.Files.createDirectories(b);
+        java.nio.file.Files.writeString(a.resolve("Ledger.java"), code);
+        java.nio.file.Files.writeString(b.resolve("Ledger.java"), documented);
+        Config codeLoc = Config.defaults();
+        codeLoc.loc = "code";
+        Report ra = new Auditor(codeLoc).audit(tmp.resolve("a"));
+        Report rb = new Auditor(codeLoc).audit(tmp.resolve("b"));
+        assertEquals("1.2.0", ra.version);
+        // the default stays ruleset 1.1.0 with its published hash, so existing baselines remain comparable
+        Report physical = new Auditor(Config.defaults()).audit(tmp.resolve("b"));
+        assertEquals("1.1.0", physical.version);
+        assertEquals("0018a27e11dbcfd2", physical.rulesetHash);
+        assertTrue(type(physical, "Ledger").loc() > type(rb, "Ledger").loc(), "physical counting includes the comments");
+        TypeReport ta = type(ra, "Ledger");
+        TypeReport tb = type(rb, "Ledger");
+        assertEquals(ta.loc(), tb.loc(), "code lines only");
+        assertEquals(7, ta.loc()); // class header, field, method header, 2 statements, 2 closing braces
+        assertEquals(ta.index(), tb.index());
+        assertEquals(ra.summary.estateIndex, rb.summary.estateIndex);
+    }
 }

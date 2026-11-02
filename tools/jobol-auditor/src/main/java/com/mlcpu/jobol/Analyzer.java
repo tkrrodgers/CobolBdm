@@ -379,7 +379,7 @@ final class Analyzer {
         if (md.getType().isVoidType() && !stmts.isEmpty() && stmts.get(stmts.size() - 1) instanceof ReturnStmt r && r.getExpression().isEmpty()) {
             add(a, line(r), "JOB051", "trailing 'return;' in " + name + "()");
         }
-        int lines = lines(body.get());
+        int lines = size(body.get());
         if (lines > 150) {
             add(a, line(md), "JOB054", Severity.MAJOR, name + "() is " + lines + " lines");
         } else if (lines > 60) {
@@ -457,7 +457,7 @@ final class Analyzer {
         List<MethodDeclaration> declared = t.getMethods();
         for (MethodDeclaration m : declared) {
             if (m.getBody().isEmpty()) continue;
-            int ml = lines(m.getBody().get());
+            int ml = size(m.getBody().get());
             methodLines += ml;
             maxMethod = Math.max(maxMethod, ml);
             params += m.getParameters().size();
@@ -727,11 +727,33 @@ final class Analyzer {
         return n.getRange().map(r -> r.end.line - r.begin.line + 1).orElse(0);
     }
 
+    /**
+     * Lines holding at least one code token (ruleset 1.2): comment and blank lines are not code, so documentation never
+     * moves a size rule or an estate weight. Falls back to the physical range when tokens are unavailable.
+     */
+    static int codeLines(Node n) {
+        return n.getTokenRange().map(tr -> {
+            java.util.Set<Integer> ls = new java.util.HashSet<>();
+            for (com.github.javaparser.JavaToken tok : tr) {
+                if (tok.getCategory().isWhitespaceOrComment()) continue;
+                tok.getRange().ifPresent(r -> {
+                    for (int l = r.begin.line; l <= r.end.line; l++) ls.add(l);
+                });
+            }
+            return ls.size();
+        }).orElseGet(() -> lines(n));
+    }
+
+    /** A node's size in lines under the configured counting (cfg.loc: physical for 1.1.0, code for 1.2.0). */
+    private int size(Node n) {
+        return "code".equals(cfg.loc) ? codeLines(n) : lines(n);
+    }
+
     /** Lines of the declaration, less those of directly nested member types (reported separately). */
-    private static int ownLines(TypeDeclaration<?> t) {
-        int total = lines(t);
+    private int ownLines(TypeDeclaration<?> t) {
+        int total = size(t);
         for (BodyDeclaration<?> m : t.getMembers()) {
-            if (m instanceof TypeDeclaration<?>) total -= lines(m);
+            if (m instanceof TypeDeclaration<?>) total -= size(m);
         }
         return Math.max(total, 1);
     }

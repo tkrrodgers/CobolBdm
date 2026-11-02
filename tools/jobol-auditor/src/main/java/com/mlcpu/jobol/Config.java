@@ -34,6 +34,12 @@ public final class Config {
      */
     public List<String> compareInfrastructureGlobs = new ArrayList<>();
     /**
+     * How sizes and estate weights count lines: "physical" (ruleset 1.1.0, the default) or "code" (ruleset 1.2.0: lines
+     * holding code only, so comments and Javadoc never move a score). Not in default-jobol.json, so the default hash is
+     * unchanged.
+     */
+    public String loc = "physical";
+    /**
      * compare --align structural: modern files never offered as a structural partner (runtime plumbing). Everything
      * else outside the test lane is a candidate, including the infrastructure above: a provenance-free estate puts its
      * domain types there too. Not in default-jobol.json, so the ruleset hash is unchanged.

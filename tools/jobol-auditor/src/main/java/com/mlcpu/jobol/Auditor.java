@@ -46,6 +46,7 @@ public final class Auditor {
         List<Path> files = collect(root);
         Report r = new Report();
         r.root = root.toAbsolutePath().normalize().toString().replace('\\', '/');
+        r.version = Report.version(cfg);
         r.rulesetHash = rulesetHash();
         for (Zone z : Zone.values()) if (z != Zone.EXCLUDED) r.summary.lanes.put(z.id(), new Report.Lane());
         Set<String> filesSeen = new HashSet<>();
@@ -235,7 +236,7 @@ public final class Auditor {
     }
 
     private String rulesetHash() {
-        StringBuilder sb = new StringBuilder(Report.VERSION).append('\n');
+        StringBuilder sb = new StringBuilder(Report.version(cfg)).append('\n');
         for (Rules.Spec s : cfg.effectiveRules()) {
             sb.append(s.id()).append(s.severity()).append(s.zones()).append(s.cap()).append('\n');
         }

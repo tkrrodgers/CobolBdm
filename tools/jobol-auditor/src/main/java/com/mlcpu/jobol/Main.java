@@ -21,6 +21,8 @@ public final class Main {
           --config FILE      lane globs, rule overrides and gate (default: built-in, see --print-config)
           --baseline FILE    a previous jobol-report.json: report the change and fail on regression
           --max-index N      override gate.maxEstateIndex
+          --loc MODE         physical (default, ruleset 1.1.0) | code (ruleset 1.2.0: sizes and estate weights count
+                             code lines only; comments and blank lines never move a score)
           --top N            types listed in the Markdown report and on the console (default 25)
           --no-gate          always exit 0 (report only)
           --quiet            no console summary
@@ -44,6 +46,7 @@ public final class Main {
         int top = 25;
         boolean gate = true;
         boolean quiet = false;
+        String loc = null;
         try {
             for (int i = 0; i < args.length; i++) {
                 String a = args[i];
@@ -56,6 +59,10 @@ public final class Main {
                     case "--top" -> top = Integer.parseInt(args[++i]);
                     case "--no-gate" -> gate = false;
                     case "--quiet" -> quiet = true;
+                    case "--loc" -> {
+                        loc = args[++i];
+                        if (!loc.equals("physical") && !loc.equals("code")) throw new IllegalArgumentException("--loc physical|code");
+                    }
                     case "--print-config" -> {
                         System.out.print(Config.defaultsText());
                         return 0;
@@ -89,6 +96,7 @@ public final class Main {
         try {
             Config cfg = configFile == null ? Config.defaults() : Config.load(configFile);
             if (maxIndex != null) cfg.gate.maxEstateIndex = maxIndex;
+            if (loc != null) cfg.loc = loc;
             Auditor auditor = new Auditor(cfg);
             Report r = auditor.audit(target);
             if (baseline != null) auditor.compare(r, baseline);
