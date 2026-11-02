@@ -132,6 +132,31 @@ Acceptance for naming v1:
   - the generated value types are shared across different values (PaymentValueRecord holds five).
 - Validator rule added from this run: a type name equal to a JDK simple name the estate uses is rejected.
 
+### 2.8 DT1 accepted (2026-11-02 09:00): the end-to-end naming loop works
+- Validator (pipeline) and lead pre-check agree on the v2 handoff: 216 approved (204 renames + 12 explicit no-ops in
+  complete canonical units), 544 queued (538 entries + 6 notes), 0 rejected. The v1 handoff failed atomicity because it
+  dropped no-op members; the validator was right.
+- `lift --names` binds by javac Element identity. 204 decisions, 1,110 name nodes, residue 0. The re-attributed
+  reference graph is identical, and the non-identifier tokens are invariant. Name-as-data checks: enum
+  name/valueOf/toString, record toString, reflection.
+- Gates:
+  - compile;
+  - kernel gates: decimal 686,922 cases, 0 differences, 6/6 mutants; rounding 2,082,656 cases, 0 differences, 3/3;
+  - GN4 strict 20/20, with result SHA-256s equal to native;
+  - abend source-map remap fixture (RC 16 on both sides);
+  - two applies byte-identical (57 files); off-path 641 files byte-identical; toggling naming off restores 54/54;
+  - JOBOL: a delta of 0 under code-LOC 1.2.0. The raw 1.1.0 +0.3 is a Javadoc weight artifact (decision log section 10).
+- Traceability: names.json carries 216 deep-thinker entries (ledger id, origin, model, prompt), and every renamed
+  declaration carries a Legacy Javadoc line. FSEM0100 <-> AnnuityCalculationService resolves from the files alone.
+- Samples: Kzle0100Batch -> AnnuityLoanPlanBatch; Fsem0100 -> AnnuityCalculationService; EventRecord -> CaseRecord;
+  EventOutRecord -> ResultRecord; monthlyPayment() -> computeMonthlyPayment(); checkTerms() -> validateTerms().
+- Open:
+  - DT1.1: record parameters take derived names (today the same record is `loanCase` in one method and `caseWork` in
+    another, because their units fell on different sides of the threshold); the Javadoc star; one Legacy line per type;
+  - the human review sheet (loops/dt1-kontor/REVIEW-SHEET.md: 253 held units, 26 type names first);
+  - generalization on fineract-legacy;
+  - task 2 (domain decomposition) for fidelity.
+
 ## 3. The notebook (memory that improves over time)
 `knowledge/notebook/` (versioned in the repo, reviewed like code), built on the existing `knowledge/glossary` and
 `taxonomy.json`:
