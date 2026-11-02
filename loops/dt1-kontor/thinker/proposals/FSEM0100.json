@@ -1,0 +1,2276 @@
+{
+  "schema": "mlcpu.naming-unit-proposals.v1",
+  "estate": "kontor-zins-legacy",
+  "packetSha256": "eaeb07f7e07036a1b5736512420e6ed570247dd3f394f0a4142fe08551d2fef8",
+  "model": "claude-opus-5-5",
+  "promptVersion": "naming-1u",
+  "units": [
+    {
+      "unit": "U015",
+      "keep": true,
+      "confidence": 0.85,
+      "rationale": "RC-PRECISION is the math-context precision of the run control record, validated as 1 to 12 digits.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 123, "quote": "IF RC-PRECISION < 1 OR RC-PRECISION > 12" }
+      ],
+      "notebook": ["math-context", "run-control"]
+    },
+    {
+      "unit": "U016",
+      "name": "recordType",
+      "confidence": 0.75,
+      "rationale": "RC-REC-TYPE identifies the run control record type; 'MC' marks a math-context record. REC expanded.",
+      "evidence": [
+        { "file": "source/app/cpy/FNRUNCT.cpy", "line": 3, "quote": "RC-IS-MATH-CONTEXT" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 118, "quote": "IF RC-REC-TYPE NOT = 'MC' OR DW-NUM-1 = 'N'" }
+      ],
+      "notebook": ["math-context", "run-control"]
+    },
+    {
+      "unit": "U017",
+      "keep": true,
+      "confidence": 0.9,
+      "rationale": "RC-ROUNDING-MODE holds the BigDecimal rounding mode name, checked against UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 133, "quote": "DISPLAY 'KZLE0100 BAD ROUNDING MODE ' RC-ROUNDING-MODE" }
+      ],
+      "notebook": ["rounding-mode", "run-control"]
+    },
+    {
+      "unit": "U018",
+      "keep": true,
+      "confidence": 0.85,
+      "rationale": "FN-RUN-CONTROL is the layout of the RUNCTL input file (KONTZINS.RUN.CONTROL); an I/O layout, so RunControlRecord is right.",
+      "evidence": [
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 5, "quote": "KONTZINS.RUN.CONTROL" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 110, "quote": "READ RUNCTL-FILE INTO FN-RUN-CONTROL" }
+      ],
+      "notebook": ["run-control", "P003-record-vs-entity"]
+    },
+    {
+      "unit": "U019",
+      "name": "resultCount",
+      "confidence": 0.7,
+      "rationale": "FO-COUNT is the number of result records the service placed in FO-REC; the driver writes entries 1 to FO-COUNT.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 550, "quote": "MOVE KZ-EVENT-OUT TO FO-REC (FO-COUNT)." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 546, "quote": "ADD 1 TO FO-COUNT" }
+      ],
+      "notebook": ["record-counter"]
+    },
+    {
+      "unit": "U020",
+      "name": "serviceFunction",
+      "confidence": 0.6,
+      "rationale": "FO-FUNC tells the annuity calculation service which kind of call this is (header, offer, event, end of run).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 52, "quote": "EVALUATE FO-FUNC" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 215, "quote": "MOVE 'H' TO FO-FUNC" }
+      ],
+      "notebook": ["P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U021",
+      "name": "ServiceFunction",
+      "confidence": 0.6,
+      "rationale": "Enum of the FO-FUNC values that select the service's action.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 52, "quote": "EVALUATE FO-FUNC" }
+      ],
+      "notebook": ["P004-88-level-enum"]
+    },
+    {
+      "unit": "U022",
+      "name": null,
+      "confidence": 0.65,
+      "rationale": "The driver passes the code of the record it hands over: H header starts a case, P offer is checked, V event is processed, E is sent once after the files are closed.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 54, "quote": "PERFORM 1000-START-CASE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 56, "quote": "PERFORM 1100-CHECK-OFFER" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 58, "quote": "PERFORM 2000-PROCESS-EVENT" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 88, "quote": "MOVE 'E' TO FO-FUNC" }
+      ],
+      "notebook": ["P004-88-level-enum"],
+      "constants": {
+        "42b0c1effa699a7aa758a7b6c8ef8137d9b0716c3fcd55166e8f0db9dd917d1c": "OTHER",
+        "9c592654e0289feed7269e0fb05dfb58c0967bbdd1a6cfdc6824cf53b7bd999e": "END_OF_RUN",
+        "f49872f0e9efa8b7f2841849c28e1d55c350cfd4b96abe00658b187d203dd305": "HEADER",
+        "0bd6a967c8850f9b1f4a2ac7c03063c06b1de467f34565bb49b862c09d398c82": "OFFER",
+        "535d81b15cb37c6accf8759448f4deaa4f015bcbbd71a0ef8324e37aeebb0277": "EVENT"
+      }
+    },
+    {
+      "unit": "U023",
+      "name": "resultRecord",
+      "confidence": 0.6,
+      "rationale": "FO-REC is the table of result-record images the service returns; the driver writes each one to the results file.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 237, "quote": "WRITE RESULT-REC FROM FO-REC (DW-K)" }
+      ],
+      "notebook": ["P003-record-vs-entity"]
+    },
+    {
+      "unit": "U024",
+      "name": "rejectRecord",
+      "confidence": 0.65,
+      "rationale": "FO-REJECT holds the reject result record built when the calculation fails; the driver writes it on status R.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 575, "quote": "MOVE KZ-EVENT-OUT TO FO-REJECT" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 248, "quote": "WRITE RESULT-REC FROM FO-REJECT" }
+      ],
+      "notebook": ["reject-reason"]
+    },
+    {
+      "unit": "U025",
+      "name": "serviceStatus",
+      "confidence": 0.6,
+      "rationale": "FO-STATUS is the outcome of the service call (S success, R rejected); the driver abends on any other value.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 259, "quote": "DISPLAY 'KZLE0100 ENTRY STATUS INVALID ' FO-STATUS" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 50, "quote": "MOVE 'S' TO FO-STATUS" }
+      ],
+      "notebook": ["status-block"]
+    },
+    {
+      "unit": "U026",
+      "name": "ServiceStatus",
+      "confidence": 0.6,
+      "rationale": "Enum of the FO-STATUS outcomes of a service call.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 233, "quote": "EVALUATE FO-STATUS" }
+      ],
+      "notebook": ["P004-88-level-enum", "status-block"]
+    },
+    {
+      "unit": "U027",
+      "name": null,
+      "confidence": 0.7,
+      "rationale": "S is set at the start of every call and R only when the record was rejected; the driver writes results on S and the reject on R.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 50, "quote": "MOVE 'S' TO FO-STATUS" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 576, "quote": "MOVE 'R' TO FO-STATUS." }
+      ],
+      "notebook": ["status-block"],
+      "constants": {
+        "641fa24b38043716e83edade3aa54083cb17126de1b385774984de60fd988d8d": "OTHER",
+        "c173d02af7d683b8287a070be5a568c0d4ed00d420730bd4df3f4611b3646679": "REJECTED",
+        "d54b69dd3c6b409df85a8480571848aaa20352429a79c6090f0df739ed4b9806": "SUCCESS"
+      }
+    },
+    {
+      "unit": "U028",
+      "name": "ServiceResponse",
+      "confidence": 0.5,
+      "rationale": "FS-OUT is the exchange area of the annuity calculation service: the function in, then status, reject and result records out. Not a file layout; mostly response.",
+      "evidence": [
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 8, "quote": "KZLE0100 READS CASES AND CALLS THE ANNUITY CALCULATION SERVICE." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 46, "quote": "KZ-EVENT-REC FS-OUT." }
+      ],
+      "notebook": ["P003-record-vs-entity", "C002-generic-suffixes"]
+    },
+    {
+      "unit": "U029",
+      "name": "operandAScale",
+      "confidence": 0.75,
+      "rationale": "JB-A-S is the scale of the first operand (A) passed to the decimal kernel; -S is scale, not signed.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 394, "quote": "MOVE 2 TO JB-A-S" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 416, "quote": "MOVE JB-A-S TO W-SA" }
+      ],
+      "notebook": ["scale", "unscaled-value"]
+    },
+    {
+      "unit": "U030",
+      "name": "operandAUnscaled",
+      "confidence": 0.75,
+      "rationale": "JB-A-U is the unscaled value of operand A (amount times 10 to the scale).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 393, "quote": "COMPUTE JB-A-U = CURRENT-BALANCE * 100" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U031",
+      "name": "operandAExponent",
+      "confidence": 0.55,
+      "rationale": "JB-A-Z sits where the value groups keep their EXPONENT: a positive count of extra trailing zeros, negative when the value is a big-number handle.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 699, "quote": "COMPUTE JB-N = W-NX + W-ZA" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 801, "quote": "IF JB-A-Z > 0" },
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 4, "quote": "05 PRINCIPAL-EXPONENT PIC S9(4) COMP." }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U032",
+      "name": "operandBScale",
+      "confidence": 0.75,
+      "rationale": "JB-B-S is the scale of the second operand (B).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 413, "quote": "MOVE 2 TO JB-B-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U033",
+      "name": "operandBUnscaled",
+      "confidence": 0.75,
+      "rationale": "JB-B-U is the unscaled value of operand B.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 412, "quote": "COMPUTE JB-B-U = CURRENT-INTEREST * 100" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U034",
+      "name": "operandBExponent",
+      "confidence": 0.55,
+      "rationale": "JB-B-Z is operand B's exponent (trailing-zero count, or big-number handle flag when negative), twin of JB-A-Z.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 814, "quote": "IF JB-B-Z > 0" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U035",
+      "name": "doubleValue",
+      "confidence": 0.25,
+      "rationale": "JB-D is never referenced; its fixed 13.5-digit picture suggests a binary-floating (double) value for an unimplemented op such as VD. Needs review.",
+      "evidence": [
+        { "file": "source/app/cpy/FSJBDP.cpy", "line": 18, "quote": "PIC S9(13)V9(5) COMP-3." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U036",
+      "name": "roundingMode",
+      "confidence": 0.85,
+      "rationale": "JB-M is the rounding mode code (0 UP to 6 HALF_EVEN, otherwise UNNECESSARY) translated into W-MODE.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 237, "quote": "WHEN 4 MOVE 'H' TO W-MODE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 278, "quote": "MOVE 4 TO JB-M" }
+      ],
+      "notebook": ["rounding-mode"]
+    },
+    {
+      "unit": "U037",
+      "name": "integerResult",
+      "confidence": 0.6,
+      "rationale": "JB-N returns integer answers: the precision (digit count), the comparison result -1/0/1, or an exported limb.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 699, "quote": "COMPUTE JB-N = W-NX + W-ZA" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 363, "quote": "COMPUTE DIGITS-TO-DROP = JB-N - ROUND-PRECISION" }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U038",
+      "name": "operation",
+      "confidence": 0.8,
+      "rationale": "JB-OP is the operation code the decimal kernel dispatches on (add, subtract, multiply, divide, set scale...).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 242, "quote": "EVALUATE JB-OP" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 286, "quote": "MOVE 'AD' TO JB-OP" }
+      ],
+      "notebook": ["P001-kernel-library"]
+    },
+    {
+      "unit": "U039",
+      "name": "DecimalOperation",
+      "confidence": 0.75,
+      "rationale": "Enum of the decimal kernel's operation codes; each dispatches to an arithmetic paragraph.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 243, "quote": "WHEN 'AD' PERFORM 1000-ADD" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 247, "quote": "WHEN 'DS' PERFORM 1700-DIVIDE-SCALE" }
+      ],
+      "notebook": ["P001-kernel-library", "decimal-kernel"]
+    },
+    {
+      "unit": "U040",
+      "name": null,
+      "confidence": 0.5,
+      "rationale": "Implemented codes are named by their paragraphs (ADD, DIVIDE-MC, SET-SCALE, PRECISION, COMPARE, big-store mark/reset/export); AM/SM/MM/DR/MN/MX/PW/EQ/HC/VD are classified but not implemented, so those names are BigDecimal-API guesses for review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 246, "quote": "WHEN 'DM' PERFORM 1600-DIVIDE-MC" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 248, "quote": "WHEN 'SS' PERFORM 1800-SET-SCALE" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 177, "quote": "MOVE BG-USED TO BG-MARK" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 186, "quote": "PERFORM 7990-BIG-EXPORT" }
+      ],
+      "notebook": ["P001-kernel-library", "C003-no-invented-meaning"],
+      "constants": {
+        "3cdd9b191852a136c90b83a56353bf265effb9ad424e4bd9070088d30ef90e26": "OTHER",
+        "c7c5c1c623aedb2b1d2040efd9b53ff120bece19e0001c517a8a3667632f3203": "ADD",
+        "75de7307ac87fa41804303b45017e1de7d020e34a633890273be6cd72e05c3e3": "ADD_WITH_MATH_CONTEXT",
+        "fed1fd1319a7659f7a3d3c98bb7a342efb8b31eb5d8a59b2b6eda9dde033b448": "MARK_BIG_STORE",
+        "c74c7b9cb3b217f2c267d04991684f9ad93ffd15bcb0e87b4fbaa049ed5aead3": "EXPORT_BIG_LIMB",
+        "db887e3f0e5f018dc040683d5744a255082f102570c8ebb3550f2388acbfb4b1": "RESET_BIG_STORE",
+        "455b2c55065eccf41be5240d2fdfe3643f3a0629c16303a49b4df1940befbfce": "COMPARE",
+        "919ad71cdc6771b9201193567b4047951c30d2999b8de6ca67a049c59e0dfccc": "DIVIDE_WITH_MATH_CONTEXT",
+        "545c84cb0793177f18c401fd12a8f470ca13dfbbe241f76957fe9a24ccfe803d": "DIVIDE_WITH_ROUNDING_MODE",
+        "3abfcaa14852f76f3c6cead9850cf29b2c213dc17a4c237fd157c6333d4ab6f6": "DIVIDE_TO_SCALE",
+        "e3f46f2f3c25efdbd92de98e8c587cb89c8350f74c9fe9003b360e42efa3ed35": "EQUALS",
+        "acde25eef5220df6a81aa6994c8e1111d95c63e475dc37f16ce35cfd9e1cab98": "HASH_CODE",
+        "e25ab436c24d5d2ea4917f7d56bfc6a685953ce5ee8e7b6b11ac31467bd10aaa": "MULTIPLY_WITH_MATH_CONTEXT",
+        "49770612fa567e6b30575f4b0c050f6b538ac153ba77a6922096e3372bc5fcc6": "MIN",
+        "33d8451ac33962f8e2e32353826b9b60c8d9e720106344310db66943618aa50d": "MULTIPLY",
+        "09ffcdb61848281ef312fa66a80ac89b7d1d2b5a90eda49e2c607427dd7db902": "MAX",
+        "f8c4bdb58c3662ce6cf7fa57e3d49c5c0fcf9a4cca9123fd235e5d1fa6458fc4": "PRECISION",
+        "a361aac048419e44c90b38f60bdd16a158aa0c4ba44dd9d4a1f1c80df7c03528": "POWER",
+        "3e64f8594001e1956dc3b99284207309857b1544aa7a644dd98de8accb259e80": "SUBTRACT",
+        "255f0beb6af307a944339e15341608c7df909dc5b3c99afbf33938dd8a00b400": "SUBTRACT_WITH_MATH_CONTEXT",
+        "17732e46978ff29a3e7532660bbc9521c7d89147d89d78aba11141f5e6432692": "SET_SCALE",
+        "0b6e4ac1d72bb7242f6f056bf83bf694e8d86ac6768b2ba0d5bdf614acf3a406": "DOUBLE_VALUE"
+      }
+    },
+    {
+      "unit": "U041",
+      "name": "precisionOrScale",
+      "confidence": 0.55,
+      "rationale": "JB-P is a precision for divide-with-context (20 digits) but the target scale for divide-to-scale and set-scale (2), so both words are needed.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 317, "quote": "MOVE 20 TO JB-P" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 656, "quote": "MOVE JB-P TO W-S" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 321, "quote": "IF W-NX > JB-P" }
+      ],
+      "notebook": ["math-context", "scale"]
+    },
+    {
+      "unit": "U042",
+      "name": "resultScale",
+      "confidence": 0.75,
+      "rationale": "JB-R-S is the scale of the kernel's decimal result.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 406, "quote": "MOVE W-S TO JB-R-S." }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U043",
+      "name": "resultUnscaled",
+      "confidence": 0.75,
+      "rationale": "JB-R-U is the unscaled value of the kernel's decimal result.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 402, "quote": "MOVE W-X TO JB-R-U" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 404, "quote": "COMPUTE CURRENT-INTEREST = JB-R-U / 100" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U044",
+      "name": "resultExponent",
+      "confidence": 0.55,
+      "rationale": "JB-R-Z is the result's exponent (trailing-zero count, or -1 for a big-number handle).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 401, "quote": "MOVE W-RZ TO JB-R-Z" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1508, "quote": "MOVE -1 TO JB-R-Z" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U045",
+      "name": "returnCode",
+      "confidence": 0.8,
+      "rationale": "JB-RC is the kernel return code: 0 ok, 1 arithmetic exception, 20 capacity exceeded.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 554, "quote": "IF JB-RC = 1" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1545, "quote": "MOVE 20 TO JB-RC" }
+      ],
+      "notebook": ["return-code"]
+    },
+    {
+      "unit": "U046",
+      "name": "DecimalKernelParameters",
+      "confidence": 0.6,
+      "rationale": "JB is the linkage block of the decimal kernel FSJBDEC: operation, operands A and B, result, precision/scale, mode, return code.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 553, "quote": "CALL 'FSJBDEC' USING JB" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 162, "quote": "PROCEDURE DIVISION USING JB." }
+      ],
+      "notebook": ["P001-kernel-library", "decimal-kernel"]
+    },
+    {
+      "unit": "U047",
+      "name": "months",
+      "confidence": 0.6,
+      "rationale": "CASE-MONTHS is the loan duration in months taken from the header; it drives the payment and plan length.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 76, "quote": "MOVE KH-MONTHS TO CASE-MONTHS" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 178, "quote": "MOVE CASE-MONTHS TO CALC-MONTHS" }
+      ],
+      "notebook": ["loan"]
+    },
+    {
+      "unit": "U048",
+      "name": "principal",
+      "confidence": 0.7,
+      "rationale": "CASE-PRINCIPAL is the loan principal from the header record.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 70, "quote": "MOVE KH-PRINCIPAL TO CASE-PRINCIPAL" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U049",
+      "name": "annualRate",
+      "confidence": 0.6,
+      "rationale": "CASE-RATE becomes the annual rate value that is divided by 12 into the monthly rate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 177, "quote": "MOVE CASE-RATE TO CALC-RATE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 314, "quote": "MOVE ANNUAL-RATE-VALUE TO JB-A" }
+      ],
+      "notebook": ["nominal-interest-rate"]
+    },
+    {
+      "unit": "U050",
+      "name": "years",
+      "confidence": 0.6,
+      "rationale": "CASE-YEARS is the loan duration in years; the SY event turns it into months.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 158, "quote": "COMPUTE CALC-MONTHS = CASE-YEARS * 12" }
+      ],
+      "notebook": ["loan"]
+    },
+    {
+      "unit": "U051",
+      "keep": true,
+      "confidence": 0.8,
+      "rationale": "OFFER-COUNT counts the valid offers of the case and is reported by the CO event.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 86, "quote": "ADD 1 TO OFFER-COUNT" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 536, "quote": "MOVE OFFER-COUNT TO KC-COUNT" }
+      ],
+      "notebook": ["record-counter"]
+    },
+    {
+      "unit": "U052",
+      "name": "planTotalInterest",
+      "confidence": 0.7,
+      "rationale": "PLAN-INTEREST accumulates each installment's interest and is reported as the plan's total interest.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 454, "quote": "ADD CURRENT-INTEREST TO PLAN-INTEREST (PLAN-SLOT)" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 501, "quote": "COMPUTE KS-TOT-INTEREST-U =" }
+      ],
+      "notebook": ["interest", "report-totals"]
+    },
+    {
+      "unit": "U053",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "PLAN-MONTHS is the number of monthly installments in the repayment plan.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 383, "quote": "MOVE CALC-MONTHS TO PLAN-MONTHS (PLAN-SLOT)" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U054",
+      "name": "planTotalPaid",
+      "confidence": 0.7,
+      "rationale": "PLAN-PAID accumulates every installment amount and is reported as the plan's total paid.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 460, "quote": "ADD CURRENT-PAYMENT TO PLAN-PAID (PLAN-SLOT)" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 504, "quote": "COMPUTE KS-TOT-PAID-U = PLAN-PAID (PLAN-SLOT) * 100" }
+      ],
+      "notebook": ["report-totals"]
+    },
+    {
+      "unit": "U055",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "PLAN-PRESENT flags that a repayment plan was built in the slot; queries fail without it.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 389, "quote": "MOVE 'Y' TO PLAN-PRESENT (PLAN-SLOT)" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 193, "quote": "IF PLAN-PRESENT (1) NOT = 'Y'" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U056",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "PLAN-PRINCIPAL is the principal the plan starts from (reported as the opening debt).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 382, "quote": "CURRENT-BALANCE PLAN-PRINCIPAL (PLAN-SLOT)" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 505, "quote": "COMPUTE KS-DEBT-0-U = PLAN-PRINCIPAL (PLAN-SLOT) * 100" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U057",
+      "name": "planPrincipalRepaid",
+      "confidence": 0.65,
+      "rationale": "PLAN-REPAID sums the principal portion of every installment, i.e. the principal repaid over the plan.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 457, "quote": "ADD CURRENT-PRINCIPAL TO PLAN-REPAID (PLAN-SLOT)" }
+      ],
+      "notebook": ["principal", "report-totals"]
+    },
+    {
+      "unit": "U058",
+      "name": "remainingDebt",
+      "confidence": 0.7,
+      "rationale": "ROW-DEBT is the balance still owed after the installment; the QR event reports it as remaining debt.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 453, "quote": "MOVE CURRENT-BALANCE TO ROW-DEBT (PLAN-SLOT, ROW-NUMBER)" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 439, "quote": "SUBTRACT CURRENT-PRINCIPAL FROM CURRENT-BALANCE" }
+      ],
+      "notebook": ["balance", "principal"]
+    },
+    {
+      "unit": "U059",
+      "name": "installmentInterest",
+      "confidence": 0.7,
+      "rationale": "ROW-INTEREST is the interest part of one installment row of the plan.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 449, "quote": "MOVE CURRENT-INTEREST TO ROW-INTEREST" }
+      ],
+      "notebook": ["interest"]
+    },
+    {
+      "unit": "U060",
+      "name": "installmentAmount",
+      "confidence": 0.65,
+      "rationale": "ROW-PAYMENT is the installment's total amount, interest plus principal portion.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 435, "quote": "COMPUTE CURRENT-PAYMENT = CURRENT-INTEREST +" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 447, "quote": "MOVE CURRENT-PAYMENT TO ROW-PAYMENT" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U061",
+      "name": "installmentPrincipal",
+      "confidence": 0.65,
+      "rationale": "ROW-PRINCIPAL is the principal portion repaid by the installment; zero marks an interest-only row.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 451, "quote": "MOVE CURRENT-PRINCIPAL TO ROW-PRINCIPAL" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 522, "quote": "IF ROW-PRINCIPAL (PLAN-SLOT, OUTPUT-ROW) = 0" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U062",
+      "name": "termsMonths",
+      "confidence": 0.6,
+      "rationale": "TERM-MONTHS is the duration stored with the validated loan terms (TERM-DATA, written by STORE-TERMS).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 210, "quote": "MOVE CALC-MONTHS TO TERM-MONTHS (TERM-SLOT)" }
+      ],
+      "notebook": ["loan"]
+    },
+    {
+      "unit": "U063",
+      "name": "termsPresent",
+      "confidence": 0.6,
+      "rationale": "TERM-PRESENT flags that loan terms are stored in the slot; later calculations fail without them.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 211, "quote": "MOVE 'Y' TO TERM-PRESENT (TERM-SLOT)" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 182, "quote": "IF TERM-PRESENT (TERM-SLOT) NOT = 'Y'" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U064",
+      "name": "termsPrincipal",
+      "confidence": 0.6,
+      "rationale": "TERM-PRINCIPAL is the loan terms' principal rounded to cents.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 205, "quote": "COMPUTE TERM-PRINCIPAL (TERM-SLOT)" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 206, "quote": "ROUNDED = CALC-PRINCIPAL" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U065",
+      "name": "termsAnnualRate",
+      "confidence": 0.6,
+      "rationale": "TERM-RATE is the terms' annual rate rounded half-even to 12 decimals.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 231, "quote": "COMPUTE TERM-RATE (TERM-SLOT) =" }
+      ],
+      "notebook": ["nominal-interest-rate", "half-even"]
+    },
+    {
+      "unit": "U066",
+      "name": "LoanCase",
+      "confidence": 0.55,
+      "rationale": "KZ-CASE-WORK is reset per case and carries the loan's principal, rate, duration, offer count, stored terms and plans across service calls; the driver calls a case a loan.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 69, "quote": "INITIALIZE KZ-CASE-WORK" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 176, "quote": "'KZLE0100 LOAN DOES NOT START WITH A HEADER '" }
+      ],
+      "notebook": ["loan", "P003-record-vs-entity", "C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U067",
+      "name": "amountScale",
+      "confidence": 0.75,
+      "rationale": "KA-AMOUNT-S is the scale of the reported amount; -S means scale, paired with -U unscaled.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 468, "quote": "MOVE RESULT-SCALE TO KA-AMOUNT-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U068",
+      "name": "amountUnscaled",
+      "confidence": 0.75,
+      "rationale": "KA-AMOUNT-U is the unscaled value of the reported amount.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 467, "quote": "MOVE RESULT-UNSCALED TO KA-AMOUNT-U" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U069",
+      "name": "amountEventType",
+      "confidence": 0.6,
+      "rationale": "KA-EVENT-TYPE echoes the event type in the amount variant; prefixed by variant because every variant repeats EVENT-TYPE in the same record.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 466, "quote": "MOVE KE-TYPE TO KA-EVENT-TYPE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U070",
+      "keep": true,
+      "confidence": 0.6,
+      "rationale": "KO-BODY is the variable part of the result record that the amount, terms, summary, row, count and reject variants redefine.",
+      "evidence": [
+        { "file": "source/app/cpy/KZEVOUT.cpy", "line": 7, "quote": "KO-AMOUNT REDEFINES KO-BODY." }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U071",
+      "keep": true,
+      "confidence": 0.8,
+      "rationale": "KO-CASE-ID carries the case id of the input record into the result.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 540, "quote": "MOVE KV-CASE-ID TO KO-CASE-ID" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U072",
+      "name": "offerCount",
+      "confidence": 0.7,
+      "rationale": "KC-COUNT reports the case's number of valid offers.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 536, "quote": "MOVE OFFER-COUNT TO KC-COUNT" }
+      ],
+      "notebook": ["record-counter"]
+    },
+    {
+      "unit": "U073",
+      "name": "offerCountEventType",
+      "confidence": 0.55,
+      "rationale": "KC-EVENT-TYPE echoes the event type in the offer-count variant.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 535, "quote": "MOVE KE-TYPE TO KC-EVENT-TYPE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U074",
+      "name": "resultNumber",
+      "confidence": 0.6,
+      "rationale": "KO-NUM numbers the result records produced for one input record (1, 2, ...).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 542, "quote": "COMPUTE KO-NUM = FO-COUNT + 1" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U075",
+      "name": "recordType",
+      "confidence": 0.75,
+      "rationale": "KO-REC-TYPE says which variant the result record carries (amount, terms, summary, installment, count, reject).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 465, "quote": "MOVE 'A' TO KO-REC-TYPE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U076",
+      "name": "ResultRecordType",
+      "confidence": 0.7,
+      "rationale": "Enum of the result record variants.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 479, "quote": "MOVE 'T' TO KO-REC-TYPE" }
+      ],
+      "notebook": ["P004-88-level-enum"]
+    },
+    {
+      "unit": "U077",
+      "name": null,
+      "confidence": 0.7,
+      "rationale": "Each code is set by its output paragraph: A amount, T terms, S summary, M installment row, C offer count, X reject.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 498, "quote": "MOVE 'S' TO KO-REC-TYPE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 511, "quote": "MOVE 'M' TO KO-REC-TYPE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 534, "quote": "MOVE 'C' TO KO-REC-TYPE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 565, "quote": "MOVE 'X' TO KO-REC-TYPE" }
+      ],
+      "notebook": ["P004-88-level-enum"],
+      "constants": {
+        "9f07d3c3889b98e1d23105d58b1b4b2c6bc019e09570c849378506896604ccf2": "OTHER",
+        "a539c4c6f2bc27304cea5d4a5bdf0beb883bbe28d1992eb9ec77969c3066d3ed": "AMOUNT",
+        "a21cfb0411b918ce93d5d327ad7eee4b6e3f2ff608510ece4eac8232f6f024a0": "OFFER_COUNT",
+        "0eb01afd370a01b39360f5f5bbd6909338641d657c64e8e8af965ac46a59a2c1": "INSTALLMENT",
+        "75cbe6491dbd41a920e46ed0f34c623110e758401e96807e9f7fd7b0788c6e12": "SUMMARY",
+        "48d2c9615848da0b48a8da292e7b2216e0883fc50209a9b655f03abc9d8b0175": "TERMS",
+        "739e51f790ef4b0f98e49e7188f0c7eccd77e327d72c191bc376bb5f74db7cbc": "REJECT"
+      }
+    },
+    {
+      "unit": "U078",
+      "name": "rejectCode",
+      "confidence": 0.75,
+      "rationale": "KX-CODE is the reject code (RJEVT001 from the driver, UNMAPPED from the service).",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 378, "quote": "MOVE DW-CODE TO KX-CODE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 572, "quote": "MOVE 'UNMAPPED' TO KX-CODE" }
+      ],
+      "notebook": ["reject-reason"]
+    },
+    {
+      "unit": "U079",
+      "name": "rejectEventType",
+      "confidence": 0.65,
+      "rationale": "KX-EVENT-TYPE is the event type of the rejected record (blank for headers and offers).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 568, "quote": "MOVE KE-TYPE TO KX-EVENT-TYPE" }
+      ],
+      "notebook": ["reject-reason"]
+    },
+    {
+      "unit": "U080",
+      "name": "rejectedRecordType",
+      "confidence": 0.65,
+      "rationale": "KX-REC-TYPE copies the type (H, P, E) of the input record that was rejected.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 566, "quote": "MOVE KV-REC-TYPE TO KX-REC-TYPE" }
+      ],
+      "notebook": ["reject-reason"]
+    },
+    {
+      "unit": "U081",
+      "name": "rejectSource",
+      "confidence": 0.65,
+      "rationale": "KX-SOURCE names where the reject came from ('ENVELOPE' for the driver's format check, '?' from the service).",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 379, "quote": "MOVE 'ENVELOPE' TO KX-SOURCE" }
+      ],
+      "notebook": ["reject-reason", "status-block"]
+    },
+    {
+      "unit": "U082",
+      "name": "rejectText",
+      "confidence": 0.7,
+      "rationale": "KX-TEXT is the reject's explanation text (format message or exception name).",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 382, "quote": "MOVE DW-TEXT-1 TO KX-TEXT" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 574, "quote": "MOVE FAILURE-NAME TO KX-TEXT" }
+      ],
+      "notebook": ["reject-reason"]
+    },
+    {
+      "unit": "U083",
+      "name": "remainingDebtScale",
+      "confidence": 0.7,
+      "rationale": "KR-DEBT-S is the scale (2) of the row's remaining debt.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 521, "quote": "KR-DEBT-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U084",
+      "name": "remainingDebtUnscaled",
+      "confidence": 0.7,
+      "rationale": "KR-DEBT-U is the unscaled remaining debt after the installment.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 519, "quote": "COMPUTE KR-DEBT-U = ROW-DEBT (PLAN-SLOT, OUTPUT-ROW) * 100" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U085",
+      "name": "interestOnly",
+      "confidence": 0.7,
+      "rationale": "KR-INT-ONLY is Y when the installment repays no principal (interest only). INT expanded.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 522, "quote": "IF ROW-PRINCIPAL (PLAN-SLOT, OUTPUT-ROW) = 0" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 523, "quote": "MOVE 'Y' TO KR-INT-ONLY" }
+      ],
+      "notebook": ["interest"]
+    },
+    {
+      "unit": "U086",
+      "name": "installmentInterestScale",
+      "confidence": 0.7,
+      "rationale": "KR-INTEREST-S is the scale of the installment's interest.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 520, "quote": "MOVE 2 TO KR-PAYMENT-S KR-INTEREST-S KR-PRINCIPAL-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U087",
+      "name": "installmentInterestUnscaled",
+      "confidence": 0.7,
+      "rationale": "KR-INTEREST-U is the unscaled interest part of the installment row.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 516, "quote": "ROW-INTEREST (PLAN-SLOT, OUTPUT-ROW) * 100" }
+      ],
+      "notebook": ["interest", "unscaled-value"]
+    },
+    {
+      "unit": "U088",
+      "name": "installmentMonth",
+      "confidence": 0.7,
+      "rationale": "KR-MONTH is the month number of the installment row being reported.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 512, "quote": "MOVE OUTPUT-ROW TO KR-MONTH" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U089",
+      "name": "installmentAmountScale",
+      "confidence": 0.65,
+      "rationale": "KR-PAYMENT-S is the scale of the installment amount.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 520, "quote": "MOVE 2 TO KR-PAYMENT-S KR-INTEREST-S KR-PRINCIPAL-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U090",
+      "name": "installmentAmountUnscaled",
+      "confidence": 0.65,
+      "rationale": "KR-PAYMENT-U is the unscaled installment amount (interest plus principal portion).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 514, "quote": "ROW-PAYMENT (PLAN-SLOT, OUTPUT-ROW) * 100" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U091",
+      "name": "installmentPrincipalScale",
+      "confidence": 0.65,
+      "rationale": "KR-PRINCIPAL-S is the scale of the installment's principal portion.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 520, "quote": "MOVE 2 TO KR-PAYMENT-S KR-INTEREST-S KR-PRINCIPAL-S" }
+      ],
+      "notebook": ["scale", "principal"]
+    },
+    {
+      "unit": "U092",
+      "name": "installmentPrincipalUnscaled",
+      "confidence": 0.65,
+      "rationale": "KR-PRINCIPAL-U is the unscaled principal portion of the installment.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 518, "quote": "ROW-PRINCIPAL (PLAN-SLOT, OUTPUT-ROW) * 100" }
+      ],
+      "notebook": ["principal", "unscaled-value"]
+    },
+    {
+      "unit": "U093",
+      "name": "sequenceNumber",
+      "confidence": 0.7,
+      "rationale": "KO-SEQ carries the input record's sequence number within the case. SEQ expanded.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 541, "quote": "MOVE KV-SEQ TO KO-SEQ" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U094",
+      "name": "openingDebtScale",
+      "confidence": 0.6,
+      "rationale": "KS-DEBT-0-S is the scale of the debt at month 0, the plan's opening debt.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 507, "quote": "KS-TOT-PAID-S KS-DEBT-0-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U095",
+      "name": "openingDebtUnscaled",
+      "confidence": 0.6,
+      "rationale": "KS-DEBT-0-U is the unscaled debt at month 0, i.e. the plan principal.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 505, "quote": "COMPUTE KS-DEBT-0-U = PLAN-PRINCIPAL (PLAN-SLOT) * 100" }
+      ],
+      "notebook": ["principal", "unscaled-value"]
+    },
+    {
+      "unit": "U096",
+      "name": "planMonths",
+      "confidence": 0.6,
+      "rationale": "KS-DURATION reports PLAN-MONTHS, so it takes the same word as the plan field.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 500, "quote": "MOVE PLAN-MONTHS (PLAN-SLOT) TO KS-DURATION KS-LAST-MONTH" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U097",
+      "name": "summaryEventType",
+      "confidence": 0.6,
+      "rationale": "KS-EVENT-TYPE echoes the event type in the summary variant.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 499, "quote": "MOVE KE-TYPE TO KS-EVENT-TYPE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U098",
+      "name": "lastInstallmentMonth",
+      "confidence": 0.6,
+      "rationale": "KS-LAST-MONTH is the month of the plan's last installment.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 500, "quote": "MOVE PLAN-MONTHS (PLAN-SLOT) TO KS-DURATION KS-LAST-MONTH" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U099",
+      "name": "totalInterestScale",
+      "confidence": 0.75,
+      "rationale": "KS-TOT-INTEREST-S is the scale of the plan's total interest. TOT expanded.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 506, "quote": "MOVE 2 TO KS-TOT-INTEREST-S KS-TOT-PRINCIPAL-S" }
+      ],
+      "notebook": ["report-totals", "scale"]
+    },
+    {
+      "unit": "U100",
+      "name": "totalInterestUnscaled",
+      "confidence": 0.75,
+      "rationale": "KS-TOT-INTEREST-U is the unscaled total interest of the plan.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 501, "quote": "COMPUTE KS-TOT-INTEREST-U =" }
+      ],
+      "notebook": ["report-totals", "interest"]
+    },
+    {
+      "unit": "U101",
+      "name": "totalPaidScale",
+      "confidence": 0.75,
+      "rationale": "KS-TOT-PAID-S is the scale of the plan's total paid.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 507, "quote": "KS-TOT-PAID-S KS-DEBT-0-S" }
+      ],
+      "notebook": ["report-totals", "scale"]
+    },
+    {
+      "unit": "U102",
+      "name": "totalPaidUnscaled",
+      "confidence": 0.75,
+      "rationale": "KS-TOT-PAID-U is the unscaled sum of all installment amounts.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 504, "quote": "COMPUTE KS-TOT-PAID-U = PLAN-PAID (PLAN-SLOT) * 100" }
+      ],
+      "notebook": ["report-totals"]
+    },
+    {
+      "unit": "U103",
+      "name": "totalPrincipalRepaidScale",
+      "confidence": 0.65,
+      "rationale": "KS-TOT-PRINCIPAL-S is the scale of the total principal repaid (PLAN-REPAID).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 506, "quote": "MOVE 2 TO KS-TOT-INTEREST-S KS-TOT-PRINCIPAL-S" }
+      ],
+      "notebook": ["principal", "scale"]
+    },
+    {
+      "unit": "U104",
+      "name": "totalPrincipalRepaidUnscaled",
+      "confidence": 0.65,
+      "rationale": "KS-TOT-PRINCIPAL-U reports PLAN-REPAID, the principal repaid over the plan.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 503, "quote": "COMPUTE KS-TOT-PRINCIPAL-U = PLAN-REPAID (PLAN-SLOT) * 100" }
+      ],
+      "notebook": ["principal", "report-totals"]
+    },
+    {
+      "unit": "U105",
+      "name": "termsEventType",
+      "confidence": 0.6,
+      "rationale": "KT-EVENT-TYPE echoes the event type in the terms variant.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 480, "quote": "MOVE KE-TYPE TO KT-EVENT-TYPE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U106",
+      "name": "interestFree",
+      "confidence": 0.7,
+      "rationale": "KT-FREE is set to Y exactly when the terms' rate is zero, i.e. the loan is interest-free.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 490, "quote": "IF TERM-RATE (TERM-SLOT) = 0" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 491, "quote": "MOVE 'Y' TO KT-FREE" }
+      ],
+      "notebook": ["interest"]
+    },
+    {
+      "unit": "U107",
+      "name": "monthlyRateScale",
+      "confidence": 0.75,
+      "rationale": "KT-MONTHLY-RATE-S is the scale of the monthly rate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 489, "quote": "MOVE MONTHLY-RATE-SCALE TO KT-MONTHLY-RATE-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U108",
+      "name": "monthlyRateUnscaled",
+      "confidence": 0.75,
+      "rationale": "KT-MONTHLY-RATE-U is the unscaled monthly rate (annual rate divided by 12).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 488, "quote": "MOVE MONTHLY-RATE-UNSCALED TO KT-MONTHLY-RATE-U" }
+      ],
+      "notebook": ["unscaled-value", "nominal-interest-rate"]
+    },
+    {
+      "unit": "U109",
+      "name": "termsMonths",
+      "confidence": 0.6,
+      "rationale": "KT-MONTHS is the duration of the loan terms being reported; same word as the stored terms field.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 487, "quote": "MOVE CALC-MONTHS TO KT-MONTHS" }
+      ],
+      "notebook": ["loan"]
+    },
+    {
+      "unit": "U110",
+      "name": "termsPrincipalScale",
+      "confidence": 0.65,
+      "rationale": "KT-PRINCIPAL-S is the scale (2) of the terms' principal.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 483, "quote": "MOVE 2 TO KT-PRINCIPAL-S" }
+      ],
+      "notebook": ["scale", "principal"]
+    },
+    {
+      "unit": "U111",
+      "name": "termsPrincipalUnscaled",
+      "confidence": 0.65,
+      "rationale": "KT-PRINCIPAL-U is the unscaled principal of the stored loan terms.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 482, "quote": "TERM-PRINCIPAL (TERM-SLOT) * 100" }
+      ],
+      "notebook": ["principal", "unscaled-value"]
+    },
+    {
+      "unit": "U112",
+      "name": "termsAnnualRateScale",
+      "confidence": 0.6,
+      "rationale": "KT-RATE-S is the scale (12) of the terms' annual rate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 486, "quote": "MOVE 12 TO KT-RATE-S" }
+      ],
+      "notebook": ["scale", "nominal-interest-rate"]
+    },
+    {
+      "unit": "U113",
+      "name": "termsAnnualRateUnscaled",
+      "confidence": 0.6,
+      "rationale": "KT-RATE-U is the unscaled annual rate of the stored terms.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 484, "quote": "COMPUTE KT-RATE-U = TERM-RATE (TERM-SLOT) *" }
+      ],
+      "notebook": ["nominal-interest-rate", "unscaled-value"]
+    },
+    {
+      "unit": "U114",
+      "name": "ResultRecord",
+      "confidence": 0.8,
+      "rationale": "KZ-EVENT-OUT is the layout of the KZOUT results file (KONTZINS.RESULTS.DATA); an I/O layout, so ...Record.",
+      "evidence": [
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 7, "quote": "KONTZINS.RESULTS.DATA" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 387, "quote": "WRITE RESULT-REC FROM KZ-EVENT-OUT" }
+      ],
+      "notebook": ["P003-record-vs-entity", "P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U115",
+      "keep": true,
+      "confidence": 0.6,
+      "rationale": "KV-BODY is the variable part of the case record that the header, offer and event variants redefine.",
+      "evidence": [
+        { "file": "source/app/cpy/KZEVTIN.cpy", "line": 6, "quote": "KV-HEADER REDEFINES KV-BODY." }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U116",
+      "keep": true,
+      "confidence": 0.85,
+      "rationale": "KV-CASE-ID identifies the case (loan) the record belongs to; the first 8 bytes of the sort key.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 540, "quote": "MOVE KV-CASE-ID TO KO-CASE-ID" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 181, "quote": "MOVE KZ-EVENT-REC (1:8) TO DW-LOAN" }
+      ],
+      "notebook": ["loan"]
+    },
+    {
+      "unit": "U117",
+      "name": "queryMonth",
+      "confidence": 0.6,
+      "rationale": "KE-MONTH is the month the QI and QR query events ask about (installment row or remaining debt).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 131, "quote": "MOVE KE-MONTH TO OUTPUT-ROW" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 144, "quote": "MOVE ROW-DEBT (1, KE-MONTH)" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U118",
+      "name": "eventType",
+      "confidence": 0.8,
+      "rationale": "KE-TYPE is the event type the service dispatches on (MP, NT, MT, SC, QI, QR, CO, SY, YS).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 91, "quote": "EVALUATE KE-TYPE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U119",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "Enum of the event types the driver accepts and the service dispatches on.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 310, "quote": "IF NOT (KE-TYPE = 'MP' OR KE-TYPE = 'NT' OR KE-TYPE = 'MT' OR" }
+      ],
+      "notebook": ["P004-88-level-enum"]
+    },
+    {
+      "unit": "U120",
+      "name": null,
+      "confidence": 0.5,
+      "rationale": "Named by what each branch does: MP monthly payment, NT stores terms, MT payment from stored terms, SC schedule, QI/QR queries, CO offer count, SY terms from years, YS years-plan summary. No comment expands the letters.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 94, "quote": "PERFORM 4000-MONTHLY-PAYMENT" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 102, "quote": "PERFORM 3100-STORE-TERMS" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 158, "quote": "COMPUTE CALC-MONTHS = CASE-YEARS * 12" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 151, "quote": "PERFORM 6500-OUTPUT-COUNT" }
+      ],
+      "notebook": ["C003-no-invented-meaning", "P004-88-level-enum"],
+      "constants": {
+        "6027e8985c900a0a3270ddfe38ed3e20e0617beb32d28d70a33eedd6d3475ea2": "OTHER",
+        "be0a8f7afaa735b9d18f016831ddc01f371f7c1b6193e10a40e83badcc0440e3": "OFFER_COUNT",
+        "bf9799f64d863c8caec0ca07aa1babb71f32759a2fd60c9f8daada36f786efcd": "MONTHLY_PAYMENT",
+        "6ef7dec45ae540627fee37dc0f2afe22c7ce4abf744ce7ebc61013e790019ef7": "TERMS_MONTHLY_PAYMENT",
+        "4d7395ecf480c56ce786be300c43dc80282007804ae13f3d0d19dfcc5078f642": "STORE_TERMS",
+        "a314d6cb234ae6ac78845ef7f0bef528844ab54e00095ac7502d8d434a4c80f4": "QUERY_INSTALLMENT",
+        "7fd1a5e27858e280d5c4b0295bddc1e2f5634e55d86eb245c38a9fbb04841990": "QUERY_REMAINING_DEBT",
+        "2283f6216b47bddd61f1531340ca3e308a36567f1926c5f1d38aa8dbfcd2a78b": "SCHEDULE",
+        "d3f023d3236f21b3167bf80fdb400ea516ba1eb5bcf9829615747de4d12f06d1": "STORE_TERMS_FROM_YEARS",
+        "1fd68486c7b04cd340ba528600aa77ca89908e5bb8d56b292773a0ed5a652060": "YEARS_SCHEDULE_SUMMARY"
+      }
+    },
+    {
+      "unit": "U121",
+      "keep": true,
+      "confidence": 0.45,
+      "rationale": "KH-FREE-RATE replaces the header rate when the free flag is Y; the business meaning of 'free' is not documented, so the literal name stays for review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 72, "quote": "MOVE KH-FREE-RATE TO CASE-RATE" }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U122",
+      "name": "useFreeRate",
+      "confidence": 0.45,
+      "rationale": "KH-FREE (Y/N) selects the free rate instead of the normal rate for the case; named for that effect because 'free' is not explained.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 71, "quote": "IF KH-FREE = 'Y'" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 281, "quote": "IF KH-FREE NOT = 'Y' AND KH-FREE NOT = 'N'" }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U123",
+      "keep": true,
+      "confidence": 0.65,
+      "rationale": "KH-MONTHS is the loan duration in months on the header.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 76, "quote": "MOVE KH-MONTHS TO CASE-MONTHS" }
+      ],
+      "notebook": ["loan"]
+    },
+    {
+      "unit": "U124",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "KH-PRINCIPAL is the loan principal on the header record.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 70, "quote": "MOVE KH-PRINCIPAL TO CASE-PRINCIPAL" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U125",
+      "name": "annualRate",
+      "confidence": 0.6,
+      "rationale": "KH-RATE is the loan's annual rate; the service divides it by 12 for the monthly rate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 74, "quote": "MOVE KH-RATE TO CASE-RATE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 316, "quote": "MOVE 12 TO JB-B-U" }
+      ],
+      "notebook": ["nominal-interest-rate"]
+    },
+    {
+      "unit": "U126",
+      "keep": true,
+      "confidence": 0.65,
+      "rationale": "KH-YEARS is the loan duration in years on the header.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 77, "quote": "MOVE KH-YEARS TO CASE-YEARS" }
+      ],
+      "notebook": ["loan"]
+    },
+    {
+      "unit": "U127",
+      "name": "offerMonths",
+      "confidence": 0.65,
+      "rationale": "KP-MONTHS is the duration of an offer record (KV-OFFER variant).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 83, "quote": "MOVE KP-MONTHS TO CALC-MONTHS" },
+        { "file": "source/app/cpy/KZEVTIN.cpy", "line": 17, "quote": "KV-OFFER REDEFINES KV-BODY." }
+      ],
+      "notebook": ["P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U128",
+      "name": "offerPrincipal",
+      "confidence": 0.65,
+      "rationale": "KP-PRINCIPAL is the principal of an offer, checked by CHECK-OFFER.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 81, "quote": "MOVE KP-PRINCIPAL TO CALC-PRINCIPAL" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U129",
+      "name": "offerAnnualRate",
+      "confidence": 0.6,
+      "rationale": "KP-RATE is the offer's annual rate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 82, "quote": "MOVE KP-RATE TO CALC-RATE" }
+      ],
+      "notebook": ["nominal-interest-rate"]
+    },
+    {
+      "unit": "U130",
+      "name": "recordType",
+      "confidence": 0.8,
+      "rationale": "KV-REC-TYPE tells header (H), offer (P) and event (E) records apart. REC expanded.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 212, "quote": "EVALUATE KV-REC-TYPE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U131",
+      "name": "CaseRecordType",
+      "confidence": 0.7,
+      "rationale": "Enum of the case record types (header, offer, event).",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 174, "quote": "IF KV-REC-TYPE NOT = 'H'" }
+      ],
+      "notebook": ["P004-88-level-enum"]
+    },
+    {
+      "unit": "U132",
+      "name": null,
+      "confidence": 0.7,
+      "rationale": "H opens a loan and is checked as a header, P is the KV-OFFER layout, E is an event counted in EVENTS.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 214, "quote": "PERFORM 2100-CHECK-HEADER" },
+        { "file": "source/app/cpy/KZEVTIN.cpy", "line": 17, "quote": "KV-OFFER REDEFINES KV-BODY." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 198, "quote": "IF KV-REC-TYPE = 'E'" }
+      ],
+      "notebook": ["P004-88-level-enum"],
+      "constants": {
+        "b0bc136f1b8154de91e2d63aefa11249af6e6dc44bfc410f9933182d7a6957a5": "OTHER",
+        "1a3905470bf89c9acb2483f7d09b09421913b879b3fa5dbe15b505158680fde5": "EVENT",
+        "e532152970fc4a1311329e6edcad8ddd11563471226b3c781c6e85904092961c": "HEADER",
+        "3dfa942a2bbf01153c15daa2d827c8c8c0d1086fac435ebc33358fa260761491": "OFFER"
+      }
+    },
+    {
+      "unit": "U133",
+      "name": "sequenceNumber",
+      "confidence": 0.7,
+      "rationale": "KV-SEQ is the record's sequence within the case; case id plus sequence must ascend.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 166, "quote": "AND KZ-EVENT-REC (1:12) NOT > DW-PREV-KEY" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 541, "quote": "MOVE KV-SEQ TO KO-SEQ" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U134",
+      "name": "CaseRecord",
+      "confidence": 0.8,
+      "rationale": "KZ-EVENT-REC is the layout of the CASES input file; the program itself calls it a case record.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 72, "quote": "'CASE RECORD FORMAT INVALID'." },
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 6, "quote": "KONTZINS.CASES.DATA" }
+      ],
+      "notebook": ["P003-record-vs-entity", "P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U135",
+      "name": "exponent",
+      "confidence": 0.5,
+      "rationale": "The type is shared by the annual and monthly rate values, so its fields take the generic decimal-part names; EXPONENT is the copybook's own word.",
+      "evidence": [
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 8, "quote": "05 ANNUAL-RATE-EXPONENT PIC S9(4) COMP." },
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 12, "quote": "05 MONTHLY-RATE-EXPONENT PIC S9(4) COMP." }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U136",
+      "name": "scale",
+      "confidence": 0.5,
+      "rationale": "Scale of a rate value; generic because the type holds both the annual and the monthly rate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 271, "quote": "MOVE CALC-RATE-SCALE TO ANNUAL-RATE-SCALE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 489, "quote": "MOVE MONTHLY-RATE-SCALE TO KT-MONTHLY-RATE-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U137",
+      "name": "unscaledValue",
+      "confidence": 0.5,
+      "rationale": "Unscaled value of a rate; generic because the type holds both the annual and the monthly rate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 259, "quote": "COMPUTE ANNUAL-RATE-UNSCALED =" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 488, "quote": "MOVE MONTHLY-RATE-UNSCALED TO KT-MONTHLY-RATE-U" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U138",
+      "name": "InterestRateValue",
+      "confidence": 0.5,
+      "rationale": "Generated type used for both ANNUAL-RATE-VALUE and MONTHLY-RATE-VALUE: an interest rate held as unscaled value, scale and exponent.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 314, "quote": "MOVE ANNUAL-RATE-VALUE TO JB-A" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 321, "quote": "MOVE JB-R TO MONTHLY-RATE-VALUE." }
+      ],
+      "notebook": ["nominal-interest-rate", "P003-record-vs-entity"]
+    },
+    {
+      "unit": "U139",
+      "name": "exponent",
+      "confidence": 0.5,
+      "rationale": "The type is shared by the principal, payment, numerator, power and result values, so the field takes the generic name.",
+      "evidence": [
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 28, "quote": "05 PAYMENT-EXPONENT PIC S9(4) COMP." },
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 4, "quote": "05 PRINCIPAL-EXPONENT PIC S9(4) COMP." }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U140",
+      "name": "scale",
+      "confidence": 0.5,
+      "rationale": "Scale of a shared decimal value (payment, principal, result, ...).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 531, "quote": "MOVE 2 TO RESULT-SCALE." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 256, "quote": "MOVE CALC-PRINCIPAL-SCALE TO PRINCIPAL-SCALE" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U141",
+      "name": "unscaledValue",
+      "confidence": 0.5,
+      "rationale": "Unscaled value of a shared decimal value (payment, principal, result, ...).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 530, "quote": "COMPUTE RESULT-UNSCALED = TEMP-MONEY * 100" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 245, "quote": "COMPUTE PRINCIPAL-UNSCALED = CALC-PRINCIPAL * 100" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U142",
+      "name": "DecimalValue",
+      "confidence": 0.55,
+      "rationale": "Generated type used for PRINCIPAL-, PAYMENT-, NUMERATOR-, POWER- and RESULT-VALUE: a BigDecimal-style number (unscaled value, scale, exponent) exchanged with the decimal kernel, not a payment.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 290, "quote": "MOVE PRINCIPAL-VALUE TO JB-A" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 298, "quote": "MOVE JB-R TO NUMERATOR-VALUE" }
+      ],
+      "notebook": ["unscaled-value", "P003-record-vs-entity"]
+    },
+    {
+      "unit": "U143",
+      "name": "exponent",
+      "confidence": 0.5,
+      "rationale": "Exponent part of the power base, same decimal-part naming as the other value types.",
+      "evidence": [
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 16, "quote": "05 POWER-BASE-EXPONENT PIC S9(4) COMP." }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U144",
+      "name": "scale",
+      "confidence": 0.5,
+      "rationale": "Scale part of the power base value.",
+      "evidence": [
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 15, "quote": "05 POWER-BASE-SCALE PIC S9(9) COMP." }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U145",
+      "name": "unscaledValue",
+      "confidence": 0.5,
+      "rationale": "Unscaled part of the power base value.",
+      "evidence": [
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 14, "quote": "05 POWER-BASE-UNSCALED PIC S9(31) COMP-3." }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U146",
+      "name": "PowerBaseValue",
+      "confidence": 0.45,
+      "rationale": "POWER-BASE holds 1 plus the monthly rate, the base raised to the number of months in the compound factor; a working value, not a record.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 288, "quote": "MOVE JB-R TO POWER-BASE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 339, "quote": "MOVE POWER-BASE TO JB-B" }
+      ],
+      "notebook": ["P003-record-vs-entity"]
+    },
+    {
+      "unit": "U153",
+      "name": "abendService",
+      "confidence": 0.6,
+      "rationale": "Field holding the CEE3ABD abend service, called on a capacity error.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 579, "quote": "CALL 'CEE3ABD' USING SIZE-ERROR-CODE ABEND-TIMING." }
+      ],
+      "notebook": ["abend", "P002-abend-routine"]
+    },
+    {
+      "unit": "U154",
+      "keep": true,
+      "confidence": 0.85,
+      "rationale": "FSJBDEC is the decimal library called with an operation code; decimalKernel is the capability name.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 553, "quote": "CALL 'FSJBDEC' USING JB" }
+      ],
+      "notebook": ["P001-kernel-library", "decimal-kernel"]
+    },
+    {
+      "unit": "U155",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "ANNUAL-RATE-VALUE is the annual rate in decimal-kernel form, divided by 12 for the monthly rate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 314, "quote": "MOVE ANNUAL-RATE-VALUE TO JB-A" }
+      ],
+      "notebook": ["nominal-interest-rate"]
+    },
+    {
+      "unit": "U156",
+      "name": "decimalParameters",
+      "confidence": 0.6,
+      "rationale": "The JB block passed on every decimal kernel call.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 553, "quote": "CALL 'FSJBDEC' USING JB" }
+      ],
+      "notebook": ["P001-kernel-library"]
+    },
+    {
+      "unit": "U157",
+      "name": "resultRecord",
+      "confidence": 0.75,
+      "rationale": "KZ-EVENT-OUT is the result record being built before it is saved into the response.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 539, "quote": "MOVE SPACES TO KZ-EVENT-OUT" }
+      ],
+      "notebook": ["P003-record-vs-entity"]
+    },
+    {
+      "unit": "U158",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "MONTHLY-RATE-VALUE is the monthly rate (annual rate / 12) in decimal-kernel form.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 321, "quote": "MOVE JB-R TO MONTHLY-RATE-VALUE." }
+      ],
+      "notebook": ["nominal-interest-rate"]
+    },
+    {
+      "unit": "U159",
+      "keep": true,
+      "confidence": 0.6,
+      "rationale": "NUMERATOR-VALUE is the numerator of the annuity formula (principal times monthly rate times compound factor).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 298, "quote": "MOVE JB-R TO NUMERATOR-VALUE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U160",
+      "name": "monthlyPaymentValue",
+      "confidence": 0.7,
+      "rationale": "PAYMENT-VALUE is the annuity's monthly payment computed by MONTHLY-PAYMENT.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 235, "quote": "4000-MONTHLY-PAYMENT." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 310, "quote": "MOVE JB-R TO PAYMENT-VALUE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U161",
+      "name": "powerBaseValue",
+      "confidence": 0.55,
+      "rationale": "Field for POWER-BASE (1 plus the monthly rate); not an I/O record, so no Record suffix.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 288, "quote": "MOVE JB-R TO POWER-BASE" }
+      ],
+      "notebook": ["P003-record-vs-entity"]
+    },
+    {
+      "unit": "U162",
+      "name": "compoundFactorValue",
+      "confidence": 0.65,
+      "rationale": "POWER-VALUE is (1 + monthly rate) raised to the months, produced by COMPOUND-FACTOR.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 322, "quote": "4200-COMPOUND-FACTOR." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 342, "quote": "MOVE JB-R TO POWER-VALUE" }
+      ],
+      "notebook": ["interest"]
+    },
+    {
+      "unit": "U163",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "PRINCIPAL-VALUE is the principal in decimal-kernel form.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 245, "quote": "COMPUTE PRINCIPAL-UNSCALED = CALC-PRINCIPAL * 100" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U164",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "RESULT-VALUE is the amount reported in an amount result record.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 96, "quote": "MOVE PAYMENT-VALUE TO RESULT-VALUE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U165",
+      "name": "calculationMonths",
+      "confidence": 0.65,
+      "rationale": "CALC-MONTHS is the duration the current calculation runs on (from the case, an offer or stored terms). CALC expanded.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 178, "quote": "MOVE CASE-MONTHS TO CALC-MONTHS" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U166",
+      "name": "calculationPrincipalScale",
+      "confidence": 0.65,
+      "rationale": "CALC-PRINCIPAL-SCALE is the scale of the calculation principal (4 raw, 2 from terms).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 179, "quote": "MOVE 4 TO CALC-PRINCIPAL-SCALE" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U167",
+      "name": "calculationPrincipal",
+      "confidence": 0.65,
+      "rationale": "CALC-PRINCIPAL is the principal the current calculation uses.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 176, "quote": "MOVE CASE-PRINCIPAL TO CALC-PRINCIPAL" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U168",
+      "name": "calculationAnnualRateScale",
+      "confidence": 0.6,
+      "rationale": "CALC-RATE-SCALE is the scale of the calculation's annual rate (13 raw, 12 from terms).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 271, "quote": "MOVE CALC-RATE-SCALE TO ANNUAL-RATE-SCALE" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U169",
+      "name": "calculationAnnualRate",
+      "confidence": 0.6,
+      "rationale": "CALC-RATE is the annual rate the current calculation uses.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 177, "quote": "MOVE CASE-RATE TO CALC-RATE" }
+      ],
+      "notebook": ["nominal-interest-rate"]
+    },
+    {
+      "unit": "U170",
+      "name": "remainingDebt",
+      "confidence": 0.65,
+      "rationale": "CURRENT-BALANCE starts at the principal, is reduced by each principal portion and is stored as ROW-DEBT; same concept as the row's debt.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 439, "quote": "SUBTRACT CURRENT-PRINCIPAL FROM CURRENT-BALANCE" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 453, "quote": "MOVE CURRENT-BALANCE TO ROW-DEBT (PLAN-SLOT, ROW-NUMBER)" }
+      ],
+      "notebook": ["balance"]
+    },
+    {
+      "unit": "U171",
+      "name": "installmentInterest",
+      "confidence": 0.65,
+      "rationale": "CURRENT-INTEREST is the interest of the installment being built.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 449, "quote": "MOVE CURRENT-INTEREST TO ROW-INTEREST" }
+      ],
+      "notebook": ["interest"]
+    },
+    {
+      "unit": "U172",
+      "name": "installmentAmount",
+      "confidence": 0.65,
+      "rationale": "CURRENT-PAYMENT is interest plus principal portion of the installment being built.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 435, "quote": "COMPUTE CURRENT-PAYMENT = CURRENT-INTEREST +" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U173",
+      "name": "installmentPrincipal",
+      "confidence": 0.65,
+      "rationale": "CURRENT-PRINCIPAL is the principal portion of the installment being built.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 451, "quote": "MOVE CURRENT-PRINCIPAL TO ROW-PRINCIPAL" }
+      ],
+      "notebook": ["principal"]
+    },
+    {
+      "unit": "U174",
+      "keep": true,
+      "confidence": 0.65,
+      "rationale": "DIGITS-TO-DROP is how many digits the compound factor exceeds the rounding precision by.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 363, "quote": "COMPUTE DIGITS-TO-DROP = JB-N - ROUND-PRECISION" }
+      ],
+      "notebook": ["significant-digits"]
+    },
+    {
+      "unit": "U175",
+      "name": "exceptionName",
+      "confidence": 0.75,
+      "rationale": "FAILURE-NAME holds the Java exception class name written as the reject text.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 49, "quote": "MOVE 'IllegalArgumentException' TO FAILURE-NAME" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 556, "quote": "MOVE 'ArithmeticException' TO FAILURE-NAME" }
+      ],
+      "notebook": ["status-block", "reject-reason"]
+    },
+    {
+      "unit": "U176",
+      "name": "calculationFailed",
+      "confidence": 0.8,
+      "rationale": "FAILURE-SW is the switch behind the 88-level CALCULATION-FAILED.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 21, "quote": "88 CALCULATION-FAILED VALUE 'Y'." }
+      ],
+      "notebook": ["P004-88-level-enum"]
+    },
+    {
+      "unit": "U177",
+      "name": "outputMonth",
+      "confidence": 0.55,
+      "rationale": "OUTPUT-ROW is the month whose plan row is being reported.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 512, "quote": "MOVE OUTPUT-ROW TO KR-MONTH" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 131, "quote": "MOVE KE-MONTH TO OUTPUT-ROW" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U178",
+      "keep": true,
+      "confidence": 0.6,
+      "rationale": "PLAN-SLOT selects which of the two stored plans is used (1 months-based, 2 years-based).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 167, "quote": "MOVE 2 TO TERM-SLOT PLAN-SLOT" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U179",
+      "name": "exponentBit",
+      "confidence": 0.5,
+      "rationale": "POWER-BIT walks the binary digits of the month exponent in square-and-multiply exponentiation.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 330, "quote": "PERFORM UNTIL POWER-BIT * 2 > CALC-MONTHS" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U180",
+      "name": "exponentDigits",
+      "confidence": 0.5,
+      "rationale": "POWER-DIGITS counts the decimal digits of the month exponent to size the working precision.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 329, "quote": "COMPUTE WORK-PRECISION = 21 + POWER-DIGITS" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U181",
+      "name": "exponentQuotient",
+      "confidence": 0.4,
+      "rationale": "POWER-QUOTIENT is a copy of the exponent divided by 10 repeatedly to count its digits.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 326, "quote": "DIVIDE 10 INTO POWER-QUOTIENT" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U182",
+      "name": "remainingExponent",
+      "confidence": 0.5,
+      "rationale": "POWER-REMAINDER is the part of the month exponent not yet multiplied in.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 337, "quote": "SUBTRACT POWER-BIT FROM POWER-REMAINDER" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U183",
+      "keep": true,
+      "confidence": 0.55,
+      "rationale": "RATE-PARITY is the parity of the rate units used to round half to even.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 226, "quote": "(RATE-TAIL = 5 AND RATE-PARITY = 1)" }
+      ],
+      "notebook": ["half-even"]
+    },
+    {
+      "unit": "U184",
+      "keep": true,
+      "confidence": 0.5,
+      "rationale": "RATE-QUOTIENT is the by-product of dividing the rate units by 2 for the parity test.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 221, "quote": "DIVIDE RATE-UNITS BY 2 GIVING RATE-QUOTIENT" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U185",
+      "keep": true,
+      "confidence": 0.5,
+      "rationale": "RATE-RAW-UNITS is the unrounded rate in units of 10 to the minus 13.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 214, "quote": "COMPUTE RATE-RAW-UNITS = CALC-RATE * 10000000000000" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U186",
+      "name": "droppedRateDigit",
+      "confidence": 0.5,
+      "rationale": "RATE-TAIL is the 13th decimal digit removed when the rate is rounded to 12 decimals.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 218, "quote": "REMAINDER RATE-TAIL" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 225, "quote": "IF RATE-TAIL > 5 OR" }
+      ],
+      "notebook": ["half-even"]
+    },
+    {
+      "unit": "U187",
+      "keep": true,
+      "confidence": 0.5,
+      "rationale": "RATE-UNITS is the rate in units of 10 to the minus 12 after half-even rounding.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 232, "quote": "RATE-UNITS / 1000000000000" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U188",
+      "name": "roundingPrecision",
+      "confidence": 0.55,
+      "rationale": "ROUND-PRECISION is the number of significant digits the power value is rounded to (working precision, finally 20).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 356, "quote": "MOVE 20 TO ROUND-PRECISION" }
+      ],
+      "notebook": ["math-context", "significant-digits"]
+    },
+    {
+      "unit": "U189",
+      "name": "installmentNumber",
+      "confidence": 0.6,
+      "rationale": "ROW-NUMBER counts the installments 1 to the number of months while the plan is built.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 384, "quote": "PERFORM VARYING ROW-NUMBER FROM 1 BY 1" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 407, "quote": "IF ROW-NUMBER = CALC-MONTHS" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U190",
+      "name": "capacityAbendCode",
+      "confidence": 0.6,
+      "rationale": "SIZE-ERROR-CODE (9) is the abend code passed to CEE3ABD on a calculation capacity error.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 35, "quote": "05 SIZE-ERROR-CODE PIC S9(9) COMP VALUE 9." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 578, "quote": "DISPLAY 'ANNUITY CALCULATION CAPACITY ERROR'" }
+      ],
+      "notebook": ["size-error", "abend", "P002-abend-routine"]
+    },
+    {
+      "unit": "U191",
+      "name": "moneyAmount",
+      "confidence": 0.45,
+      "rationale": "TEMP-MONEY stages a cents amount (here the queried remaining debt) before it is converted to the result value.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 140, "quote": "MOVE PLAN-PRINCIPAL (1) TO TEMP-MONEY" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 530, "quote": "COMPUTE RESULT-UNSCALED = TEMP-MONEY * 100" }
+      ],
+      "notebook": ["money", "C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U192",
+      "name": "termsSlot",
+      "confidence": 0.6,
+      "rationale": "TERM-SLOT selects which stored loan terms are used (1 months-based, 2 years-based).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 182, "quote": "IF TERM-PRESENT (TERM-SLOT) NOT = 'Y'" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U193",
+      "name": "workingPrecision",
+      "confidence": 0.6,
+      "rationale": "WORK-PRECISION is the extra-digit precision used for intermediate products of the exponentiation.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 329, "quote": "COMPUTE WORK-PRECISION = 21 + POWER-DIGITS" }
+      ],
+      "notebook": ["math-context"]
+    },
+    {
+      "unit": "U194",
+      "name": null,
+      "confidence": 0.6,
+      "rationale": "Entry paragraph is locked; its parameters are the loan case state, the run control, the case record and the service response.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 45, "quote": "PROCEDURE DIVISION USING KZ-CASE-WORK FN-RUN-CONTROL" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 46, "quote": "KZ-EVENT-REC FS-OUT." }
+      ],
+      "notebook": [],
+      "parameters": {
+        "640aec6909f6aee5c05c3a7b5f53db5f098e3bdba9cf8e1465cbabf587d63f25": "loanCase",
+        "ae646a5079323755f367411c6af93918634cda1326ce9bd28d12aedf078305b2": "runControl",
+        "78c3a8fabf45f37ea458a31eb88d191f9ce8e728a703b4801fe65a4cc7883d3a": "caseRecord",
+        "6793acd12e3030ad424244b98e89367ed82e9209208b6b633698acaa2f037a95": "response"
+      }
+    },
+    {
+      "unit": "U195",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "START-CASE resets the case state and loads the header's principal, rate and duration.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 68, "quote": "1000-START-CASE." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 69, "quote": "INITIALIZE KZ-CASE-WORK" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "7a5c6e110e6e0ec5c6f7e672863726ec2e98404482e1f1000270f479a0a68899": "loanCase",
+        "1811a19d459cd5d1dc0dfaddda88e80f88316000e23bd05b16136b13209ccabb": "caseRecord"
+      }
+    },
+    {
+      "unit": "U196",
+      "name": "countValidOffer",
+      "confidence": 0.55,
+      "rationale": "CHECK-OFFER validates the offer's terms and, if valid, adds it to OFFER-COUNT; an invalid offer is rejected.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 84, "quote": "PERFORM 3000-CHECK-TERMS" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 86, "quote": "ADD 1 TO OFFER-COUNT" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "f0650856762d6abc9ff619c830d7e9690dd2430c82d6d8544a0d8df480cba542": "loanCase",
+        "9f95735f7065ca41a31f0a8adeb944d27148a2321e4c04aa722c3fa991f2577b": "caseRecord"
+      }
+    },
+    {
+      "unit": "U197",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "PROCESS-EVENT dispatches on the event type to the calculation and output paragraphs.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 90, "quote": "2000-PROCESS-EVENT." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 91, "quote": "EVALUATE KE-TYPE" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "df5c205dd042d571354d51d3e6bc08da3ba36051e937de3b7c19e6963bb601e3": "loanCase",
+        "59f2bed0a8786342798d6ae207d725ce9d2d71fb0b4b57f78aa1b53584e52b54": "caseRecord",
+        "b46f8c8ff99f61274b27a37348a8231b40272ed125ff947f86dc0da46671dc6a": "response"
+      }
+    },
+    {
+      "unit": "U198",
+      "name": "loadRawCaseValues",
+      "confidence": 0.6,
+      "rationale": "RAW-CALCULATION loads the unrounded case principal, rate and months (scales 4 and 13) as the calculation inputs.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 175, "quote": "2100-RAW-CALCULATION." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 176, "quote": "MOVE CASE-PRINCIPAL TO CALC-PRINCIPAL" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "3b5302fed7c9878e15e737471c95d0dd102f94c0a3dc2b7f81ba0cae635dac56": "loanCase"
+      }
+    },
+    {
+      "unit": "U199",
+      "name": "loadStoredTerms",
+      "confidence": 0.6,
+      "rationale": "TERM-CALCULATION loads the stored, rounded loan terms of the slot as calculation inputs, failing if none are stored.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 181, "quote": "2200-TERM-CALCULATION." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 185, "quote": "MOVE TERM-PRINCIPAL (TERM-SLOT) TO CALC-PRINCIPAL" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "313a5ebf9e92c497db31774bb0ebafd985a8eaba7b293c3db44838fad0b13755": "loanCase"
+      }
+    },
+    {
+      "unit": "U200",
+      "name": "requirePlan",
+      "confidence": 0.6,
+      "rationale": "CHECK-PLAN fails with NullPointerException when no plan is stored, like a Java null check.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 193, "quote": "IF PLAN-PRESENT (1) NOT = 'Y'" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 195, "quote": "MOVE 'NullPointerException' TO FAILURE-NAME" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "e3409b3393e8b0743d24afd03bb82005580066953c14c8d0e85bb9d36e52a36e": "loanCase"
+      }
+    },
+    {
+      "unit": "U201",
+      "name": "validateTerms",
+      "confidence": 0.7,
+      "rationale": "CHECK-TERMS fails the calculation unless principal > 0, rate >= 0 and 1 to 600 months.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 198, "quote": "IF CALC-PRINCIPAL <= 0 OR CALC-RATE < 0 OR" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 199, "quote": "CALC-MONTHS < 1 OR CALC-MONTHS > 600" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U202",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "STORE-TERMS validates and stores rounded loan terms in the slot.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 202, "quote": "3100-STORE-TERMS." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 211, "quote": "MOVE 'Y' TO TERM-PRESENT (TERM-SLOT)" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "955afff90b3aade0b1067b9419cdbea86f9f044aeb4a582086993eb23d5b0e55": "loanCase"
+      }
+    },
+    {
+      "unit": "U203",
+      "keep": true,
+      "confidence": 0.65,
+      "rationale": "ROUND-RATE rounds the rate half-even to 12 decimals into the terms.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 213, "quote": "3150-ROUND-RATE." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 231, "quote": "COMPUTE TERM-RATE (TERM-SLOT) =" }
+      ],
+      "notebook": ["half-even"],
+      "parameters": {
+        "f07a1127313fa446b928cd4875162a2c41488024045f71e6970530b8f21cbc76": "loanCase"
+      }
+    },
+    {
+      "unit": "U204",
+      "name": "computeMonthlyPayment",
+      "confidence": 0.8,
+      "rationale": "MONTHLY-PAYMENT computes the annuity payment (principal / months when the rate is zero).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 235, "quote": "4000-MONTHLY-PAYMENT." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 310, "quote": "MOVE JB-R TO PAYMENT-VALUE" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U205",
+      "name": "computeMonthlyRate",
+      "confidence": 0.8,
+      "rationale": "MONTHLY-RATE divides the annual rate by 12 with 20-digit precision.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 312, "quote": "4100-MONTHLY-RATE." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 321, "quote": "MOVE JB-R TO MONTHLY-RATE-VALUE." }
+      ],
+      "notebook": ["nominal-interest-rate"]
+    },
+    {
+      "unit": "U206",
+      "name": "computeCompoundFactor",
+      "confidence": 0.75,
+      "rationale": "COMPOUND-FACTOR raises 1 plus the monthly rate to the number of months by square-and-multiply.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 322, "quote": "4200-COMPOUND-FACTOR." }
+      ],
+      "notebook": ["interest"]
+    },
+    {
+      "unit": "U207",
+      "name": "roundCompoundFactor",
+      "confidence": 0.6,
+      "rationale": "ROUND-POWER rounds the power value to the rounding precision by setting its scale lower.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 358, "quote": "4300-ROUND-POWER." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 368, "quote": "MOVE 'SS' TO JB-OP" }
+      ],
+      "notebook": ["significant-digits"]
+    },
+    {
+      "unit": "U208",
+      "name": "buildRepaymentPlan",
+      "confidence": 0.75,
+      "rationale": "BUILD-PLAN builds the installment rows of the repayment plan the job is named after.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 376, "quote": "5000-BUILD-PLAN." },
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 4, "quote": "ANNUITY LOAN REPAYMENT PLANS" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "9abf5230556275652f78513343be35f8e2ca650fd13155d1a6089780cb111a5f": "loanCase"
+      }
+    },
+    {
+      "unit": "U209",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "BUILD-INSTALLMENT computes one row: interest, principal portion, amount and remaining debt.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 391, "quote": "5100-BUILD-INSTALLMENT." }
+      ],
+      "notebook": [],
+      "parameters": {
+        "244a6d55b716b66cf020241c2d8156bf02e9dafb417c7f233eb9b34e52f8ebad": "loanCase"
+      }
+    },
+    {
+      "unit": "U210",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "OUTPUT-AMOUNT adds an amount result record to the response.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 463, "quote": "6000-OUTPUT-AMOUNT." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 465, "quote": "MOVE 'A' TO KO-REC-TYPE" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "e0a9fd421d3eabba9889d393debc9c810b0a00ed3129416aa3869f751993bc58": "caseRecord",
+        "33a80efb7f2856ebc63248c35b0fee4c1c17bdbcb217d71fe980754632b57c0e": "response"
+      }
+    },
+    {
+      "unit": "U211",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "OUTPUT-TERMS adds a terms result record (principal, rates, months, interest-free flag).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 470, "quote": "6100-OUTPUT-TERMS." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 479, "quote": "MOVE 'T' TO KO-REC-TYPE" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "11bc89d929c8e6ecd9089f1b1c0ddcc0b44fdb9e3e3c762c788430deaf3a65cd": "loanCase",
+        "64d032e993b1327bcd5bae117f206212c9aa9e06e2d90ebaca51902d104c8d1f": "caseRecord",
+        "91444495953c5cc3e9f776b5fd44ca470d1c251a9100504775efabe5bdd241d3": "response"
+      }
+    },
+    {
+      "unit": "U212",
+      "keep": true,
+      "confidence": 0.7,
+      "rationale": "OUTPUT-SUMMARY adds the plan summary record (duration and totals).",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 496, "quote": "6200-OUTPUT-SUMMARY." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 498, "quote": "MOVE 'S' TO KO-REC-TYPE" }
+      ],
+      "notebook": ["report-totals"],
+      "parameters": {
+        "8dc883e02ff723ca76b756136c9a9572f7aa421f3686a956f40fa1905b22b5d7": "loanCase",
+        "74b1143686671a883f73147ec7e4e375d2253961f683546af0a5879926ddfe36": "caseRecord",
+        "00006d5cc408e65ccd738d3faf359ec099fea1e9bf2b90e59050afdd7501135b": "response"
+      }
+    },
+    {
+      "unit": "U213",
+      "name": "outputInstallment",
+      "confidence": 0.65,
+      "rationale": "OUTPUT-ROW adds one installment row of the plan (record type M) to the response.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 509, "quote": "6300-OUTPUT-ROW." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 511, "quote": "MOVE 'M' TO KO-REC-TYPE" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "980246be597fcc06cca0904357acbdf119c1219f38b0f2d9f5e8ab7e0e3c8895": "loanCase",
+        "f517aceebd6c87ac8b04c8b3861f9137431dc03d3f7e1475d074e10efb19b854": "caseRecord",
+        "c707bb42b6018c72ad80ed7ae5445d83ea2d1c034104ce6e92c43fe55e98cf9c": "response"
+      }
+    },
+    {
+      "unit": "U214",
+      "name": "convertMoneyToResult",
+      "confidence": 0.55,
+      "rationale": "MONEY-RESULT turns a cents amount into the result value with scale 2.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 528, "quote": "6400-MONEY-RESULT." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 530, "quote": "COMPUTE RESULT-UNSCALED = TEMP-MONEY * 100" }
+      ],
+      "notebook": ["money"]
+    },
+    {
+      "unit": "U215",
+      "name": "outputOfferCount",
+      "confidence": 0.7,
+      "rationale": "OUTPUT-COUNT adds a record with the case's valid-offer count.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 532, "quote": "6500-OUTPUT-COUNT." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 536, "quote": "MOVE OFFER-COUNT TO KC-COUNT" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "0a9357721fa2d55af7a8c8b16e3f6be4a399f2844269808a8123fc079c336b59": "loanCase",
+        "427c5bd494cc28690277da5c996a920ff75611d107eac6da4e2087bf83b04596": "caseRecord",
+        "2b95c601f2abb2478c97d8f4cb881a4313428ecb49973a7e9de37a6cda01cd5a": "response"
+      }
+    },
+    {
+      "unit": "U216",
+      "keep": true,
+      "confidence": 0.6,
+      "rationale": "START-OUTPUT clears the result record and fills its key and number.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 538, "quote": "6600-START-OUTPUT." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 539, "quote": "MOVE SPACES TO KZ-EVENT-OUT" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "61c093e5b445486b9cdf0dfee79aff59820a94437632e71e8a43eaa13fe4ca66": "caseRecord",
+        "93529f39672dd71be15df7b8afe91020a8139c0faa5a8ea71d05406ad5a2e718": "response"
+      }
+    },
+    {
+      "unit": "U217",
+      "keep": true,
+      "confidence": 0.6,
+      "rationale": "SAVE-OUTPUT appends the built result record to the response table.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 545, "quote": "6700-SAVE-OUTPUT." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 550, "quote": "MOVE KZ-EVENT-OUT TO FO-REC (FO-COUNT)." }
+      ],
+      "notebook": [],
+      "parameters": {
+        "04bf4297f4e257b9ad8269d2a69e4300130e05ab98c8d2673ca21d8874caf467": "response"
+      }
+    },
+    {
+      "unit": "U218",
+      "name": "callDecimalKernel",
+      "confidence": 0.7,
+      "rationale": "DECIMAL-OPERATION calls FSJBDEC and maps its return code to an ArithmeticException or a capacity abend.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 553, "quote": "CALL 'FSJBDEC' USING JB" }
+      ],
+      "notebook": ["P001-kernel-library"]
+    },
+    {
+      "unit": "U219",
+      "name": "rejectCaseRecord",
+      "confidence": 0.65,
+      "rationale": "REJECT-RECORD replaces the output with a reject of the input record (code UNMAPPED, exception name) and sets status R.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 562, "quote": "9000-REJECT-RECORD." },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 576, "quote": "MOVE 'R' TO FO-STATUS." }
+      ],
+      "notebook": ["reject-reason", "status-block"],
+      "parameters": {
+        "8cd7e8c7ec12e159024be97d29e3720285d89cfbfbb198d73226108dbae7d96e": "caseRecord",
+        "8bd1f5f0fb7b10a149ef6bf280f9a708f27395b46992616ca54f23ca6fede679": "response"
+      }
+    },
+    {
+      "unit": "U220",
+      "name": "abendOnCapacityError",
+      "confidence": 0.65,
+      "rationale": "SIZE-ERROR reports a calculation capacity error and abends through CEE3ABD.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 578, "quote": "DISPLAY 'ANNUITY CALCULATION CAPACITY ERROR'" }
+      ],
+      "notebook": ["P002-abend-routine", "size-error"]
+    },
+    {
+      "unit": "U221",
+      "name": "AnnuityCalculationService",
+      "confidence": 0.85,
+      "rationale": "The job comment names FSEM0100 the annuity calculation service that KZLE0100 calls.",
+      "evidence": [
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 8, "quote": "KZLE0100 READS CASES AND CALLS THE ANNUITY CALCULATION SERVICE." }
+      ],
+      "notebook": ["P006-prefix-is-not-meaning"]
+    }
+  ],
+  "notes": [
+    {
+      "kind": "pattern",
+      "text": "In decimal estates a -U/-S suffix pair means unscaled value and scale (BigDecimal parts), not unsigned/signed; name them <noun>Unscaled and <noun>Scale and keep one noun for both.",
+      "evidence": [
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 467, "quote": "MOVE RESULT-UNSCALED TO KA-AMOUNT-U" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 468, "quote": "MOVE RESULT-SCALE TO KA-AMOUNT-S" }
+      ]
+    },
+    {
+      "kind": "caution",
+      "text": "When identical value groups (unscaled, scale, exponent) are merged into one generated type, name the type and its fields generically; a name taken from the first group (PaymentValue) mislabels the others.",
+      "evidence": [
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 10, "quote": "05 MONTHLY-RATE-UNSCALED PIC S9(31) COMP-3." },
+        { "file": "source/app/cpy/KZNUMWRK.cpy", "line": 6, "quote": "05 ANNUAL-RATE-UNSCALED PIC S9(31) COMP-3." }
+      ]
+    }
+  ]
+}

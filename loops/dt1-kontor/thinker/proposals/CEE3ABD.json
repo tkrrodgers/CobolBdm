@@ -1,0 +1,73 @@
+{
+  "schema": "mlcpu.naming-unit-proposals.v1",
+  "estate": "kontor-zins-legacy",
+  "packetSha256": "eaeb07f7e07036a1b5736512420e6ed570247dd3f394f0a4142fe08551d2fef8",
+  "model": "claude-opus-5-5",
+  "promptVersion": "naming-1u",
+  "units": [
+    {
+      "unit": "U001",
+      "keep": true,
+      "confidence": 0.85,
+      "rationale": "RETURN-CODE is the step return code the abend stub sets to 16 before stopping the run; returnCode is already the business name.",
+      "evidence": [
+        { "file": "source/app/cbl/CEE3ABD.cbl", "line": 9, "quote": "MOVE 16 TO RETURN-CODE" }
+      ],
+      "notebook": ["return-code", "P002-abend-routine"]
+    },
+    {
+      "unit": "U002",
+      "name": "ReturnCode",
+      "confidence": 0.5,
+      "rationale": "Holder type for the RETURN-CODE special register, not a file layout, so no Record suffix; it is just the job step return code.",
+      "evidence": [
+        { "file": "source/app/cbl/CEE3ABD.cbl", "line": 9, "quote": "MOVE 16 TO RETURN-CODE" }
+      ],
+      "notebook": ["return-code", "P003-record-vs-entity"]
+    },
+    {
+      "unit": "U147",
+      "name": "abendCode",
+      "confidence": 0.85,
+      "rationale": "LK-CODE receives the caller's abend code (DW-ABEND-CODE, SIZE-ERROR-CODE) in the CEE3ABD call.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 433, "quote": "CALL 'CEE3ABD' USING DW-ABEND-CODE DW-ABEND-TIMING." },
+        { "file": "source/app/cbl/CEE3ABD.cbl", "line": 7, "quote": "PROCEDURE DIVISION USING LK-CODE LK-TIMING." }
+      ],
+      "notebook": ["abend", "P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U148",
+      "name": "AbendCode",
+      "confidence": 0.6,
+      "rationale": "Single-field linkage parameter holding the abend code; a parameter, not an I/O record, so the type is named for its value.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 433, "quote": "CALL 'CEE3ABD' USING DW-ABEND-CODE DW-ABEND-TIMING." }
+      ],
+      "notebook": ["abend", "P003-record-vs-entity"]
+    },
+    {
+      "unit": "U149",
+      "name": "abendTiming",
+      "confidence": 0.75,
+      "rationale": "LK-TIMING receives DW-ABEND-TIMING (value 0), the abend timing option of the CEE3ABD service.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 46, "quote": "05 DW-ABEND-TIMING PIC S9(9) COMP VALUE 0." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 433, "quote": "CALL 'CEE3ABD' USING DW-ABEND-CODE DW-ABEND-TIMING." }
+      ],
+      "notebook": ["abend"]
+    },
+    {
+      "unit": "U150",
+      "name": "AbendTiming",
+      "confidence": 0.6,
+      "rationale": "Single-field linkage parameter holding the abend timing option; named for its value rather than the program id.",
+      "evidence": [
+        { "file": "source/app/cbl/CEE3ABD.cbl", "line": 6, "quote": "LK-TIMING" },
+        { "file": "source/app/cbl/FSEM0100.cbl", "line": 579, "quote": "CALL 'CEE3ABD' USING SIZE-ERROR-CODE ABEND-TIMING." }
+      ],
+      "notebook": ["abend", "P003-record-vs-entity"]
+    }
+  ],
+  "notes": []
+}

@@ -1,0 +1,530 @@
+{
+  "schema": "mlcpu.naming-unit-proposals.v1",
+  "estate": "kontor-zins-legacy",
+  "packetSha256": "eaeb07f7e07036a1b5736512420e6ed570247dd3f394f0a4142fe08551d2fef8",
+  "model": "claude-opus-5-5",
+  "promptVersion": "naming-1u",
+  "units": [
+    {
+      "unit": "U348",
+      "name": "abendService",
+      "confidence": 0.6,
+      "rationale": "Field holding the CEE3ABD abend service the driver calls on severe errors.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 433, "quote": "CALL 'CEE3ABD' USING DW-ABEND-CODE DW-ABEND-TIMING." }
+      ],
+      "notebook": ["abend", "P002-abend-routine"]
+    },
+    {
+      "unit": "U349",
+      "name": "annuityCalculationService",
+      "confidence": 0.85,
+      "rationale": "The job comment says KZLE0100 calls the annuity calculation service, which is FSEM0100.",
+      "evidence": [
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 8, "quote": "KZLE0100 READS CASES AND CALLS THE ANNUITY CALCULATION SERVICE." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 230, "quote": "CALL 'FSEM0100' USING KZ-CASE-WORK FN-RUN-CONTROL" }
+      ],
+      "notebook": ["P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U350",
+      "name": "checkedDate",
+      "confidence": 0.45,
+      "rationale": "DW-DATE is the year/month/day validated by DATE-CHECK; that paragraph is never performed, so its role is unconfirmed.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 398, "quote": "DW-MM > 0 AND DW-MM < 13 AND DW-DD > 0" }
+      ],
+      "notebook": ["leap-year", "C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U351",
+      "name": "runControl",
+      "confidence": 0.75,
+      "rationale": "Field holding the run control record read from RUNCTL; not a file layout itself, so no Record suffix.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 110, "quote": "READ RUNCTL-FILE INTO FN-RUN-CONTROL" }
+      ],
+      "notebook": ["run-control"]
+    },
+    {
+      "unit": "U352",
+      "name": "serviceResponse",
+      "confidence": 0.5,
+      "rationale": "Field holding the service's response area (status, reject, result records).",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 233, "quote": "EVALUATE FO-STATUS" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 237, "quote": "WRITE RESULT-REC FROM FO-REC (DW-K)" }
+      ],
+      "notebook": ["status-block"]
+    },
+    {
+      "unit": "U353",
+      "name": "loanCase",
+      "confidence": 0.55,
+      "rationale": "Field holding the per-loan case state passed to the service on every call.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 230, "quote": "CALL 'FSEM0100' USING KZ-CASE-WORK FN-RUN-CONTROL" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 176, "quote": "'KZLE0100 LOAN DOES NOT START WITH A HEADER '" }
+      ],
+      "notebook": ["loan"]
+    },
+    {
+      "unit": "U354",
+      "name": "caseRecord",
+      "confidence": 0.75,
+      "rationale": "Field holding the record just read from the CASES file.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 152, "quote": "READ EVENT-FILE INTO KZ-EVENT-REC" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 72, "quote": "'CASE RECORD FORMAT INVALID'." }
+      ],
+      "notebook": ["P003-record-vs-entity"]
+    },
+    {
+      "unit": "U355",
+      "keep": true,
+      "confidence": 0.6,
+      "rationale": "0000-MAIN is the job step: read control, open files, process every record, report run totals.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 79, "quote": "0000-MAIN." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 83, "quote": "PERFORM UNTIL DW-EOF = 'Y'" }
+      ],
+      "notebook": ["end-of-file"]
+    },
+    {
+      "unit": "U356",
+      "name": "readRunControl",
+      "confidence": 0.75,
+      "rationale": "RUN-CONTROL reads the run control record and abends if it is missing or its type, precision or rounding mode is invalid.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 103, "quote": "0100-RUN-CONTROL." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 112, "quote": "DISPLAY 'KZLE0100 RUN CONTROL RECORD MISSING'" }
+      ],
+      "notebook": ["run-control"]
+    },
+    {
+      "unit": "U357",
+      "keep": true,
+      "confidence": 0.8,
+      "rationale": "OPEN-FILES opens the cases input and results output, abending on a bad file status.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 137, "quote": "0200-OPEN-FILES." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 140, "quote": "DISPLAY 'ERROR OPENING CASES ' DS-EVENT" }
+      ],
+      "notebook": ["file-status"]
+    },
+    {
+      "unit": "U358",
+      "name": "checkRecordOrder",
+      "confidence": 0.6,
+      "rationale": "The read paragraph's sequence logic checks that keys ascend, each loan starts with a header and offers precede events, and counts loans and events.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 167, "quote": "DISPLAY 'KZLE0100 RECORD OUT OF SEQUENCE '" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 192, "quote": "DISPLAY 'KZLE0100 RECORD OUT OF PLACE '" }
+      ],
+      "notebook": ["record-counter"],
+      "parameters": {
+        "978ddffd02035ab05531954eabb7947bcbcb6f36d1d07721a794dd81efe9e7c4": "caseRecord",
+        "b0dbc176c0097994620faac75b641e2b2fe79a1348b685334695b37d8ee7984e": "totals"
+      }
+    },
+    {
+      "unit": "U359",
+      "name": "processCaseRecord",
+      "confidence": 0.6,
+      "rationale": "CHECK-RECORD validates the record by type and then either writes a reject or calls the service.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 224, "quote": "PERFORM 2900-CHECK-REJECT" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 227, "quote": "PERFORM 2020-CALL" }
+      ],
+      "notebook": [],
+      "parameters": {
+        "8b2a6d9ef3aa341c833a0009e894ed3e222ad21d1d9e1e695882aa7b205dd2c7": "caseRecord",
+        "190ee2b722f8e4cb7ea9e36ae9e457d6afbce92c069c0b6ae8c8158ff0f549dd": "totals"
+      }
+    },
+    {
+      "unit": "U360",
+      "name": "validateCaseRecord",
+      "confidence": 0.7,
+      "rationale": "Validator that dispatches on the record type (header, offer, event) and yields a reject code when invalid.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 212, "quote": "EVALUATE KV-REC-TYPE" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 223, "quote": "IF DW-CODE NOT = SPACES" }
+      ],
+      "notebook": ["reject-reason"],
+      "parameters": {
+        "3620f34d4200e5cbd9dc4b9b9e762d04281fb0b33e123dc7c6c778da26051e76": "caseRecord"
+      }
+    },
+    {
+      "unit": "U361",
+      "name": null,
+      "confidence": 0.6,
+      "rationale": "2020-CALL is locked; its parameters are the case record passed to the service and the run totals it updates.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 230, "quote": "CALL 'FSEM0100' USING KZ-CASE-WORK FN-RUN-CONTROL" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 243, "quote": "ADD 1 TO DW-RECORDS" }
+      ],
+      "notebook": ["P005-run-totals"],
+      "parameters": {
+        "8533e686d1fb8a283396dfe2e37b87268a0ff48375343795daeb2cdccb88a4ac": "caseRecord",
+        "b990b21b9b8d967b92b168c2875c5a923e5c6c2e084dfbbad2c4798e578cd36a": "totals"
+      }
+    },
+    {
+      "unit": "U362",
+      "name": "validateHeader",
+      "confidence": 0.75,
+      "rationale": "CHECK-HEADER checks the header's numeric fields and Y/N flag, setting reject code RJEVT001 if any fails.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 263, "quote": "2100-CHECK-HEADER." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 285, "quote": "MOVE 'RJEVT001' TO DW-CODE" }
+      ],
+      "notebook": ["reject-reason"],
+      "parameters": {
+        "a717b0089a9114cf56d69a7485be336f9816261dc3e93115ffe8f850302bf5c6": "caseRecord"
+      }
+    },
+    {
+      "unit": "U363",
+      "name": "isAnnualRateNumeric",
+      "confidence": 0.6,
+      "rationale": "DW-NUM-3 tests that the header rate has a sign and 15 digits; 'annualRate' matches the rate's name elsewhere. Sibling predicates isKpPrincipalNumeric etc. would read better as isOfferPrincipalNumeric, outside this stem.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 331, "quote": "IF (KH-RATE (1:1) NOT = '+' AND KH-RATE (1:1) NOT = '-')" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 333, "quote": "MOVE 'N' TO DW-NUM-3" }
+      ],
+      "notebook": ["nominal-interest-rate"],
+      "parameters": {
+        "60b20f24b4be5e5d0ea5b4ad1830079bff23853060b9b3d5c541bb307ce77f81": "runControl",
+        "8dc567cb47558feee8307a8c97158b79c0e1bea4f906a11ba4a93a0cc04b7aba": "caseRecord",
+        "dff11d2febcfb7a4a65e33a189b0bdaedbe88bff5da9814b7921a61fd81da9d0": "caseRecord",
+        "ec14b3a0b50cb6839b2a7fa0ff8ec655431691ddb3c851ab352dac4c8bc78c04": "caseRecord",
+        "4a7685f506c14776f7ecd2e9ce7d7c2a3ffc8856583cf966dd0be6c6423d8c58": "caseRecord",
+        "52c6cfa20b631ef12601a5338a9fcc3e58ac59ae591cb9996d714d33162c19ce": "caseRecord",
+        "7843e901c2e311d61ac83276855342110f7d3c2b438983e59bf624c31dfb37a6": "caseRecord",
+        "e6d6db70226b63e0a70f2aabe376a0d89ff31eb95e4eef14fb324b99e09cf658": "caseRecord",
+        "0ce52cc0de3fe5c452d5ad5fd9617c3cb70d588a9314f365413633b52ba08c89": "caseRecord",
+        "4cac285fc4100fc40e3e0bd8f34478ccbed43b1c39d569f6f4e1f81427a89c4c": "caseRecord"
+      }
+    },
+    {
+      "unit": "U364",
+      "name": "validateDate",
+      "confidence": 0.55,
+      "rationale": "DATE-CHECK validates year, month and day including leap years; note it is never performed in this program.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 396, "quote": "2110-DATE-CHECK." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 410, "quote": "IF DW-R400 = 0 OR (DW-R4 = 0 AND DW-R100 NOT = 0)" }
+      ],
+      "notebook": ["leap-year"]
+    },
+    {
+      "unit": "U365",
+      "name": "validateOffer",
+      "confidence": 0.55,
+      "rationale": "The paragraph is called CHECK-PERIOD, but it validates the P record's KP- fields, which the copybook names the offer layout.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 288, "quote": "2200-CHECK-PERIOD." },
+        { "file": "source/app/cpy/KZEVTIN.cpy", "line": 17, "quote": "KV-OFFER REDEFINES KV-BODY." }
+      ],
+      "notebook": ["C003-no-invented-meaning"],
+      "parameters": {
+        "4dcdd5fbc321f48f49066997a2516d2aba9fce0deef7a9a72580e858681e4184": "caseRecord"
+      }
+    },
+    {
+      "unit": "U366",
+      "name": "validateEvent",
+      "confidence": 0.75,
+      "rationale": "CHECK-EVENT checks the queried month is numeric and the event type is one of the nine known codes.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 304, "quote": "2300-CHECK-EVENT." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 310, "quote": "IF NOT (KE-TYPE = 'MP' OR KE-TYPE = 'NT' OR KE-TYPE = 'MT' OR" }
+      ],
+      "notebook": ["reject-reason"],
+      "parameters": {
+        "fc887e136bef547977b33ba453b71020a23bb65172a7fb444800f750d8e4484e": "caseRecord"
+      }
+    },
+    {
+      "unit": "U367",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "The DW-CODE values (RJEVT001) are reject codes written into the reject record's code field.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 381, "quote": "WHEN 'RJEVT001'" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 378, "quote": "MOVE DW-CODE TO KX-CODE" }
+      ],
+      "notebook": ["reject-reason"]
+    },
+    {
+      "unit": "U368",
+      "name": null,
+      "confidence": 0.9,
+      "rationale": "RJEVT001 is written with the text 'CASE RECORD FORMAT INVALID'; the current constant already says so.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 72, "quote": "'CASE RECORD FORMAT INVALID'." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 382, "quote": "MOVE DW-TEXT-1 TO KX-TEXT" }
+      ],
+      "notebook": ["reject-reason"],
+      "constants": {
+        "5bd6e21398a85953af49c8a38b3eb87f43696c153cda29db2c57bf56f4c60ead": "CASE_RECORD_FORMAT_INVALID"
+      }
+    },
+    {
+      "unit": "U369",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "CHECK-REJECT builds and writes the reject result record (source ENVELOPE) and counts it.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 379, "quote": "MOVE 'ENVELOPE' TO KX-SOURCE" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 387, "quote": "WRITE RESULT-REC FROM KZ-EVENT-OUT" }
+      ],
+      "notebook": ["reject-reason"],
+      "parameters": {
+        "26c86cee607f1a866df991331107cbfbb9500c4038aecb17c48f862591b3f3f2": "caseRecord",
+        "687e405d94a92de6f9c5d5b515c16e0ca643d1f7f9969db355fe2806c1b9bc57": "rejectCode",
+        "fe08d9da1e77ca817d496e9ae500babdf9e2bc83df8b43d1edb0f5c36317cf00": "totals"
+      }
+    },
+    {
+      "unit": "U370",
+      "name": "abendOnCounterOverflow",
+      "confidence": 0.7,
+      "rationale": "COUNTER-OVERFLOW is performed on any counter size error and abends with code 9.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 427, "quote": "9998-COUNTER-OVERFLOW." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 428, "quote": "MOVE 9 TO DW-ABEND-CODE" }
+      ],
+      "notebook": ["P002-abend-routine", "size-error"]
+    },
+    {
+      "unit": "U371",
+      "keep": true,
+      "confidence": 0.75,
+      "rationale": "ABEND-PROGRAM displays the abend code and calls CEE3ABD.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 432, "quote": "DISPLAY 'KZLE0100 ABENDING, CODE ' DW-DISPLAY-CODE" }
+      ],
+      "notebook": ["abend", "P002-abend-routine"],
+      "parameters": {
+        "d0bf2d05aa1e2c238062ba6b823cde711f5f6a122476d2dfd289f5f260fe6fb4": "abendCode"
+      }
+    },
+    {
+      "unit": "U372",
+      "name": "day",
+      "confidence": 0.8,
+      "rationale": "DW-DD is the day of month, checked against the month length.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 423, "quote": "IF DW-DD NOT > DW-MONTH-LEN" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U373",
+      "name": "month",
+      "confidence": 0.8,
+      "rationale": "DW-MM is the month number 1 to 12.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 408, "quote": "EVALUATE DW-MM" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U374",
+      "name": "year",
+      "confidence": 0.8,
+      "rationale": "DW-YYYY is the four-digit year tested for leap years.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 399, "quote": "DIVIDE DW-YYYY BY 4 GIVING DW-Q REMAINDER DW-R4" }
+      ],
+      "notebook": ["leap-year"]
+    },
+    {
+      "unit": "U375",
+      "name": "CalendarDate",
+      "confidence": 0.6,
+      "rationale": "DW-DATE is a year-month-day value (redefined as an 8-character date); a value type, not a file record.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 62, "quote": "DW-DATE-X REDEFINES DW-DATE PIC X(8)." }
+      ],
+      "notebook": ["P003-record-vs-entity"]
+    },
+    {
+      "unit": "U376",
+      "keep": true,
+      "confidence": 0.6,
+      "rationale": "DW-SKIP marks the current loan as rejected so its remaining records are skipped; rejected()/reject() state that.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 207, "quote": "IF DW-SKIP NOT = 'Y'" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 257, "quote": "MOVE 'Y' TO DW-SKIP" }
+      ],
+      "notebook": ["reject-reason"]
+    },
+    {
+      "unit": "U377",
+      "name": "AnnuityLoanPlanBatch",
+      "confidence": 0.75,
+      "rationale": "KZLE0100 is the batch step of the job 'ANNUITY LOAN PLANS', which produces annuity loan repayment plans.",
+      "evidence": [
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 1, "quote": "JOB 'ANNUITY LOAN PLANS'" },
+        { "file": "source/app/jcl/KZANNUIT.jcl", "line": 4, "quote": "ANNUITY LOAN REPAYMENT PLANS" }
+      ],
+      "notebook": ["P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U378",
+      "keep": true,
+      "confidence": 0.8,
+      "rationale": "DW-EVENTS counts event records and is displayed as EVENTS at end of job.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 200, "quote": "ADD 1 TO DW-EVENTS" }
+      ],
+      "notebook": ["P005-run-totals", "record-counter"]
+    },
+    {
+      "unit": "U379",
+      "name": "incrementEvents",
+      "confidence": 0.75,
+      "rationale": "Increments the event count when an E record is read.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 200, "quote": "ADD 1 TO DW-EVENTS" }
+      ],
+      "notebook": ["P005-run-totals"]
+    },
+    {
+      "unit": "U380",
+      "keep": true,
+      "confidence": 0.8,
+      "rationale": "DW-LOANS counts loans (new case ids) and is displayed as LOANS.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 184, "quote": "ADD 1 TO DW-LOANS" }
+      ],
+      "notebook": ["P005-run-totals", "loan"]
+    },
+    {
+      "unit": "U381",
+      "name": "incrementLoans",
+      "confidence": 0.75,
+      "rationale": "Increments the loan count when a new case starts.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 184, "quote": "ADD 1 TO DW-LOANS" }
+      ],
+      "notebook": ["P005-run-totals"]
+    },
+    {
+      "unit": "U382",
+      "name": "recordsRead",
+      "confidence": 0.8,
+      "rationale": "DW-READ counts input records and is displayed as RECORDS READ.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 93, "quote": "DISPLAY 'KZLE0100 RECORDS READ" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 155, "quote": "ADD 1 TO DW-READ" }
+      ],
+      "notebook": ["P005-run-totals", "record-counter"]
+    },
+    {
+      "unit": "U383",
+      "name": "incrementRecordsRead",
+      "confidence": 0.75,
+      "rationale": "Increments the records-read count on each successful read.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 155, "quote": "ADD 1 TO DW-READ" }
+      ],
+      "notebook": ["P005-run-totals"]
+    },
+    {
+      "unit": "U384",
+      "name": "resultRecords",
+      "confidence": 0.8,
+      "rationale": "DW-RECORDS counts records written to the results file, displayed as RESULT RECORDS.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 101, "quote": "DISPLAY 'KZLE0100 RESULT RECORDS" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 243, "quote": "ADD 1 TO DW-RECORDS" }
+      ],
+      "notebook": ["P005-run-totals", "record-counter"]
+    },
+    {
+      "unit": "U385",
+      "name": "incrementResultRecords",
+      "confidence": 0.75,
+      "rationale": "Increments the result-record count for each record written.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 243, "quote": "ADD 1 TO DW-RECORDS" }
+      ],
+      "notebook": ["P005-run-totals"]
+    },
+    {
+      "unit": "U386",
+      "keep": true,
+      "confidence": 0.8,
+      "rationale": "DW-REJECTS counts reject records and is displayed as REJECTS.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 254, "quote": "ADD 1 TO DW-RECORDS DW-REJECTS" }
+      ],
+      "notebook": ["P005-run-totals", "reject-reason"]
+    },
+    {
+      "unit": "U387",
+      "name": "incrementRejects",
+      "confidence": 0.75,
+      "rationale": "Increments the reject count for each reject written.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 393, "quote": "ADD 1 TO DW-RECORDS DW-REJECTS" }
+      ],
+      "notebook": ["P005-run-totals"]
+    },
+    {
+      "unit": "U388",
+      "keep": true,
+      "confidence": 0.8,
+      "rationale": "The five counters are run statistics displayed at end of job: one RunTotals value.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 92, "quote": "MOVE DW-READ TO DW-DISPLAY" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 98, "quote": "MOVE DW-REJECTS TO DW-DISPLAY" }
+      ],
+      "notebook": ["P005-run-totals", "record-counter"]
+    },
+    {
+      "unit": "U389",
+      "name": "caseSequence",
+      "confidence": 0.6,
+      "rationale": "Field holding the state that tracks record order within each loan case.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 173, "quote": "IF DW-FIRST = 'Y' OR KZ-EVENT-REC (1:8) NOT = DW-LOAN" }
+      ],
+      "notebook": []
+    },
+    {
+      "unit": "U390",
+      "name": "CaseSequence",
+      "confidence": 0.6,
+      "rationale": "DW-FIRST, DW-PREV-KEY, DW-LOAN, DW-SAW-EVENT and DW-SKIP together track key order and record placement per loan case.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 172, "quote": "MOVE KZ-EVENT-REC (1:12) TO DW-PREV-KEY" },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 199, "quote": "MOVE 'Y' TO DW-SAW-EVENT" }
+      ],
+      "notebook": []
+    }
+  ],
+  "notes": [
+    {
+      "kind": "caution",
+      "text": "A paragraph name can disagree with the copybook about what a record is (CHECK-PERIOD validates the OFFER layout); prefer the layout and the callee's usage, and mark the conflict for review.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 288, "quote": "2200-CHECK-PERIOD." },
+        { "file": "source/app/cpy/KZEVTIN.cpy", "line": 17, "quote": "KV-OFFER REDEFINES KV-BODY." }
+      ]
+    },
+    {
+      "kind": "pattern",
+      "text": "Reject texts and DISPLAY messages often name the record or count in plain words (CASE RECORD, RESULT RECORDS); quote them first when naming layouts and run totals.",
+      "evidence": [
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 72, "quote": "'CASE RECORD FORMAT INVALID'." },
+        { "file": "source/app/cbl/KZLE0100.cbl", "line": 101, "quote": "DISPLAY 'KZLE0100 RESULT RECORDS" }
+      ]
+    }
+  ]
+}

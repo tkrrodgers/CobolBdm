@@ -1,0 +1,1348 @@
+{
+  "schema": "mlcpu.naming-unit-proposals.v1",
+  "estate": "kontor-zins-legacy",
+  "packetSha256": "eaeb07f7e07036a1b5736512420e6ed570247dd3f394f0a4142fe08551d2fef8",
+  "model": "claude-opus-5-5",
+  "promptVersion": "naming-1u",
+  "units": [
+    {
+      "unit": "U222",
+      "name": "savedRoundingMode",
+      "confidence": 0.6,
+      "rationale": "BG-SAVE-M keeps the caller's rounding mode so the operation can be retried in big-number mode after a capacity overflow.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 194, "quote": "MOVE JB-M TO BG-SAVE-M" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1537, "quote": "MOVE BG-SAVE-M TO JB-M" }
+      ],
+      "notebook": ["C001-save-and-work-areas", "rounding-mode"]
+    },
+    {
+      "unit": "U223",
+      "name": "savedPrecisionOrScale",
+      "confidence": 0.6,
+      "rationale": "BG-SAVE-P keeps the caller's precision/scale parameter for the big-number retry.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 193, "quote": "MOVE JB-P TO BG-SAVE-P" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1536, "quote": "MOVE BG-SAVE-P TO JB-P" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U224",
+      "name": "SavedOperands",
+      "confidence": 0.55,
+      "rationale": "BG-SAVE is scratch that preserves the original operands and parameters so a fast-path overflow can be redone by the big-number path.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 191, "quote": "MOVE JB-A TO BG-SAVE-A" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1539, "quote": "PERFORM 7000-BIG" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U225",
+      "name": "entryGeneration",
+      "confidence": 0.55,
+      "rationale": "BG-V-GEN stamps a stored big number with the store generation so stale handles are detected.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1502, "quote": "MOVE BG-GEN TO BG-V-GEN (BX-E)" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 874, "quote": "IF BG-V-GEN (BX-E) NOT = BX-G" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U226",
+      "name": "entryLimb",
+      "confidence": 0.5,
+      "rationale": "BG-V-L holds the base-10^9 limbs of a stored big number.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 84, "quote": "15 BG-V-L PIC S9(9) COMP OCCURS 2223." }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U227",
+      "name": "entryLength",
+      "confidence": 0.5,
+      "rationale": "BG-V-LEN is the number of limbs in a stored big number.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 83, "quote": "15 BG-V-LEN PIC S9(9) COMP." }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U228",
+      "name": "entrySign",
+      "confidence": 0.5,
+      "rationale": "BG-V-SG is the sign (-1, 0, 1) of a stored big number.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 82, "quote": "15 BG-V-SG PIC S9(4) COMP." }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U229",
+      "name": "BigNumberStore",
+      "confidence": 0.6,
+      "rationale": "BG-STORE keeps up to 2500 big results; callers get a handle of generation times 10^6 plus slot.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 79, "quote": "05 BG-V OCCURS 2500." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1504, "quote": "COMPUTE BX-H = BG-GEN * 1000000 + BX-E" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U230",
+      "name": "operandALimb",
+      "confidence": 0.55,
+      "rationale": "BX-A-L holds operand A's base-10^9 limbs, least significant first.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 835, "quote": "DIVIDE BX-U31 BY 1000000000 GIVING BX-W31" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 836, "quote": "REMAINDER BX-A-L (BX-A-LEN)" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U231",
+      "name": "operandALength",
+      "confidence": 0.55,
+      "rationale": "BX-A-LEN is the number of limbs in big operand A.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 834, "quote": "ADD 1 TO BX-A-LEN" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U232",
+      "name": "operandASign",
+      "confidence": 0.55,
+      "rationale": "BX-A-SG is the sign (-1, 0, 1) of big operand A.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 823, "quote": "MOVE -1 TO BX-A-SG" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U233",
+      "name": "operandBLimb",
+      "confidence": 0.55,
+      "rationale": "BX-B-L holds operand B's base-10^9 limbs.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 861, "quote": "REMAINDER BX-B-L (BX-B-LEN)" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U234",
+      "name": "operandBLength",
+      "confidence": 0.55,
+      "rationale": "BX-B-LEN is the number of limbs in big operand B.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 859, "quote": "ADD 1 TO BX-B-LEN" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U235",
+      "name": "operandBSign",
+      "confidence": 0.55,
+      "rationale": "BX-B-SG is the sign of big operand B (negated for subtraction).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 848, "quote": "MOVE -1 TO BX-B-SG" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1279, "quote": "COMPUTE BX-B-SG = 0 - BX-B-SG" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U236",
+      "name": "quotientLimb",
+      "confidence": 0.55,
+      "rationale": "BX-Q-L receives the quotient limbs of the big division.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1263, "quote": "MOVE BX-QH TO BX-Q-L (BX-IJ)" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U237",
+      "name": "quotientLength",
+      "confidence": 0.55,
+      "rationale": "BX-Q-LEN is the number of limbs in the quotient.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1154, "quote": "MOVE BX-A-LEN TO BX-Q-LEN" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U238",
+      "name": "quotientSign",
+      "confidence": 0.5,
+      "rationale": "BX-Q-SG is the sign of the quotient register (set positive for the magnitude division).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1160, "quote": "MOVE 1 TO BX-Q-SG" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U239",
+      "name": "resultLimb",
+      "confidence": 0.55,
+      "rationale": "BX-R-L holds the limbs of the big result.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1079, "quote": "MOVE BX-P TO BX-R-L (BX-I)" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U240",
+      "name": "resultLength",
+      "confidence": 0.55,
+      "rationale": "BX-R-LEN is the number of limbs in the big result.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1081, "quote": "MOVE BX-N TO BX-R-LEN" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U241",
+      "name": "resultSign",
+      "confidence": 0.55,
+      "rationale": "BX-R-SG is the sign of the big result.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1335, "quote": "COMPUTE BX-R-SG = BX-A-SG * BX-B-SG" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U242",
+      "name": "remainderLimb",
+      "confidence": 0.5,
+      "rationale": "BX-T-L receives the remainder limbs of the magnitude division (also a swap register).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1156, "quote": "MOVE BX-C TO BX-T-L (1)" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U243",
+      "name": "remainderLength",
+      "confidence": 0.5,
+      "rationale": "BX-T-LEN is the number of limbs in the division remainder.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1155, "quote": "MOVE 1 TO BX-T-LEN" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U244",
+      "name": "remainderSign",
+      "confidence": 0.5,
+      "rationale": "BX-T-SG is the sign of the division remainder.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1161, "quote": "MOVE 1 TO BX-T-SG" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U245",
+      "name": "normalizedDividendLimb",
+      "confidence": 0.5,
+      "rationale": "BX-U holds the dividend multiplied by the normalisation factor in the long (Knuth) division.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1169, "quote": "MOVE BX-A TO BX-U" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1170, "quote": "PERFORM 7320-SMUL-U" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U246",
+      "name": "normalizedDividendLength",
+      "confidence": 0.5,
+      "rationale": "BX-U-LEN is the limb count of the normalised dividend.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1177, "quote": "MOVE BX-IJ TO BX-U-LEN" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U247",
+      "name": "normalizedDividendSign",
+      "confidence": 0.45,
+      "rationale": "BX-U-SG is the sign of the normalised dividend register, cleared when it trims to zero.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 919, "quote": "MOVE 0 TO BX-U-SG" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U248",
+      "name": "normalizedDivisorLimb",
+      "confidence": 0.5,
+      "rationale": "BX-V holds the divisor multiplied by the normalisation factor in the long division.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1179, "quote": "MOVE BX-B TO BX-V" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1181, "quote": "MOVE BX-V-L (BX-N) TO BX-VT" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U249",
+      "name": "normalizedDivisorLength",
+      "confidence": 0.5,
+      "rationale": "BX-V-LEN is the limb count of the normalised divisor.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1024, "quote": "PERFORM VARYING BX-I FROM 1 BY 1 UNTIL BX-I > BX-V-LEN" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U250",
+      "name": "normalizedDivisorSign",
+      "confidence": 0.45,
+      "rationale": "BX-V-SG is the sign slot of the divisor register (copied with the divisor, not tested).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 119, "quote": "10 BX-V-SG PIC S9(4) COMP." }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U251",
+      "name": "registerXLimb",
+      "confidence": 0.25,
+      "rationale": "BX-X is declared but never referenced; a spare big register with no role, so it is named structurally for review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 101, "quote": "10 BX-X-L PIC S9(9) COMP OCCURS 2225." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U252",
+      "name": "registerXLength",
+      "confidence": 0.25,
+      "rationale": "Limb count of the unused spare register BX-X.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 100, "quote": "10 BX-X-LEN PIC S9(9) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U253",
+      "name": "registerXSign",
+      "confidence": 0.25,
+      "rationale": "Sign of the unused spare register BX-X.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 99, "quote": "10 BX-X-SG PIC S9(4) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U254",
+      "name": "registerYLimb",
+      "confidence": 0.25,
+      "rationale": "BX-Y is declared but never referenced; a spare big register named structurally for review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 105, "quote": "10 BX-Y-L PIC S9(9) COMP OCCURS 2225." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U255",
+      "name": "registerYLength",
+      "confidence": 0.25,
+      "rationale": "Limb count of the unused spare register BX-Y.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 104, "quote": "10 BX-Y-LEN PIC S9(9) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U256",
+      "name": "registerYSign",
+      "confidence": 0.25,
+      "rationale": "Sign of the unused spare register BX-Y.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 103, "quote": "10 BX-Y-SG PIC S9(4) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U257",
+      "name": "BigNumberRegisters",
+      "confidence": 0.55,
+      "rationale": "BX-REGS are the multi-limb (base 10^9) number registers of the big-number arithmetic: operands, result, quotient, remainder, normalised dividend and divisor.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 85, "quote": "BX-REGS." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1164, "quote": "7460-KNUTH." }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U258",
+      "name": "unusedBs",
+      "confidence": 0.15,
+      "rationale": "BX-BS is declared but never referenced and nothing shows its meaning; flagged for removal or review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 153, "quote": "05 BX-BS PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U259",
+      "name": "borrow",
+      "confidence": 0.75,
+      "rationale": "BX-BW is the borrow carried between limbs in magnitude subtraction.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1092, "quote": "COMPUTE BX-P = BX-A-L (BX-I) - BX-BW" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1098, "quote": "MOVE 1 TO BX-BW" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U260",
+      "name": "carry",
+      "confidence": 0.75,
+      "rationale": "BX-C is the carry between limbs in addition and multiplication.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1075, "quote": "MOVE 1 TO BX-C" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1126, "quote": "DIVIDE BX-P BY 1000000000 GIVING BX-C" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U261",
+      "name": "magnitudeComparison",
+      "confidence": 0.6,
+      "rationale": "BX-CMP is the -1/0/1 result of comparing the magnitudes of A and B.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1039, "quote": "7400-MAG-CMP." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1043, "quote": "MOVE 1 TO BX-CMP" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U262",
+      "name": "storeSlot",
+      "confidence": 0.6,
+      "rationale": "BX-E is the slot of a big number in the store, decoded from or encoded into a handle.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 870, "quote": "DIVIDE BX-H BY 1000000 GIVING BX-G REMAINDER BX-E" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 871, "quote": "IF BX-E < 1 OR BX-E > BG-USED" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U263",
+      "name": "limbFactor",
+      "confidence": 0.5,
+      "rationale": "BX-F is a single-limb multiplier or divisor: a power of ten for shifts, the normalisation factor, or a one-limb divisor.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 942, "quote": "MOVE BX-POW9 (BX-KD + 1) TO BX-F" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1168, "quote": "DIVIDE 1000000000 BY BX-T1 GIVING BX-F" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U264",
+      "name": "handleGeneration",
+      "confidence": 0.6,
+      "rationale": "BX-G is the generation decoded from a big-number handle, checked against the slot's generation.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 870, "quote": "DIVIDE BX-H BY 1000000 GIVING BX-G REMAINDER BX-E" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U265",
+      "name": "handle",
+      "confidence": 0.65,
+      "rationale": "BX-H is a big-number handle (generation times 10^6 plus slot) passed in place of an unscaled value.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 869, "quote": "7190-HANDLE." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1504, "quote": "COMPUTE BX-H = BG-GEN * 1000000 + BX-E" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U266",
+      "name": "index",
+      "confidence": 0.6,
+      "rationale": "BX-I is the main limb loop index.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1065, "quote": "PERFORM VARYING BX-I FROM 1 BY 1 UNTIL BX-I > BX-N" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U267",
+      "name": "combinedIndex",
+      "confidence": 0.5,
+      "rationale": "BX-IJ is the summed index i + j into the product or dividend limbs.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1226, "quote": "COMPUTE BX-IJ = BX-I + BX-J" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U268",
+      "name": "secondIndex",
+      "confidence": 0.5,
+      "rationale": "BX-J is the inner (operand B / quotient position) loop index.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1120, "quote": "PERFORM VARYING BX-J FROM 1 BY 1 UNTIL BX-J >" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U269",
+      "name": "dividendTopIndex",
+      "confidence": 0.45,
+      "rationale": "BX-J1 = j + n + 1 indexes the top dividend limb used to estimate a quotient digit.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1186, "quote": "COMPUTE BX-J1 = BX-J + BX-N + 1" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U270",
+      "name": "dividendNextIndex",
+      "confidence": 0.45,
+      "rationale": "BX-J2 = j + n indexes the next dividend limb for the quotient estimate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1187, "quote": "COMPUTE BX-J2 = BX-J + BX-N" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U271",
+      "name": "dividendThirdIndex",
+      "confidence": 0.45,
+      "rationale": "BX-J3 = j + n - 1 indexes the third dividend limb used to correct the estimate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1188, "quote": "COMPUTE BX-J3 = BX-J + BX-N - 1" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U272",
+      "name": "shiftDigits",
+      "confidence": 0.6,
+      "rationale": "BX-K is the number of decimal digits a big number is shifted (multiplied by 10^k) to align scales.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1289, "quote": "COMPUTE BX-K = BX-SB - BX-SA" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 923, "quote": "DIVIDE BX-K BY 9 GIVING BX-KL REMAINDER BX-KD" }
+      ],
+      "notebook": ["C001-save-and-work-areas", "scale"]
+    },
+    {
+      "unit": "U273",
+      "name": "secondShiftDigits",
+      "confidence": 0.2,
+      "rationale": "BX-K2 is declared but never referenced; named after its apparent twin BX-K for review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 154, "quote": "05 BX-K2 PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U274",
+      "name": "shiftRemainderDigits",
+      "confidence": 0.55,
+      "rationale": "BX-KD is the part of the shift below one limb (k mod 9 digits), applied by a power-of-ten multiply.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 923, "quote": "DIVIDE BX-K BY 9 GIVING BX-KL REMAINDER BX-KD" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U275",
+      "name": "shiftLimbs",
+      "confidence": 0.55,
+      "rationale": "BX-KL is the whole-limb part of the shift (k div 9), applied by moving limbs up.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 923, "quote": "DIVIDE BX-K BY 9 GIVING BX-KL REMAINDER BX-KD" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 939, "quote": "ADD BX-KL TO BX-A-LEN" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U276",
+      "name": "lengthDifference",
+      "confidence": 0.5,
+      "rationale": "BX-M is the dividend length minus the divisor length, which sizes the quotient.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1166, "quote": "COMPUTE BX-M = BX-A-LEN - BX-N" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1184, "quote": "COMPUTE BX-Q-LEN = BX-M + 1" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U277",
+      "name": "limbCount",
+      "confidence": 0.5,
+      "rationale": "BX-N is a working limb count (product length, longer operand, divisor length).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1107, "quote": "COMPUTE BX-N = BX-A-LEN + BX-B-LEN" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1165, "quote": "MOVE BX-B-LEN TO BX-N" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U278",
+      "name": "twoLimbNumerator",
+      "confidence": 0.55,
+      "rationale": "BX-NUM joins the top two dividend limbs to estimate the next quotient digit.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1189, "quote": "COMPUTE BX-NUM = BX-U-L (BX-J1) * 1000000000 + BX-U-L" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U279",
+      "name": "quotientParity",
+      "confidence": 0.55,
+      "rationale": "BX-ODD is the parity of the quotient's lowest limb, used for half-even rounding.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1461, "quote": "REMAINDER BX-ODD" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1462, "quote": "IF BX-ODD = 1" }
+      ],
+      "notebook": ["half-even"]
+    },
+    {
+      "unit": "U280",
+      "name": "limbProduct",
+      "confidence": 0.55,
+      "rationale": "BX-P holds a limb product or sum including carry before it is split into limb and carry.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1122, "quote": "COMPUTE BX-P = BX-A-L (BX-I) * BX-B-L (BX-J) +" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U281",
+      "name": "productLowLimb",
+      "confidence": 0.55,
+      "rationale": "BX-PL is the low limb of a quotient-digit times divisor-limb product.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1225, "quote": "DIVIDE BX-P BY 1000000000 GIVING BX-C REMAINDER BX-PL" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U282",
+      "name": "limbPowerOfTen",
+      "confidence": 0.6,
+      "rationale": "BX-POW9 is the table 10^0 to 10^9 used for within-limb shifts and digit counts.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 788, "quote": "MULTIPLY BX-POW9 (BX-I - 1) BY 10 GIVING BX-POW9" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U283",
+      "name": "quotientEstimate",
+      "confidence": 0.6,
+      "rationale": "BX-QH is the estimated quotient digit (q-hat) of long division, corrected downward when too big.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1193, "quote": "DIVIDE BX-NUM BY BX-VT GIVING BX-QH REMAINDER BX-RH" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1212, "quote": "SUBTRACT 1 FROM BX-QH" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U284",
+      "name": "quotientSign",
+      "confidence": 0.65,
+      "rationale": "BX-QS is the sign of the division result (sign of A times sign of B), applied after the magnitude division.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1362, "quote": "COMPUTE BX-QS = BX-A-SG * BX-B-SG" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1366, "quote": "MOVE BX-QS TO BX-R-SG" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U285",
+      "name": "remainderEstimate",
+      "confidence": 0.6,
+      "rationale": "BX-RH is the remainder (r-hat) that goes with the quotient-digit estimate.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1193, "quote": "DIVIDE BX-NUM BY BX-VT GIVING BX-QH REMAINDER BX-RH" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U286",
+      "name": "operandAScale",
+      "confidence": 0.6,
+      "rationale": "BX-SA is operand A's scale during alignment.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1285, "quote": "MOVE JB-A-S TO BX-SA" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U287",
+      "name": "operandBScale",
+      "confidence": 0.6,
+      "rationale": "BX-SB is operand B's scale during alignment.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1286, "quote": "MOVE JB-B-S TO BX-SB" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U288",
+      "name": "resultScale",
+      "confidence": 0.6,
+      "rationale": "BX-SC is the scale of the big result returned in JB-R-S.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1337, "quote": "COMPUTE BX-SC = JB-A-S + JB-B-S" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1510, "quote": "MOVE BX-SC TO JB-R-S." }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U289",
+      "name": "firstTemporary",
+      "confidence": 0.35,
+      "rationale": "BX-T1 is a general temporary (divisor top plus one, product, borrow-adjusted limb).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1167, "quote": "COMPUTE BX-T1 = BX-B-L (BX-N) + 1" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U290",
+      "name": "secondTemporary",
+      "confidence": 0.35,
+      "rationale": "BX-T2 is the second temporary of the quotient-digit correction test.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1203, "quote": "COMPUTE BX-T2 = BX-RH * 1000000000 + BX-U-L" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U291",
+      "name": "packedValue",
+      "confidence": 0.5,
+      "rationale": "BX-U31 is the 31-digit packed value converted to or from limbs.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 799, "quote": "MOVE JB-A-U TO BX-U31" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1494, "quote": "MOVE BX-U31 TO JB-R-U" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U292",
+      "name": "divisorTopLimb",
+      "confidence": 0.6,
+      "rationale": "BX-VT is the most significant limb of the normalised divisor.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1181, "quote": "MOVE BX-V-L (BX-N) TO BX-VT" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U293",
+      "name": "divisorSecondLimb",
+      "confidence": 0.6,
+      "rationale": "BX-VT2 is the second most significant limb of the normalised divisor.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1183, "quote": "MOVE BX-V-L (BX-IJ) TO BX-VT2" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U294",
+      "name": "packedQuotient",
+      "confidence": 0.45,
+      "rationale": "BX-W31 receives the packed value divided by 10^9 while it is split into limbs.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 835, "quote": "DIVIDE BX-U31 BY 1000000000 GIVING BX-W31" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 838, "quote": "MOVE BX-W31 TO BX-U31" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U295",
+      "name": "BigNumberScratch",
+      "confidence": 0.45,
+      "rationale": "BX-WORK is scratch for the big-number algorithms (indexes, carries, estimates); not a business entity.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 122, "quote": "BX-WORK." }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U296",
+      "name": "absoluteAccumulator",
+      "confidence": 0.5,
+      "rationale": "W-A is the absolute value of the accumulator W-X, used to count its digits.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 256, "quote": "COMPUTE W-A = 0 - W-X" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U297",
+      "name": "absoluteSecondOperand",
+      "confidence": 0.25,
+      "rationale": "W-B is never referenced; same picture as W-A, so presumably the absolute value of W-Y. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 16, "quote": "05 W-B PIC 9(31) COMP-3." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U298",
+      "name": "largerScale",
+      "confidence": 0.2,
+      "rationale": "W-BIGS is never referenced; read as 'bigger scale' only from its letters. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 31, "quote": "05 W-BIGS PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U299",
+      "name": "comparison",
+      "confidence": 0.6,
+      "rationale": "W-CMP is the -1/0/1 result of comparing the aligned values.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 393, "quote": "WHEN W-X > W-Y MOVE 1 TO W-CMP" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 758, "quote": "MOVE W-CMP TO JB-N" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U300",
+      "name": "doubleValue",
+      "confidence": 0.25,
+      "rationale": "W-D is never referenced; it mirrors JB-D's picture, presumably for an unimplemented double conversion. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 48, "quote": "05 W-D PIC S9(13)V9(5) COMP-3." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U301",
+      "name": "operandADigits",
+      "confidence": 0.5,
+      "rationale": "W-DA is the digit count of operand A used to left-align it for comparison.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 479, "quote": "MOVE W-NX TO W-DA" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 380, "quote": "COMPUTE W-K = 31 - W-DA" }
+      ],
+      "notebook": ["significant-digits"]
+    },
+    {
+      "unit": "U302",
+      "name": "operandBDigits",
+      "confidence": 0.5,
+      "rationale": "W-DB is the digit count of operand B used to left-align it for comparison.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 485, "quote": "MOVE W-NX TO W-DB" }
+      ],
+      "notebook": ["significant-digits"]
+    },
+    {
+      "unit": "U303",
+      "name": "doubleUnscaled",
+      "confidence": 0.25,
+      "rationale": "W-DU redefines W-D as an integer (unscaled) view; never referenced. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 49, "quote": "05 W-DU REDEFINES W-D PIC S9(18) COMP-3." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U304",
+      "name": "operandAUpscale",
+      "confidence": 0.45,
+      "rationale": "W-EA is the number of powers of ten the dividend is multiplied by before dividing.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 504, "quote": "ADD W-RAISE TO W-EA" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 547, "quote": "MOVE W-EA TO W-K" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U305",
+      "name": "operandBUpscale",
+      "confidence": 0.45,
+      "rationale": "W-EB is the number of powers of ten the divisor is multiplied by before dividing.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 512, "quote": "COMPUTE W-EB = W-EB + W-NEWS - W-YS" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 543, "quote": "MOVE W-EB TO W-K" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U306",
+      "name": "operandAAdjustedExponent",
+      "confidence": 0.45,
+      "rationale": "W-EST is A's digits plus exponent minus scale, the order of magnitude compared first.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 736, "quote": "COMPUTE W-EST = W-NX + W-ZA - JB-A-S" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U307",
+      "name": "hash",
+      "confidence": 0.2,
+      "rationale": "W-H is never referenced; it belongs to an H-group that presumably served the unimplemented HC (hash code) operation. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 36, "quote": "05 W-H PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U308",
+      "name": "operandBAdjustedExponent",
+      "confidence": 0.45,
+      "rationale": "W-HIGH is B's digits plus exponent minus scale, compared with A's.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 748, "quote": "COMPUTE W-HIGH = W-NX + W-ZB - JB-B-S" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U309",
+      "name": "hashLow",
+      "confidence": 0.2,
+      "rationale": "W-HL is never referenced; part of the presumed hash-code group. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 50, "quote": "05 W-HL PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U310",
+      "name": "hashMultiplier",
+      "confidence": 0.2,
+      "rationale": "W-HM is never referenced; part of the presumed hash-code group. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 54, "quote": "05 W-HM PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U311",
+      "name": "hashQuotient",
+      "confidence": 0.2,
+      "rationale": "W-HQ is never referenced; part of the presumed hash-code group. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 51, "quote": "05 W-HQ PIC S9(31) COMP-3." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U312",
+      "name": "hashSecondQuotient",
+      "confidence": 0.2,
+      "rationale": "W-HQ2 is never referenced; part of the presumed hash-code group. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 52, "quote": "05 W-HQ2 PIC S9(31) COMP-3." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U313",
+      "name": "hashRemainder",
+      "confidence": 0.2,
+      "rationale": "W-HR is never referenced; part of the presumed hash-code group. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 53, "quote": "05 W-HR PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U314",
+      "name": "index",
+      "confidence": 0.6,
+      "rationale": "W-I is the loop index over the powers-of-ten table and digit counts.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 166, "quote": "PERFORM VARYING W-I FROM 2 BY 1 UNTIL W-I > 31" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U315",
+      "name": "roundIncrement",
+      "confidence": 0.3,
+      "rationale": "W-INC is never referenced; its twin BX-INC is the round-up flag of the big path. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 47, "quote": "05 W-INC PIC X." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 1467, "quote": "IF BX-INC = 'Y'" }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U316",
+      "name": "shiftDigits",
+      "confidence": 0.6,
+      "rationale": "W-K is the number of decimal digits to drop or to upscale by.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 322, "quote": "COMPUTE W-K = W-NX - JB-P" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 344, "quote": "MULTIPLY W-POW (W-K + 1) BY W-X" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U317",
+      "name": "roundingMode",
+      "confidence": 0.8,
+      "rationale": "W-MODE is the rounding mode of the operation, translated from the JB-M code into letters.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 233, "quote": "WHEN 0 MOVE 'U' TO W-MODE" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 308, "quote": "MOVE W-MODE TO DK-MODE" }
+      ],
+      "notebook": ["rounding-mode"]
+    },
+    {
+      "unit": "U318",
+      "name": "ResolvedRoundingMode",
+      "confidence": 0.5,
+      "rationale": "Enum of the letter codes W-MODE resolves JB-M into; it adds UNNECESSARY, so it is kept distinct from the rounding kernel's RoundingMode.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 232, "quote": "EVALUATE JB-M" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 240, "quote": "WHEN OTHER MOVE 'X' TO W-MODE" }
+      ],
+      "notebook": ["rounding-mode", "P004-88-level-enum"]
+    },
+    {
+      "unit": "U319",
+      "name": null,
+      "confidence": 0.75,
+      "rationale": "JB-M codes 0 to 6 map to U, D, C, F, H, N, E (the BigDecimal rounding-mode order); anything else becomes X, which raises an ArithmeticException when digits would be lost, i.e. UNNECESSARY.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 235, "quote": "WHEN 2 MOVE 'C' TO W-MODE" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 238, "quote": "WHEN 5 MOVE 'N' TO W-MODE" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 239, "quote": "WHEN 6 MOVE 'E' TO W-MODE" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 582, "quote": "IF W-MODE = 'X'" }
+      ],
+      "notebook": ["rounding-mode", "half-up", "half-down", "half-even", "round-up-down"],
+      "constants": {
+        "1621755dc7ff1e77c6222846decaac45cba0368bd80b225c066fa3c7600961d1": "OTHER",
+        "171efe164c4901622fada247b8a47e70493766ec9ebdd207a1aa471a1df1ef76": "CEILING",
+        "2d2cca3e47bb8476bf573cccdb64b417c2ddaaf2790f2a3ca029ec5379af8518": "DOWN",
+        "fb73e10ce131bfb7b29792efeb205bf1f72651ed15f9421a6384a5ef22b75695": "HALF_EVEN",
+        "71b05d57d65f65c42d0aa61a2fc54a752c3d14c5971c09439a49ba306ee6fcd5": "FLOOR",
+        "ac2312bfd24bf2ed1633c52bd61f178f534c1b40a448a009a174d9ca49799b97": "HALF_UP",
+        "0a034856ecde812a8170bee168cdd5a99d3e420363e5c02cde139ad35d5f188f": "HALF_DOWN",
+        "e92c31719a57197b9a9e2f4d736e814b9aa0814a855e8b4420fdc8a6cf967ca6": "UP",
+        "733712e8d886c6886cc486e8cc531394aadc6bd148bdb416a594e04303e93f30": "UNNECESSARY"
+      }
+    },
+    {
+      "unit": "U320",
+      "name": "trailingZeros",
+      "confidence": 0.6,
+      "rationale": "W-N counts the trailing zeros stripped from a value by the ZEROS paragraph.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 449, "quote": "1510-ZEROS." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 458, "quote": "ADD 1 TO W-N" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U321",
+      "name": "newScale",
+      "confidence": 0.5,
+      "rationale": "W-NEWS is the dividend precision minus the requested precision, the scale the divisor is adjusted towards.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 508, "quote": "COMPUTE W-NEWS = W-SA - JB-P" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U322",
+      "name": "accumulatorDigits",
+      "confidence": 0.6,
+      "rationale": "W-NX is the number of decimal digits in the accumulator W-X.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 254, "quote": "8000-DIGITS-X." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 265, "quote": "MOVE W-I TO W-NX" }
+      ],
+      "notebook": ["significant-digits"]
+    },
+    {
+      "unit": "U323",
+      "name": "secondOperandDigits",
+      "confidence": 0.25,
+      "rationale": "W-NY is never referenced; twin of W-NX for W-Y. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 18, "quote": "05 W-NY PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U324",
+      "name": "precision",
+      "confidence": 0.2,
+      "rationale": "W-P is never referenced; 'precision' is a guess from the letter and JB-P. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 28, "quote": "05 W-P PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U325",
+      "name": "preferredScale",
+      "confidence": 0.7,
+      "rationale": "W-PS is the division's preferred scale (dividend scale minus divisor scale); trailing zeros are stripped down to it.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 469, "quote": "COMPUTE W-PS = JB-A-S - JB-B-S" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 349, "quote": "PERFORM UNTIL W-X = 0 OR W-S NOT > W-PS" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U326",
+      "name": "quotient",
+      "confidence": 0.7,
+      "rationale": "W-Q is the quotient of the packed division.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 569, "quote": "DIVIDE W-X BY W-Y GIVING W-Q REMAINDER W-R" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U327",
+      "name": "remainder",
+      "confidence": 0.7,
+      "rationale": "W-R is the remainder of the packed division, which decides the rounding.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 569, "quote": "DIVIDE W-X BY W-Y GIVING W-Q REMAINDER W-R" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 572, "quote": "IF W-R NOT = 0" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U328",
+      "name": "dividendRaise",
+      "confidence": 0.5,
+      "rationale": "W-RAISE is how many digits the dividend must be raised to give the requested precision.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 498, "quote": "COMPUTE W-RAISE = JB-P + W-YS - W-SA" }
+      ],
+      "notebook": ["math-context"]
+    },
+    {
+      "unit": "U329",
+      "name": "resultExponent",
+      "confidence": 0.55,
+      "rationale": "W-RZ is the result's exponent (extra trailing zeros) returned in JB-R-Z.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 401, "quote": "MOVE W-RZ TO JB-R-Z" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U330",
+      "name": "resultScale",
+      "confidence": 0.6,
+      "rationale": "W-S is the scale of the value being built, returned in JB-R-S.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 406, "quote": "MOVE W-S TO JB-R-S." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 445, "quote": "COMPUTE W-S = JB-A-S + JB-B-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U331",
+      "name": "operandAScale",
+      "confidence": 0.35,
+      "rationale": "W-SA is A's scale when aligning, but is reused for A's precision in division and A's sign in compare; named for its first role.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 416, "quote": "MOVE JB-A-S TO W-SA" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 704, "quote": "WHEN JB-A-U > 0 MOVE 1 TO W-SA" }
+      ],
+      "notebook": ["C001-save-and-work-areas", "C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U332",
+      "name": "operandBScale",
+      "confidence": 0.35,
+      "rationale": "W-SB is B's scale when aligning, reused for B's sign in compare.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 417, "quote": "MOVE JB-B-S TO W-SB" }
+      ],
+      "notebook": ["C001-save-and-work-areas", "C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U333",
+      "name": "quotientScale",
+      "confidence": 0.5,
+      "rationale": "W-SCL is the scale the quotient of divide-with-context gets before final rounding.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 495, "quote": "COMPUTE W-SCL = W-PS + W-YS - W-SA + JB-P" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 549, "quote": "MOVE W-SCL TO W-S" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U334",
+      "name": "sign",
+      "confidence": 0.2,
+      "rationale": "W-SG is never referenced; 'sign' is read from the letters only. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 33, "quote": "05 W-SG PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U335",
+      "name": "smallerScale",
+      "confidence": 0.2,
+      "rationale": "W-SMS is never referenced; read as 'smaller scale', twin of W-BIGS. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 32, "quote": "05 W-SMS PIC S9(18) COMP." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U336",
+      "keep": true,
+      "confidence": 0.55,
+      "rationale": "W-STICKY is the rounding sticky flag: Y when a non-zero remainder lies beyond the retained digit; passed on to the rounding kernel.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 609, "quote": "MOVE 'Y' TO W-STICKY" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 309, "quote": "MOVE W-STICKY TO DK-STICKY" }
+      ],
+      "notebook": ["rounding-mode"]
+    },
+    {
+      "unit": "U337",
+      "name": "temporary",
+      "confidence": 0.4,
+      "rationale": "W-T is a general temporary: swap holder, extra quotient digit, rounding increment.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 423, "quote": "MOVE W-X TO W-T" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 301, "quote": "MOVE W-T TO W-X" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U338",
+      "name": "savedValue",
+      "confidence": 0.35,
+      "rationale": "W-U parks a value while W-X is reused (stripped dividend, |A|, a remainder for the sticky test).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 523, "quote": "MOVE W-X TO W-U" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 546, "quote": "MOVE W-U TO W-X" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U339",
+      "name": "hashWord",
+      "confidence": 0.2,
+      "rationale": "W-W (4 occurrences) is never referenced; presumed part of the hash-code group. Review.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 55, "quote": "05 W-W PIC S9(18) COMP OCCURS 4." }
+      ],
+      "notebook": ["C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U340",
+      "name": "accumulator",
+      "confidence": 0.5,
+      "rationale": "W-X is the working unscaled value every fast-path operation builds and returns in JB-R-U.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 414, "quote": "MOVE JB-A-U TO W-X" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 402, "quote": "MOVE W-X TO JB-R-U" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U341",
+      "name": "secondOperand",
+      "confidence": 0.45,
+      "rationale": "W-Y holds the second (aligned) operand or divisor.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 415, "quote": "MOVE JB-B-U TO W-Y" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 409, "quote": "ADD W-Y TO W-X" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U342",
+      "name": "divisorPrecision",
+      "confidence": 0.5,
+      "rationale": "W-YS is the divisor's digit count plus exponent, i.e. its precision, in divide-with-context.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 486, "quote": "COMPUTE W-YS = W-NX + W-ZB" }
+      ],
+      "notebook": ["math-context"]
+    },
+    {
+      "unit": "U343",
+      "name": "operandAExponent",
+      "confidence": 0.55,
+      "rationale": "W-ZA is the working copy of operand A's exponent (JB-A-Z).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 215, "quote": "MOVE JB-A-Z TO W-ZA" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U344",
+      "name": "operandBExponent",
+      "confidence": 0.55,
+      "rationale": "W-ZB is the working copy of operand B's exponent (JB-B-Z).",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 216, "quote": "MOVE JB-B-Z TO W-ZB" }
+      ],
+      "notebook": ["unscaled-value"]
+    },
+    {
+      "unit": "U345",
+      "name": "PackedDecimalScratch",
+      "confidence": 0.45,
+      "rationale": "W-AREA is the scratch of the 31-digit packed (fast) arithmetic path; an algorithm area, not an entity.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 8, "quote": "W-AREA." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 9, "quote": "05 W-X PIC S9(31) COMP-3." }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U346",
+      "name": "powerOfTen",
+      "confidence": 0.8,
+      "rationale": "W-POW(i) holds 10 to the power i-1.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 167, "quote": "MULTIPLY W-POW (W-I - 1) BY 10 GIVING W-POW (W-I)" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U347",
+      "name": "DecimalPowerTable",
+      "confidence": 0.6,
+      "rationale": "W-POWERS is the decimal kernel's powers-of-ten table, distinct from the rounding kernel's.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 165, "quote": "MOVE 1 TO W-POW (1)" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    }
+  ],
+  "notes": [
+    {
+      "kind": "glossary",
+      "text": "A numeric rounding-mode code 0..6 that maps to UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN is Java RoundingMode order; the catch-all that throws when digits would be lost is UNNECESSARY.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 233, "quote": "WHEN 0 MOVE 'U' TO W-MODE" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 240, "quote": "WHEN OTHER MOVE 'X' TO W-MODE" }
+      ]
+    },
+    {
+      "kind": "caution",
+      "text": "Library scratch areas carry fields that are never referenced (spare registers, groups for unimplemented op codes); check references before naming and send such fields to review rather than inventing roles.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 98, "quote": "05 BX-X." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 251, "quote": "WHEN OTHER PERFORM 9020-CAPACITY" }
+      ]
+    }
+  ]
+}

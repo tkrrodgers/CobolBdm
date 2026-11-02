@@ -1,0 +1,184 @@
+{
+  "schema": "mlcpu.naming-unit-proposals.v1",
+  "estate": "kontor-zins-legacy",
+  "packetSha256": "eaeb07f7e07036a1b5736512420e6ed570247dd3f394f0a4142fe08551d2fef8",
+  "model": "claude-opus-5-5",
+  "promptVersion": "naming-1u",
+  "units": [
+    {
+      "unit": "U003",
+      "name": "roundingFunction",
+      "confidence": 0.7,
+      "rationale": "DK-FUNCTION selects how the rounding kernel FNDKRND rounds: to significant digits, by decimals, or shortened to significant digits.",
+      "evidence": [
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 38, "quote": "WHEN DK-FN-SIGNIFICANT OR DK-FN-SHORTEN" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 304, "quote": "MOVE 'P' TO DK-FUNCTION" }
+      ],
+      "notebook": ["decimal-kernel", "P001-kernel-library", "P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U004",
+      "name": "RoundingFunction",
+      "confidence": 0.7,
+      "rationale": "Enum of the FNDKRND function codes, all named by 88-levels; named after what it classifies (the kind of rounding).",
+      "evidence": [
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 4, "quote": "DK-FN-SIGNIFICANT" },
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 43, "quote": "WHEN DK-FN-DECIMALS" }
+      ],
+      "notebook": ["P004-88-level-enum", "decimal-kernel"]
+    },
+    {
+      "unit": "U005",
+      "name": null,
+      "confidence": 0.65,
+      "rationale": "88-levels name the codes: S keeps DK-PARM significant digits, D rounds off DK-PARM low-order digits, P rounds like S but returns the shortened coefficient and the digits dropped.",
+      "evidence": [
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 4, "quote": "DK-FN-SIGNIFICANT" },
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 5, "quote": "DK-FN-DECIMALS" },
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 6, "quote": "DK-FN-SHORTEN" },
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 156, "quote": "MOVE WS-SHIFT TO DK-SHIFT" }
+      ],
+      "notebook": ["P004-88-level-enum", "significant-digits"],
+      "constants": {
+        "1ffb620365481181db9fd0e880743cfda68f81264a83bfe79d32c93018c69c2a": "OTHER",
+        "4ec3e61c8b08ed1900db1ebdcb036d83541f6006fce34127162660e676cf1288": "DECIMALS",
+        "0b5bd4764b2bc880a83b325f93fc3d7e8edcb1999d98d49cb423481897582c82": "SHORTEN_TO_SIGNIFICANT_DIGITS",
+        "63b77f8623700a98aedf596e05da9d18059206a943344b9640a81d91f34757c2": "SIGNIFICANT_DIGITS"
+      }
+    },
+    {
+      "unit": "U006",
+      "name": "roundingMode",
+      "confidence": 0.85,
+      "rationale": "DK-MODE carries the rounding mode (UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN) passed by the decimal kernel.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 308, "quote": "MOVE W-MODE TO DK-MODE" },
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 13, "quote": "DK-MODE-HALF-UP" }
+      ],
+      "notebook": ["rounding-mode", "P006-prefix-is-not-meaning"]
+    },
+    {
+      "unit": "U007",
+      "name": "RoundingMode",
+      "confidence": 0.8,
+      "rationale": "Enum of the DK-MODE 88-levels, which are exactly the BigDecimal rounding modes.",
+      "evidence": [
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 15, "quote": "DK-MODE-HALF-EVEN" },
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 130, "quote": "WHEN DK-MODE-HALF-EVEN" }
+      ],
+      "notebook": ["rounding-mode", "P004-88-level-enum"]
+    },
+    {
+      "unit": "U008",
+      "name": null,
+      "confidence": 0.9,
+      "rationale": "Each code is named by its 88-level and the rounding paragraph implements exactly that rule (H increments at half, N only above half, E to even).",
+      "evidence": [
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 9, "quote": "DK-MODE-UP" },
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 11, "quote": "DK-MODE-CEILING" },
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 14, "quote": "DK-MODE-HALF-DOWN" },
+        { "file": "source/app/cpy/FNDKPRM.cpy", "line": 15, "quote": "DK-MODE-HALF-EVEN" }
+      ],
+      "notebook": ["P004-88-level-enum", "half-up", "half-down", "half-even", "round-up-down"],
+      "constants": {
+        "1d0d7438d9071fe516bde68e6b37f92c345ad64b40aee4a5da55e73ffde43590": "OTHER",
+        "6d74e9f09c7b119413b901d38b33b56b320415d7bf07a18a983f1e77a5553d4f": "CEILING",
+        "5d8d374a7c3e4118a2dd0d55c3e900a7610a5453edbdf96a17c3d3619009cc5e": "DOWN",
+        "d4d74e10c4894681f5e8cd644836c5231821e272a9235616b5574b9423258380": "HALF_EVEN",
+        "f811cb133a71a67ac030badc7ee970c01a291fddf604e0f543f184857c5fcfc5": "FLOOR",
+        "5d053f0821435b3edd2c421a88de2630fff844731268a427e9246d6a15e715ab": "HALF_UP",
+        "7727271d43a0340124e4cb0f8f5c4a7f9ca420be13a3ebdcccc7e93709b933f3": "HALF_DOWN",
+        "c0663b73780c49477d424b60100ce4e3977a853cc9a12a229268c11408a7c54b": "UP"
+      }
+    },
+    {
+      "unit": "U009",
+      "name": "digitCount",
+      "confidence": 0.5,
+      "rationale": "DK-PARM is a count of digits: the significant digits to keep (S, P) or the low-order digits to round off (D); one name covers both uses only structurally.",
+      "evidence": [
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 40, "quote": "COMPUTE WS-SHIFT = WS-NDIG - DK-PARM" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 305, "quote": "COMPUTE DK-PARM = W-NX - W-K" }
+      ],
+      "notebook": ["significant-digits", "C003-no-invented-meaning"]
+    },
+    {
+      "unit": "U010",
+      "name": "returnCode",
+      "confidence": 0.8,
+      "rationale": "DK-RC is the kernel's return code (0 ok, 8 inexact, 12 invalid request, 20 overflow) that the caller checks.",
+      "evidence": [
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 46, "quote": "MOVE 12 TO DK-RC" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 311, "quote": "IF DK-RC NOT = 0 AND DK-RC NOT = 8" }
+      ],
+      "notebook": ["return-code"]
+    },
+    {
+      "unit": "U011",
+      "name": "digitsDropped",
+      "confidence": 0.7,
+      "rationale": "DK-SHIFT returns how many low-order digits the shorten function removed, so the caller can lower the scale.",
+      "evidence": [
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 156, "quote": "MOVE WS-SHIFT TO DK-SHIFT" },
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 154, "quote": "IF DK-FN-SHORTEN" }
+      ],
+      "notebook": ["scale"]
+    },
+    {
+      "unit": "U012",
+      "keep": true,
+      "confidence": 0.55,
+      "rationale": "DK-STICKY is the rounding 'sticky' flag: Y means non-zero digits were already discarded below the value, so a zero tail or exact half is not exact.",
+      "evidence": [
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 100, "quote": "WHEN WS-R = 0 AND DK-STICKY NOT = 'Y'" },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 309, "quote": "MOVE W-STICKY TO DK-STICKY" }
+      ],
+      "notebook": ["rounding-mode"]
+    },
+    {
+      "unit": "U013",
+      "name": "unscaledValue",
+      "confidence": 0.65,
+      "rationale": "DK-VALUE is the unscaled integer coefficient that FNDKRND rounds in place; the caller passes its working unscaled value.",
+      "evidence": [
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 303, "quote": "MOVE W-X TO DK-VALUE" },
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 70, "quote": "IF DK-VALUE < 0" }
+      ],
+      "notebook": ["unscaled-value", "decimal-kernel"]
+    },
+    {
+      "unit": "U014",
+      "name": "RoundingKernelParameters",
+      "confidence": 0.65,
+      "rationale": "DK-PARMS is the linkage block of the rounding kernel FNDKRND (value, function, digits, mode, sticky, return code); PARMS expanded.",
+      "evidence": [
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 30, "quote": "PROCEDURE DIVISION USING DK-PARMS." },
+        { "file": "source/app/cbl/FSJBDEC.cbl", "line": 310, "quote": "CALL 'FNDKRND' USING DK-PARMS" }
+      ],
+      "notebook": ["P001-kernel-library", "decimal-kernel"]
+    },
+    {
+      "unit": "U151",
+      "name": "powerOfTen",
+      "confidence": 0.85,
+      "rationale": "WS-POW(k) holds 10 to the power k-1, built once by multiplying the previous entry by 10.",
+      "evidence": [
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 64, "quote": "MULTIPLY WS-POW (WS-K - 1) BY 10 GIVING WS-POW (WS-K)" },
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 62, "quote": "MOVE 1 TO WS-POW (1)" }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    },
+    {
+      "unit": "U152",
+      "name": "RoundingPowerTable",
+      "confidence": 0.6,
+      "rationale": "WS-POWERS is the rounding kernel's private table of powers of ten; prefixed to stay distinct from the decimal kernel's table.",
+      "evidence": [
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 61, "quote": "1000-INIT-POWERS." },
+        { "file": "source/app/cbl/FNDKRND.cbl", "line": 8, "quote": "OCCURS 31 TIMES." }
+      ],
+      "notebook": ["C001-save-and-work-areas"]
+    }
+  ],
+  "notes": []
+}

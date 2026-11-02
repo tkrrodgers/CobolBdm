@@ -104,6 +104,34 @@ Acceptance for naming v1:
   Renaming cannot raise fidelity on this estate by itself. Naming v1 still gives readability, traceability and the
   ledger. The fidelity gain needs **task 2 (domain decomposition)** next, and the packet is built to serve both tasks.
 
+### 2.7 First thinker run (DT1, kontor-zins-legacy, 2026-11-02)
+- Packet eaeb07f7 (pipeline part 1): 2,924 symbols, 827 proposable. The lead verified there are no original names and
+  no J3S provenance.
+- 390 naming units: 548 of the 604 proposable methods are accessors and setters of 277 data items, so a data item is
+  named once and its members follow by suffix.
+- Thinker: claude-opus-5-5, prompt naming-1u. Isolated in a folder holding only copies of the COBOL, JCL, masked
+  samples and the notebook; about 30 minutes.
+- Answers: 339 units named, 51 kept, 99 at confidence 0.5 or lower. 600 citations, all verbatim. 6 notes proposed.
+- Lead pre-check (`tools/deep-thinker/dt_expand.py`):
+  - 387 of 390 units pass. U363 and U376 are merged derived-role units, sent to review. U007 named a type
+    `RoundingMode`, which shadows `java.math.RoundingMode`, so it is rejected.
+  - 223 symbol renames are ledger candidates (0.7 or higher); 505 go to review. 0 collisions.
+- Blind score against the held-out original (`dt_eval.py`, lead only):
+  - concept recall is **88% (29/33) for the thinker against 55% (18/33) for the generator**. The thinker recovered
+    Annuity, Schedule, isInterestFree, isInterestOnly, remainingDebtAfter, totalInterest, totalPaid and totalPrincipal,
+    among others.
+  - Missed: LoanTerms (the type does not exist yet; see 2.6), durationInMonths, installments and principalPart.
+  - Vocabulary hit: 29% against 21%. It is diluted, because most of the estate (the decimal library, kernels and I/O
+    records) has no counterpart in the 5-class original.
+  - Caveats: concept recall was defined after the run, so it is exploratory. Precision against the original cannot be
+    measured here without structural pairs (2.6).
+- The thinker's own findings, all sent to review:
+  - FSEM0100 receives the run control record but hardcodes precision 20 and HALF_UP;
+  - 2110-DATE-CHECK is never performed;
+  - KH-FREE ("free rate" or "interest-free") cannot be decided from the evidence;
+  - the generated value types are shared across different values (PaymentValueRecord holds five).
+- Validator rule added from this run: a type name equal to a JDK simple name the estate uses is rejected.
+
 ## 3. The notebook (memory that improves over time)
 `knowledge/notebook/` (versioned in the repo, reviewed like code), built on the existing `knowledge/glossary` and
 `taxonomy.json`:
