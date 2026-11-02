@@ -1,0 +1,37 @@
+{
+  "schema": "mlcpu.kb-notebook.v1",
+  "kind": "caution",
+  "note": "Where naming went wrong before, and why. Seeded by the lead; the thinker and the review queue add entries.",
+  "entries": [
+    {
+      "id": "C001-save-and-work-areas",
+      "kind": "caution",
+      "text": "-SAVE, -WORK, -REGS, -AREA and -TEMP groups are scratch storage for an algorithm, not business entities. Do not give them domain names; they usually become locals or private state of the kernel that owns them.",
+      "confidence": 0.8,
+      "evidence": [{"estate": "kontor-zins-legacy", "file": "FSJBDEC.cbl", "line": null, "summary": "save, regs and work areas of the decimal library"}],
+      "origin": {"source": "lead", "run": "loop5", "ledger": null},
+      "reviewed": false,
+      "estates": ["kontor-zins-legacy"]
+    },
+    {
+      "id": "C002-generic-suffixes",
+      "kind": "caution",
+      "text": "Avoid empty suffixes (Data, Info, Manager, Handler, Processor, Util) unless the COBOL evidence names that role. Prefer the business noun the comments use.",
+      "confidence": 0.7,
+      "evidence": [],
+      "origin": {"source": "lead", "run": "DT-1", "ledger": null},
+      "reviewed": false,
+      "estates": []
+    },
+    {
+      "id": "C003-no-invented-meaning",
+      "kind": "caution",
+      "text": "When neither comments nor data names nor sample records support a business meaning, say so: propose a structural name (e.g. InterestStep) with confidence below 0.5, so it goes to review. A confident wrong name is worse than a plain one.",
+      "confidence": 0.9,
+      "evidence": [],
+      "origin": {"source": "lead", "run": "DT-1", "ledger": null},
+      "reviewed": false,
+      "estates": []
+    }
+  ]
+}

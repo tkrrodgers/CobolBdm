@@ -1,0 +1,67 @@
+{
+  "schema": "mlcpu.kb-notebook.v1",
+  "kind": "pattern",
+  "note": "Seeded by the lead from verified loop evidence (ModernizationLoops.md loops 1-5). COBOL-side facts only; no original-Java identifiers.",
+  "entries": [
+    {
+      "id": "P001-kernel-library",
+      "kind": "pattern",
+      "text": "A called program that dispatches on a function or operation code in its linkage area and does arithmetic on caller-supplied operands is a library (kernel), not business logic. Name it after the capability (DecimalKernel, RoundingKernel, DateKernel); its op codes become methods named after the operation the paragraph performs.",
+      "confidence": 0.9,
+      "evidence": [{"estate": "kontor-zins-legacy", "file": "FSJBDEC.cbl", "line": null, "summary": "decimal library called with an operation code (loop 5)"}],
+      "origin": {"source": "lead", "run": "loop5", "ledger": null},
+      "reviewed": false,
+      "estates": ["fineract-cobol", "kontor-zins-legacy"]
+    },
+    {
+      "id": "P002-abend-routine",
+      "kind": "pattern",
+      "text": "A paragraph that sets a return or abend code and CALLs CEE3ABD (or ends the run with a non-zero RETURN-CODE) is the abend path; in Java it is an exception type plus a single throw site, named for the failure (e.g. CapacityExceeded), not for the paragraph number.",
+      "confidence": 0.85,
+      "evidence": [{"estate": "kontor-zins-legacy", "file": "CEE3ABD", "line": null, "summary": "abend 37 on decimal capacity (DecimalLimit decision)"}],
+      "origin": {"source": "lead", "run": "loop5", "ledger": null},
+      "reviewed": false,
+      "estates": ["kontor-zins-legacy", "fineract-legacy"]
+    },
+    {
+      "id": "P003-record-vs-entity",
+      "kind": "pattern",
+      "text": "An FD or I/O record layout is a boundary type (name it ...Record or ...Line after the file's business content). A WORKING-STORAGE group that several paragraphs read and write together as one business value is the domain entity candidate (no Record suffix).",
+      "confidence": 0.75,
+      "evidence": [{"estate": "kontor-zins-legacy", "file": "FSEM0100.cbl", "line": null, "summary": "value groups read and written together by the posting paragraphs"}],
+      "origin": {"source": "lead", "run": "DT-1", "ledger": null},
+      "reviewed": false,
+      "estates": ["kontor-zins-legacy"]
+    },
+    {
+      "id": "P004-88-level-enum",
+      "kind": "pattern",
+      "text": "A field whose values are all named by 88-levels is an enum; name the enum after what the field classifies (the 88-level names are the constants, expanded from their abbreviations), not after the field's prefix.",
+      "confidence": 0.85,
+      "evidence": [{"estate": "fineract-legacy", "file": "*.cpy", "line": null, "summary": "88-level condition names on status and type codes"}],
+      "origin": {"source": "lead", "run": "loop2", "ledger": null},
+      "reviewed": false,
+      "estates": ["fineract-legacy", "kontor-zins-legacy"]
+    },
+    {
+      "id": "P005-run-totals",
+      "kind": "pattern",
+      "text": "Counters and accumulators incremented per record and printed at end of job are run statistics: one value type (RunTotals) with named components, not separate fields on the job class.",
+      "confidence": 0.8,
+      "evidence": [{"estate": "kontor-zins-legacy", "file": "FSEM0100.cbl", "line": null, "summary": "end-of-job counts written to the report"}],
+      "origin": {"source": "lead", "run": "loop5", "ledger": null},
+      "reviewed": false,
+      "estates": ["kontor-zins-legacy", "fineract-legacy"]
+    },
+    {
+      "id": "P006-prefix-is-not-meaning",
+      "kind": "pattern",
+      "text": "Shop prefixes (WS-, LK-, a 2-4 letter program or system prefix such as KZ or FS) carry ownership, not meaning. Drop them from Java names; record them in the ledger's legacy id.",
+      "confidence": 0.9,
+      "evidence": [{"estate": "kontor-zins-legacy", "file": "*.cbl", "line": null, "summary": "WS- and program-prefixed data names throughout"}],
+      "origin": {"source": "lead", "run": "DT-1", "ledger": null},
+      "reviewed": false,
+      "estates": ["kontor-zins-legacy", "fineract-legacy", "fineract-cobol"]
+    }
+  ]
+}

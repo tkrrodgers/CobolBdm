@@ -1,0 +1,6 @@
+{
+  "schema": "mlcpu.kb-notebook.v1",
+  "kind": "glossary",
+  "note": "Estate-confirmed abbreviations that ../glossary/financial-terms.json lacks. Empty at bootstrap: entries come from thinker runs and review.",
+  "entries": []
+}
