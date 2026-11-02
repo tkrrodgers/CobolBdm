@@ -104,3 +104,10 @@ visibility, types and idioms. Behaviour is not lost.
   stricter than the originals. It is classed (c) under closedWorld only, because Spring/JPA proxies, mocks and library
   extension need open classes, and the closed estate cannot see them. The profile is a per-estate deployment decision,
   never inferred.
+- **R5 REJECTED (17:30), as pre-registered:** G11 TEST 3 -> 3, G13 +1. Almost no concrete JDK collection declarations
+  exist in the lifted code; the remaining G11 cases involve estate interfaces.
+- **Key risk disclosed:** Types.cs types parameters from the J3S FRAME parameter-type names and synthesizes estate
+  interfaces from them. Model.cs takes names and packages from CLASS/FRAME. The generated Javadoc repeats FRAME
+  signatures. A large part of J3S-estate "good Java" comes from provenance comments.
+- **Next: A0 provenance ablation** (measurement only): regenerate the J3S estates from copies with the provenance
+  comments stripped, then report lift, parity, JOBOL and fidelity. It sets the honest baseline for R2/R4 and CardDemo.
