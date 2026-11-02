@@ -94,3 +94,5 @@ fineract-xl strict SYSOUT (10:52): the 30 schedule cases PASS strict under the F
 | joda-money | 203e70 | 1.5 A | 41/41 |
 
 Disclosed risks: fineract-xl has 123 unchecked decimal ops and 106 unpreserved after-call JOBFAILs; loop 2 residual coverage; the joda replay gaps. Next estate: Tomrodgers decides (candidate: CardDemo, native COBOL, deferred).
+
+**Correction of scope (18:20, A0 ablation):** the J3S estates (fineract-xl, loanamorti, kontor-zins, joda-money) were modernized through a lift path that depends on J3S provenance comments. With those comments stripped, nothing lifts or builds. Their results stand as J3S round-trip results with strict parity, but they do not show the modernizer works on legacy COBOL. Evidence that does: fineract-cobol, fineract-cobol-cr and fineract-legacy (the generic lift, no provenance). The next real tests are CardDemo and the `legacy` session's legacy-profile estates.

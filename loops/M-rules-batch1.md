@@ -111,3 +111,9 @@ visibility, types and idioms. Behaviour is not lost.
   signatures. A large part of J3S-estate "good Java" comes from provenance comments.
 - **Next: A0 provenance ablation** (measurement only): regenerate the J3S estates from copies with the provenance
   comments stripped, then report lift, parity, JOBOL and fidelity. It sets the honest baseline for R2/R4 and CardDemo.
+- **A0 provenance ablation (18:16): decisive.** Stripping only the J3S provenance comments (6,204 lines; code
+  byte-identical, cobc -E identical) makes all 4 J3S estates fail to lift and build. Residue: xl 0 -> 4,650, kontor
+  0 -> 128, joda 0 -> 1,890, loan 0 -> 2,075. javac fails. Recovered functions drop to 15-25%. Parity cannot run. The
+  J3S lift path is a provenance-dependent J3S decompiler. The J3S-estate results (loops 0, 3, 4) are J3S round-trip
+  results, NOT legacy-COBOL evidence. The generalization evidence is loops 1-2 (fineract-cobol, -cr, -legacy: the generic
+  lift, no provenance). R2/R4 on the J3S path are suspended; the direction is Tomrodgers's decision.
