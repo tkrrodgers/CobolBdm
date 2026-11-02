@@ -13,8 +13,13 @@ public sealed class ERecordField(DataItem item) : Expr
     /// <summary>A reference modification (1-based start, length): the characters of that part of the field.</summary>
     public int RefStart { get; init; }
     public int RefLen { get; init; }
-    public override IEnumerable<Expr> Children => Index is null ? [] : [Index];
-    public override Expr Map(Func<Expr, Expr> f) => Index is null ? this : new ERecordField(Item) { Index = f(Index), Padded = Padded, Type = Type, RefStart = RefStart, RefLen = RefLen };
+    /// <summary>The record as a parameter or local of a restructured program method (ClassicFlow), in place of its instance field.</summary>
+    public Expr? Via { get; init; }
+    /// <summary>The subscripts past the first (a table inside a table: MA-IP-RATE (k, j)), 1-based.</summary>
+    public IReadOnlyList<Expr> More { get; init; } = [];
+    public override IEnumerable<Expr> Children => (Index is null ? [] : new[] { Index }).Concat(More).Concat(Via is null ? [] : [Via]);
+    public override Expr Map(Func<Expr, Expr> f) => Index is null && Via is null ? this
+        : new ERecordField(Item) { Index = Index is null ? null : f(Index), More = More.Select(f).ToList(), Padded = Padded, Type = Type, RefStart = RefStart, RefLen = RefLen, Via = Via is null ? null : f(Via) };
 }
 
 public sealed partial class FunctionLifter
@@ -164,6 +169,10 @@ public sealed partial class FunctionLifter
         return new EOpaque("FA " + k);
     }
 
+    /// <summary>JBigDecimalOps.pow(BigDecimal, int, MathContext), J3S's JRE emulation of BigDecimal.pow(n, mc).</summary>
+    public static bool IsJrePow(FunctionDef f) =>
+        f.Owner is { Kind: ClassKind.Emulation } o && JdkMap.EmulationName(o) == "JBigDecimalOps" && f.MethodName == "pow" && f.Params.Count == 3;
+
     /// <summary>Emits the call; returns the expression holding the result (a temporary), or null for void.</summary>
     Expr? EmitCall(FunctionDef callee, Expr? recv, List<Expr> args)
     {
@@ -210,6 +219,16 @@ public sealed partial class FunctionLifter
         {
             Emit(new SExpr(call));
             return null;
+        }
+        // the J3S JRE pow(int, MathContext) emulation: its result may be a stored decimal, its operations are FSJBDEC's
+        // (DecimalLimit.pow at the emulation's sites, Rewrite)
+        if (IsJrePow(callee))
+        {
+            if (M.DecimalInline) Residue("decimal capacity: the JRE pow emulation over a runtime without a big-value store has no checked form");
+            if (M.JrePowSites.Count < 4) Residue("decimal capacity: the JRE pow emulation's sites (PW, MU, SS, DM) were not found");
+            M.LimitedReturns.TryAdd(KeyOf(callee), 0);
+            M.CheckedFunctions.TryAdd(FnKey, 0);
+            foreach (var jrs in M.JrePowSites.Values) M.DecimalLimitSites.TryAdd(jrs, 0);
         }
         var t = NewTemp(callee.Ret.Kind);
         Emit(new SAssign(new EVar(t), call));

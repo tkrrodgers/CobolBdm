@@ -29,12 +29,21 @@ public final class OpenDatasets {
         Set<AutoCloseable> open = OPEN.get();
         List<AutoCloseable> left = new ArrayList<>(open);
         open.clear();
+        IllegalStateException failure = null;
         for (AutoCloseable d : left) {
             try {
                 d.close();
-            } catch (Exception ignored) {
-                // As GnuCOBOL's implicit CLOSE: the run unit is ending, there is no one left to report the status to.
+            } catch (Exception e) {
+                if (failure == null) failure = new IllegalStateException("implicit dataset CLOSE failed", e);
+                else failure.addSuppressed(e);
             }
         }
+        if (failure != null) throw failure;
     }
+
+    record State(Set<AutoCloseable> datasets) {
+        void restore() { OPEN.set(new LinkedHashSet<>(datasets)); }
+    }
+    static State capture() { return new State(new LinkedHashSet<>(OPEN.get())); }
+    static State fresh() { return new State(Set.of()); }
 }

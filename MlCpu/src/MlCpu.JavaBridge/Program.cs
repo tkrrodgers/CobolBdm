@@ -12,8 +12,8 @@ if (opts.ContainsKey("help") || args.Length == 0)
 {
     Console.WriteLine("""
         MlCpu.JavaBridge
-          --file <path> [--ir-out <file>] [--sidecar <url>] [--spill-dir <dir>] [--transpile-only]
-          --batch-dir <dir> --spill-dir <dir> --report <path> [--sidecar <url>]
+          --file <path> [--ir-out <file>] [--sidecar <url>] [--spill-dir <dir>] [--transpile-only] [--compose-storage [--extract-rules]]
+          --batch-dir <dir> --spill-dir <dir> --report <path> [--sidecar <url>] [--compose-storage [--extract-rules]]
           --analyze <path>        print parse diagnostics and frontiers only
           --kb <siteDir> --estate <app root>                     kb/jobs.jsonl, programs.jsonl, meta.json
           --graph <dir> --estate <code root>                     program graphs + estate call graph
@@ -175,7 +175,7 @@ if (opts.TryGetValue("file", out var file))
 {
     // the programs after the first one of a source (separate or nested) are transpiled and spilled too
     foreach (var other in CobolModelBuilder.BuildAllGroundedFull(file!).Skip(1))
-        Console.WriteLine(Summary(await Transpile(http, IrExporter.Export(other), opts.GetValueOrDefault("spill-dir"), opts.ContainsKey("transpile-only"))));
+        Console.WriteLine(Summary(await Transpile(http, IrExporter.Export(other), opts.GetValueOrDefault("spill-dir"), opts.ContainsKey("transpile-only"), opts.ContainsKey("compose-storage"), opts.ContainsKey("extract-rules"))));
     var ir = IrExporter.Export(CobolModelBuilder.BuildGroundedFull(file!));
     if (opts.TryGetValue("ir-out", out var irOut))
     {
@@ -183,7 +183,7 @@ if (opts.TryGetValue("file", out var file))
         Console.WriteLine($"IR written: {irOut}");
         if (!opts.ContainsKey("sidecar") && !opts.ContainsKey("spill-dir")) return 0;
     }
-    var result = await Transpile(http, ir, opts.GetValueOrDefault("spill-dir"), opts.ContainsKey("transpile-only"));
+    var result = await Transpile(http, ir, opts.GetValueOrDefault("spill-dir"), opts.ContainsKey("transpile-only"), opts.ContainsKey("compose-storage"), opts.ContainsKey("extract-rules"));
     Console.WriteLine(Summary(result));
     return result?["compiled"]?.GetValue<bool>() == true ? 0 : 1;
 }
@@ -194,6 +194,7 @@ if (opts.TryGetValue("batch-dir", out var batchDir))
     var report = opts.GetValueOrDefault("report") ?? Path.Combine(spill, "batch-report.json");
     Directory.CreateDirectory(spill);
     foreach (var old in Directory.EnumerateFiles(spill, "Prog_*.java")) File.Delete(old);
+    if (opts.ContainsKey("extract-rules") && Directory.Exists(Path.Combine(spill, "rules"))) Directory.Delete(Path.Combine(spill, "rules"), true);
     var rows = new List<JsonObject>();
     foreach (var path in CobolFiles.Programs(batchDir!))
     {
@@ -201,7 +202,7 @@ if (opts.TryGetValue("batch-dir", out var batchDir))
         try
         {
             var ir = IrExporter.Export(CobolModelBuilder.BuildGroundedFull(path));
-            var r = await Transpile(http, ir, spill, true);
+            var r = await Transpile(http, ir, spill, true, opts.ContainsKey("compose-storage"), opts.ContainsKey("extract-rules"));
             row = new JsonObject
             {
                 ["program"] = ir.Program.Id, ["path"] = path, ["verdict"] = r?["verdict"]?.GetValue<string>(),
@@ -224,8 +225,9 @@ if (opts.TryGetValue("batch-dir", out var batchDir))
 Console.Error.WriteLine("nothing to do; see --help");
 return 2;
 
-static async Task<JsonNode?> Transpile(HttpClient http, IrRoot ir, string? spillDir, bool transpileOnly)
+static async Task<JsonNode?> Transpile(HttpClient http, IrRoot ir, string? spillDir, bool transpileOnly, bool composeStorage = false, bool extractRules = false)
 {
+    if (extractRules && !composeStorage) throw new ArgumentException("--extract-rules requires --compose-storage");
     var request = new JsonObject
     {
         ["battery"] = new JsonArray(new JsonObject { ["inputs"] = new JsonObject(), ["expect"] = new JsonObject() }),
@@ -233,17 +235,35 @@ static async Task<JsonNode?> Transpile(HttpClient http, IrRoot ir, string? spill
         ["loopPolicy"] = "TERMINATE",
         ["includeJavaSource"] = spillDir is null,
         ["transpileOnly"] = transpileOnly || spillDir is not null,
+        ["composeStorage"] = composeStorage,
+        ["extractRules"] = extractRules,
     };
     if (spillDir is not null) request["javaSourceDir"] = Path.GetFullPath(spillDir);
     var content = new StringContent(IrExporter.TranspileRequest(ir, request), Encoding.UTF8, "application/json");
     var resp = await http.PostAsync("/transpile-verify", content);
     var body = await resp.Content.ReadAsStringAsync();
-    return JsonNode.Parse(body);
+    var result = JsonNode.Parse(body);
+    if (composeStorage && result?["storageComposition"]?.GetValue<bool>() != true)
+        throw new InvalidOperationException("sidecar did not emit composed storage: " + (result?["error"]?.GetValue<string>() ?? "rebuild the sidecar"));
+    if (extractRules && result?["extractionLedger"] is null)
+        throw new InvalidOperationException("sidecar did not return a rule extraction ledger: " + (result?["error"]?.GetValue<string>() ?? "rebuild the sidecar"));
+    // The spilled program calls its typed rule binding; write the rule sources beside it (assembly into modules runs in the host).
+    if (extractRules && spillDir is not null)
+        foreach (var s in result?["additionalSources"]?.AsArray() ?? [])
+        {
+            var rel = s!["path"]!.GetValue<string>();
+            if (!rel.StartsWith("com/mlcpu/rules/", StringComparison.Ordinal) || rel.Contains("..", StringComparison.Ordinal)) throw new InvalidOperationException("unexpected rule source path " + rel);
+            var target = Path.Combine(Path.GetFullPath(spillDir), "rules", rel);
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            File.WriteAllText(target, s["content"]!.GetValue<string>());
+        }
+    return result;
 }
 
 static string Summary(JsonNode? r) =>
     r is null ? "no response" :
     $"{r["programId"]}: verdict={r["verdict"]} compiled={r["compiled"]} lowered={r["loweredStatements"]} abstained={r["abstainedStatements"]} " +
+    (r["extractionLedger"] is { } l ? $"rules={r["ruleContracts"]?.AsArray().Count ?? 0} skipped={l["skipped"]?.AsArray().Count ?? 0} " : "") +
     $"{(r["javaSourcePath"] is { } p ? "→ " + p : "")}{(r["error"] is { } e ? " error=" + e : "")}" +
     (r["diagnostics"] is JsonArray d && d.Count > 0 ? "\n  " + string.Join("\n  ", d.Take(20)) : "");
 

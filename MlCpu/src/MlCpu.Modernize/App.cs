@@ -8,6 +8,19 @@ namespace MlCpu.Modernize;
 /// </summary>
 public sealed class RecordClass
 {
+    public RecordClass()
+    {
+        var names = new AliasComparer(Alias);
+        DateViews = new(names);
+        Flags = new(names);
+        Codes = new(names);
+        Initializers = new(names);
+        Edited = new(names);
+    }
+
+    /// <summary>Numeric-edited fields the code moves a number to, by item name: a setter that edits it (the PICTURE in the codec).</summary>
+    public HashSet<string> Edited { get; }
+
     public required DataItem Item { get; init; }
     public required string Name { get; init; }
     /// <summary>Private to one program (a nested class), or shared by the programs that copy it (a top-level class).</summary>
@@ -15,13 +28,88 @@ public sealed class RecordClass
     public string? Copybook { get; init; }
     /// <summary>Accessor names by item name (the programs that copy a record have their own items of it).</summary>
     public Dictionary<string, string> Accessors { get; } = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>
+    /// Item names of another copy of the same layout (COPY ... REPLACING ==:M:== BY ==MA== and BY ==LM==) → the name of
+    /// the field they are: one record class serves every copy, so a caller's record is the parameter its callee declares.
+    /// </summary>
+    public Dictionary<string, string> Alias { get; } = new(StringComparer.OrdinalIgnoreCase);
     /// <summary>The record's fields, from the first program that uses it (offsets relative to the record).</summary>
     public List<DataItem> Fields { get; } = [];
     /// <summary>Fields the code reads or writes as a date (yyyyMMdd), by item name.</summary>
-    public HashSet<string> DateViews { get; } = new(StringComparer.OrdinalIgnoreCase);
+    public HashSet<string> DateViews { get; }
     /// <summary>Y/N indicators the code only tests for 'Y' (and validates as Y or N), by item name: a boolean accessor.</summary>
-    public HashSet<string> Flags { get; } = new(StringComparer.OrdinalIgnoreCase);
+    public HashSet<string> Flags { get; }
+    /// <summary>Named views of the image's characters the code reads or writes (a number's digits, a sign, adjacent fields): name → bytes.</summary>
+    public Dictionary<string, (int Offset, int Length, string Doc)> Views { get; } = new(StringComparer.Ordinal);
+    /// <summary>Code fields read as enums (a closed set of codes the code compares and switches on): item name → enum name and codes.</summary>
+    public Dictionary<string, (string Enum, SortedSet<string> Codes, Dictionary<string, string> Names)> Codes { get; }
+    /// <summary>Groups the code INITIALIZEs (the record itself, or a group of it), by item name: their initialize method.</summary>
+    public Dictionary<string, string> Initializers { get; }
     public int Length => Item.Length;
+
+    /// <summary>The name of the field an item of this layout is (its own name, or the first copy's).</summary>
+    public string Canon(string name) => Alias.TryGetValue(name, out var c) ? c : name;
+
+    /// <summary>Item names compared through <see cref="Alias"/>: two copies' names of one field are equal.</summary>
+    sealed class AliasComparer(Dictionary<string, string> alias) : IEqualityComparer<string>
+    {
+        string C(string s) => alias.TryGetValue(s, out var c) ? c : s;
+        public bool Equals(string? a, string? b) => a is null || b is null ? a == b : string.Equals(C(a), C(b), StringComparison.OrdinalIgnoreCase);
+        public int GetHashCode(string s) => StringComparer.OrdinalIgnoreCase.GetHashCode(C(s));
+    }
+
+    /// <summary>
+    /// The named view of the image's bytes [offset, offset + length): a text field (its Text accessor), a number's
+    /// characters, a SIGN LEADING SEPARATE field's sign or digits, a group, or adjacent fields; null when the bytes are
+    /// no such part (they stay a positional read).
+    /// </summary>
+    public string? View(int offset, int length)
+    {
+        foreach (var (name, v) in Views) if (v.Offset == offset && v.Length == length) return name;
+        static int Off(DataItem d) => d.Offset - d.Record.Offset;
+        var leaves = Fields.Where(f => f.Dims.Count == 0 && f.Occurs == 0).ToList();
+        string? Add(string name, string doc)
+        {
+            var textAccessors = Fields.Where(f => f.Category != Category.Numeric && Accessors.ContainsKey(f.Name)).Select(f => Accessors[f.Name] + "Text");
+            if (Accessors.Values.Contains(name) || textAccessors.Contains(name) || Views.ContainsKey(name) || name is "text" or "raw" or "bytes") return null;
+            Views[name] = (offset, length, doc);
+            return name;
+        }
+        if (leaves.FirstOrDefault(f => Off(f) == offset && f.Length == length) is { } leaf && Accessors.TryGetValue(leaf.Name, out var acc))
+            return leaf.Category == Category.Numeric ? Add(acc + "Text", $"{leaf.Name}: its characters") : acc + "Text";
+        foreach (var f in leaves.Where(f => f.Category == Category.Numeric && f.Signed && f.SignSeparate))
+        {
+            if (!Accessors.TryGetValue(f.Name, out var sa)) continue;
+            if (Off(f) == offset && length == 1) return Add(sa + "Sign", $"{f.Name}: its sign character");
+            if (Off(f) + 1 == offset && f.Length - 1 == length) return Add(sa + "Digits", $"{f.Name}: its digits");
+        }
+        var group = Descendants(Item).FirstOrDefault(d => !d.IsLeaf && !d.IsFiller && d.Dims.Count == 0 && Off(d) == offset && d.Length == length);
+        if (group is not null)
+        {
+            var words = group.Name.Split('-', StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (words.Count > 1 && words[0].Length <= 3) words.RemoveAt(0);
+            return Add(Naming.Camel(string.Join('-', words)) + "Text", $"{group.Name}: its characters");
+        }
+        // adjacent fields of the record's own layout (not a REDEFINES alternative), at most four
+        var own = leaves.Where(f => !Ancestry(f).Any(a => a.RedefinesItem is not null) && !f.IsFiller).OrderBy(Off).ToList();
+        var run = new List<DataItem>();
+        int at = offset;
+        while (at < offset + length && run.Count < 4 && own.FirstOrDefault(f => Off(f) == at) is { } next && Accessors.ContainsKey(next.Name)) { run.Add(next); at += next.Length; }
+        if (run.Count >= 2 && at == offset + length)
+            return Add(Accessors[run[0].Name] + string.Concat(run.Skip(1).Select(r => Naming.UpperFirst(Accessors[r.Name]))) + "Text", string.Join(" and ", run.Select(r => r.Name)) + ": their characters");
+        return null;
+    }
+
+    static IEnumerable<DataItem> Descendants(DataItem d)
+    {
+        foreach (var c in d.Children)
+        {
+            yield return c;
+            foreach (var x in Descendants(c)) yield return x;
+        }
+    }
+
+    static IEnumerable<DataItem> Ancestry(DataItem d) { for (var x = d; x is not null; x = x.Parent) yield return x; }
 }
 
 /// <summary>A plain Java field for a program's own elementary item (a work field never seen as bytes); a boolean is a Y/N flag ('Y' true).</summary>
@@ -31,8 +119,24 @@ public sealed record PromotedField(string Name, JType Type, DataItem Item);
 public sealed class AppProgram
 {
     public required SourceProgram P { get; init; }
-    public required string ClassName { get; init; }
+    public required string ClassName { get; set; }
+    /// <summary>A subprogram whose CALL interface is a known JDK contract (Kernels): its class is the JDK's, the lifted code its test reference.</summary>
+    public KernelContract? Kernel { get; set; }
+    /// <summary>The header evidence the class is named from (Q2); null: named with its program id.</summary>
+    public HeaderNames.Evidence? NameEvidence { get; set; }
     public bool IsJob { get; init; }
+    /// <summary>A CALLed subprogram (PROCEDURE DIVISION USING, no datasets): a class whose public entry takes the caller's records.</summary>
+    public bool IsSubprogram { get; init; }
+    /// <summary>A subprogram whose performed paragraphs end the CALL (GOBACK outside the entry paragraph): call() catches their CallEnded.</summary>
+    public bool EndsCallInParagraph { get; set; }
+    /// <summary>A batch step (main(), datasets by DD name).</summary>
+    public bool IsStep => !IsJob && !IsSubprogram;
+    /// <summary>A subprogram's LINKAGE records as parameters: record (and a record that REDEFINES it) → its variable.</summary>
+    public Dictionary<DataItem, Var> LinkageVars { get; } = [];
+    /// <summary>A subprogram's USING records in order (the entry method's parameters).</summary>
+    public List<DataItem> LinkageOrder { get; } = [];
+    /// <summary>The LINKAGE records each paragraph reads or writes, the paragraphs it PERFORMs included (USING order).</summary>
+    public Dictionary<string, List<DataItem>> ParagraphLinkage { get; } = new(StringComparer.OrdinalIgnoreCase);
     public List<FunctionDef> JobFunctions { get; } = [];
     /// <summary>Job functions that map an exception to a reject (they read JX-C and JX-SITE): classic code with the exception as parameter.</summary>
     public HashSet<FunctionDef> RejectFunctions { get; } = [];
@@ -50,6 +154,13 @@ public sealed class AppProgram
     /// <summary>Programs this one CALLs: program id → the field holding its instance.</summary>
     public Dictionary<string, string> Callees { get; } = new(StringComparer.OrdinalIgnoreCase);
     public string Description { get; set; } = "";
+    /// <summary>The restructured data flow of a batch step (ClassicFlow): the fields that remain, its nested types, its report.</summary>
+    public FlowResult? Flow { get; set; }
+
+    /// <summary>The names of the program class's fields (locals of its methods take other names).</summary>
+    public IEnumerable<string> FieldNames() => Flow is { } f
+        ? Instances.Values.Where(i => !f.DroppedInstances.Contains(i)).Concat(f.Fields.Select(x => x.Name)).Concat(FileFields.Values).Concat(Callees.Values).Concat(f.ReportField is null ? [] : [f.ReportField]).Concat(f.Nested.Select(n => n.Field))
+        : Instances.Where(kv => !LinkageVars.ContainsKey(kv.Key)).Select(kv => kv.Value).Concat(Promoted.Values.Select(p => p.Name)).Concat(FileFields.Values).Concat(Callees.Values);
 }
 
 /// <summary>
@@ -68,16 +179,34 @@ public sealed class AppModel
     public string AppPackage => BasePackage + ".batch";
     public string RecordPackage => BasePackage + ".batch.record";
     public string PlatformPackage => BasePackage + ".batch.platform";
+    /// <summary>An abend routine reports its abend with the lines it displays (Abend's display constructor).</summary>
+    public bool DisplayedAbends { get; set; }
 
     static readonly HashSet<string> RuntimeRecords = new(StringComparer.OrdinalIgnoreCase) { "FS-HEAP", "FS-CTX", "FS-FRAMES", "JB", "DT-PARMS", "JO", "JO-TEXTS", "FS-STATE" };
 
+    /// <summary>
+    /// Records named as J3S runtime storage in an estate that has no J3S runtime (a Tier-1 estate's DT-PARMS is the
+    /// date kernel's own LINKAGE record, a record of the application like any other).
+    /// </summary>
+    static readonly System.Runtime.CompilerServices.ConditionalWeakTable<DataItem, object> PlainRecords = new();
+
     /// <summary>J3S runtime storage: the heap, the context and its registers, the frames, the BigDecimal and date interfaces.</summary>
     public static bool IsRuntime(DataItem it) =>
-        RuntimeRecords.Contains(it.Record.Name) || System.Text.RegularExpressions.Regex.IsMatch(it.Record.Name, @"^F\d{4}$", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        RuntimeRecords.Contains(it.Record.Name) && !PlainRecords.TryGetValue(it.Record, out _)
+        || System.Text.RegularExpressions.Regex.IsMatch(it.Record.Name, @"^F\d{4}$", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+    /// <summary>A J3S estate: a program keeps the J3S context, heap or frames.</summary>
+    static bool IsJ3s(Model m) => m.Functions.Count > 0 || m.Estate.Programs.Any(p => p.Model.Items.Any(i => i.Level == 1
+        && (i.Name.Equals("FS-CTX", StringComparison.OrdinalIgnoreCase) || i.Name.Equals("FS-HEAP", StringComparison.OrdinalIgnoreCase)
+            || System.Text.RegularExpressions.Regex.IsMatch(i.Name, @"^F\d{4}$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))));
 
     public static AppModel Build(Model m)
     {
         var app = new AppModel { M = m, BasePackage = BaseOf(m) };
+        if (!IsJ3s(m))
+            foreach (var p in m.Estate.Programs)
+                foreach (var it in p.Model.Items.Where(i => i.Level == 1 && RuntimeRecords.Contains(i.Name)))
+                    PlainRecords.AddOrUpdate(it, true);
         foreach (var p in m.Estate.Programs)
         {
             var jobFns = m.Functions.Values.Where(f => f.IsJob && f.Program == p && !f.MethodName.Contains("STRING-LITERALS", StringComparison.OrdinalIgnoreCase)).OrderBy(f => f.Id, StringComparer.Ordinal).ToList();
@@ -89,9 +218,71 @@ public sealed class AppModel
             app.Programs.Add(ap);
             app.ById[p.Id] = ap;
         }
-        foreach (var ap in app.Programs) app.Analyse(ap);
+        foreach (var ap in app.Programs.ToList()) app.Analyse(ap);
+        app.Subprograms();
+        // a decimal library its callers CALL (recognized once every caller is known): the JDK, proven by its gate
+        foreach (var ap in app.Programs.Where(p => p.IsSubprogram && p.Kernel is null).ToList())
+            if (DecimalKernels.Recognize(app, ap) is { } dk) { ap.Kernel = dk; ap.ClassName = dk.ClassName; }
+        app.NameSubprograms();
+        foreach (var ap in app.Programs) app.Wire(ap);
         app.Flags();
         return app;
+    }
+
+    /// <summary>
+    /// The subprograms the application layer CALLs (statically, by literal name), and theirs: a program without datasets
+    /// or J3S functions whose PROCEDURE DIVISION USING names records of the application (not J3S runtime storage), CALLed
+    /// with arguments that are such records.
+    /// </summary>
+    void Subprograms()
+    {
+        var queue = new Queue<AppProgram>(Programs);
+        while (queue.Count > 0)
+        {
+            var caller = queue.Dequeue();
+            foreach (var s in caller.Classic.SelectMany(x => Model.Deep(x.Statements)).Where(s => s.Verb == "CALL"))
+            {
+                if (s.Get("target") is not { K: "str", V: { } target } || ById.ContainsKey(target) || !M.Estate.ById.TryGetValue(target, out var sp)) continue;
+                var args = (s.L?.GetValueOrDefault("args") ?? []).Select(a => a.L ?? a).ToList();
+                if (args.Count == 0 || args.All(a => caller.P.ItemsById.TryGetValue(a.Id ?? -1, out var ai) && IsRuntime(ai))) continue;
+                if (sp.Model.Files.Count > 0 || M.Functions.Values.Any(f => f.Program == sp)) continue;
+                var using_ = sp.Model.Using.Select(u => sp.ItemsByName.GetValueOrDefault(u)).ToList();
+                if (using_.Count == 0 || using_.Any(u => u is null || IsRuntime(u))) continue;
+                var ap = new AppProgram { P = sp, IsSubprogram = true, ClassName = Naming.Pascal(sp.Id) };
+                ap.Description = Describe(sp);
+                Programs.Add(ap);
+                ById[sp.Id] = ap;
+                Analyse(ap);
+                // a known kernel contract (by its LINKAGE layout and function codes): the JDK, proven by its gate
+                if (Kernels.Recognize(ap) is { } kernel) { ap.Kernel = kernel; ap.ClassName = kernel.ClassName; }
+                queue.Enqueue(ap);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The subprograms' class names from their headers (Q2), where the name is unique among the application's classes;
+    /// a kernel the JDK replaces is named by its contract, a program whose header names nothing keeps its program id.
+    /// </summary>
+    void NameSubprograms()
+    {
+        var named = Programs.Where(p => p.IsSubprogram && p.Kernel is null).Select(p => (P: p, E: HeaderNames.FromHeader(p.P))).Where(x => x.E is not null).ToList();
+        var taken = new HashSet<string>(Programs.Where(p => !named.Any(n => n.P == p)).Select(p => p.ClassName), StringComparer.OrdinalIgnoreCase);
+        foreach (var group in named.GroupBy(n => n.E!.Name, StringComparer.OrdinalIgnoreCase))
+        {
+            if (group.Count() > 1 || taken.Contains(group.Key) || group.Key.EndsWith("Record", StringComparison.Ordinal)) continue;
+            var (p, e) = group.First();
+            p.ClassName = e!.Name;
+            p.NameEvidence = e;
+        }
+    }
+
+    /// <summary>The programs a program CALLs: one instance each (a job program keeps its state across calls).</summary>
+    void Wire(AppProgram ap)
+    {
+        foreach (var s in ap.Classic.SelectMany(x => Model.Deep(x.Statements)).Where(s => s.Verb == "CALL"))
+            if (s.Get("target") is { K: "str", V: var callee } && callee is not null && !ap.Callees.ContainsKey(callee) && ById.TryGetValue(callee, out var cp))
+                ap.Callees[callee] = Unique(cp.Kernel is not null || cp.NameEvidence is not null ? Naming.LowerFirst(cp.ClassName) : Naming.Camel(callee), ap);
     }
 
     /// <summary>The common package root of the domain classes (org.apache.fineract).</summary>
@@ -144,11 +335,12 @@ public sealed class AppModel
         foreach (var name in p.Model.Using)
             if (p.ItemsByName.TryGetValue(name, out var u) && !IsRuntime(u)) ap.Using.Add(u);
         foreach (var fd in p.Model.Files) ap.FileFields[fd.Name] = Naming.Camel(fd.Name);
-        // the data the program's code touches: references of its paragraphs and of its job functions
+        // the data the program's code touches: references of its paragraphs and of its job functions (a condition
+        // name's reference is its field's)
         var refs = new List<(Node N, Stmt S)>();
         foreach (var para in ap.Classic)
             foreach (var s in Model.Deep(para.Statements))
-                foreach (var n in Model.Refs(s)) refs.Add((n, s));
+                foreach (var n in Model.Refs(s).Concat(StmtNodes(s).Where(x => x.K == "c88"))) refs.Add((n, s));
         foreach (var f in ap.JobFunctions)
             for (int i = f.FirstParagraph; i >= 0 && i <= f.LastParagraph && i < p.Model.Paragraphs.Count; i++)
                 foreach (var s in Model.Deep(p.Model.Paragraphs[i].Statements))
@@ -163,7 +355,9 @@ public sealed class AppModel
         var asBytes = new HashSet<DataItem>();
         foreach (var (n, s) in refs)
         {
-            if (!p.ItemsById.TryGetValue(n.Id ?? -1, out var it) || it.Level == 88) continue;
+            if (!p.ItemsById.TryGetValue(n.Id ?? -1, out var it)) continue;
+            // a condition name of a table's field: the table is bytes of a record
+            if (it.Level == 88) { if (it.Parent is { } cp && (cp.Dims.Count > 0 || cp.RedefinesItem is not null)) asBytes.Add(cp.Record); continue; }
             if (!it.IsLeaf || n.Start is not null || it.Occurs > 0 || it.Dims.Count > 0 || it.RedefinesItem is not null) asBytes.Add(it.Record);
             if (s.Verb is "READ" or "WRITE" or "CALL" && !it.IsLeaf) asBytes.Add(it.Record);
         }
@@ -175,7 +369,7 @@ public sealed class AppModel
             if (!copybook && !linkage && !asBytes.Contains(rec) && rec.Section is DataSection.WorkingStorage or DataSection.File)
             {
                 foreach (var leaf in Leaves(rec).Where(used.Contains))
-                    ap.Promoted[leaf] = new PromotedField(Unique(Naming.Camel(leaf.Name), ap), FieldType(leaf), leaf);
+                    ap.Promoted[leaf] = new PromotedField(Unique(Naming.Field(leaf.Name), ap), FieldType(leaf), leaf);
                 continue;
             }
             // FD records are buffers: READ INTO and WRITE FROM go through the target and the source
@@ -191,13 +385,79 @@ public sealed class AppModel
             var rc = RecordFor(rec, ap, copybook);
             ap.Records[rec] = rc;
             // the instance is named with its class (currencyRecord), apart from the domain objects of the same name
-            ap.Instances[rec] = Unique(Naming.LowerFirst(rc.Name), ap);
+            ap.Instances[rec] = Unique(ap.IsSubprogram && linkage ? ParamName(rec.Name) : Naming.LowerFirst(rc.Name), ap);
         }
-        // CALLs of other programs of the application layer: one instance each (a job program keeps its state across calls)
-        foreach (var s in ap.Classic.SelectMany(x => Model.Deep(x.Statements)).Where(s => s.Verb == "CALL"))
-            if (s.Get("target") is { K: "str", V: var callee } && callee is not null && !ap.Callees.ContainsKey(callee) && ById.ContainsKey(callee))
-                ap.Callees[callee] = Unique(Naming.Camel(callee), ap);
+        // several records of one class (copies of a layout: PRINCIPAL-VALUE, PAYMENT-VALUE): each instance is named by its
+        // own record (principalValue, paymentValue), not numbered after the class
+        foreach (var group in ap.Records.Where(kv => kv.Key.Section != DataSection.Linkage && kv.Key.RedefinesItem is null).GroupBy(kv => kv.Value).Where(g => g.Count() > 1).ToList())
+        {
+            foreach (var (rec, _) in group) ap.Instances.Remove(rec);
+            foreach (var (rec, _) in group.OrderBy(kv => kv.Key.Line)) ap.Instances[rec] = Unique(Naming.Camel(rec.Name), ap);
+        }
+        if (ap.IsSubprogram) Linkage(ap);
     }
+
+    /// <summary>A LINKAGE record's parameter name: its words without a short prefix or a REC suffix (LK-MODEL-QUERY → modelQuery).</summary>
+    static string ParamName(string cobol)
+    {
+        var words = cobol.Split('-', StringSplitOptions.RemoveEmptyEntries).ToList();
+        if (words.Count > 1 && words[0].Length <= 3) words.RemoveAt(0);
+        if (words.Count > 1 && words[^1] is "REC" or "RECORD" or "PARMS" or "PARM") words.RemoveAt(words.Count - 1);
+        return Naming.Camel(string.Join('-', words));
+    }
+
+    /// <summary>
+    /// A subprogram's LINKAGE records as parameters: of its entry, and of every paragraph that reads or writes them (or
+    /// PERFORMs one that does), so that no paragraph keeps the caller's storage in a field.
+    /// </summary>
+    void Linkage(AppProgram ap)
+    {
+        var p = ap.P;
+        foreach (var name in p.Model.Using)
+        {
+            if (!p.ItemsByName.TryGetValue(name, out var u) || !ap.Records.TryGetValue(u.Record, out var rc)) continue;
+            var v = new Var { Name = ap.Instances[u.Record], Type = JType.Of(RecordPackage + "." + rc.Name), IsParam = true, Fixed = true };
+            ap.LinkageVars[u.Record] = v;
+            ap.LinkageOrder.Add(u.Record);
+        }
+        foreach (var rec in ap.Records.Keys.Where(r => r.RedefinesItem?.Record is { } b && ap.LinkageVars.ContainsKey(b)))
+            ap.LinkageVars.TryAdd(rec, ap.LinkageVars[rec.RedefinesItem!.Record]);
+        var paras = p.Model.Paragraphs;
+        var direct = new Dictionary<int, HashSet<DataItem>>();
+        var performs = new Dictionary<int, HashSet<int>>();
+        for (int i = 0; i < paras.Count; i++)
+        {
+            var d = direct[i] = [];
+            var calls = performs[i] = [];
+            foreach (var s in Model.Deep(paras[i].Statements))
+            {
+                foreach (var n in StmtNodes(s))
+                    if (n.K is "ref" or "c88" && p.ItemsById.TryGetValue(n.Id ?? -1, out var it) && ap.LinkageVars.TryGetValue(it.Record, out var lv))
+                        d.Add(ap.LinkageOrder.First(r => ap.LinkageVars[r] == lv));
+                if (s.Verb == "PERFORM" && s.Str("inline") != "true" && s.Str("target") is { } t && p.ParagraphIndex.TryGetValue(t, out var from))
+                {
+                    int to = s.Str("thru") is { } thru && p.ParagraphIndex.TryGetValue(thru, out var th) ? th : from;
+                    for (int k = from; k <= to; k++) calls.Add(k);
+                }
+            }
+        }
+        for (bool changed = true; changed;)
+        {
+            changed = false;
+            foreach (var (i, calls) in performs)
+                foreach (var k in calls)
+                    foreach (var r in direct[k])
+                        if (direct[i].Add(r)) changed = true;
+        }
+        for (int i = 0; i < paras.Count; i++)
+            ap.ParagraphLinkage[paras[i].Name] = ap.LinkageOrder.Where(direct[i].Contains).ToList();
+        // the entry takes every USING record (the caller passes them all)
+        if (ap.Classic.Count > 0) ap.ParagraphLinkage[ap.Classic[0].Name] = [.. ap.LinkageOrder];
+    }
+
+    /// <summary>Every node of a statement's operands (not of its nested statements).</summary>
+    internal static IEnumerable<Node> StmtNodes(Stmt s) =>
+        (s.N?.Values ?? Enumerable.Empty<Node>()).Concat(s.L?.Values.SelectMany(l => l) ?? []).SelectMany(Nodes);
 
     readonly HashSet<string> takenNames = [];
 
@@ -236,10 +496,43 @@ public sealed class AppModel
             foreach (var l in Leaves(c)) if (l.Level != 88) yield return l;
     }
 
+    static IEnumerable<DataItem> Descendants(DataItem d)
+    {
+        foreach (var c in d.Children)
+        {
+            yield return c;
+            foreach (var x in Descendants(c)) yield return x;
+        }
+    }
+
     RecordClass RecordFor(DataItem rec, AppProgram ap, bool copybook)
     {
         var key = (copybook ? rec.Origin : ap.P.Id) + "/" + rec.Name;
-        if (copybook && Shared.TryGetValue(key, out var shared)) return shared;
+        if (copybook && Shared.TryGetValue(key, out var shared))
+        {
+            // the same record name with other item names (COPY FNSTATX REPLACING ==:P:== BY ==XT==): the names are aliases
+            var (sd, rd) = (Descendants(shared.Item).ToList(), Descendants(rec).ToList());
+            if (sd.Count == rd.Count)
+                foreach (var (a, b) in sd.Zip(rd))
+                {
+                    if (a.Level == 88 || a.IsFiller || a.Name.Equals(b.Name, StringComparison.OrdinalIgnoreCase)) continue;
+                    shared.Alias[b.Name] = a.Name;
+                    if (shared.Accessors.TryGetValue(a.Name, out var sacc)) shared.Accessors[b.Name] = sacc;
+                }
+            return shared;
+        }
+        // another copy of a copybook's record (COPY ... REPLACING a prefix): the same class, its names aliases of the first's
+        if (copybook && Shared.Values.FirstOrDefault(r => r.Copybook == rec.Origin && SameLayout(r.Item, rec)) is { } same)
+        {
+            foreach (var (a, b) in Descendants(same.Item).Prepend(same.Item).Zip(Descendants(rec).Prepend(rec)))
+            {
+                if (a.Level == 88 || a.IsFiller || a.Name.Equals(b.Name, StringComparison.OrdinalIgnoreCase)) continue;
+                same.Alias[b.Name] = a.Name;
+                if (same.Accessors.TryGetValue(a.Name, out var acc)) same.Accessors[b.Name] = acc;
+            }
+            Shared[key] = same;
+            return same;
+        }
         // a program's own record is named with the program (Lcle0100DateRecord): all records are classes of the record package
         var name = copybook ? RecordName(rec.Name) : Naming.Pascal(ap.P.Id) + RecordName(rec.Name);
         // two copybooks with a record of the same name (FSOUT and FSEOUT both define FS-OUT): the copybook names the second
@@ -250,7 +543,29 @@ public sealed class AppModel
         return rc;
     }
 
-    static readonly HashSet<string> RecordMembers = new(StringComparer.Ordinal) { "text", "bytes", "raw", "clear", "image", "length" };
+    // a record's own members, and Object's (a field named EQUALS must not overload equals(Object))
+    static readonly HashSet<string> RecordMembers = new(StringComparer.Ordinal)
+    {
+        "text", "bytes", "raw", "clear", "image", "length",
+        "equals", "hashCode", "toString", "getClass", "wait", "notify", "notifyAll", "clone", "finalize",
+    };
+
+    /// <summary>Two copies of one copybook record: the same items at the same offsets, their names the same past their first word.</summary>
+    static bool SameLayout(DataItem a, DataItem b)
+    {
+        static string Tail(string n) => n.IndexOf('-') is var k and > 0 ? n[(k + 1)..] : n;
+        var da = Descendants(a).Prepend(a).ToList();
+        var db = Descendants(b).Prepend(b).ToList();
+        if (da.Count != db.Count) return false;
+        for (int i = 0; i < da.Count; i++)
+        {
+            var (x, y) = (da[i], db[i]);
+            if (x.Level != y.Level || x.Offset - x.Record.Offset != y.Offset - y.Record.Offset || x.Length != y.Length || x.Usage != y.Usage
+                || x.Pic != y.Pic || x.Occurs != y.Occurs || x.IsFiller != y.IsFiller || !Tail(x.Name).Equals(Tail(y.Name), StringComparison.OrdinalIgnoreCase)) return false;
+            if (x.Level == 88 && !x.Values.Select(v => v.Low.Text).SequenceEqual(y.Values.Select(v => v.Low.Text))) return false;
+        }
+        return !a.Name.Equals(b.Name, StringComparison.OrdinalIgnoreCase);
+    }
 
     static void AddField(RecordClass rc, DataItem leaf)
     {
@@ -278,6 +593,8 @@ public sealed class AppModel
     {
         public int All, Ok;
         public bool N, InJob;
+        /// <summary>Evidence of a Y/N flag (a test for, or a MOVE or SET of, 'Y' or 'N'); a field only copied into a record has none.</summary>
+        public bool Yn, RecordCopy;
     }
 
     /// <summary>
@@ -289,6 +606,7 @@ public sealed class AppModel
     void Flags()
     {
         var recordOk = new Dictionary<(RecordClass, string), bool>();
+        var recordYn = new HashSet<(RecordClass, string)>();
         foreach (var ap in Programs)
         {
             var uses = new Dictionary<DataItem, FlagUse>();
@@ -320,19 +638,25 @@ public sealed class AppModel
                                 && it.Values[0].Low is { Quoted: true, Text: "Y" or "N" } lo && n.Start is null)
                             {
                                 u.Ok++;
+                                u.Yn = true;
                                 if (lo.Text == "N") u.N = true;
                             }
+                            // SET flag-88 TO TRUE: the MOVE of its one value, 'Y' or 'N'
+                            else if (it.Level == 88 && s.Verb == "SET" && s.Str("mode") == "TRUE" && it.Values.Count == 1 && it.Values[0].High is null
+                                && it.Values[0].Low is { Quoted: true, Text: "Y" or "N" } && n.Start is null && n.Args is null or { Count: 0 })
+                            { u.Ok++; u.Yn = true; }
                         }
                         if (YesNo(ap, n) is (DataItem yi, string yl, _))
                         {
                             U(yi).Ok++;
+                            U(yi).Yn = true;
                             if (yl == "N" && !validated.Contains(n)) U(yi).N = true;
                         }
                     }
                 // MOVE 'Y' / 'N' TO the field
                 if (s.Verb == "MOVE" && s.Get("src") is { K: "str", V: "Y" or "N" })
                     foreach (var d in s.L?.GetValueOrDefault("dst") ?? [])
-                        if (d.Id is int did && d.Start is null && ap.P.ItemsById.TryGetValue(did, out var dit) && dit.Level != 88) U(dit).Ok++;
+                        if (d.Id is int did && d.Start is null && ap.P.ItemsById.TryGetValue(did, out var dit) && dit.Level != 88) { U(dit).Ok++; U(dit).Yn = true; }
                 // MOVE a work flag TO a work flag
                 if (s.Verb == "MOVE" && s.Get("src") is { K: "ref", Start: null, Id: int sid } && ap.P.ItemsById.TryGetValue(sid, out var sit) && sit.Level != 88 && ap.Promoted.ContainsKey(sit) && sit.Length == 1)
                     foreach (var d in s.L?.GetValueOrDefault("dst") ?? [])
@@ -342,13 +666,24 @@ public sealed class AppModel
                             U(dit2).Ok++;
                             copies.Add((sit, dit2));
                         }
+                // MOVE a one-character field TO a record's one-character field: the record keeps the character (a flag
+                // field's boolean accessor reads it as 'Y' is true, a work flag is written as 'Y' or 'N')
+                if (s.Verb == "MOVE" && s.Get("src") is { K: "ref", Start: null, Id: int rsid } && ap.P.ItemsById.TryGetValue(rsid, out var rsit) && OneChar(rsit))
+                    foreach (var d in s.L?.GetValueOrDefault("dst") ?? [])
+                        if (d.Id is int rdid && d.Start is null && (d.Args is null || d.Args.Count == 0) && ap.P.ItemsById.TryGetValue(rdid, out var rdit) && OneChar(rdit)
+                            && !ap.Promoted.ContainsKey(rdit) && RecordOf(ap, rdit) is not null && (ap.Promoted.ContainsKey(rsit) || RecordOf(ap, rsit) is not null))
+                        {
+                            U(rsit).Ok++;
+                            U(rdit).Ok++;
+                            U(rsit).RecordCopy = true;
+                        }
             }
             // work flags tested for 'N' whose initial value is not Y or N: safe when every read follows an assignment
             var unset = uses.Where(kv => ap.Promoted.ContainsKey(kv.Key) && kv.Value.N && !kv.Value.InJob
                 && !(kv.Key.Values.Count == 1 && kv.Key.Values[0].Low is { Quoted: true, Text: "Y" or "N" })).Select(kv => kv.Key).ToHashSet();
             var setFirst = unset.Count == 0 ? [] : AssignedBeforeRead(ap, unset);
             bool Shape(DataItem it, FlagUse u) => it.IsLeaf && it.Length == 1 && it.Category is not (Category.Numeric or Category.NumericEdited) && u.All == u.Ok;
-            var work = uses.Where(kv => ap.Promoted.ContainsKey(kv.Key) && Shape(kv.Key, kv.Value) && !kv.Value.InJob
+            var work = uses.Where(kv => ap.Promoted.ContainsKey(kv.Key) && Shape(kv.Key, kv.Value) && !kv.Value.InJob && (kv.Value.Yn || !kv.Value.RecordCopy)
                 && (kv.Key.Values.Count == 1 && kv.Key.Values[0].Low is { Quoted: true, Text: "Y" or "N" } || !kv.Value.N || setFirst.Contains(kv.Key))).Select(kv => kv.Key).ToHashSet();
             for (bool changed = true; changed;)
             {
@@ -365,10 +700,14 @@ public sealed class AppModel
                 if (RecordOf(ap, it) is not { } r) continue;
                 var key = (r.Rc, it.Name);
                 recordOk[key] = (recordOk.TryGetValue(key, out var prev) ? prev : true) && flag && !u.N;
+                if (u.Yn) recordYn.Add(key);
             }
         }
-        foreach (var ((rc, name), ok) in recordOk) if (ok) rc.Flags.Add(name);
+        foreach (var ((rc, name), ok) in recordOk) if (ok && recordYn.Contains((rc, name))) rc.Flags.Add(name);
     }
+
+    /// <summary>A one-character alphanumeric elementary item (a flag's shape).</summary>
+    static bool OneChar(DataItem it) => it.Level != 88 && it.IsLeaf && it.Length == 1 && it.Category is not (Category.Numeric or Category.NumericEdited);
 
     /// <summary>
     /// The flags whose every read follows an assignment on every path from the program's entry (their initial value is
@@ -419,6 +758,10 @@ public sealed class AppModel
                 {
                     case "MOVE":
                         Reads(s, a);
+                        a = new HashSet<DataItem>(a);
+                        foreach (var d in s.L?.GetValueOrDefault("dst") ?? []) if (Flag(d) is { } f) a.Add(f);
+                        break;
+                    case "SET" when s.Str("mode") == "TRUE":
                         a = new HashSet<DataItem>(a);
                         foreach (var d in s.L?.GetValueOrDefault("dst") ?? []) if (Flag(d) is { } f) a.Add(f);
                         break;
@@ -515,13 +858,16 @@ public sealed class AppModel
                 foreach (var s in Model.Deep(ap.P.Model.Paragraphs[i].Statements)) yield return (s, true);
     }
 
-    /// <summary>The Java type of an elementary item.</summary>
+    /// <summary>
+    /// The Java type of an elementary item. A packed or binary number past 18 digits is a BigDecimal of scale 0 (long
+    /// cannot hold it, and the arithmetic is BigDecimal's); a zoned one keeps its BigInteger view.
+    /// </summary>
     public static JType FieldType(DataItem it)
     {
         if (it.Category is Category.Numeric)
         {
             if (it.Scale > 0) return JType.BigDecimal;
-            if (it.Digits > 18) return JType.Of("java.math.BigInteger");
+            if (it.Digits > 18) return it.Usage == Usage.Display ? JType.Of("java.math.BigInteger") : JType.BigDecimal;
             return it.Digits > 9 ? JType.Long : JType.Int;
         }
         return JType.String;

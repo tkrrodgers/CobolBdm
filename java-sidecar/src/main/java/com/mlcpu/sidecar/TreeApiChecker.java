@@ -18,12 +18,24 @@ public final class TreeApiChecker {
     }
 
     public Structure scan(Class<?> c) {
+        return scan(c, false);
+    }
+
+    public Structure scan(Class<?> c, boolean composedStorage) {
         Structure s = new Structure();
         s.className = c.getName();
         CobolProgram a = c.getAnnotation(CobolProgram.class);
         s.cobolProgramId = a == null ? null : a.programId();
         for (Method m : c.getDeclaredMethods()) if (m.getName().matches("p\\d+_.*")) s.methods.add(m.getName());
-        for (Field f : c.getDeclaredFields()) if (f.getType() == CobField.class) s.fields.add(f.getName());
+        Class<?> storage = c;
+        if (composedStorage) {
+            try {
+                storage = c.getDeclaredField("_storage").getType();
+            } catch (NoSuchFieldException e) {
+                throw new IllegalStateException("composed program has no storage aggregate: " + c.getName(), e);
+            }
+        }
+        for (Field f : storage.getDeclaredFields()) if (f.getType() == CobField.class) s.fields.add(f.getName());
         return s;
     }
 }

@@ -30,6 +30,12 @@ public final class SkeletonEmitter {
         public int linkageWholeStateCalls;
         public List<String> scopeFrontiers = new ArrayList<>();
         public List<String> abstained = new ArrayList<>();
+        /** Typed rule sources (JDK-only), one map per file: path, className, sourceSet, role, ruleIds, content. Empty unless extracting. */
+        public List<Map<String, Object>> additionalSources = List.of();
+        /** mlcpu.rule-contract.v1 descriptors of the rules the program uses. */
+        public List<Map<String, Object>> ruleContracts = List.of();
+        /** mlcpu.rule-extraction-ledger.v1 (APPLIED/SKIPPED sites), or null when rules were not extracted. */
+        public Map<String, Object> extractionLedger;
     }
 
     static final class Abstain extends RuntimeException {
@@ -52,6 +58,7 @@ public final class SkeletonEmitter {
 
     // per-emission state
     private Ir ir;
+    private boolean composeStorage;
     private final Map<Integer, Ir.Field> byId = new HashMap<>();
     private final Map<Integer, List<Ir.Field>> children = new HashMap<>();
     private final Map<Integer, String> jname = new HashMap<>();
@@ -88,10 +95,27 @@ public final class SkeletonEmitter {
     private final Set<String> sortFiles = new java.util.TreeSet<>();
     /** Why the program's ALTERs are not lowered (an altered paragraph that is not a lone GO TO sentence), or null. */
     private String alterProblem;
+    /** Typed rule slices of the program (extracting only), else null. */
+    private RuleSet ruleSet;
 
     public Emission emit(Ir in) {
+        return emit(in, false);
+    }
+
+    public Emission emit(Ir in, boolean composedStorage) {
+        return emit(in, composedStorage, false);
+    }
+
+    /**
+     * With {@code extractRules} (composed lane only) conditions and arithmetic the {@link RulePlanner} proves equivalent
+     * run behind generated typed contracts; every other site keeps its faithful lowering and is recorded as SKIPPED.
+     */
+    public Emission emit(Ir in, boolean composedStorage, boolean extractRules) {
+        if (extractRules && !composedStorage) throw new IllegalArgumentException("extractRules requires composeStorage");
         reset();
+        composeStorage = composedStorage;
         ir = in;
+        if (extractRules) ruleSet = new RuleSet(ir.program.id);
         if (!Ir.supports(ir.irVersion)) throw new IllegalArgumentException("unsupported IR version " + ir.irVersion);
         if (ir.semantics == null || ir.semantics.paragraphs == null)
             throw new IllegalArgumentException("IR has no semantic tree (schema mlcpu.semantic-tree.v1 required)");
@@ -123,7 +147,24 @@ public final class SkeletonEmitter {
         body.append("/** Generated from ").append(ir.program.path).append(" by MlCpu SkeletonEmitter (IR ").append(ir.irVersion).append("). */\n");
         body.append("@CobolProgram(programId = \"").append(ir.program.id).append("\", source = \"").append(esc(ir.program.path)).append("\")\n");
         body.append("public final class ").append(cls).append(" extends CobolBase {\n\n");
-        emitDeclarations(body);
+        if (composeStorage) {
+            body.append("    // Storage composition: execution and files remain on the program adapter.\n");
+            body.append("    private final Storage _storage = new Storage();\n\n");
+            body.append("    private static final class Storage {\n");
+            StringBuilder storage = new StringBuilder();
+            emitDeclarations(storage);
+            body.append(storage.toString().indent(4));
+            body.append("    }\n\n");
+        } else emitDeclarations(body);
+        boolean rules = ruleSet != null && !ruleSet.usedRules().isEmpty();
+        if (rules) {
+            String binding = ruleSet.bindingFqn();
+            body.append("    // Typed rule seam: extracted predicates/calculations run behind generated JDK-only contracts.\n");
+            body.append("    private final ").append(binding).append(" _rules;\n\n");
+            body.append("    public ").append(cls).append("() {\n        this(").append(binding).append(".selected());\n    }\n\n");
+            body.append("    public ").append(cls).append("(").append(binding).append(" rules) {\n")
+                    .append("        this._rules = java.util.Objects.requireNonNull(rules, \"rules\");\n    }\n\n");
+        }
         if (!alterVar.isEmpty()) {
             body.append("    // ---- ALTERed GO TO targets (paragraph indexes; -1 until an ALTER when the GO TO names none)\n");
             for (Map.Entry<Integer, String> e : alterVar.entrySet()) {
@@ -153,6 +194,12 @@ public final class SkeletonEmitter {
         em.loweredStatements = lowered;
         em.abstainedStatements = abstainedCount;
         em.abstained = abstainedList;
+        if (ruleSet != null) {
+            RuleSources.Output out = RuleSources.render(ruleSet, byId::get, em.className);
+            em.additionalSources = out.additionalSources();
+            em.ruleContracts = out.ruleContracts();
+            em.extractionLedger = out.ledger();
+        }
         return em;
     }
 
@@ -162,6 +209,7 @@ public final class SkeletonEmitter {
         abstainedCount = 0; abstainedList.clear(); sentenceLabel = null; loopLabels.clear();
         odoTable.clear(); odoAbstain.clear(); c88Consts.clear(); alterVar.clear(); alterProblem = null; useFor.clear(); useForMode.clear(); sortFiles.clear();
         osvsTrunc.clear();
+        ruleSet = null;
     }
 
     private void validateStepIds() {
@@ -192,6 +240,8 @@ public final class SkeletonEmitter {
         // The emitter's own members: storage areas (a<id>, aF_<file>) and files (file<Name>). A data item named A2 or
         // FILE-IN must not take their names (it did: "variable a2 is already defined").
         Set<String> reserved = new HashSet<>();
+        if (composeStorage) reserved.add("_storage");
+        if (ruleSet != null) reserved.add("_rules");
         for (Ir.Field f : ir.dictionary) reserved.add("a" + f.id);
         if (ir.program.files != null) for (Ir.File fd : ir.program.files) reserved.add("file" + camelUpper(fd.name));
         for (Ir.Field f : ir.dictionary) {
@@ -414,6 +464,14 @@ public final class SkeletonEmitter {
         };
     }
 
+    private String fieldRef(int id) {
+        return (composeStorage ? "_storage." : "") + jname.get(id);
+    }
+
+    private String areaRef(String area) {
+        return (composeStorage ? "_storage." : "") + area;
+    }
+
     private String dims(Ir.Field f) {
         if (f.dims == null || f.dims.isEmpty()) return "null, null";
         StringBuilder c = new StringBuilder("new int[]{"), s = new StringBuilder("new int[]{");
@@ -442,10 +500,10 @@ public final class SkeletonEmitter {
             };
             StringBuilder keys = new StringBuilder("null"), dups = new StringBuilder("null");
             if (fd.recordKey != null) {
-                keys = new StringBuilder("new CobField[]{" + jname.get(fd.recordKey));
+                keys = new StringBuilder("new CobField[]{" + fieldRef(fd.recordKey));
                 dups = new StringBuilder("new boolean[]{false");
                 if (fd.alternateKeys != null) for (Ir.AltKey a : fd.alternateKeys) {
-                    keys.append(", ").append(jname.get(a.key));
+                    keys.append(", ").append(fieldRef(a.key));
                     dups.append(", ").append(a.duplicates);
                 }
                 keys.append("}");
@@ -453,10 +511,10 @@ public final class SkeletonEmitter {
             }
             boolean variable = "V".equals(fd.recordingMode) || (fd.minRecord > 0 && fd.minRecord != fd.maxRecord);
             b.append("    final CobFile ").append(fileVar.get(fd.name)).append(" = new CobFile(\"").append(fd.name).append("\", \"").append(fd.assign)
-                    .append("\", CobFile.Org.").append(org).append(", CobFile.Acc.").append(acc).append(", aF_").append(sanitize(fd.name)).append(", ")
+                    .append("\", CobFile.Org.").append(org).append(", CobFile.Acc.").append(acc).append(", ").append(areaRef("aF_" + sanitize(fd.name))).append(", ")
                     .append(fd.minRecord).append(", ").append(Math.max(fd.maxRecord, 1)).append(", ")
-                    .append(fd.fileStatus != null ? jname.get(fd.fileStatus) : "null").append(", ").append(keys).append(", ").append(dups).append(", ")
-                    .append(fd.recordDependingOn != null ? jname.get(fd.recordDependingOn) : "null").append(", ").append(variable).append(");\n");
+                    .append(fd.fileStatus != null ? fieldRef(fd.fileStatus) : "null").append(", ").append(keys).append(", ").append(dups).append(", ")
+                    .append(fd.recordDependingOn != null ? fieldRef(fd.recordDependingOn) : "null").append(", ").append(variable).append(");\n");
         }
         b.append("\n");
     }
@@ -489,7 +547,7 @@ public final class SkeletonEmitter {
         // EXTERNAL areas belong to the run unit: zeroed once when first allocated, never re-filled by a program. A USING
         // record has no storage of its own (it is the caller's): initializing the program never writes it.
         for (String a : areaSize.keySet())
-            if (!externalAreas.containsKey(a) && !usingAreas.contains(a)) init.add(a + ".fill(CobConfig.DEFAULT_BYTE);");
+            if (!externalAreas.containsKey(a) && !usingAreas.contains(a)) init.add(areaRef(a) + ".fill(CobConfig.DEFAULT_BYTE);");
         StringBuilder values = new StringBuilder();
         emitValues(values, "WorkingStorage");
         emitValues(values, "LocalStorage");
@@ -500,9 +558,9 @@ public final class SkeletonEmitter {
         for (Ir.Field f : ir.dictionary)
             if (f.parentId == null && f.lvl() != 88 && "LocalStorage".equals(f.section) && !local.contains(areaOf.get(f.id))) local.add(areaOf.get(f.id));
         if (!local.isEmpty()) {
-            b.append("    @Override\n    protected Area[] _localAreas() { return new Area[]{").append(String.join(", ", local)).append("}; }\n\n");
+            b.append("    @Override\n    protected Area[] _localAreas() { return new Area[]{").append(String.join(", ", local.stream().map(this::areaRef).toList())).append("}; }\n\n");
             b.append("    @Override\n    protected void _initLocal() {\n");
-            for (String a : local) b.append("        ").append(a).append(".fill(CobConfig.DEFAULT_BYTE);\n");
+            for (String a : local) b.append("        ").append(areaRef(a)).append(".fill(CobConfig.DEFAULT_BYTE);\n");
             emitValues(b, "LocalStorage");
             b.append("    }\n\n");
         }
@@ -526,9 +584,9 @@ public final class SkeletonEmitter {
                 continue;
             }
             if (f.dims == null || f.dims.isEmpty()) {
-                b.append("        CobRt.move(").append(lit).append(", ").append(jname.get(f.id)).append(");\n");
+                b.append("        CobRt.move(").append(lit).append(", ").append(fieldRef(f.id)).append(");\n");
             } else {
-                b.append("        ").append(loops(f.dims, 0, "CobRt.move(" + lit + ", " + jname.get(f.id) + ".at(" + loopVars(f.dims.size(), 0) + "));")).append("\n");
+                b.append("        ").append(loops(f.dims, 0, "CobRt.move(" + lit + ", " + fieldRef(f.id) + ".at(" + loopVars(f.dims.size(), 0) + "));")).append("\n");
             }
         }
     }
@@ -620,7 +678,7 @@ public final class SkeletonEmitter {
         while (start < n && paras.get(start).declarative) start++;
         if (start > 0) b.append("    @Override\n    protected int _start() { return ").append(start).append("; } // after DECLARATIVES\n\n");
         b.append("    @Override\n    protected Area[] _linkage() { return new Area[]{");
-        b.append(String.join(", ", usingLinkageAreas())).append("}; }\n\n");
+        b.append(String.join(", ", usingLinkageAreas().stream().map(this::areaRef).toList())).append("}; }\n\n");
         b.append("    @Override\n    public String programId() { return \"").append(ir.program.id).append("\"; }\n\n");
         if (n <= STATEMENTS_PER_METHOD) {
             b.append("    @Override\n    protected String[] _paragraphNames() { return new String[]{");
@@ -638,7 +696,7 @@ public final class SkeletonEmitter {
         for (Ir.Field f : ir.dictionary) {
             if (f.lvl() == 88 || "FILLER".equals(f.field) || count.get(f.field) > 1 || (f.dims != null && !f.dims.isEmpty())) continue;
             if (children.containsKey(f.id) && children.get(f.id).stream().anyMatch(c -> c.lvl() != 88)) continue;
-            puts.add("m.put(\"" + esc(f.field) + "\", " + jname.get(f.id) + ");");
+            puts.add("m.put(\"" + esc(f.field) + "\", " + fieldRef(f.id) + ");");
         }
         StringBuilder fields = new StringBuilder();
         chunkedMethod(fields, "    @Override\n    protected java.util.Map<String, CobField> _fields() {\n        java.util.Map<String, CobField> m = new java.util.LinkedHashMap<>();\n",
@@ -684,12 +742,14 @@ public final class SkeletonEmitter {
 
     private void emitParagraph(StringBuilder out, int i) {
         int[] counters = {tmp, lowered, abstainedCount, abstainedList.size()};
+        int[] ruleMark = ruleMark();
         StringBuilder pb = new StringBuilder();
         emitParagraphBody(pb, i);
         if (pb.chars().filter(c -> c == '\n').count() > PARAGRAPH_MAX_LINES) {
             // Emit it again, outlining large blocks into methods; the first emission is discarded with its counts.
             tmp = counters[0]; lowered = counters[1]; abstainedCount = counters[2];
             abstainedList.subList(counters[3], abstainedList.size()).clear();
+            ruleReset(ruleMark);
             pb.setLength(0);
             outlined.setLength(0);
             outlineSeq = 0;
@@ -804,6 +864,7 @@ public final class SkeletonEmitter {
         StringBuilder sb = new StringBuilder();
         List<String> savedLoops = new ArrayList<>(loopLabels);
         int savedOutlined = outlined.length();
+        int[] ruleMark = ruleMark();
         try {
             lower(sb, s, indent);
             out.append(sb);
@@ -812,6 +873,7 @@ public final class SkeletonEmitter {
             loopLabels.clear();
             loopLabels.addAll(savedLoops);
             outlined.setLength(savedOutlined); // blocks outlined for the abandoned lowering
+            ruleReset(ruleMark); // rule sites of the abandoned lowering
             frontier(out, s, e.getMessage(), indent);
         }
     }
@@ -838,7 +900,7 @@ public final class SkeletonEmitter {
             case "COMPUTE" -> lowerCompute(o, s, in);
             case "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE" -> lowerArith(o, s, in);
             case "IF" -> {
-                o.append(p).append("if (").append(cond(s.n("cond"))).append(") {\n");
+                o.append(p).append("if (").append(topCond(s, null, s.n("cond"))).append(") {\n");
                 emitBlock(o, s.block("TRUE"), in + 1);
                 o.append(p).append("}");
                 List<Ir.Stmt> f = s.block("FALSE");
@@ -972,7 +1034,7 @@ public final class SkeletonEmitter {
                 if (!dc.field.equals(sc.field) || dc.lvl() == 88 || (dc.redefines != null && !dc.redefines.isEmpty())) continue;
                 boolean sg = "Group".equals(sc.category), dg = "Group".equals(dc.category);
                 if (sg && dg) corresponding(sc.id, dc.id, pairs);
-                else if (!sg || !dg) pairs.add(new String[]{jname.get(sc.id), jname.get(dc.id)});
+                else if (!sg || !dg) pairs.add(new String[]{fieldRef(sc.id), fieldRef(dc.id)});
             }
         }
     }
@@ -988,6 +1050,8 @@ public final class SkeletonEmitter {
         Integer sc = storeScale(s.l("dst"));
         String value = sc != null && "bin".equals(expr.k) && "/".equals(expr.op)
                 ? "CobRt.divTo(" + num(expr.l) + ", " + num(expr.r) + ", " + (sc + 1) + ")" : num(expr);
+        String typed = calc(s, expr, "Compute", s.l("dst"));
+        if (typed != null) value = typed;
         o.append(p).append("    BigDecimal ").append(v).append(" = ").append(value).append(";\n");
         for (Ir.Node d : s.l("dst"))
             o.append(p).append("    ").append(se).append(" |= CobRt.store(").append(field(d)).append(", ").append(v).append(", ").append(Boolean.TRUE.equals(d.rounded)).append(", ").append(phrase).append(");\n");
@@ -1027,6 +1091,18 @@ public final class SkeletonEmitter {
                 Ir.Node list = binaryList(ops);
                 if (ops.size() > 1) osvs(s.l("dst"), list, s.verb.equals("ADD") ? '+' : '-');
                 String sum = num(list);
+                List<Ir.Node> dsts = s.l("dst");
+                if (ruleSet != null && dsts.size() == 1) {
+                    // One receiver: its new value is receiver (+|-) operands, read before the store as the faithful lowering does.
+                    Ir.Node d = dsts.get(0);
+                    String value = calc(s, bin(s.verb.equals("ADD") ? "+" : "-", d, list), s.verb.equals("ADD") ? "AddTo" : "SubtractFrom", dsts);
+                    if (value != null) {
+                        o.append(q).append(se).append(" |= CobRt.store(").append(field(d)).append(", ").append(value).append(", ")
+                                .append(Boolean.TRUE.equals(d.rounded)).append(", ").append(phrase).append(");\n");
+                        break;
+                    }
+                } else if (ruleSet != null)
+                    skipCalc(s, "several receivers: each adds to its own current value in turn (receivers may alias)");
                 String v = t("_s");
                 o.append(q).append("BigDecimal ").append(v).append(" = ").append(sum).append(";\n");
                 for (Ir.Node d : s.l("dst"))
@@ -1036,20 +1112,41 @@ public final class SkeletonEmitter {
             case "ADD:GIVING" -> {
                 Ir.Node list = binaryList(ops);
                 osvs(s.l("giving"), list, (char) 0);
-                storeGiving(o, q, s, se, num(list), phrase);
+                String value = num(list);
+                String typed = calc(s, list, "AddGiving", s.l("giving"));
+                storeGiving(o, q, s, se, typed != null ? typed : value, phrase);
             }
             case "SUBTRACT:GIVING" -> {
                 Ir.Node value = bin("-", s.n("minuend"), binaryList(ops));
                 osvs(s.l("giving"), value, (char) 0);
-                storeGiving(o, q, s, se, num(value), phrase);
+                String faithful = num(value);
+                String typed = calc(s, value, "SubtractGiving", s.l("giving"));
+                storeGiving(o, q, s, se, typed != null ? typed : faithful, phrase);
             }
             case "MULTIPLY:BY" -> {
-                for (Ir.Node d : s.l("dst"))
+                List<Ir.Node> dsts = s.l("dst");
+                if (ruleSet != null && dsts.size() == 1) {
+                    Ir.Node d = dsts.get(0);
+                    String faithful = num(ops.get(0));
+                    String typed = calc(s, bin("*", ops.get(0), d), "MultiplyBy", dsts);
+                    if (typed != null) {
+                        o.append(q).append(se).append(" |= CobRt.store(").append(field(d)).append(", ").append(typed).append(", ")
+                                .append(Boolean.TRUE.equals(d.rounded)).append(", ").append(phrase).append(");\n");
+                        break;
+                    }
+                } else if (ruleSet != null)
+                    skipCalc(s, "several receivers: each is multiplied by its own current value in turn (receivers may alias)");
+                for (Ir.Node d : dsts)
                     o.append(q).append(se).append(" |= CobRt.store(").append(field(d)).append(", CobRt.mul(").append(num(ops.get(0))).append(", ").append(field(d)).append(".dec()), ")
                             .append(Boolean.TRUE.equals(d.rounded)).append(", ").append(phrase).append(");\n");
             }
-            case "MULTIPLY:GIVING" -> storeGiving(o, q, s, se, "CobRt.mul(" + num(ops.get(0)) + ", " + num(s.n("by")) + ")", phrase);
+            case "MULTIPLY:GIVING" -> {
+                String faithful = "CobRt.mul(" + num(ops.get(0)) + ", " + num(s.n("by")) + ")";
+                String typed = calc(s, bin("*", ops.get(0), s.n("by")), "MultiplyGiving", s.l("giving"));
+                storeGiving(o, q, s, se, typed != null ? typed : faithful, phrase);
+            }
             case "DIVIDE:INTO" -> {
+                if (ruleSet != null) skipCalc(s, "division: the runtime's truncated quotient and SIZE ERROR on a zero divisor stay in the adapter");
                 for (Ir.Node d : s.l("dst")) {
                     Integer dsc = storeScale(List.of(d));
                     o.append(q).append(se).append(" |= CobRt.store(").append(field(d)).append(", CobRt.div").append(dsc == null ? "(" : "To(").append(field(d)).append(".dec(), ").append(num(ops.get(0)))
@@ -1058,6 +1155,7 @@ public final class SkeletonEmitter {
                 }
             }
             case "DIVIDE:INTO-GIVING", "DIVIDE:BY-GIVING" -> {
+                if (ruleSet != null) skipCalc(s, "division: the runtime's truncated quotient and SIZE ERROR on a zero divisor stay in the adapter");
                 String dividend = form.equals("INTO-GIVING") ? num(s.n("by")) : num(ops.get(0));
                 String divisor = form.equals("INTO-GIVING") ? num(ops.get(0)) : num(s.n("by"));
                 String dv = t("_dd"), ds = t("_dv");
@@ -1139,7 +1237,7 @@ public final class SkeletonEmitter {
         boolean first = true;
         for (Ir.Stmt w : whens) {
             boolean other = "true".equals(w.s("other"));
-            String c = other ? null : cond(w.n("cond"));
+            String c = other ? null : topCond(w, null, w.n("cond"));
             if (first) o.append(p).append("if (").append(c == null ? "true" : c).append(") { // [").append(w.stepId).append("] ").append(oneLine(w.text)).append("\n");
             else if (other) o.append(p).append("} else { // [").append(w.stepId).append("] WHEN OTHER\n");
             else o.append(p).append("} else if (").append(c).append(") { // [").append(w.stepId).append("] ").append(oneLine(w.text)).append("\n");
@@ -1184,11 +1282,11 @@ public final class SkeletonEmitter {
         String sd = s.s("file");
         Ir.File fd = files.get(sd);
         if (fd == null || !fd.sort) throw new Abstain(s.verb + " of " + sd + ", which is not an SD file");
-        for (Ir.Node k : s.l("keys")) { keys.add(jname.get(k.l.id)); asc.add(String.valueOf("ASC".equals(k.op))); }
+        for (Ir.Node k : s.l("keys")) { keys.add(fieldRef(k.l.id)); asc.add(String.valueOf("ASC".equals(k.op))); }
         if (keys.isEmpty()) throw new Abstain(s.verb + " without KEY");
         String v = sortVar(sd), srt = t("_srt");
         o.append(p).append("{\n");
-        o.append(q).append("CobSort ").append(srt).append(" = new CobSort(\"").append(sd).append("\", aF_").append(sanitize(sd)).append(", ").append(Math.max(fd.maxRecord, 1))
+        o.append(q).append("CobSort ").append(srt).append(" = new CobSort(\"").append(sd).append("\", ").append(areaRef("aF_" + sanitize(sd))).append(", ").append(Math.max(fd.maxRecord, 1))
                 .append(", new CobField[]{").append(String.join(", ", keys)).append("}, new boolean[]{").append(String.join(", ", asc)).append("});\n");
         o.append(q).append(v).append(" = ").append(srt).append(";\n");
         o.append(q).append("try {\n");
@@ -1363,15 +1461,15 @@ public final class SkeletonEmitter {
             String f = field(var);
             o.append(p).append(label).append(": for (CobRt.store(").append(f).append(", ").append(num(s.n("from"))).append(", false, false); ; CobRt.store(")
                     .append(f).append(", CobRt.add(").append(f).append(".dec(), ").append(num(s.n("by"))).append("), false, false)) {\n")
-                    .append(tick).append(body).append(ind(in + 1)).append("if (").append(cond(until)).append(") break ").append(label).append(";\n").append(p).append("}\n");
+                    .append(tick).append(body).append(ind(in + 1)).append("if (").append(topCond(s, "UNTIL", until)).append(") break ").append(label).append(";\n").append(p).append("}\n");
         } else if (var != null) {
             String f = field(var);
-            o.append(p).append(label).append(": for (CobRt.store(").append(f).append(", ").append(num(s.n("from"))).append(", false, false); !(").append(cond(until))
+            o.append(p).append(label).append(": for (CobRt.store(").append(f).append(", ").append(num(s.n("from"))).append(", false, false); !(").append(topCond(s, "UNTIL", until))
                     .append("); CobRt.store(").append(f).append(", CobRt.add(").append(f).append(".dec(), ").append(num(s.n("by"))).append("), false, false)) {\n")
                     .append(tick).append(body).append(p).append("}\n");
         } else if (until != null) {
-            if (after) o.append(p).append(label).append(": do {\n").append(tick).append(body).append(p).append("} while (!(").append(cond(until)).append("));\n");
-            else o.append(p).append(label).append(": while (!(").append(cond(until)).append(")) {\n").append(tick).append(body).append(p).append("}\n");
+            if (after) o.append(p).append(label).append(": do {\n").append(tick).append(body).append(p).append("} while (!(").append(topCond(s, "UNTIL", until)).append("));\n");
+            else o.append(p).append(label).append(": while (!(").append(topCond(s, "UNTIL", until)).append(")) {\n").append(tick).append(body).append(p).append("}\n");
         } else if (times != null) {
             String tv = t("_t");
             o.append(p).append(label).append(": for (long ").append(tv).append(" = ").append(num(times)).append(".longValue(); ").append(tv).append(" > 0; ").append(tv).append("--) {\n")
@@ -1424,7 +1522,7 @@ public final class SkeletonEmitter {
         o.append(p).append(labels.get(k)).append(": for (;;) {\n");
         o.append(q).append("CobRt.loopTick(\"").append(esc(s.stepId)).append("\", ++").append(lc).append(");\n");
         String reset = last ? "" : q + "CobRt.store(" + field(lv.get(k + 1)[0]) + ", " + num(lv.get(k + 1)[1]) + ", false, false);\n";
-        String test = q + "if (" + cond(me[3]) + ") break " + labels.get(k) + ";\n";
+        String test = q + "if (" + topCond(s, k == 0 ? "UNTIL" : "UNTIL" + k, me[3]) + ") break " + labels.get(k) + ";\n";
         if (!after) o.append(reset).append(test);
         else o.append(reset);
         if (last) o.append(body);
@@ -1671,10 +1769,10 @@ public final class SkeletonEmitter {
             int ld = leaf.dims == null ? 0 : leaf.dims.size();
             String fixed = subs;
             String expr;
-            if (ld == targetDims) expr = jname.get(leaf.id) + (ld > 0 ? ".at(" + fixed + ")" : "");
+            if (ld == targetDims) expr = fieldRef(leaf.id) + (ld > 0 ? ".at(" + fixed + ")" : "");
             else {
                 String vars = loopVars(ld, targetDims);
-                expr = jname.get(leaf.id) + ".at(" + (fixed.isEmpty() ? "" : fixed + ", ") + vars + ")";
+                expr = fieldRef(leaf.id) + ".at(" + (fixed.isEmpty() ? "" : fixed + ", ") + vars + ")";
             }
             String stmt = "CobRt.initLeaf(" + expr + ");";
             o.append(p).append(ld > targetDims ? loops(leaf.dims, targetDims, stmt) : stmt).append("\n");
@@ -1719,7 +1817,7 @@ public final class SkeletonEmitter {
             }
             if (group) {
                 if (u != null) {
-                    String view = odoTable.containsKey(c.id) ? odoView(jname.get(c.id), odoTable.get(c.id)) : firstOccurrence(c);
+                    String view = odoTable.containsKey(c.id) ? odoView(fieldRef(c.id), odoTable.get(c.id)) : firstOccurrence(c);
                     o.append(p).append(view).append(".fill((byte) ").append((int) u).append(");\n");
                 } else initCompound(o, c, p);
                 continue;
@@ -1731,7 +1829,7 @@ public final class SkeletonEmitter {
     /** The item at subscript 1 of every table it belongs to (INITIALIZE works on first occurrences, then copies). */
     private String firstOccurrence(Ir.Field f) {
         int n = f.dims == null ? 0 : f.dims.size();
-        return jname.get(f.id) + (n == 0 ? "" : ".at(" + String.join(", ", java.util.Collections.nCopies(n, "1")) + ")");
+        return fieldRef(f.id) + (n == 0 ? "" : ".at(" + String.join(", ", java.util.Collections.nCopies(n, "1")) + ")");
     }
 
     /** The byte every member of {@code f} initializes to, when they all agree (GnuCOBOL's uniform INITIALIZE), else null. */
@@ -1821,8 +1919,8 @@ public final class SkeletonEmitter {
             if (a == null) continue;
             int ld = leaf.dims == null ? 0 : leaf.dims.size();
             String expr;
-            if (ld == targetDims) expr = jname.get(leaf.id) + (ld > 0 ? ".at(" + subs + ")" : "");
-            else expr = jname.get(leaf.id) + ".at(" + (subs.isEmpty() ? "" : subs + ", ") + loopVars(ld, targetDims) + ")";
+            if (ld == targetDims) expr = fieldRef(leaf.id) + (ld > 0 ? ".at(" + subs + ")" : "");
+            else expr = fieldRef(leaf.id) + ".at(" + (subs.isEmpty() ? "" : subs + ", ") + loopVars(ld, targetDims) + ")";
             String stmt = String.format(a, expr);
             o.append(p).append(ld > targetDims ? loops(leaf.dims, targetDims, stmt) : stmt).append("\n");
         }
@@ -1933,7 +2031,7 @@ public final class SkeletonEmitter {
         if (f == null) throw new Abstain("unknown data item " + n.v);
         String why = odoAbstain.get(f.id);
         if (why != null) throw new Abstain(why);
-        String e = jname.get(n.id);
+        String e = fieldRef(n.id);
         if (n.args != null && !n.args.isEmpty()) {
             if (f.dims == null || f.dims.isEmpty()) throw new Abstain("subscript on a non-table item " + f.field);
             e += ".at(" + subscripts(n.args) + ")";
@@ -2083,6 +2181,101 @@ public final class SkeletonEmitter {
 
     private boolean isArithmetic(Ir.Node n) {
         return "bin".equals(n.k) || "neg".equals(n.k) || ("fn".equals(n.k) && NUMERIC_FNS.contains(n.v) && n.start == null);
+    }
+
+    // ------------------------------------------------------------------ typed rule slices (extracting only)
+
+    /**
+     * A statement's whole condition. Extracting, an equivalent condition runs as its generated predicate on a snapshot of
+     * the items it reads; an alphanumeric equality keeps the faithful test under an EBCDIC collating sequence (whose
+     * runtime compare treats two bytes as equal). Anything else stays faithful and is recorded as SKIPPED.
+     */
+    private String topCond(Ir.Stmt s, String role, Ir.Node n) {
+        String faithful = cond(n);
+        if (ruleSet == null) return faithful;
+        String site = role == null ? s.stepId : s.stepId + "#" + role;
+        RulePlanner planner = planner();
+        RuleSet.Rule rule;
+        try {
+            rule = ruleSet.intern("predicate", planner.predicate(n), planner, n, null);
+        } catch (RulePlanner.Skip e) {
+            ruleSet.skip(site, "predicate", e.getMessage(), paragraphName(), s.line, s.verb);
+            return faithful;
+        }
+        ruleSet.use(site, rule, paragraphName(), s.line, s.verb, null);
+        String call = "_rules." + rule.accessor + "().evaluate(" + ruleInput(rule, planner) + ")";
+        return rule.requiresLatin1 ? "(RecordCharset.isEbcdic() ? (" + faithful + ") : " + call + ")" : call;
+    }
+
+    /**
+     * The value of an arithmetic statement as its generated calculation, or null (SKIPPED: the faithful value stays). The
+     * calculation returns the exact intermediate; storing it (ROUNDED, truncation, SIZE ERROR) stays with CobRt.store.
+     */
+    private String calc(Ir.Stmt s, Ir.Node expr, String verbName, List<Ir.Node> receivers) {
+        if (ruleSet == null) return null;
+        RulePlanner planner = planner();
+        RuleSet.Rule rule;
+        List<String> names = new ArrayList<>();
+        try {
+            if (receivers.isEmpty()) throw new RulePlanner.Skip("no receiver");
+            for (Ir.Node d : receivers) {
+                Ir.Field f = d.id == null ? null : byId.get(d.id);
+                if (f == null || d.start != null || !("Numeric".equals(f.category) || "NumericEdited".equals(f.category)))
+                    throw new RulePlanner.Skip("receiver " + (f == null ? "?" : f.field) + " is not numeric: its digits would follow the value's scale");
+                names.add(f.field);
+            }
+            if (touchesOsvs(expr)) throw new RulePlanner.Skip("arithmetic-osvs truncates an intermediate result (dialect-configured runtime behaviour)");
+            RulePlanner.Num v = planner.calculation(expr);
+            rule = ruleSet.intern("calculation", v, planner, expr, verbName + camelUpper(names.get(0)));
+        } catch (RulePlanner.Skip e) {
+            ruleSet.skip(s.stepId, "calculation", e.getMessage(), paragraphName(), s.line, s.verb);
+            return null;
+        }
+        ruleSet.use(s.stepId, rule, paragraphName(), s.line, s.verb, names);
+        return "_rules." + rule.accessor + "().evaluate(" + ruleInput(rule, planner) + ").value()";
+    }
+
+    private void skipCalc(Ir.Stmt s, String reason) {
+        ruleSet.skip(s.stepId, "calculation", reason, paragraphName(), s.line, s.verb);
+    }
+
+    private RulePlanner planner() {
+        return new RulePlanner(new RulePlanner.Facts() {
+            public Ir.Field field(int id) { return byId.get(id); }
+            public boolean odo(int id) { return odoTable.containsKey(id) || odoAbstain.containsKey(id); }
+        });
+    }
+
+    /** The rule's input record over snapshots of this site's items, taken where the faithful lowering reads them. */
+    private String ruleInput(RuleSet.Rule rule, RulePlanner site) {
+        List<String> values = new ArrayList<>();
+        for (int i = 0; i < site.inputs.size(); i++)
+            // Text is read through bytes() as the faithful compare reads it (same failure, if any, on an unbound item).
+            values.add(site.isNumericInput(i) ? field(refTo(site.inputs.get(i).id)) + ".dec()"
+                    : "new String(" + field(refTo(site.inputs.get(i).id)) + ".bytes(), java.nio.charset.StandardCharsets.ISO_8859_1)");
+        return "new " + ruleSet.pkg + "." + rule.inputType() + "(" + String.join(", ", values) + ")";
+    }
+
+    private boolean touchesOsvs(Ir.Node n) {
+        if (n == null) return false;
+        if (osvsTrunc.containsKey(n)) return true;
+        if (touchesOsvs(n.l) || touchesOsvs(n.r)) return true;
+        if (n.args != null) for (Ir.Node a : n.args) if (touchesOsvs(a)) return true;
+        return false;
+    }
+
+    private String paragraphName() {
+        return paras.isEmpty() ? null : paras.get(currentPara).name;
+    }
+
+    private int[] ruleMark() {
+        return ruleSet == null ? null : new int[]{ruleSet.uses.size(), ruleSet.skips.size()};
+    }
+
+    private void ruleReset(int[] mark) {
+        if (mark == null) return;
+        ruleSet.uses.subList(mark[0], ruleSet.uses.size()).clear();
+        ruleSet.skips.subList(mark[1], ruleSet.skips.size()).clear();
     }
 
     /** A boolean condition expression. */

@@ -89,9 +89,12 @@ public static class Fold
 
     /// <summary>
     /// Splits each temporary into webs (definitions connected through the uses they reach): J3S reuses statement
-    /// temporaries, Java gets one variable per value.
+    /// temporaries, Java gets one variable per value. A structured try statement in the list is one instruction that uses
+    /// the temporaries it mentions (deep). <paramref name="region"/>: the list is a try region's own; a temporary it reads
+    /// before setting it there holds the value of the code before the region, so every web the region defines is a new
+    /// variable (the old one is left to that code).
     /// </summary>
-    public static void Webs(List<St> low, List<Var> vars)
+    public static void Webs(List<St> low, List<Var> vars, ISet<Var>? exclude = null, bool region = false)
     {
         // blocks over the low IR: index ranges; successor by labels
         var labels = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -113,7 +116,7 @@ public static class Fold
                 default: if (i + 1 < n) succ[i].Add(i + 1); break;
             }
         }
-        var temps = vars.Where(v => v.IsTemp).ToHashSet();
+        var temps = vars.Where(v => v.IsTemp && (region || exclude is null || !exclude.Contains(v))).ToHashSet();
         if (temps.Count == 0) return;
         // definitions: instruction index per temp
         var defsOf = new Dictionary<Var, List<int>>();
@@ -125,9 +128,13 @@ public static class Fold
         (Var, int) Find((Var, int) x) { while (uf.TryGetValue(x, out var p) && !p.Equals(x)) x = p; return x; }
         void Union((Var, int) a, (Var, int) b) { a = Find(a); b = Find(b); if (!a.Equals(b)) uf[a] = b; }
         var useWeb = new Dictionary<(int Instr, Var V), (Var, int)>();
+        // region: temporaries the code outside the region also has (exclude) or that the region reads before setting them
+        var keepNone = new HashSet<Var>();
         foreach (var (v, defs) in defsOf)
         {
-            if (defs.Count < 2) continue;
+            if (defs.Count < 2 && !region) continue;
+            // a region's webs are all new variables: the slot's variable is the code's outside the region (before or after it)
+            if (region) keepNone.Add(v);
             foreach (var d in defs) uf[(v, d)] = (v, d);
             // in[i]: set of defs of v reaching instruction i
             var inSet = new HashSet<int>[n];
@@ -152,7 +159,7 @@ public static class Fold
             {
                 if (!Uses(low[i], v)) continue;
                 var reach = inSet[i].ToList();
-                if (reach.Count == 0) continue;
+                if (reach.Count == 0) { if (region) keepNone.Add(v); continue; }
                 for (int k = 1; k < reach.Count; k++) Union((v, reach[0]), (v, reach[k]));
                 useWeb[(i, v)] = (v, reach[0]);
             }
@@ -161,10 +168,10 @@ public static class Fold
         var webVar = new Dictionary<(Var, int), Var>();
         foreach (var (v, defs) in defsOf)
         {
-            if (defs.Count < 2) continue;
+            if (defs.Count < 2 && !region) continue;
             var roots = defs.Select(d => Find((v, d))).Distinct().ToList();
-            if (roots.Count < 2) continue;
-            bool first = true;
+            if (roots.Count < 2 && !keepNone.Contains(v)) continue;
+            bool first = !keepNone.Contains(v);
             foreach (var r in roots)
             {
                 if (first) { webVar[r] = v; first = false; continue; }
@@ -190,7 +197,8 @@ public static class Fold
         }
     }
 
-    static bool Uses(St s, Var v) => Exprs(s).Any(e => Mentions(e, v));
+    static bool Uses(St s, Var v) => s is STry t ? Passes.All([t]).Skip(1).Any(x => Exprs(x).Any(e => Mentions(e, v)) || x is SAssign { Lhs: EVar { V: var dv } } && dv == v)
+        : Exprs(s).Any(e => Mentions(e, v));
 
     /// <summary>The expressions a statement reads (an assignment's target object counts, not the variable it assigns).</summary>
     public static IEnumerable<Expr> Exprs(St s)
@@ -234,10 +242,66 @@ public static class Fold
             case SThrow t: t.E = R(t.E); break;
             case LCondGoto cg: cg.C = R(cg.C); break;
             case LSwitchGoto sw: sw.Subject = R(sw.Subject); break;
+            // a try statement uses what it mentions: every occurrence is the outer web's (Webs, region)
+            case STry t:
+                foreach (var x in Passes.All([t]).Skip(1))
+                {
+                    if (x is SAssign { Lhs: EVar { V: var dv } } xa && dv == from) xa.Lhs = new EVar(to) { Type = xa.Lhs.Type };
+                    if (x is SLoop { Each: { } each } xl && each == from) xl.Each = to;
+                    ReplaceUses(x, from, to);
+                    switch (x)
+                    {
+                        case SIf i: i.C = R(i.C); break;
+                        case SLoop l: if (l.C is not null) l.C = R(l.C); if (l.Iterable is not null) l.Iterable = R(l.Iterable); break;
+                        case SSwitch ss: ss.Subject = R(ss.Subject); break;
+                    }
+                }
+                break;
         }
     }
 
-    // ================================================================== inlining (structured)
+    // ================================================================== results kept in fields
+
+    /// <summary>
+    /// t = e; f = t; ... uses of t: the job program keeps a result in a job object (f, a field of the job class) and uses
+    /// it; Java writes f = e and reads f (the field is not written again before those uses), without a numbered local.
+    /// </summary>
+    public static void ResultFields(List<St> body)
+    {
+        foreach (var s in Passes.All(body).ToList())
+            switch (s)
+            {
+                case SIf i: ResultFieldsIn(i.Then); ResultFieldsIn(i.Else); break;
+                case SLoop l: ResultFieldsIn(l.Body); break;
+                case SBlock b: ResultFieldsIn(b.Body); break;
+                case STry t: ResultFieldsIn(t.Body); foreach (var c in t.Catches) ResultFieldsIn(c.Body); break;
+                case SSwitch sw: foreach (var c in sw.Cases) ResultFieldsIn(c.Body); if (sw.Default is not null) ResultFieldsIn(sw.Default); break;
+            }
+        ResultFieldsIn(body);
+    }
+
+    static int UseCount(Expr e, Var v) => (e is EVar ev && ev.V == v ? 1 : 0) + (e is ELambda l ? l.Captures.Values.Sum(c => UseCount(c, v)) : e.Children.Sum(c => UseCount(c, v)));
+
+    static void ResultFieldsIn(List<St> list)
+    {
+        for (int k = 0; k + 1 < list.Count; k++)
+        {
+            if (list[k] is not SAssign { Lhs: EVar { V: var t }, Rhs: var rhs } a || t.IsParam || list[k + 1] is not SAssign { Lhs: EStatic { F.Group: "SJOB" } f, Rhs: EVar { V: var t2 } } || t2 != t) continue;
+            // t is read once after, as a direct argument of the next statement's call (evaluated before anything the call
+            // does to the field), and assigned nowhere else
+            var rest = list.Skip(k + 2).ToList();
+            if (rest.Count == 0 || rest[0] is not SExpr { E: ECall { Args: var cargs } } || cargs.Count(x => x is EVar { V: var xv } && xv == t) != 1) continue;
+            if (rest.Sum(x => Passes.All([x]).Sum(y => Exprs(y).Sum(e => UseCount(e, t)))) != 1) continue;
+            if (rest.Any(x => Passes.All([x]).Any(y => y is SAssign { Lhs: EVar { V: var dv } } && dv == t))) continue;
+            if (list.Take(k).Any(x => Passes.All([x]).Any(y => Exprs(y).Any(e => Mentions(e, t)) || y is SAssign { Lhs: EVar { V: var dv } } && dv == t))) continue;
+            list[k + 1].Line = a.Line;
+            ((SAssign)list[k + 1]).Rhs = rhs;
+            list[k + 1].Site ??= a.Site;
+            list.RemoveAt(k);
+            foreach (var x in rest) foreach (var y in Passes.All([x])) SubstituteOwn(y, t, new EStatic(f.F) { Type = f.Type });
+            k--;
+        }
+    }
 
     sealed class Counts
     {
@@ -342,7 +406,7 @@ public static class Fold
             if (effects && inOwn && !FirstEffect(target, t)) continue;
             // a copy into a local (v = t) cannot throw: its site is only the last one set, and the folded statement takes the value's
             bool copy = target is SAssign { Lhs: EVar, Rhs: EVar { V: var cv } } && cv == t;
-            if (effects && def.Site is not null && target.Site is not null && def.Site != target.Site && !copy)
+            if (effects && def.Site is not null && target.Site is not null && def.Site != target.Site && !copy && !Total(def.Rhs) && CheckedSite(def.Rhs) != target.Site)
             {
                 // t.add(x) ... with t = a.subtract(b) of another site: a.subtract(b) then .add(x) on the next line, which keeps its site
                 // (javac gives each call the line of its parenthesis)
@@ -358,6 +422,17 @@ public static class Fold
         }
         return list;
     }
+
+    /// <summary>A call that cannot throw (BigDecimal.valueOf of an int or a long): where it is evaluated has no site of its own.</summary>
+    static bool Total(Expr e) => e is ECall { Kind: CallKind.JdkStatic, Owner: "java.math.BigDecimal", Name: "valueOf" } c
+        && c.Args.All(a => Pure(a) && (a is EVar v ? v.V.Kind is VKind.Int or VKind.Long || v.V.Type?.Name is "int" or "long" : a.Type?.Name is "int" or "long"));
+
+    /// <summary>
+    /// The site a checked decimal operation names (DecimalLimit.op(..., "site")): the legacy guard of the operation itself,
+    /// lifted before the guard set the statement's site.
+    /// </summary>
+    static string? CheckedSite(Expr e) => e is ECall { Kind: CallKind.JdkStatic, Owner: { } o, Args: [.., ELit { Value: string s }] }
+        && o.EndsWith(".DecimalLimit", StringComparison.Ordinal) ? s : null;
 
     /// <summary>The call whose receiver is t at the head of the statement's call chain (x = t.m(a).n(b), return t.m(), t.m()), or null.</summary>
     static ECall? ChainHead(St target, Var t)

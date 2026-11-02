@@ -28,22 +28,44 @@ public final class CobFile {
     public static final Map<String, String> DD = new HashMap<>();
 
     /** Files open in the current run unit, closed implicitly when the run unit ends normally (GnuCOBOL's implicit CLOSE). */
-    private static final java.util.Set<CobFile> OPEN = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+    private static final java.util.Set<CobFile> OPEN = new java.util.LinkedHashSet<>();
 
     /**
      * Implicit CLOSE of every file the run unit left open: at a normal end (GOBACK / STOP RUN of the main program) and at
      * an abnormal one too. GnuCOBOL closes open files when the CEE3ABD stub ends the run with STOP RUN and when a runtime
      * error ends it ("libcob: warning: implicit CLOSE"), so the records written before the abend are in the output.
      */
-    public static synchronized void closeAllOpen() {
-        for (CobFile f : new ArrayList<>(OPEN)) f.close();
-        OPEN.clear();
+    public static void closeAllOpen() {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            CobRt.RuntimeCheck failure = null;
+            for (CobFile f : new ArrayList<>(OPEN)) {
+                int status = f.close();
+                if (status != 0) {
+                    CobRt.RuntimeCheck error = new CobRt.RuntimeCheck("implicit CLOSE failed for " + f.name + ": status " + status);
+                    if (failure == null) failure = error; else failure.addSuppressed(error);
+                }
+            }
+            OPEN.clear();
+            if (failure != null) throw failure;
+        }
     }
 
     /** Forgets the open files without closing them (only for resetting a run unit whose files are gone). */
-    public static synchronized void forgetOpen() {
-        OPEN.clear();
+    public static void forgetOpen() {
+        try (RunUnit.Guard guard = RunUnit.guard()) { OPEN.clear(); }
     }
+
+    record State(Map<String, String> dds, java.util.Set<CobFile> opened, java.util.function.Consumer<IoEvent> trace) {
+        void restore() {
+            DD.clear(); DD.putAll(dds);
+            OPEN.clear(); OPEN.addAll(opened);
+            TRACE = trace;
+        }
+    }
+    static State capture() {
+        return new State(new HashMap<>(DD), new java.util.LinkedHashSet<>(OPEN), TRACE);
+    }
+    static State fresh() { return new State(Map.of(), java.util.Set.of(), null); }
 
     /** One I/O statement of a traced run: operation, file, DD, file status, ADVANCING, and the record bytes it read or wrote. */
     public record IoEvent(String op, String file, String dd, int status, String advancing, byte[] record) {}
@@ -172,6 +194,7 @@ public final class CobFile {
     public int open(String openMode) {
         lastOpenMode = openMode;
         if (mode != null) return done(41);
+        StepStrangler.validateAssignment(assign);
         path = resolve(assign);
         try {
             switch (org) {

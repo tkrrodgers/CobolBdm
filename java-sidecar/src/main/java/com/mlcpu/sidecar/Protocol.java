@@ -23,6 +23,9 @@ public final class Protocol {
         public String javaSourceDir;
         public Boolean includeJavaSource;
         public boolean transpileOnly;
+        public boolean composeStorage;
+        /** Typed rule slices behind generated contracts; requires composeStorage. */
+        public boolean extractRules;
         public JsonObject scope;
     }
 }

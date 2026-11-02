@@ -390,6 +390,11 @@ public sealed partial class TypeInferenceCollector
             case "getKey" when recv is not null: return recv.Key;
             case "getValue" when recv is not null: return recv.Val;
             case "iterator" or "listIterator" or "descendingIterator" when recv is not null: { var s = Fresh("java.util.Iterator"); TypeInference.Slot.Unify(s.Elem, recv.Elem); return s; }
+            // ClassLoader.getResources: the resource's URLs
+            case "getResources" when recv is not null && args.Count == 1: { var s = Fresh("java.util.Enumeration"); T.Flow(Of(JType.Of("java.net.URL")), s.Elem); return s; }
+            case "emptyEnumeration" when owner == "java.util.Collections": return Fresh("java.util.Enumeration");
+            case "nextElement" when recv is not null: return recv.Elem;
+            case "hasMoreElements" when recv is not null: return Of(JType.Bool);
             case "subList" or "reversed" when recv is not null: { var s = Fresh("java.util.List"); TypeInference.Slot.Unify(s.Elem, recv.Elem); return s; }
             case "addAll" when recv is not null && args.Count == 1: TypeInference.Slot.Unify(recv.Elem, args[0].Elem); return Of(JType.Bool);
             case "forEach" when recv is not null && args.Count == 1:

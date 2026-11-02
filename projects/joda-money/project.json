@@ -1,0 +1,1086 @@
+{
+  "schema": "mlcpu.project.v1",
+  "id": "joda-money",
+  "name": "joda-money",
+  "origin": "C:\\Users\\Tomrodgers\\JavaToCOBOLTest\\claude-in-app\\workspace\\runs\\20261101-034452-joda-money\\estate\\source",
+  "onboardedAt": "2026-11-01T10:41:51",
+  "layout": {
+    "sourceDir": "source",
+    "codeRoots": [
+      "app/cbl"
+    ],
+    "copybookRoots": [
+      "app/cpy"
+    ],
+    "jclRoots": [
+      "app/jcl"
+    ],
+    "procRoots": [],
+    "controlCardRoots": [],
+    "dataRoots": [
+      "app/data"
+    ]
+  },
+  "programs": [
+    {
+      "id": "FNDKRND",
+      "path": "app/cbl/FNDKRND.cbl",
+      "kind": "subprogram",
+      "lines": 191,
+      "calledBy": [
+        "FSJBDEC"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNDTKRN",
+      "path": "app/cbl/FNDTKRN.cbl",
+      "kind": "subprogram",
+      "lines": 243,
+      "calledBy": [
+        "FSJRDT"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSBM01",
+      "path": "app/cbl/FSBM01.cbl",
+      "kind": "subprogram",
+      "lines": 2173,
+      "calledBy": [
+        "FSBM02",
+        "FSEM0100",
+        "FSM01",
+        "FSM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSBM02",
+      "path": "app/cbl/FSBM02.cbl",
+      "kind": "subprogram",
+      "lines": 642,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSCME01",
+      "path": "app/cbl/FSCME01.cbl",
+      "kind": "subprogram",
+      "lines": 108,
+      "calledBy": [
+        "FSBM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSCU01",
+      "path": "app/cbl/FSCU01.cbl",
+      "kind": "subprogram",
+      "lines": 291,
+      "calledBy": [
+        "FSBM01",
+        "FSBM02",
+        "FSCU02",
+        "FSCUDP01",
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSCU02",
+      "path": "app/cbl/FSCU02.cbl",
+      "kind": "subprogram",
+      "lines": 1502,
+      "calledBy": [
+        "FSCU03",
+        "FSCUDP01",
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSCU03",
+      "path": "app/cbl/FSCU03.cbl",
+      "kind": "subprogram",
+      "lines": 463,
+      "calledBy": [
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSCUDP01",
+      "path": "app/cbl/FSCUDP01.cbl",
+      "kind": "subprogram",
+      "lines": 162,
+      "calledBy": [
+        "FSDCUD01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSDCUD01",
+      "path": "app/cbl/FSDCUD01.cbl",
+      "kind": "subprogram",
+      "lines": 1308,
+      "calledBy": [
+        "FSCU03",
+        "FSEM0100",
+        "FSJJC401"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSEM0100",
+      "path": "app/cbl/FSEM0100.cbl",
+      "kind": "subprogram",
+      "lines": 2648,
+      "calledBy": [
+        "JMLE0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSICE01",
+      "path": "app/cbl/FSICE01.cbl",
+      "kind": "subprogram",
+      "lines": 60,
+      "calledBy": [
+        "FSCU02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJBDEC",
+      "path": "app/cbl/FSJBDEC.cbl",
+      "kind": "subprogram",
+      "lines": 1054,
+      "calledBy": [
+        "FSJRBC"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAL01",
+      "path": "app/cbl/FSJJAL01.cbl",
+      "kind": "subprogram",
+      "lines": 102,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJHM02",
+        "FSJJLI01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAL02",
+      "path": "app/cbl/FSJJAL02.cbl",
+      "kind": "subprogram",
+      "lines": 7482,
+      "calledBy": [
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAL03",
+      "path": "app/cbl/FSJJAL03.cbl",
+      "kind": "subprogram",
+      "lines": 113,
+      "calledBy": [
+        "FSDCUD01",
+        "FSJJEL01",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAL04",
+      "path": "app/cbl/FSJJAL04.cbl",
+      "kind": "subprogram",
+      "lines": 429,
+      "calledBy": [
+        "FSCU02",
+        "FSDCUD01",
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAM01",
+      "path": "app/cbl/FSJJAM01.cbl",
+      "kind": "subprogram",
+      "lines": 130,
+      "calledBy": [
+        "FSCU02",
+        "FSJJAL02",
+        "FSJJAL04",
+        "FSJJEL02",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAN01",
+      "path": "app/cbl/FSJJAN01.cbl",
+      "kind": "subprogram",
+      "lines": 225,
+      "calledBy": [
+        "FSDCUD01",
+        "FSJJAL03",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJAS01",
+      "path": "app/cbl/FSJJAS01.cbl",
+      "kind": "subprogram",
+      "lines": 273,
+      "calledBy": [
+        "FSJJHS01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJBR01",
+      "path": "app/cbl/FSJJBR01.cbl",
+      "kind": "subprogram",
+      "lines": 468,
+      "calledBy": [
+        "FSDCUD01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJC01",
+      "path": "app/cbl/FSJJC01.cbl",
+      "kind": "subprogram",
+      "lines": 357,
+      "calledBy": [
+        "FSCU03",
+        "FSDCUD01",
+        "FSEM0100",
+        "FSJJCH02",
+        "FSJJCL01",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJC401",
+      "path": "app/cbl/FSJJC401.cbl",
+      "kind": "subprogram",
+      "lines": 175,
+      "calledBy": [
+        "FSCU03",
+        "FSJJCM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCE01",
+      "path": "app/cbl/FSJJCE01.cbl",
+      "kind": "subprogram",
+      "lines": 45,
+      "calledBy": [
+        "FSCU02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCH01",
+      "path": "app/cbl/FSJJCH01.cbl",
+      "kind": "subprogram",
+      "lines": 533,
+      "calledBy": [
+        "FSJJCH02",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCH02",
+      "path": "app/cbl/FSJJCH02.cbl",
+      "kind": "subprogram",
+      "lines": 2781,
+      "calledBy": [
+        "FSCU02",
+        "FSCU03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCI01",
+      "path": "app/cbl/FSJJCI01.cbl",
+      "kind": "subprogram",
+      "lines": 76,
+      "calledBy": [
+        "FSJJCH01",
+        "FSJJCH02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCL01",
+      "path": "app/cbl/FSJJCL01.cbl",
+      "kind": "subprogram",
+      "lines": 824,
+      "calledBy": [
+        "FSCU03",
+        "FSDCUD01",
+        "FSEM0100",
+        "FSJJCM01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCM01",
+      "path": "app/cbl/FSJJCM01.cbl",
+      "kind": "subprogram",
+      "lines": 425,
+      "calledBy": [
+        "FSCU03",
+        "FSDCUD01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCM02",
+      "path": "app/cbl/FSJJCM02.cbl",
+      "kind": "subprogram",
+      "lines": 123,
+      "calledBy": [
+        "FSCU03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCS01",
+      "path": "app/cbl/FSJJCS01.cbl",
+      "kind": "subprogram",
+      "lines": 1428,
+      "calledBy": [
+        "FSCU01",
+        "FSCU02",
+        "FSCU03",
+        "FSJJCH02",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJCT01",
+      "path": "app/cbl/FSJJCT01.cbl",
+      "kind": "subprogram",
+      "lines": 675,
+      "calledBy": [
+        "FSCU02",
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJAL04",
+        "FSJJCH02",
+        "FSJJCS01",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJEL01",
+      "path": "app/cbl/FSJJEL01.cbl",
+      "kind": "subprogram",
+      "lines": 233,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJLI01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJEL02",
+      "path": "app/cbl/FSJJEL02.cbl",
+      "kind": "subprogram",
+      "lines": 90,
+      "calledBy": [
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJHM01",
+      "path": "app/cbl/FSJJHM01.cbl",
+      "kind": "subprogram",
+      "lines": 489,
+      "calledBy": [
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJHM02",
+      "path": "app/cbl/FSJJHM02.cbl",
+      "kind": "subprogram",
+      "lines": 7730,
+      "calledBy": [
+        "FSCU02",
+        "FSJJCH02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJHS01",
+      "path": "app/cbl/FSJJHS01.cbl",
+      "kind": "subprogram",
+      "lines": 371,
+      "calledBy": [
+        "FSCU02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIL01",
+      "path": "app/cbl/FSJJIL01.cbl",
+      "kind": "subprogram",
+      "lines": 197,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJEL01",
+        "FSJJHM02",
+        "FSJJLI01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIS01",
+      "path": "app/cbl/FSJJIS01.cbl",
+      "kind": "subprogram",
+      "lines": 379,
+      "calledBy": [
+        "FSDCUD01",
+        "FSJJBR01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJIT01",
+      "path": "app/cbl/FSJJIT01.cbl",
+      "kind": "subprogram",
+      "lines": 204,
+      "calledBy": [
+        "FSDCUD01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJLI01",
+      "path": "app/cbl/FSJJLI01.cbl",
+      "kind": "subprogram",
+      "lines": 239,
+      "calledBy": [
+        "FSCU02",
+        "FSJJAM01",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJM01",
+      "path": "app/cbl/FSJJM01.cbl",
+      "kind": "subprogram",
+      "lines": 156,
+      "calledBy": [
+        "FSJJP01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJM02",
+      "path": "app/cbl/FSJJM02.cbl",
+      "kind": "subprogram",
+      "lines": 308,
+      "calledBy": [
+        "FSCU02",
+        "FSDCUD01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJME01",
+      "path": "app/cbl/FSJJME01.cbl",
+      "kind": "subprogram",
+      "lines": 65,
+      "calledBy": [
+        "FSJJCT01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJO201",
+      "path": "app/cbl/FSJJO201.cbl",
+      "kind": "subprogram",
+      "lines": 89,
+      "calledBy": [
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJP01",
+      "path": "app/cbl/FSJJP01.cbl",
+      "kind": "subprogram",
+      "lines": 5209,
+      "calledBy": [
+        "FSBM02",
+        "FSCU02",
+        "FSCU03",
+        "FSDCUD01",
+        "FSJJM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJR01",
+      "path": "app/cbl/FSJJR01.cbl",
+      "kind": "subprogram",
+      "lines": 54,
+      "calledBy": [
+        "FSJJBR01",
+        "FSJJIS01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJRE01",
+      "path": "app/cbl/FSJJRE01.cbl",
+      "kind": "subprogram",
+      "lines": 192,
+      "calledBy": [
+        "FSDCUD01",
+        "FSJJCL01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJRS01",
+      "path": "app/cbl/FSJJRS01.cbl",
+      "kind": "subprogram",
+      "lines": 302,
+      "calledBy": [
+        "FSDCUD01",
+        "FSJJCL01",
+        "FSJJIS01",
+        "FSJJUR01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJS01",
+      "path": "app/cbl/FSJJS01.cbl",
+      "kind": "subprogram",
+      "lines": 673,
+      "calledBy": [
+        "FSCU01",
+        "FSCU02",
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJBR01",
+        "FSJJCH02",
+        "FSJJCL01",
+        "FSJJCM01",
+        "FSJJCS01",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJJHS01",
+        "FSJJIS01",
+        "FSJJIT01",
+        "FSJJM02",
+        "FSJJP01",
+        "FSJJRS01",
+        "FSJJSS01",
+        "FSLIT01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJSS01",
+      "path": "app/cbl/FSJJSS01.cbl",
+      "kind": "subprogram",
+      "lines": 409,
+      "calledBy": [
+        "FSCU03"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJTD01",
+      "path": "app/cbl/FSJJTD01.cbl",
+      "kind": "subprogram",
+      "lines": 3173,
+      "calledBy": [
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJJUR01",
+      "path": "app/cbl/FSJJUR01.cbl",
+      "kind": "subprogram",
+      "lines": 105,
+      "calledBy": [
+        "FSDCUD01",
+        "FSJJCL01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRAL",
+      "path": "app/cbl/FSJRAL.cbl",
+      "kind": "subprogram",
+      "lines": 1999,
+      "calledBy": [
+        "FSBM01",
+        "FSBM02",
+        "FSCU02",
+        "FSCU03",
+        "FSDCUD01",
+        "FSEM0100",
+        "FSJJAL01",
+        "FSJJAL02",
+        "FSJJAL03",
+        "FSJJAL04",
+        "FSJJAM01",
+        "FSJJAN01",
+        "FSJJAS01",
+        "FSJJBR01",
+        "FSJJC01",
+        "FSJJC401",
+        "FSJJCH01",
+        "FSJJCH02",
+        "FSJJCL01",
+        "FSJJCM01",
+        "FSJJCM02",
+        "FSJJCS01",
+        "FSJJCT01",
+        "FSJJEL02",
+        "FSJJHM02",
+        "FSJJHS01",
+        "FSJJIL01",
+        "FSJJM01",
+        "FSJJM02",
+        "FSJJO201",
+        "FSJJP01",
+        "FSJJRE01",
+        "FSJJRS01",
+        "FSJJS01",
+        "FSJJSS01",
+        "FSJJTD01",
+        "FSJJUR01",
+        "FSJRMS",
+        "FSLIT01",
+        "FSM01",
+        "FSM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRBC",
+      "path": "app/cbl/FSJRBC.cbl",
+      "kind": "subprogram",
+      "lines": 342,
+      "calledBy": [
+        "FSBM01",
+        "FSBM02",
+        "FSJJAL02",
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRDT",
+      "path": "app/cbl/FSJRDT.cbl",
+      "kind": "subprogram",
+      "lines": 442,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRGC",
+      "path": "app/cbl/FSJRGC.cbl",
+      "kind": "subprogram",
+      "lines": 3370,
+      "calledBy": [
+        "FSJRAL"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRIH",
+      "path": "app/cbl/FSJRIH.cbl",
+      "kind": "subprogram",
+      "lines": 367,
+      "calledBy": [
+        "FSJJAL02",
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRMS",
+      "path": "app/cbl/FSJRMS.cbl",
+      "kind": "subprogram",
+      "lines": 110,
+      "calledBy": [
+        "FSEM0100",
+        "FSLIT01"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJRWB",
+      "path": "app/cbl/FSJRWB.cbl",
+      "kind": "subprogram",
+      "lines": 327,
+      "calledBy": [
+        "FSBM02",
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJCH01",
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02",
+        "FSJRDT"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSLIT01",
+      "path": "app/cbl/FSLIT01.cbl",
+      "kind": "subprogram",
+      "lines": 6770,
+      "calledBy": [
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSM01",
+      "path": "app/cbl/FSM01.cbl",
+      "kind": "subprogram",
+      "lines": 174,
+      "calledBy": [
+        "FSBM02",
+        "FSM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSM02",
+      "path": "app/cbl/FSM02.cbl",
+      "kind": "subprogram",
+      "lines": 1104,
+      "calledBy": [
+        "FSEM0100",
+        "FSJJAL02",
+        "FSJJCH02",
+        "FSJJHM01",
+        "FSJJHM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSMU01",
+      "path": "app/cbl/FSMU01.cbl",
+      "kind": "subprogram",
+      "lines": 65,
+      "calledBy": [
+        "FSBM01",
+        "FSCU02",
+        "FSM01",
+        "FSM02"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "JMLE0100",
+      "path": "app/cbl/JMLE0100.cbl",
+      "kind": "batch",
+      "lines": 443,
+      "calledBy": [],
+      "jobs": [
+        "JMMONEY"
+      ]
+    }
+  ],
+  "excluded": [],
+  "oracle": {
+    "provider": "generic",
+    "clock": "2022-07-05T10:11:12-07:00",
+    "cobcFlags": [
+      "-std=ibm",
+      "-fsign=EBCDIC",
+      "-fstatic-call",
+      "-Wno-others"
+    ],
+    "jobs": [
+      "JMMONEY"
+    ],
+    "datasets": [
+      {
+        "dsn": "JODAMONY.RUN.CONTROL",
+        "source": "app/data/RUN.CONTROL.txt",
+        "format": "fixed",
+        "lrecl": 80,
+        "minRecord": 80,
+        "alternateKeys": [],
+        "from": "JMLE0100:RUNCTL-FILE"
+      },
+      {
+        "dsn": "JODAMONY.CASES.DATA",
+        "source": "app/data/CASES.DATA.txt",
+        "format": "fixed",
+        "lrecl": 100,
+        "minRecord": 100,
+        "alternateKeys": [],
+        "from": "JMLE0100:EVENT-FILE"
+      }
+    ],
+    "scenarios": [
+      "accept-01",
+      "replay-01",
+      "replay-02",
+      "replay-03",
+      "replay-04",
+      "replay-05"
+    ],
+    "scenarioJobs": {},
+    "jobChecks": [
+      {
+        "job": "JMMONEY",
+        "scenario": "base",
+        "inputs": {
+          "JODAMONY.CASES.DATA": "oracle/runs/base/jobs/JMMONEY/in/JODAMONY.CASES.DATA",
+          "JODAMONY.RUN.CONTROL": "oracle/runs/base/jobs/JMMONEY/in/JODAMONY.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:JODAMONY.RESULTS.DATA": "oracle/runs/base/jobs/JMMONEY/out/JODAMONY.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/base/jobs/JMMONEY/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "JMMONEY",
+        "scenario": "accept-01",
+        "inputs": {
+          "JODAMONY.CASES.DATA": "oracle/runs/accept-01/jobs/JMMONEY/in/JODAMONY.CASES.DATA",
+          "JODAMONY.RUN.CONTROL": "oracle/runs/accept-01/jobs/JMMONEY/in/JODAMONY.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:JODAMONY.RESULTS.DATA": "oracle/runs/accept-01/jobs/JMMONEY/out/JODAMONY.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/accept-01/jobs/JMMONEY/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "JMMONEY",
+        "scenario": "replay-01",
+        "inputs": {
+          "JODAMONY.CASES.DATA": "oracle/runs/replay-01/jobs/JMMONEY/in/JODAMONY.CASES.DATA",
+          "JODAMONY.RUN.CONTROL": "oracle/runs/replay-01/jobs/JMMONEY/in/JODAMONY.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:JODAMONY.RESULTS.DATA": "oracle/runs/replay-01/jobs/JMMONEY/out/JODAMONY.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-01/jobs/JMMONEY/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "JMMONEY",
+        "scenario": "replay-02",
+        "inputs": {
+          "JODAMONY.CASES.DATA": "oracle/runs/replay-02/jobs/JMMONEY/in/JODAMONY.CASES.DATA",
+          "JODAMONY.RUN.CONTROL": "oracle/runs/replay-02/jobs/JMMONEY/in/JODAMONY.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:JODAMONY.RESULTS.DATA": "oracle/runs/replay-02/jobs/JMMONEY/out/JODAMONY.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-02/jobs/JMMONEY/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "JMMONEY",
+        "scenario": "replay-03",
+        "inputs": {
+          "JODAMONY.CASES.DATA": "oracle/runs/replay-03/jobs/JMMONEY/in/JODAMONY.CASES.DATA",
+          "JODAMONY.RUN.CONTROL": "oracle/runs/replay-03/jobs/JMMONEY/in/JODAMONY.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:JODAMONY.RESULTS.DATA": "oracle/runs/replay-03/jobs/JMMONEY/out/JODAMONY.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-03/jobs/JMMONEY/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "JMMONEY",
+        "scenario": "replay-04",
+        "inputs": {
+          "JODAMONY.CASES.DATA": "oracle/runs/replay-04/jobs/JMMONEY/in/JODAMONY.CASES.DATA",
+          "JODAMONY.RUN.CONTROL": "oracle/runs/replay-04/jobs/JMMONEY/in/JODAMONY.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:JODAMONY.RESULTS.DATA": "oracle/runs/replay-04/jobs/JMMONEY/out/JODAMONY.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-04/jobs/JMMONEY/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "JMMONEY",
+        "scenario": "replay-05",
+        "inputs": {
+          "JODAMONY.CASES.DATA": "oracle/runs/replay-05/jobs/JMMONEY/in/JODAMONY.CASES.DATA",
+          "JODAMONY.RUN.CONTROL": "oracle/runs/replay-05/jobs/JMMONEY/in/JODAMONY.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:JODAMONY.RESULTS.DATA": "oracle/runs/replay-05/jobs/JMMONEY/out/JODAMONY.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-05/jobs/JMMONEY/out/sysout/STEP20.SYSOUT.txt"
+        }
+      }
+    ],
+    "jobCheckRoot": ".",
+    "status": {
+      "builtAt": "2026-11-01T10:43:04",
+      "units": 1,
+      "unitsCached": 0,
+      "runAt": "2026-11-01T10:43:04",
+      "scenarios": [
+        "base",
+        "accept-01",
+        "replay-01",
+        "replay-02",
+        "replay-03",
+        "replay-04",
+        "replay-05"
+      ],
+      "problems": [],
+      "referenceOutputs": 7,
+      "referenceMatch": 7
+    }
+  },
+  "publish": {
+    "jobs": [
+      "JMMONEY"
+    ],
+    "capabilities": [
+      "FNDKRND",
+      "FNDTKRN",
+      "FSBM01",
+      "FSBM02",
+      "FSCME01",
+      "FSCU01",
+      "FSCU02",
+      "FSCU03",
+      "FSCUDP01",
+      "FSDCUD01",
+      "FSEM0100",
+      "FSICE01",
+      "FSJBDEC",
+      "FSJJAL01",
+      "FSJJAL02",
+      "FSJJAL03",
+      "FSJJAL04",
+      "FSJJAM01",
+      "FSJJAN01",
+      "FSJJAS01",
+      "FSJJBR01",
+      "FSJJC01",
+      "FSJJC401",
+      "FSJJCE01",
+      "FSJJCH01",
+      "FSJJCH02",
+      "FSJJCI01",
+      "FSJJCL01",
+      "FSJJCM01",
+      "FSJJCM02",
+      "FSJJCS01",
+      "FSJJCT01",
+      "FSJJEL01",
+      "FSJJEL02",
+      "FSJJHM01",
+      "FSJJHM02",
+      "FSJJHS01",
+      "FSJJIL01",
+      "FSJJIS01",
+      "FSJJIT01",
+      "FSJJLI01",
+      "FSJJM01",
+      "FSJJM02",
+      "FSJJME01",
+      "FSJJO201",
+      "FSJJP01",
+      "FSJJR01",
+      "FSJJRE01",
+      "FSJJRS01",
+      "FSJJS01",
+      "FSJJSS01",
+      "FSJJTD01",
+      "FSJJUR01",
+      "FSJRAL",
+      "FSJRBC",
+      "FSJRDT",
+      "FSJRGC",
+      "FSJRIH",
+      "FSJRMS",
+      "FSJRWB",
+      "FSLIT01",
+      "FSM01",
+      "FSM02",
+      "FSMU01",
+      "JMLE0100"
+    ],
+    "acceptanceScenarios": [
+      "accept-01"
+    ]
+  },
+  "gemma": {
+    "designed": []
+  },
+  "muse": {
+    "designed": []
+  },
+  "reference": {
+    "label": "MONEY AMOUNTS - the original Java (oracle A, EventHarness)",
+    "root": "C:\\Users\\Tomrodgers\\JavaToCOBOLTest\\claude-in-app\\workspace\\runs\\20261101-034452-joda-money\\estate\\oracle-a",
+    "scenarioMap": {
+      "base": "accept-01"
+    },
+    "outputs": {
+      "JODAMONY.RESULTS.DATA": "RESULTS.dat"
+    }
+  },
+  "notes": []
+}

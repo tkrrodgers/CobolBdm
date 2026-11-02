@@ -50,6 +50,13 @@ public sealed class Shapes
     readonly Dictionary<ClassDef, List<ClassDef>> nested = [];
     public readonly Dictionary<string, Iface> Interfaces = new(StringComparer.Ordinal);
     public readonly Dictionary<ClassDef, List<Iface>> Implements = [];
+    /// <summary>R1 api-visibility (opt-in): the access of methods, constructors and statics; null: the lift's own rules print.</summary>
+    public Dictionary<FunctionDef, Access>? MemberAccess;
+    public Dictionary<FieldDef, Access>? StaticAccess;
+    /// <summary>R3 final-classes (opt-in): the classes printed final; null: the lift's own rules print.</summary>
+    public HashSet<ClassDef>? FinalClasses;
+    /// <summary>R5 program-interfaces (opt-in): declarations printed with an interface type; null: the lift's own types print.</summary>
+    public ProgramInterfaces.Widened? Widened;
 
     public Shapes(Model m, Dictionary<FunctionDef, Method> methods)
     {

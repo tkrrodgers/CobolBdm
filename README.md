@@ -90,6 +90,244 @@ actions are headless under `/api` (see Run).
 - Caveat: in the CardDemo runs the AST outline reached the design prompts but not the implementation prompts. A line-ending bug, since fixed, prevented it, and the corrected run records say so.
 - Pass histories: `projects/zopeneditor-sample/gemma/RUNS.md`.
 
+## Deterministic Java modernization: composed storage (first increment)
+
+The first implementation increment of [modernizeJavaCode.md](modernizeJavaCode.md) is available without running a model.
+It is opt-in; existing transpilation and published exports keep their default behavior.
+
+- The emitter generates a private, static `Storage` aggregate owned by the program through composition. It contains
+  byte areas and field views, not procedure methods, file handles or paragraph control. The program adapter still
+  extends `CobolBase`; there is no `extends State_<PID>` in this lane.
+- MOVE, conditions, table/ODO references, file keys/status, SORT areas, VALUE initialization and LINKAGE/LOCAL-STORAGE
+  hooks use the same resolved layouts and runtime operations as the faithful lane.
+- Published exports retain an independently emitted faithful `Baseline_<PID>`. The inheritance projection is explicitly
+  skipped; later projections that require an inherited state class remain skipped with their existing ledger reasons.
+- `modernization/storage-composition.json` records source/baseline hashes, layouts, CALL sites and frontiers. It explicitly
+  says `storage-composition-only`, `businessRulesExtracted=false`, and that generation does not establish oracle parity.
+- Record-kit differential tests inspect either inherited storage or the composed aggregate. Kits are generated before
+  domain partitioning so their sources and tests enter the correct Gradle modules; unassigned root sources/tests reject
+  a partitioned export instead of being silently ignored.
+
+Select **Generate composed storage** on Conversion before Publish, or use `composeStorage=true` on the workspace publish,
+job export or estate export API. Use a separate publish target while this lane is experimental:
+
+```powershell
+dotnet run --project MlCpu\src\MlCpu.JavaBridge -- --file <prog.cbl> --compose-storage --spill-dir work\composed
+Invoke-RestMethod -Method Post "http://localhost:5100/migrate/estate-java?jobs=POSTTRAN,INTCALC,TRANREPT&partition=false&composeStorage=true&exportDir=$PWD\work\composed-export"
+dotnet run --project MlCpu\src\CobolConformance -- --suite TruthTable --compose-storage
+dotnet run --project MlCpu\src\CobolConformance -- --suite GnuCobolParity --compose-storage
+```
+
+Verification for this increment: 7 new composition/protocol regressions plus 8 existing storage/runtime tests pass;
+28 composed truth-table checks and 26 GnuCOBOL conformance comparisons pass; the default projection suite passes 18
+checks. The composed three-program CardDemo Spring export passes 122 tests with and without domain partitioning,
+including all six record-kit tests; the default partitioned lane also passes 122 tests. Its composed
+POSTTRAN/INTCALC/TRANREPT jobs match 11/11 existing oracle captures. Wall-clock comparisons differ only in approved
+clock-derived fields.
+
+### Scoped runtime, typed rule slices and human implementation handoff
+
+Composed publish now also requests `extractRules` from the sidecar. Eligible predicates and calculations become public
+immutable input/result contracts and stateless generated implementations under `com.mlcpu.rules`, compiled against the
+JDK only. The adapter reads current record values and applies results through the existing storage operations; skipped
+sites, source IDs and hashes are recorded in the extraction ledger. CBTRN02C has 25 eligible slices and CBACT04C has 19.
+Collation-sensitive, mixed-category and unsafe reads remain on the compatibility path; monthly-interest division remains
+there because its truncation/SIZE ERROR semantics are not yet extracted.
+
+`RunUnit` owns scoped registers, program registrations, EXTERNAL storage, configuration, clock, DDs, input, output and
+resource tracking. It installs/restores the original static runtime ABI under a serialized compatibility bridge.
+Concurrent requests can be isolated, but legacy execution is **not parallel**. Recursive calls restore LINKAGE bindings,
+LOCAL-STORAGE, called status and control state. `ModernProgramViews` provides live overlapping BY REFERENCE views;
+the older `byte[][]` ABI rejects unsafe overlaps. BY CONTENT buffers are private, and omitted views are explicit.
+Runtime CANCEL resets retained storage or a registered modern factory; unsupported CALL forms are not made safe merely
+by this runtime support, and the CALL inventory records their status.
+
+Published projects include `modern-rules`, `rules-example` and `rules-conformance` modules plus `rule-handoff.md`,
+contracts/cases and generated-file locks. Human implementations live outside generated roots and compile against the
+public contracts without program state. Selection is process-pinned by the generated `RuleSelector`; explicit typed
+constructor bindings are required for per-request selection. Build and job-start checks reject known stateful/ambient
+providers, but these conservative checks are not a formal purity proof or an arbitrary-code sandbox.
+
+Generated jobs accept `--mlcpu.strangler=OFF|LEGACY|MODERN|SHADOW` (default OFF). LEGACY selects frozen baselines;
+MODERN selects generated programs; SHADOW stages both sides in separate run units, records/replays clock values,
+compares ordered effects and storage/file images, and publishes only legacy outputs. Reports explicitly say
+`promoted=false`. Normalized external-port implementations and uncertified custom rule selections are rejected by
+SHADOW rather than executing duplicate live effects.
+
+Current verification: 50 Java tests pass; the human handoff and job wiring pass 52 offline/end-to-end checks. The real
+domain-partitioned CardDemo export passes 1,263 tests (1,141 rule-conformance tests), matches 11/11 captured oracle outputs,
+and POSTTRAN's actual SHADOW run reports matching storage, effects and files with the expected return code 4.
+The composed GnuCOBOL corpus still passes 26 comparisons and the truth tables pass 28 checks.
+
+**The full plan is still gated:** individual L2 slices are not complete modernized capabilities. Unsupported lowering,
+whole-workflow extraction, approved business naming/design changes and live forward-service rollout remain separate
+gates. The JOBOL loop additionally requires readable modern Java and no regression: the architect's initial
+`loanamorti` baseline is 34.7/C with `Lcle0100Batch` at 100/F, so parity alone does not complete modernization.
+Generator-level restructuring of that separate `MlCpu.Modernize` batch template is tracked independently.
+
+The architect has now accepted the first measured batch-template restructuring. Under JOBOL 1.0 the estate improved
+from 34.7 to 1.7 and `Lcle0100Batch` from 100/F to 0/A, with no regression and GN4 7/7. JOBOL 1.1 adds stricter checks;
+its new baseline `20261031-193948-bbd188` is 22.2/B (gate PASS), with the batch at 56/D. Subsequent iterations target typed
+record accessors, enums, centralized overflow policy and cohesive loan-sequence state. The two rulesets cannot be
+compared directly. GN4's ordered SYSOUT inclusion is not full byte parity, and the existing error-text gaps remain
+documented rather than waived.
+
+Under the same 1.1 ruleset, iterations 5/6 now pass the loanamorti gate at 1.7 with `Lcle0100Batch` and `Fsem0100Job`
+at 0/A (41 findings resolved, none added). GN4 remains 7/7, and the new native error harness passes 15 scoped cases.
+The iteration's architect review and the normal-SYSOUT heap-statistics exclusion remain pending. Fineract-xl's batch
+template improves as well (GN4 46/46), but its estate gate still fails on the separate lift/calculation path.
+
+An additional native MOVE suite verifies aliased multi-receiver evaluation in both emitted lanes. Shifted overlapping
+raw copies with uncertified compiler-dependent behavior now produce an explicit frontier before any bytes are changed.
+
+Iteration 7 is architect-accepted as batch-track complete (loanamorti 1.6/A; both fineract-xl batch steps A).
+Tomrodgers approved the pinned statistics-only SYSOUT exclusion v2, hash
+`faf2fc2c059ed3b204ed4b8e2c04bd1f987ad7d1b07c0ef5f2952f033474f958`; changing that scope requires renewed approval.
+It does not waive a real 31-digit arithmetic divergence exposed by the new long-term error scenario. The error harness
+still fails that case, and the separate lift/calculation track must preserve the known-site abend before claiming the
+full fineract-xl gate or parity is green.
+
+The lead has restricted work to fineract-xl loop 0 before any next estate. Native probes corrected the earlier
+precision diagnosis: the limitation is FSJBDEC big-value capacity, not an arbitrary 31-digit limit. The per-site fix
+is architect-accepted with the 1331/1332 boundary, 19/19 error cases and loanamorti GN4 7/7 without regression.
+Fineract-xl lift quality and the separate per-loan big-value-store capacity evidence remain loop-0 gates.
+
+Loop 0 is now lead-approved: fineract-xl is 15.0/B (111 findings resolved, none added), GN4 46/46,
+loanamorti GN4 7/7, and the error harness 21/21. Store capacity is preserved by the 312/313 boundary probe,
+and unchecked big-path operations fail closed. Regression baselines are
+`20261031-220149-f58389` (fineract-xl) and `20261031-220151-e020cf` (loanamorti).
+The next authorized loop is fineract-cobol's non-J3S Tier-1 shape, with fineract-cobol-cr as the independence check;
+it must prove generic typed subprogram lifting and GN4 58/58 without regressing either approved baseline.
+
+Loop 1's first milestone now emits all 16 typed CALL subprogram classes, removes the initial 87 residue sites and
+31 javac errors, and passes GN4 58/58 on both the main and clean-room estates. JOBOL improves from 93.2/F to
+55.4/D (`20261031-231144-affd92`) under the unchanged 1.1.0 ruleset, but still **FAILS** with the schedule batch
+at 100/F. Both approved regression baselines remain unchanged and green. The architect accepted progress, not
+completion. Next work proves JDK date/rounding/money replacements against retained lifted references with
+differential and mutant gates, then improves typed function APIs, state ownership, file/status flow and reporting.
+No next estate starts before Loop 1 approval; see [modernizeJavaCode.md](modernizeJavaCode.md) for the evidence.
+
+Loop 1 is now architect-approved: the final main and clean-room estates measure **12.4/B, PASS**, with zero
+residue, clean builds and GN4 58/58 each. The main audit `20261101-013204-d1d187` improves by 80.8 points against
+iteration 0 without changing rules or hiding business logic in compatibility lanes. DateKernel and RoundingKernel
+use typed JDK operations, verified against retained test-lane references over 21,058,849 and 2,082,656 cases
+respectively, with zero differences and all seven mutants detected within the documented gate domains.
+A follow-up corrected the rounding exclusion's premise: below digit count -9968, S/P legacy operations have
+defined call-history-dependent storage, not undefined behavior. Those inputs are unreachable in the approved
+estate, but public kernel equivalence there is unproven and originally lacked an explicit frontier. The architect confirmed
+this estate-scoped approval and requires an explicit unsupported-input failure at both typed and adapter entries,
+not a JDK answer or restored mutable history in modern code. The authorized Loop 2 must implement and test that
+boundary and its own caller reachability, alongside fineract-legacy's 21 programs and 58
+scenarios. All four approved estates are regression baselines. Capacity types, scratch dataflow and remaining
+naming/flow improvements carry forward as generic passes, not as waived completion of the entire plan.
+
+Loop 2 milestone 1 now measures **14.4/B, PASS** (`20261101-021443-15a70d`, change -28.5), with zero residue,
+clean build/lint and GN4 58/58. Unsupported rounding inputs explicitly fail before JDK arithmetic at both typed
+and adapter entries; supported-domain legacy-reference gates and all four regressions remain green.
+The first review's approval was conditional on coverage and expanded parity. The corrected ledger has **406**
+entries, not 410; 28 removed paragraphs are unreachable and four are inlined. Coverage over 698 legacy runs records
+330 exercised entries, with unexecuted/partial business and error paths explicitly retained as residual risk.
+Caller precision bounds are now derived, not merely observed.
+
+Loop 2 is now **lead-approved under the user's diagnostic-preservation choice**: all 13 former failures,
+**640/640 additional scenarios and 58/58 originals** pass strict parity without a new exclusion. The named, pinned
+native-diagnostics profile lives solely at the compatibility lifecycle boundary; modern domain/batch classes
+remain unchanged. Oracle probes establish first-successful-OPEN ordering (reopen retains rank) and warnings at any
+run-unit end with files left open, including normal STOP RUN/GOBACK.
+
+All five final regression baselines are green at zero delta. Approved v2 and `gn4err.sh` stay unchanged; replacing
+v2's existing implicit-CLOSE filter with the profile would require a separate user decision. Residual business
+coverage risks remain recorded. Termination-error cleanup is now hardened and architect-accepted: all releases are
+attempted and errors preserved, with twelve persistent failure-path checks passing in each of three estates and
+all five regressions unchanged. Authorized Loop 3 kontor-zins onboarding is verified: all 31 programs parse (99 call edges), and a
+fresh GnuCOBOL rebuild matches all six references byte for byte, covering 249,964 records and 696 'X' rejects.
+Fifteen additional pinned error/boundary fixture runs also match the original Java reference's output/counters and
+explicitly mapped native abend semantics, without changing the six-scenario baseline. They are not yet modern GN4
+results. Generator ownership has been handed off; Loop 3 iteration-0 generation/audit and modern parity wiring
+are proceeding. Five isolated native/modern query fixtures additionally match exactly and cover five residual
+ledger regions, but do not prove valid batch reachability or alter the batch-coverage counts. See
+[modernizeJavaCode.md](modernizeJavaCode.md) for the baseline caveat, domains and exact remaining gates.
+
+Loop 3 milestone 1 now measures **0.0/A, PASS**, with clean Java 21 build/lint, zero residue and **25 standard/domain
+parity runs passing**. Generic JDK mapping and control-flow/temporary cleanups also preserve all five regressions.
+The loop is **not complete**: payment-heavy probes expose a real FSJBDEC store-capacity abend 37 that modern pow
+does not yet reproduce. The architect selected exact compatibility-boundary store accounting under the standing
+preservation decision. Required MP/MT boundaries include 227/228 events at 360 months and 192/193 at 600 months,
+with exact partial output/return-code/SYSOUT tests and a store-model-removal negative control. No new exclusion or
+generic 31-digit precision cap substitutes for that behavior; Loop 4 waits for the complete gate.
+
+The user subsequently approved retiring v2's implicit-CLOSE exclusion. **v2.1 is statistics-only**, pinned at
+`7d7905e2067af80b3950dd93b7e87b3644ecd72388c1d3f10241bfbe20f4b7c6`, with the original statistics allowlist,
+guard and END-position rule unchanged. Runtime warnings are compared everywhere, including the error harness.
+Kontor-zins now passes **50/50** standard and capacity-fixture runs under this policy. Disabling the diagnostics
+profile makes the seven warning-bearing loanamorti error cases fail as expected. Full five-estate validation is
+running; exact store-model negative controls and final Loop 3 closeout are still pending.
+
+Loop 3 is now **lead-approved**: exact decimal-store preservation passes **56/56** runs and 31 native-measured
+capacity fixtures, with the required store-model negative controls. Its final audit is 0.0/A. A surviving carry-loop
+mutant is recorded as a test-coverage gap; production contains the full checked retry loop, not a runtime frontier.
+
+The stricter XL comparison uncovered older statistics-only SYSOUT gaps. The user explicitly approved separate
+353-line FSGN/schedule and FSEM/event scopes, each pinned to its named step, exact pool names and END position.
+Base v2.1 and the diagnostics profile remain unchanged; every business, abend and implicit-CLOSE line is compared.
+The full XL strict rerun now passes **46/46**, with exactly 353 explicitly approved statistics lines per case and
+all remaining SYSOUT, datasets and return codes equal. This closes the older gap; prior inclusion-only results
+are not retrospectively presented as exact parity.
+
+Authorized Loop 4 Joda-Money onboarding is verified: 65 programs, with fresh native outputs **6/6 byte-equal**
+(12,845 records, 811 rejects) and LICENSE/NOTICE retained. Its generation/audit baseline is proceeding against six
+anchors. Unreached traps, unproven capacities and untested APIs remain explicit scope risks, not waived semantics.
+The statistics-only migration also passes loanamorti 7/7 plus 21/21 error paths and all three FN estates 58/58;
+the native diagnostics profile and base v2.1 remain pinned unchanged.
+
+Loop 4's Joda-Money milestone now builds cleanly with zero untranslated items and audits **1.5/A**.
+All **39/39 runs pass strict native/reference parity** after the user's separate Joda-only 83-line statistics
+policy was pinned (`811a128d0363aaa07bc9eaa9b937fd009a9496ecfb2b5a7aa9eafc48c68bf709`).
+Every business, abend and implicit-CLOSE line remains compared. The detected compact-only decimal runtime's
+working/result limits and job-output range failures are preserved at compatibility sites.
+At that progress milestone, the final six-anchor execution checks and startup/exception fidelity scope review were pending; unreplayed APIs,
+measured-only pool capacities and disclosed older unchecked-operation paths are not claimed proven. No Loop 5 has started.
+
+**The five JOBOL loops (0-4) are now architect-approved.** Joda's final generation is **1.5/A**, builds cleanly
+and passes **41/41 strict** runs; all six earlier estates were actually rerun with zero audit delta.
+The strict checker, native capacity/add counterexample, startup/resource proofs and 23 mutation controls are verified.
+There is no fncobolgen emulation class in Joda's main Java sources.
+
+This completes the bounded five-loop programme, **not every forward-engineering or unsupported-semantics gate**.
+Fineract-xl's 123 unchecked decimal operations and 106 unpreserved failure paths remain disclosed, as do replay,
+pool-bound and residual coverage gaps. Seven final regression anchors are recorded in
+[modernizeJavaCode.md](modernizeJavaCode.md). No next estate or generator/policy change is started; the user decides
+the next work, and the pipeline inbox watcher stays active. Nothing has been committed.
+
+The user has approved **Phase M**, original-guided generic quality rules. The lead compares against original Java
+and will supply rule specifications; the generator itself must never read originals or use per-estate name/structure
+hints. Each rule uses COBOL/IR/estate evidence, fails closed and is implemented one per milestone, with separate
+train/test deltas, strict parity, JOBOL and all seven anchors unchanged.
+The first rule, **R1 API-surface visibility, was rejected** by its pre-registered quality test: widened access fell,
+but narrowed access rose and API fidelity declined on TRAIN and TEST. All seven behavior gates passed; that does not
+make the quality result acceptable. R1 stays opt-in only, with default generation byte-identical to the final anchors.
+Recovering external API intent needs evidence outside the closed call graph, such as a future business API manifest.
+
+An important pre-existing limit is now explicit: J3S class/package/method names come from CLASS/FRAME provenance
+headers quoting original Java. J3S name/structure fidelity is therefore not proof of header-free COBOL generalization.
+New rule decisions must not use those comments or original sources; this underlying model reliance remains disclosed.
+**R3 final classes only is accepted as opt-in under an explicit `closedWorld: true` deployment declaration**.
+G23 falls TRAIN 20 to 3 and TEST 7 to 0 with unchanged fidelity and all seven gates green, but 22 added finals are stricter
+than the originals. They are permitted only when the owner declares no external subclassing/proxying; default stays
+off. The explicit `project.json` deployment-profile gate is now architect-accepted: both `closedWorld: true` and
+the selected rule are required, invalid/unauthorized input fails before generation, and authorization is recorded.
+All 96 self-tests and 36 CLI-negative checks pass; no actual estate declaration was changed.
+
+**R5 program-to-interfaces was rejected**: G11 improved on TRAIN only (13 to 12), TEST stayed at 3 and G13 rose.
+All seven behavior gates passed, but the quality criterion failed; R5 remains opt-in/off and default output unchanged.
+
+The key risk is broader than names: existing FRAME comments also supply parameter types and synthesized interfaces,
+and generated Javadoc repeats their Java signatures. Those provenance-assisted results do not demonstrate recovery
+from ordinary legacy COBOL. **A0 provenance ablation is now measuring the bias**, using scratch copies with provenance
+comments stripped and active code byte-identical. No generator fix, new rule or policy change is part of A0.
+Lift/build/parity/fidelity failures will be reported, not repaired or counted as success. R2/R4 and CardDemo wait
+for the lead's next decision; CardDemo still requires explicit user authorization.
+
 ## Layout
 
 ```

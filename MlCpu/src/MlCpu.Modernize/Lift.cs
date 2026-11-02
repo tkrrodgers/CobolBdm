@@ -52,6 +52,8 @@ public sealed partial class FunctionLifter
     /// <summary>Closure objects being captured.</summary>
     readonly Dictionary<Var, ELambda> closures = [];
     string? site;
+    /// <summary>What the last MOVE to JX-AT named (a field or a step of the job adapter): the site of JX-JOBFAIL.</summary>
+    string? jobFailAt;
     int line;
     int tempNo;
 
@@ -72,56 +74,112 @@ public sealed partial class FunctionLifter
 
     void Run()
     {
-        // parameters in order
+        // parameters in order (one a caller passes a stored decimal to is checked: the model's taint sets)
         foreach (var ps in Fn.Params)
         {
             var v = VarOf(ps);
+            if (M.LimitedParams.ContainsKey(FnKey + "#" + R.Params.Count)) Taint(v);
             R.Params.Add(v);
         }
         var paras = P.Model.Paragraphs;
         // a job function's reject paragraph is the handler the application layer wraps around it
         if (Fn.IsJob) skipParagraphs.Add("F" + Fn.Id[1..] + "-REJECT");
         var tries = FindTries();
-        for (int i = Fn.FirstParagraph; i <= Fn.LastParagraph; i++)
+        foreach (var t in tries) tryHandlers.Add(paras[t.HandlerPara].Name);
+        LiftParagraphs(Fn.FirstParagraph, 0, Fn.LastParagraph, tries);
+        Flush();
+        Fold.Returns(R.Low, Fn.ExitParagraph, Fn.Ret is null ? null : ResultVar());
+        Fold.DuplicateExits(R.Low);
+        Fold.Webs(R.Low, R.Vars);
+    }
+
+    /// <summary>
+    /// Lifts paragraphs first..last (the first from its statement firstStmt on); a try statement among them (one of
+    /// <paramref name="tries"/> that starts here and ends before last) becomes an STry, its body lifted the same way, so
+    /// nested try statements nest.
+    /// </summary>
+    void LiftParagraphs(int first, int firstStmt, int last, List<TryRegion> tries)
+    {
+        var paras = P.Model.Paragraphs;
+        for (int i = first; i <= last; i++)
         {
             var para = paras[i];
+            int from = i == first ? firstStmt : 0;
             Flush();
-            // a try statement: its body from the start statement to the handler, the catch body up to the join
-            if (tries.FirstOrDefault(t => t.StartPara == i) is { } tr)
+            // a try statement: its body from the start statement to the handler, each catch clause from its paragraph on
+            if (tries.Where(t => t.StartPara == i && t.StartStmt >= from && t.HandlerPara <= last + 1)
+                    .OrderBy(t => t.StartStmt).ThenByDescending(t => t.HandlerPara).FirstOrDefault() is { } tr)
             {
-                if (i > Fn.FirstParagraph) Emit(new LLabel(para.Name));
-                Block(para.Statements.Take(tr.StartStmt).ToList());
+                if (i > Fn.FirstParagraph && from == 0) Emit(new LLabel(para.Name));
+                Block(para.Statements.Skip(from).Take(tr.StartStmt - from).ToList());
                 Flush();
-                var tryBody = LiftRegion(() =>
+                var inner = tries.Where(t => !ReferenceEquals(t, tr)).ToList();
+                int start = i;
+                if (tr.Clauses.Count == 0 && tr.Trap is null)
                 {
-                    Block(para.Statements.Skip(tr.StartStmt).ToList());
-                    for (int k = i + 1; k < tr.HandlerPara; k++) { Flush(); Emit(new LLabel(paras[k].Name)); Block(paras[k].Statements); }
-                }, tr.Join);
-                var e = NewNamed("e", VKind.Ref);
-                e.Type = tr.Types.Count == 1 ? tr.Types[0] : JType.Of(string.Join(" | ", tr.Types.Select(t => t.Simple)));
-                var catchBody = LiftRegion(() =>
-                {
-                    for (int k = tr.CatchPara; k < tr.JoinPara; k++) { Flush(); if (k > tr.CatchPara) Emit(new LLabel(paras[k].Name)); Block(paras[k].Statements); }
-                }, tr.Join);
+                    // a handler that never catches: the body in place, the handler and its dead catch bodies skipped
+                    LiftParagraphs(start, tr.StartStmt, tr.HandlerPara - 1, inner);
+                    i = tr.JoinPara - 1;
+                    continue;
+                }
+                var tryBody = LiftRegion(() => LiftParagraphs(start, tr.StartStmt, tr.HandlerPara - 1, inner), tr.Join);
+                var siteAfterBody = site;
                 var st = new STry(tryBody) { Line = line };
-                st.Catches.Add((e.Type, e, catchBody));
+                foreach (var c in tr.Clauses)
+                {
+                    var e = NewNamed("e", VKind.Ref);
+                    e.Type = c.Type;
+                    var catchBody = LiftRegion(() =>
+                    {
+                        for (int k = c.FirstPara; k < c.EndPara; k++) { Flush(); if (k > c.FirstPara) Emit(new LLabel(paras[k].Name)); Block(paras[k].Statements); }
+                    }, tr.Join);
+                    st.Catches.Add((c.Type, e, catchBody));
+                }
+                if (tr.Trap is { } trap)
+                {
+                    // a try-with-resources handler: J3S cannot close the resource and keep the exception (suppressed), so
+                    // an exception with the resource open stops the run (abend 31 at the trap's site); else it propagates
+                    var e = NewNamed("e", VKind.Ref);
+                    e.Type = JType.Of("java.lang.Exception");
+                    var catchBody = LiftRegion(() => { Block([trap]); Flush(); Emit(new SThrow(new EVar(e))); }, tr.Join);
+                    st.Catches.Add((e.Type, e, catchBody));
+                }
+                // clauses with the same body, the later catching a superclass of the earlier: the later alone (a
+                // RuntimeException handler followed by an Exception handler that both stop the run)
+                for (int ci = 0; ci + 1 < st.Catches.Count; ci++)
+                    if (CatchSuper(st.Catches[ci].Type.Name, st.Catches[ci + 1].Type.Name)
+                        && IrText.Show(st.Catches[ci].Body, 0) == IrText.Show(st.Catches[ci + 1].Body, 0)
+                        && !Passes.All(st.Catches[ci].Body).SelectMany(Fold.Exprs).Any(x => Fold.Mentions(x, st.Catches[ci].V)))
+                    {
+                        st.Catches.RemoveAt(ci);
+                        ci--;
+                    }
+                // the statements after the try continue the try body's site (a handler's trap site is its own)
+                site = siteAfterBody;
                 Low.Add(st);
                 i = tr.JoinPara - 1;
                 continue;
             }
             if (skipParagraphs.Contains(para.Name)) { Emit(new LLabel(para.Name)); Emit(new SThrow(new ENew { JdkClass = "java.lang.IllegalStateException", Args = [ELit.Str("lifted elsewhere")] })); continue; }
-            if (i > Fn.FirstParagraph) Emit(new LLabel(para.Name));
+            if (i > Fn.FirstParagraph && from == 0) Emit(new LLabel(para.Name));
             if (IsExit(para.Name))
             {
                 Emit(new SReturn(Fn.Ret is null ? null : new EVar(ResultVar())));
                 continue;
             }
-            Block(para.Statements);
+            Block(para.Statements.Skip(from).ToList());
         }
-        Flush();
-        Fold.Returns(R.Low, Fn.ExitParagraph, Fn.Ret is null ? null : ResultVar());
-        Fold.DuplicateExits(R.Low);
-        Fold.Webs(R.Low, R.Vars);
+    }
+
+    /// <summary>Whether the JDK exception class <paramref name="super"/> is a superclass of <paramref name="sub"/> (java.lang's hierarchy).</summary>
+    static bool CatchSuper(string sub, string super)
+    {
+        var up = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["java.lang.RuntimeException"] = "java.lang.Exception", ["java.lang.Exception"] = "java.lang.Throwable", ["java.lang.Error"] = "java.lang.Throwable",
+        };
+        for (var x = up.GetValueOrDefault(sub); x is not null; x = up.GetValueOrDefault(x)) if (x == super) return true;
+        return false;
     }
 
     bool IsExit(string para) => para.Equals(Fn.ExitParagraph, StringComparison.OrdinalIgnoreCase);
@@ -129,46 +187,129 @@ public sealed partial class FunctionLifter
     /// <summary>Where statements go: the function's low IR, or the region being lifted (a try body, a catch body).</summary>
     List<St>? sink;
     List<St> Low => sink ?? R.Low;
+    /// <summary>The regions being lifted, outermost first.</summary>
+    readonly List<List<St>> regionStack = [];
+    /// <summary>The handler paragraphs of the function's try statements: a GO TO one after a raise is the throw itself.</summary>
+    readonly HashSet<string> tryHandlers = new(StringComparer.OrdinalIgnoreCase);
 
-    sealed record TryRegion(int StartPara, int StartStmt, int HandlerPara, int CatchPara, int JoinPara, string Join, List<JType> Types);
+    sealed record CatchClause(JType Type, int FirstPara, int EndPara);
 
     /// <summary>
-    /// J3S's try/catch: the guards of the try body GO TO a handler paragraph (PERFORM JX-ISA-n, IF JX-ISA = 'Y' GO TO the
-    /// catch body, else on to the outer handler or the exit); the try body before the handler ends with GO TO the join;
-    /// the catch body runs from its paragraph to the join. JX-ISA-n names the caught classes.
+    /// A try statement: its body from StartPara/StartStmt to the handler paragraph; the catch clauses (each a typed catch
+    /// body from its paragraph on); or the trap of a try-with-resources handler (Trap: the IF that stops the run when the
+    /// resource is open); the join is where the statement completes normally.
+    /// </summary>
+    sealed record TryRegion(int StartPara, int StartStmt, int HandlerPara, int JoinPara, string Join, List<CatchClause> Clauses, Stmt? Trap, string Next);
+
+    /// <summary>
+    /// J3S's try/catch: the guards of the try body GO TO a handler paragraph. A catch handler tests the exception's class
+    /// clause by clause (PERFORM JX-ISA-n, IF JX-ISA = 'Y' GO TO the catch body) and goes on to the outer handler or the
+    /// exit; a try-with-resources handler stops the run if the resource is open (the J3S trap) and goes on the same way.
+    /// The try body before the handler ends with GO TO the join; a catch body runs from its paragraph to the next one or
+    /// the join. JX-ISA-n names the caught class (FSJXP's comment) and lists the estate's classes that are one; a clause no
+    /// class of the estate matches never catches (its body is dead). An outer try starts where its first inner try does.
     /// </summary>
     List<TryRegion> FindTries()
     {
-        var res = new List<TryRegion>();
         var paras = P.Model.Paragraphs;
         const StringComparison ic = StringComparison.OrdinalIgnoreCase;
+        var found = new List<(int H, int JoinPara, string Join, List<(string Isa, int K)> Isas, Stmt? Trap, string Next)>();
         for (int h = Fn.FirstParagraph + 1; h <= Fn.LastParagraph; h++)
         {
             var hs = paras[h].Statements;
-            if (hs is not [{ Verb: "PERFORM" } isa, { Verb: "IF" } test, ..] || isa.Str("target") is not { } isaName || !isaName.StartsWith("JX-ISA-", ic)) continue;
-            if (test.Blocks?.GetValueOrDefault("TRUE") is not [{ Verb: "GO TO" } toCatch] || toCatch.L?.GetValueOrDefault("targets") is not [{ V: { } catchName }]) continue;
-            if (!P.ParagraphIndex.TryGetValue(catchName, out var catchPara)) continue;
             var before = paras[h - 1].Statements.LastOrDefault();
-            if (before is not { Verb: "GO TO" } || before.L?.GetValueOrDefault("targets") is not [{ V: { } join }] || !P.ParagraphIndex.TryGetValue(join, out var joinPara) || joinPara <= catchPara) continue;
-            var types = new List<JType>();
-            if (paras.FirstOrDefault(x => x.Name.Equals(isaName, ic)) is { } isaPara)
-                foreach (var w in Model.Deep(isaPara.Statements).Where(x => x.Verb == "WHEN"))
-                    if (w.Get("cond") is { K: "rel", R: { K: "num", V: { } idText } } && M.ClassIdType(int.Parse(idText, System.Globalization.CultureInfo.InvariantCulture)) is { } ct) types.Add(ct);
-            if (types.Count == 0) continue;
-            // the start: the first statement whose guard goes to the handler (the call before it, for a propagation guard)
-            int sp = -1, ss = -1;
-            for (int p = Fn.FirstParagraph; p < h && sp < 0; p++)
-                for (int k = 0; k < paras[p].Statements.Count && sp < 0; k++)
-                    if (Model.Deep([paras[p].Statements[k]]).Any(x => x.Verb == "GO TO" && x.L?.GetValueOrDefault("targets") is [{ V: { } gt }] && gt.Equals(paras[h].Name, ic)))
+            if (before is not { Verb: "GO TO" } || before.L?.GetValueOrDefault("targets") is not [{ V: { } join }] || !P.ParagraphIndex.TryGetValue(join, out var joinPara) || joinPara <= h) continue;
+            int idx = 0;
+            var isas = new List<(string, int)>();
+            while (idx + 1 < hs.Count && hs[idx] is { Verb: "PERFORM" } isa && isa.Str("target") is { } isaName && isaName.StartsWith("JX-ISA-", ic)
+                   && hs[idx + 1] is { Verb: "IF" } test && test.Blocks?.GetValueOrDefault("TRUE") is [{ Verb: "GO TO" } toCatch]
+                   && toCatch.L?.GetValueOrDefault("targets") is [{ V: { } catchName }] && P.ParagraphIndex.TryGetValue(catchName, out var k) && k > h && k < joinPara)
+            {
+                isas.Add((isaName, k));
+                idx += 2;
+            }
+            Stmt? trap = null;
+            if (isas.Count == 0 && idx < hs.Count && hs[idx] is { Verb: "IF" } tif && tif.Blocks?.GetValueOrDefault("FALSE") is null or { Count: 0 }
+                && tif.Blocks?.GetValueOrDefault("TRUE") is { Count: > 0 } tb && tb.Any(b => b.Verb == "PERFORM" && b.Str("target")?.Equals("JX-UNSUPPORTED", ic) == true)
+                && tb.All(b => b.Verb == "PERFORM" || b.Verb == "MOVE" && Model.DstName(b)?.Equals("JX-AT", ic) == true))
+            {
+                trap = tif;
+                idx++;
+            }
+            if (isas.Count == 0 && trap is null) continue;
+            if (idx != hs.Count - 1 || hs[idx] is not { Verb: "GO TO" } nx || nx.L?.GetValueOrDefault("targets") is not [{ V: { } next }]) continue;
+            found.Add((h, joinPara, join, isas, trap, next));
+        }
+        if (found.Count == 0) return [];
+        // the paragraphs of handlers and catch bodies: their GO TOs are the handlers' own, not guards of a try body
+        var handlerParas = new HashSet<int>();
+        foreach (var f in found) { handlerParas.Add(f.H); foreach (var (_, k) in f.Isas) for (int x = k; x < f.JoinPara && !found.Any(o => o.H == x); x++) handlerParas.Add(x); }
+        var starts = new Dictionary<int, (int P, int S)>();
+        foreach (var f in found)
+        {
+            for (int p = Fn.FirstParagraph; p < f.H && !starts.ContainsKey(f.H); p++)
+            {
+                if (handlerParas.Contains(p)) continue;
+                for (int k = 0; k < paras[p].Statements.Count; k++)
+                    if (Model.Deep([paras[p].Statements[k]]).Any(x => x.Verb == "GO TO" && x.L?.GetValueOrDefault("targets") is [{ V: { } gt }] && gt.Equals(paras[f.H].Name, ic)))
                     {
-                        sp = p;
-                        ss = k;
+                        int ss = k;
+                        // the call before a propagation guard is in the try body
                         if (paras[p].Statements[k].Get("cond") is { K: "rel", L: { K: "ref", V: { } cv } } && cv.Equals("JX-C", ic))
                             for (int b = k - 1; b >= 0; b--)
                                 if (paras[p].Statements[b].Verb is "CALL" or "PERFORM") { ss = b; break; }
+                        starts[f.H] = (p, ss);
+                        break;
                     }
-            if (sp < 0) continue;
-            res.Add(new TryRegion(sp, ss, h, catchPara, joinPara, join, types));
+            }
+        }
+        // an outer handler (the one an inner handler goes on to) starts no later than the inner try
+        for (bool changed = true; changed;)
+        {
+            changed = false;
+            foreach (var f in found)
+                if (starts.TryGetValue(f.H, out var si) && P.ParagraphIndex.TryGetValue(f.Next, out var outer) && found.Any(o => o.H == outer)
+                    && (!starts.TryGetValue(outer, out var so) || (si.P, si.S).CompareTo((so.P, so.S)) < 0))
+                {
+                    starts[outer] = si;
+                    changed = true;
+                }
+        }
+        var res = new List<TryRegion>();
+        foreach (var f in found)
+        {
+            if (!starts.TryGetValue(f.H, out var s)) continue;
+            var clauses = new List<CatchClause>();
+            var ks = f.Isas.Select(x => x.K).Order().ToList();
+            foreach (var (isaName, k) in f.Isas)
+            {
+                var end = ks.FirstOrDefault(x => x > k, f.JoinPara);
+                var ids = new List<JType>();
+                // WHEN 39 WHEN 36 ... (one body): an OR of the class ids
+                static IEnumerable<string> ClassIds(Node? c) => c switch
+                {
+                    { K: "or" } o => ClassIds(o.L).Concat(ClassIds(o.R)),
+                    { K: "rel", R: { K: "num", V: { } v } } => [v],
+                    _ => [],
+                };
+                var listed = 0;
+                if (paras.FirstOrDefault(x => x.Name.Equals(isaName, ic)) is { } isaPara)
+                    foreach (var w in Model.Deep(isaPara.Statements).Where(x => x.Verb == "WHEN"))
+                        foreach (var idText in ClassIds(w.Get("cond")))
+                        {
+                            listed++;
+                            if (M.ClassIdType(int.Parse(idText, System.Globalization.CultureInfo.InvariantCulture)) is { } ct) ids.Add(ct);
+                        }
+                // a clause that lists classes the model does not know cannot be lifted (fail closed)
+                if (listed > 0 && ids.Count < listed) Residue($"catch clause {isaName}: {listed - ids.Count} unknown class ids");
+                // no class of the estate is one: the clause never catches
+                if (ids.Count == 0) continue;
+                var type = M.CatchTypes.TryGetValue(isaName, out var named) ? JType.Of(named)
+                    : ids.Count == 1 ? ids[0] : JType.Of(string.Join(" | ", ids.Select(t => t.Simple)));
+                clauses.Add(new CatchClause(type, k, end));
+            }
+            // no clause catches and no trap: a handler that only goes on (its catch bodies are dead); the body is lifted in place
+            res.Add(new TryRegion(s.P, s.S, f.H, f.JoinPara, f.Join, clauses, f.Trap, f.Next));
         }
         return res;
     }
@@ -179,9 +320,21 @@ public sealed partial class FunctionLifter
         var saved = sink;
         var buf = new List<St>();
         sink = buf;
+        regionStack.Add(buf);
         lift();
         Flush();
+        regionStack.RemoveAt(regionStack.Count - 1);
         sink = saved;
+        // the region's temporaries split into webs as the function's are (Fold.Webs over the low IR, which sees a structured
+        // try as one statement): J3S reuses a temporary slot for values of other types on either side of a try's boundary,
+        // and a statement that began before the try (an allocation whose constructor is guarded) ends inside it
+        var outside = new HashSet<Var>();
+        foreach (var s in Passes.All(R.Low).Concat(regionStack.SelectMany(Passes.All)))
+        {
+            if (s is SAssign { Lhs: EVar { V: var dv } }) outside.Add(dv);
+            foreach (var e in Fold.Exprs(s)) foreach (var d in DeepOf(e)) if (d is EVar ev) outside.Add(ev.V);
+        }
+        Fold.Webs(buf, R.Vars, outside, region: true);
         for (int k = 0; k < buf.Count; k++)
         {
             Expr? ret = Fn.Ret is null ? null : new EVar(ResultVar());
@@ -200,7 +353,45 @@ public sealed partial class FunctionLifter
     {
         if (s.Line == 0) s.Line = line;
         if (s is SAssign or SExpr or SThrow or SReturn) s.Site ??= site;
+        // a copy of a capacity-checked decimal result is one too; it flows into parameters, fields and results (the model's
+        // taint sets); any other way out of the function is recorded (DecimalLimitEscapes)
+        NoteLimited(s);
         Low.Add(s);
+    }
+
+    void NoteLimited(St s)
+    {
+        // the estate's calls and constructors: an argument that may be a stored decimal taints the callee's parameter
+        foreach (var e in Fold.Exprs(s).SelectMany(DeepOf))
+        {
+            var (fn, args) = e switch { ECall { Fn: { } cf, Kind: not CallKind.Jdk and not CallKind.JdkStatic } c => (cf, c.Args), ENew { Ctor: { } ct } n => (ct, n.Args), _ => ((FunctionDef?)null, (List<Expr>?)null) };
+            if (fn is null || args is null) continue;
+            for (int i = 0; i < args.Count; i++)
+                if (Limited(args[i])) M.LimitedParams.TryAdd(KeyOf(fn) + "#" + i, 0);
+        }
+        switch (s)
+        {
+            case SAssign { Lhs: EVar lv, Rhs: var rv } when TaintedValue(rv): Taint(lv.V); return;
+            // the operation itself (a BigDecimal method on the value): BigDecimalOp checks it
+            case SAssign { Lhs: EVar ov, Rhs: ECall { Kind: CallKind.Jdk } jc } when jc.Type == JType.BigDecimal || jc.Type?.Name == JType.BigDecimal.Name: limitVars.Remove(ov.V); return;
+            // a temporary given a value that is not one is not one any more (straight-line code; Taint)
+            case SAssign { Lhs: EVar kv, Rhs: var kr } when !Limited(kr): limitVars.Remove(kv.V); return;
+            case SAssign { Lhs: EField lf, Rhs: var fr } when Limited(fr): M.LimitedFields.TryAdd(FieldKey(lf.F), 0); M.CheckedFunctions.TryAdd(FnKey, 0); return;
+            case SAssign { Lhs: EStatic ls, Rhs: var sr } when Limited(sr): M.LimitedFields.TryAdd(FieldKey(ls.F), 0); M.CheckedFunctions.TryAdd(FnKey, 0); return;
+            case SReturn { E: { } re } when Limited(re): M.LimitedReturns.TryAdd(FnKey, 0); M.CheckedFunctions.TryAdd(FnKey, 0); return;
+            case SAssign { Lhs: EVar, Rhs: ECall { Fn: not null } or ENew }: return;
+            case SExpr { E: ECall { Fn: not null } or ENew }: return;
+            case SAssign { Lhs: EVar, Rhs: var rhs } when Limited(rhs): M.DecimalLimitEscapes.TryAdd($"{P.Id} {Fn.Id} {site}: an argument or operand of {IrText.Show(rhs)}", 0); return;
+            case SAssign { Rhs: var srhs } when Limited(srhs): M.DecimalLimitEscapes.TryAdd($"{P.Id} {Fn.Id} {site}: stored, {IrText.Show(srhs)}", 0); return;
+            case SExpr { E: var se } when Limited(se): M.DecimalLimitEscapes.TryAdd($"{P.Id} {Fn.Id} {site}: an argument of {IrText.Show(se)}", 0); return;
+        }
+    }
+
+    static IEnumerable<Expr> DeepOf(Expr e)
+    {
+        yield return e;
+        foreach (var c in e.Children)
+            foreach (var d in DeepOf(c)) yield return d;
     }
 
     void Residue(string what)

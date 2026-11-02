@@ -7,7 +7,7 @@ package com.mlcpu.rt;
 public final class RecordCharset {
     private RecordCharset() {}
 
-    private static final boolean EBCDIC;
+    private static boolean EBCDIC;
     private static final int[] TO_EBCDIC = new int[256];
 
     static {
@@ -22,6 +22,14 @@ public final class RecordCharset {
     }
 
     public static boolean isEbcdic() { return EBCDIC; }
+    public static void configure(String charset) {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            if (!charset.equalsIgnoreCase("LATIN1") && !charset.equalsIgnoreCase("CP037") && !charset.equalsIgnoreCase("EBCDIC"))
+                throw new IllegalArgumentException("unsupported record charset: " + charset);
+            EBCDIC = !charset.equalsIgnoreCase("LATIN1");
+        }
+    }
+    static void restore(boolean ebcdic) { EBCDIC = ebcdic; }
 
     public static int ebcdicByte(int latin1) { return TO_EBCDIC[latin1 & 0xFF]; }
 }

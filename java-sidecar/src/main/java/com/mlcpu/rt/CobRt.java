@@ -93,11 +93,39 @@ public final class CobRt {
     }
 
     public static void resetRunUnit() {
-        synchronized (CobRt.class) { EXTERNAL.clear(); }
-        CobFile.forgetOpen();
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            EXTERNAL.clear();
+            CobFile.forgetOpen();
+            resetCounters();
+        }
+    }
+
+    static void resetCounters() {
         loopCount = 0;
         RETURN_CODE.setDec(BigDecimal.ZERO, false);
+        TALLY.setDec(BigDecimal.ZERO, false);
+        SORT_RETURN.setDec(BigDecimal.ZERO, false);
         FrontierHits.clear();
+    }
+
+    record State(java.util.Map<String, Area> external, byte[] returnCode, byte[] tally, byte[] sortReturn,
+                 long loops, java.util.function.Consumer<String> displayTrace, java.util.Set<String> abendPrograms) {
+        void restore() {
+            EXTERNAL.clear(); EXTERNAL.putAll(external);
+            RETURN_CODE.area.b = returnCode;
+            TALLY.area.b = tally;
+            SORT_RETURN.area.b = sortReturn;
+            loopCount = loops;
+            DISPLAY_TRACE = displayTrace;
+            ABEND_PROGRAMS.clear(); ABEND_PROGRAMS.addAll(abendPrograms);
+        }
+    }
+    static State capture() {
+        return new State(new java.util.HashMap<>(EXTERNAL), RETURN_CODE.area.b, TALLY.area.b, SORT_RETURN.area.b,
+                loopCount, DISPLAY_TRACE, java.util.Set.copyOf(ABEND_PROGRAMS));
+    }
+    static State fresh() {
+        return new State(java.util.Map.of(), new byte[4], new byte[4], new byte[4], 0, null, java.util.Set.copyOf(ABEND_PROGRAMS));
     }
 
     // ------------------------------------------------------------------ operand helpers
@@ -177,22 +205,46 @@ public final class CobRt {
         for (CobField d : dsts) move(src, d);
     }
 
+    /**
+     * MOVE at an IR statement: the semantics of {@link #move(Object, CobField)}; {@code site} ({@link MoveSite#encode})
+     * names the statement, its line and the receiver in a raw-overlap frontier instead of the fields' names.
+     */
+    public static void move(Object src, CobField dst, String site) {
+        if (src instanceof CobField f) moveField(f, dst, site);
+        else move(src, dst);
+    }
+
     static void moveField(CobField s, CobField d) {
-        if (s.isGroup() || d.isGroup()) { alnumMove(s.bytes(), d, false); return; }
+        moveField(s, d, null);
+    }
+
+    /** Unsigned DISPLAY numeric senders reach an alphanumeric receiver as their stored bytes ({@link #numericAsAlnum}). */
+    private static boolean rawNumericSender(CobField s) {
+        return s.use == CobField.Use.DISPLAY && !s.signed;
+    }
+
+    static void moveField(CobField s, CobField d, String site) {
+        if (s.isGroup() || d.isGroup()) {
+            if (!RawMove.apply(s, d, false, site)) alnumMove(s.bytes(), d, false);
+            return;
+        }
         switch (d.cat) {
-            case ALNUM, ALPHA -> alnumMove(s.cat == CobField.Cat.NUMERIC ? numericAsAlnum(s) : s.bytes(), d, d.just);
+            case ALNUM, ALPHA -> {
+                if ((s.cat != CobField.Cat.NUMERIC || rawNumericSender(s)) && RawMove.apply(s, d, d.just, site)) return;
+                alnumMove(s.cat == CobField.Cat.NUMERIC ? numericAsAlnum(s) : s.bytes(), d, d.just);
+            }
             case ALNUM_EDITED -> alnumEdited(s.cat == CobField.Cat.NUMERIC ? numericAsAlnum(s) : s.bytes(), d);
             case NUMERIC, INDEX, NUM_EDITED, POINTER -> {
                 switch (s.cat) {
                     case NUMERIC, INDEX -> { if (!d.moveNumericFast(s)) d.setDec(s.dec(), false); }
                     case NUM_EDITED -> d.setDec(Edit.deEdit(s.bytes(), s.scale), false);
                     default -> {
-                        if (d.cat == CobField.Cat.NUM_EDITED) alnumMove(s.bytes(), d, false);
+                        if (d.cat == CobField.Cat.NUM_EDITED) { if (!RawMove.apply(s, d, false, site)) alnumMove(s.bytes(), d, false); }
                         else alnumToNumeric(s.bytes(), d);
                     }
                 }
             }
-            default -> alnumMove(s.bytes(), d, false);
+            default -> { if (!RawMove.apply(s, d, false, site)) alnumMove(s.bytes(), d, false); }
         }
     }
 
@@ -756,6 +808,12 @@ public final class CobRt {
 
     /** CALL program USING args (BY REFERENCE fields share storage; BY CONTENT arguments are copies made by the caller). */
     public static void call(String name, CobField[] args) {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            callBound(name, args);
+        }
+    }
+
+    private static void callBound(String name, CobField[] args) {
         ProgramRegistry.Target t = ProgramRegistry.target(name);
         String n = t.id();
         ModernProgram normalized = t.modern();
@@ -776,6 +834,7 @@ public final class CobRt {
 
     /** CALL ... RETURNING: the callee's RETURN-CODE goes to {@code returning}; the caller's RETURN-CODE is restored. */
     public static void callReturning(String name, CobField[] args, CobField returning) {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
         BigDecimal saved = RETURN_CODE.dec();
         try {
             call(name, args);
@@ -783,20 +842,25 @@ public final class CobRt {
         } finally {
             RETURN_CODE.setDec(saved, false);
         }
+        }
     }
 
     private static final java.util.Map<String, Area> EXTERNAL = new java.util.HashMap<>();
 
     /** An EXTERNAL record's storage: one zeroed area per name for the run unit, shared by every program declaring it. */
-    public static synchronized Area externalArea(String name, int size) {
-        Area a = EXTERNAL.get(name.toUpperCase());
-        if (a == null) EXTERNAL.put(name.toUpperCase(), a = new Area(size));
-        else if (a.size < size) throw new RuntimeCheck("EXTERNAL " + name + " declared with " + size + " bytes, allocated with " + a.size);
-        return a;
+    public static Area externalArea(String name, int size) {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            Area a = EXTERNAL.get(name.toUpperCase(java.util.Locale.ROOT));
+            if (a == null) EXTERNAL.put(name.toUpperCase(java.util.Locale.ROOT), a = new Area(size));
+            else if (a.size < size) throw new RuntimeCheck("EXTERNAL " + name + " declared with " + size + " bytes, allocated with " + a.size);
+            return a;
+        }
     }
 
     public static CobField byContent(Object o) {
-        if (o instanceof CobField f) return CobField.temp(f.bytes()).withShape(f);
-        return CobField.temp(alnumBytes(o, 0));
+        if (o instanceof CobField f) return CobField.temp(f.bytes()).withShape(f).contentArgument();
+        return CobField.temp(alnumBytes(o, 0)).contentArgument();
     }
+
+    public static void cancel(String name) { ProgramRegistry.cancel(name); }
 }

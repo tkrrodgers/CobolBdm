@@ -41,6 +41,12 @@ public final class Area {
         this.bound = true;
     }
 
+    record Binding(byte[] storage, int offset, boolean isBound) {}
+    Binding binding() { return new Binding(b, base, bound); }
+    void restore(Binding binding) {
+        b = binding.storage(); base = binding.offset(); bound = binding.isBound();
+    }
+
     /** An unbound LINKAGE record that is used anyway: storage of its own, filled with {@code fill}. */
     public void materialize(byte fill) {
         if (!linkage || bound || b.length >= size) return;

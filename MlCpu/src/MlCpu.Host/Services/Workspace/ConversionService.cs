@@ -95,13 +95,23 @@ public sealed class ConversionService(ProjectService projects, JavaSidecarServic
         op.Info(r.ExitCode == 0 ? $"javac: {java.Count} class(es) compiled" : "javac failed: " + string.Join(" | ", r.Output.Split('\n').Take(6)));
     }
 
-    async Task<Dictionary<string, JavaTranspileResult>> ResultsAsync(ProjectDefinition p, IEnumerable<string> programs, Operation op, CancellationToken ct)
+    async Task<Dictionary<string, JavaTranspileResult>> ResultsAsync(ProjectDefinition p, IEnumerable<string> programs, Operation op, CancellationToken ct,
+        bool composeStorage = false)
     {
         var map = _results.GetOrAdd(p.Id, _ => new());
         var sources = OnboardingService.Sources(p, projects.SourceDir(p));
         var outp = new Dictionary<string, JavaTranspileResult>(StringComparer.OrdinalIgnoreCase);
         foreach (var pid in programs)
         {
+            if (composeStorage)
+            {
+                op.Info($"transpiling {pid} with composed storage");
+                var composed = await sidecar.TranspileAsync(sources[pid], transpileOnly: true, ct, composeStorage: true);
+                if (!composed.Ok || !composed.StorageComposition)
+                    throw new InvalidOperationException($"{pid}: storage composition failed: {composed.Error ?? string.Join("; ", composed.Diagnostics)}");
+                outp[pid] = composed;
+                continue;
+            }
             if (!map.TryGetValue(pid, out var r) || r.Model is null)
             {
                 op.Info($"transpiling {pid}");
@@ -115,7 +125,7 @@ public sealed class ConversionService(ProjectService projects, JavaSidecarServic
 
     public string DefaultPublishDir(ProjectDefinition p) => projects.Paths(p).Publish;
 
-    public async Task<PublishResult> PublishAsync(string projectId, string targetDir, Operation op, CancellationToken ct)
+    public async Task<PublishResult> PublishAsync(string projectId, string targetDir, Operation op, CancellationToken ct, bool composeStorage = false)
     {
         var p = projects.Get(projectId) ?? throw new ArgumentException($"no project {projectId}");
         if (p.Oracle.JobChecks.Count == 0) throw new InvalidOperationException("the GnuCOBOL oracle has not run for this project (Settings → Build & run oracle)");
@@ -131,7 +141,7 @@ public sealed class ConversionService(ProjectService projects, JavaSidecarServic
         if (graphs.BuiltAt(p) is null) await graphs.RebuildAsync(p.Id, op, ct, 0.05, 0.25);
 
         op.Report(0.25, $"transpile {programs.Count} program(s)");
-        var results = await ResultsAsync(p, programs, op, ct);
+        var results = await ResultsAsync(p, programs, op, ct, composeStorage);
         if (!Directory.Exists(Path.Combine(projects.Paths(p).Transpile, "classes"))) await CompileAsync(p, op, ct);
 
         IReadOnlyList<KitCapability> kit = [];

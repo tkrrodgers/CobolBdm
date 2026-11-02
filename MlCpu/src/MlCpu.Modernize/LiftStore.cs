@@ -154,6 +154,12 @@ public sealed partial class FunctionLifter
                 return Jdk(whole, "scale", JType.Int);
             case "P.Z":
             case "Z":
+                // a value FSJBDEC may store: its handle zone (-1 stored, 0 inline), read as the legacy reads it
+                if (Limited(whole))
+                {
+                    M.CheckedFunctions.TryAdd(FnKey, 0);
+                    return JdkStatic(M.PlatformPackage + ".DecimalLimit", "zone", JType.Int, whole);
+                }
                 return ELit.Int(0);
         }
         return new EPart(whole, part);
@@ -441,6 +447,7 @@ public sealed partial class FunctionLifter
     {
         "ConcurrentModificationException" or "NoSuchElementException" => "java.util." + simple,
         "DateTimeException" => "java.time." + simple,
+        "FileNotFoundException" or "IOException" or "UncheckedIOException" or "UnsupportedEncodingException" => "java.io." + simple,
         _ => "java.lang." + simple,
     };
 }

@@ -36,6 +36,17 @@ public static class Naming
 
     public static string Constant(string cobol) => Safe(string.Join('_', Words(cobol).Select(w => w.ToUpperInvariant())));
 
+    /// <summary>COBOL storage-section prefixes (DW-, WS-, DS-, ...): Java scope already says where a value lives.</summary>
+    static readonly HashSet<string> StoragePrefixes = ["dw", "ws", "ds", "ls", "lk", "fd", "wk", "sw", "wa", "lw", "wc"];
+
+    /// <summary>A work field's name without its storage prefix (DW-PREV-KEY → prevKey); the full name when the prefix is all there is.</summary>
+    public static string Field(string cobol)
+    {
+        var words = Words(cobol).ToList();
+        if (words.Count > 1 && StoragePrefixes.Contains(words[0])) words.RemoveAt(0);
+        return Camel(string.Join('-', words));
+    }
+
     public static string Safe(string name)
     {
         if (name.Length == 0) return "value";

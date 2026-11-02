@@ -28,6 +28,8 @@ public sealed class JavaWriter
     bool markAll;
     /// <summary>The model edits applied while printing (opt-in, <see cref="ModelEdits"/>); null: the model as recovered.</summary>
     public ModelEdits? Edits { get; init; }
+    /// <summary>The checked exceptions each method declares (<see cref="CheckedExceptions"/>).</summary>
+    public Dictionary<FunctionDef, List<string>>? Throws { get; init; }
     /// <summary>The enum constant whose body is being printed, and its enum (a model edit names them).</summary>
     string? constant, constantOf;
 
@@ -49,7 +51,7 @@ public sealed class JavaWriter
         int mark = SourceMap.Count;
         o = new Out { Indent = saved.Indent, OnSite = (_, _) => { } };
         Declarations(m.Body);
-        foreach (var st in Passes.All(m.Body)) foreach (var v in VarsOf(st)) if (!v.IsThis && !m.L.Captured.ContainsValue(v)) NameOf(v);
+        NameLocals(m);
         Block(m.Body);
         o = saved;
         if (SourceMap.Count > mark) SourceMap.RemoveRange(mark, SourceMap.Count - mark);
@@ -161,7 +163,10 @@ public sealed class JavaWriter
         current = c;
         Doc(c);
         var shape = shapes.Of(c);
-        var mods = "public " + (nested ? "static " : "") + (shape.IsAbstract ? "abstract " : "");
+        bool record = shape.Components is not null && !ExceptionRoots.Contains(c);
+        // R3 (opt-in): final only on a printed class (records and enums are implicitly final, abstract classes cannot be)
+        bool final = shapes.FinalClasses?.Contains(c) == true && !shape.IsEnum && !shape.IsAbstract && !record;
+        var mods = "public " + (nested ? "static " : "") + (shape.IsAbstract ? "abstract " : "") + (final ? "final " : "");
         string kind = shape.IsEnum ? "enum" : "class";
         var ext = !shape.IsEnum && c.Super is not null ? " extends " + TypeName(JType.Of(c.Super))
             : !shape.IsEnum && ExceptionRoots.Contains(c) ? " extends RuntimeException" : "";
@@ -292,12 +297,15 @@ public sealed class JavaWriter
         foreach (var f in c.Statics.Where(s => !shape.EnumFields.Contains(s)))
         {
             var init = shape.StaticInit.TryGetValue(f, out var e) ? " = " + Expr(e) : "";
-            o.L($"{(shape.FinalStatics.Contains(f) ? "public static final" : "static")} {TypeName(FieldType(f))} {f.Name}{init};");
+            var mods = shapes.StaticAccess?.TryGetValue(f, out var sa) == true
+                ? ApiVisibility.Modifier(sa) + (shape.FinalStatics.Contains(f) ? "static final" : "static")
+                : shape.FinalStatics.Contains(f) ? "public static final" : "static";
+            o.L($"{mods} {TypeName(DeclField(f))} {f.Name}{init};");
         }
         // a record's fields are its components
         if (shape.Components is null || ExceptionRoots.Contains(c))
             foreach (var f in c.Fields)
-                o.L($"{(shape.FinalFields.Contains(f) ? "private final" : "private")} {TypeName(FieldType(f))} {f.Name};");
+                o.L($"{(shape.FinalFields.Contains(f) ? "private final" : "private")} {TypeName(DeclField(f))} {f.Name};");
         foreach (var e in Edits?.For("add-field", c.FullName) ?? [])
         {
             o.L(EditDoc(e));
@@ -331,18 +339,20 @@ public sealed class JavaWriter
             var p = m.L.Params[i];
             var nm = Unique(p.Name);
             names[p] = nm;
-            ps.Add(TypeName(ParamType(fn, i)) + " " + nm);
+            ps.Add(TypeName(DeclParam(fn, i)) + " " + nm);
         }
         var shape = shapes.Of(current!);
         o.L(MethodDoc(fn, null));
         string head;
+        var throws = Throws?.GetValueOrDefault(fn) is { Count: > 0 } tl ? " throws " + string.Join(", ", tl.Select(x => TypeName(JType.Of(x)))) : "";
+        if (fn.IsClinit && throws.Length > 0) Residue.Add($"{fn.Id} static initializer throws checked{throws[7..]}");
         if (fn.IsClinit) head = "static";
-        else if (fn.IsCtor) head = (shape.IsEnum ? "" : "public ") + current!.SimpleName + "(" + string.Join(", ", ps) + ")";
+        else if (fn.IsCtor) head = (shape.IsEnum ? "" : shapes.MemberAccess?.TryGetValue(fn, out var ca) == true ? ApiVisibility.Modifier(ca) : "public ") + current!.SimpleName + "(" + string.Join(", ", ps) + ")" + throws;
         else
         {
-            var ret = fn.Ret is null ? "void" : TypeName(T.JavaType(T.Ret(fn)));
-            var vis = shape.Private.Contains(fn) ? "private " : "public ";
-            head = vis + (fn.IsStatic ? "static " : "") + ret + " " + shape.MethodName(fn) + "(" + string.Join(", ", ps) + ")";
+            var ret = fn.Ret is null ? "void" : TypeName(DeclReturn(fn));
+            var vis = shapes.MemberAccess?.TryGetValue(fn, out var ma) == true ? ApiVisibility.Modifier(ma) : shape.Private.Contains(fn) ? "private " : "public ";
+            head = vis + (fn.IsStatic ? "static " : "") + ret + " " + shape.MethodName(fn) + "(" + string.Join(", ", ps) + ")" + throws;
         }
         o.Open(head + " {");
         // a model edit's body in place of the recovered one: the signature (the call sites) stays the model's
@@ -358,7 +368,7 @@ public sealed class JavaWriter
             return;
         }
         Declarations(m.Body);
-        foreach (var st in Passes.All(m.Body)) foreach (var v in VarsOf(st)) if (!v.IsThis && !m.L.Captured.ContainsValue(v)) NameOf(v);
+        NameLocals(m);
         Block(m.Body);
         o.Close();
         cur = null;
@@ -371,13 +381,108 @@ public sealed class JavaWriter
         for (int k = 2; ; k++) if (taken.Add(n + k)) return n + k;
     }
 
+    /// <summary>
+    /// The method's local names, in order of first appearance; a for-each variable J3S left as a frame temporary (t20_) is
+    /// named last, after its element type, so the variables the method already names keep their names.
+    /// </summary>
+    void NameLocals(Method m)
+    {
+        TempHints(m);
+        var deferred = new List<Var>();
+        foreach (var st in Passes.All(m.Body))
+            foreach (var v in VarsOf(st))
+            {
+                if (v.IsThis || m.L.Captured.ContainsValue(v)) continue;
+                if (!v.IsTemp && FrameTemp.IsMatch(v.Name) && eachVars.Contains(v) && !names.ContainsKey(v)) { if (!deferred.Contains(v)) deferred.Add(v); }
+                else NameOf(v);
+            }
+        foreach (var v in deferred) if (!names.ContainsKey(v)) names[v] = Unique(ElementName(v));
+    }
+
+    static readonly System.Text.RegularExpressions.Regex FrameTemp = new(@"^t\d+_$", System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+    /// <summary>A loop variable's name from its element type (RepaymentPeriod: repaymentPeriod, else period when that is taken).</summary>
+    string ElementName(Var v)
+    {
+        var full = TempName(v);
+        if (!taken.Contains(Naming.Safe(full))) return full;
+        var words = System.Text.RegularExpressions.Regex.Split(full, "(?<=[a-z0-9])(?=[A-Z])");
+        if (words.Length > 1)
+        {
+            var last = Naming.LowerFirst(words[^1]);
+            if (!taken.Contains(Naming.Safe(last))) return last;
+        }
+        return full;
+    }
+
     string NameOf(Var v)
     {
         if (names.TryGetValue(v, out var n)) return n;
-        var basis = v.IsTemp ? TempName(v) : v.Name;
+        var basis = v.IsTemp ? tempHints.GetValueOrDefault(v) ?? TempName(v) : v.Name;
         n = Unique(basis);
         names[v] = n;
         return n;
+    }
+
+    /// <summary>
+    /// A temporary assigned once from a call of an estate method without arguments (an accessor: principal(),
+    /// getTotalPaid()) is named after it (principal, totalPaid), not after its type (bigDecimal, bigDecimal2).
+    /// </summary>
+    readonly Dictionary<Var, string> tempHints = [];
+
+    void TempHints(Method m)
+    {
+        tempHints.Clear();
+        var assigned = new Dictionary<Var, int>();
+        var calls = new Dictionary<Var, ECall>();
+        foreach (var st in Passes.All(m.Body))
+            if (st is SAssign { Lhs: EVar { V: { IsTemp: true } tv } } ta)
+            {
+                assigned[tv] = assigned.GetValueOrDefault(tv) + 1;
+                if (ta.Rhs is ECall { Fn: not null, Args.Count: 0, Recv: not null } tc) calls[tv] = tc;
+            }
+        foreach (var (tv, c) in calls)
+        {
+            if (assigned[tv] != 1) continue;
+            var name = shapes.MethodName(c.Fn!);
+            // an accessor only (a getter, a record component): a method that computes or builds (build(), next()) names nothing
+            if (c.Fn!.Owner is not { } fnOwner || !IsAccessor(fnOwner, name, c.Fn)) continue;
+            if (name.Length > 3 && name.StartsWith("get", StringComparison.Ordinal) && char.IsUpper(name[3])) name = Naming.LowerFirst(name[3..]);
+            else if (name.Length > 2 && name.StartsWith("is", StringComparison.Ordinal) && char.IsUpper(name[2])) continue;
+            if (name.Length == 0 || !char.IsLetter(name[0])) continue;
+            // a field of the class keeps its name: the local is qualified by what it was read from (loanTermsPrincipal)
+            if (reserved.Contains(name))
+            {
+                var recvType = ExprType(c.Recv!)?.Simple;
+                if (recvType is not { Length: > 0 } || !char.IsLetter(recvType[0])) continue;
+                name = Naming.LowerFirst(recvType) + char.ToUpperInvariant(name[0]) + name[1..];
+            }
+            tempHints[tv] = Naming.Safe(name);
+        }
+    }
+
+    /// <summary>The field names of the class whose methods are written (a program class's: set by AppWriter).</summary>
+    public HashSet<string>? ReservedNames { get; set; }
+
+    /// <summary>A getter of the class (or a record component), or a method whose whole body returns one of its fields.</summary>
+    bool IsAccessor(ClassDef owner, string name, FunctionDef fn)
+    {
+        if (methods.TryGetValue(fn, out var fm) && fm.Body is [SReturn { E: EField { Obj: EThis } }]) return true;
+        for (var x = owner; x is not null; x = x.Super)
+        {
+            var s = shapes.Of(x);
+            if (s.GetterName.Values.Contains(name) || s.ExtraGetters.Any(g => g.Name == name) || s.Components?.Any(f => f.Name == name) == true) return true;
+        }
+        return false;
+    }
+
+    HashSet<string> reserved => ReservedNames ?? FieldNames(current);
+
+    static HashSet<string> FieldNames(ClassDef? c)
+    {
+        var set = new HashSet<string>(StringComparer.Ordinal);
+        for (var x = c; x is not null; x = x.Super) foreach (var f in x.Fields) set.Add(f.Name);
+        return set;
     }
 
     string TempName(Var v)
@@ -499,7 +604,7 @@ public sealed class JavaWriter
     {
         if (declareAt.TryGetValue(s, out var decls))
             foreach (var (v, inline) in decls)
-                if (!inline) o.L($"{TypeName(VarType(v))} {NameOf(v)} = {Default(VarType(v))};");
+                if (!inline) o.L($"{TypeName(DeclVar(v))} {NameOf(v)} = {Default(VarType(v))};");
         Mark(s);
         switch (s)
         {
@@ -507,7 +612,7 @@ public sealed class JavaWriter
                 o.L($"{Expr(lf.Obj, 16)}.{shapes.Setter(wo, lf.F)}({Cast(FieldType(lf.F), fa.Rhs)});");
                 break;
             case SAssign { Lhs: ERecordField glrf } gra when GroupRaw(glrf) is { } graw:
-                o.L(graw.EndsWith(".text") ? $"{graw}({Expr(gra.Rhs)});" : $"{graw}, {Expr(gra.Rhs)});");
+                o.L(graw.EndsWith(".text") ? $"{graw}({Expr(gra.Rhs)});" : graw.EndsWith("(") ? $"{graw}{Expr(gra.Rhs)});" : $"{graw}, {Expr(gra.Rhs)});");
                 break;
             case SAssign { Lhs: ERecordField lrf } ra:
             {
@@ -516,16 +621,22 @@ public sealed class JavaWriter
                 // a whole number into a decimal field
                 var value = ft?.Name == "java.math.BigDecimal" && ra.Rhs is ELit { Value: long lz } ? (lz == 0 ? "BigDecimal.ZERO" : $"BigDecimal.valueOf({lz})") : Cast(ft, ra.Rhs);
                 if (value.StartsWith("BigDecimal.")) imports.Add("java.math.BigDecimal");
-                o.L($"{acc.R.Instance}.{acc.Name}({(lrf.Index is null ? "" : Expr(lrf.Index) + ", ")}{value});");
+                o.L($"{Inst(lrf.Via, acc.R.Instance)}.{acc.Name}({Subscripts(lrf, ", ")}{value});");
                 break;
             }
+            case SAssign { Lhs: ECode lcd } rcd:
+                o.L($"{CodeInstance(lcd)}.{lcd.Accessor}({Expr(rcd.Rhs)});");
+                break;
+            case SAssign { Lhs: ERecRaw { Len: { } dl } dlr } dra:
+                o.L($"{Inst(dlr.Via, dlr.Instance)}.raw({(dlr.Offset is null ? "0" : Expr(dlr.Offset))}, {Expr(dl)}, {Expr(dra.Rhs)});");
+                break;
             case SAssign { Lhs: ERecRaw lrr } ra2:
-                o.L(lrr.Offset is null ? $"{lrr.Instance}.text({Expr(ra2.Rhs)});" : $"{lrr.Instance}.raw({Expr(lrr.Offset)}, {lrr.Length}, {Expr(ra2.Rhs)});");
+                o.L(lrr.Offset is null ? $"{Inst(lrr.Via, lrr.Instance)}.text({Expr(ra2.Rhs)});" : ViewOf(lrr) is { } wv ? $"{Inst(lrr.Via, lrr.Instance)}.{wv}({Expr(ra2.Rhs)});" : $"{Inst(lrr.Via, lrr.Instance)}.raw({Expr(lrr.Offset)}, {lrr.Length}, {Expr(ra2.Rhs)});");
                 break;
             case SAssign a:
             {
                 bool decl = declareAt.TryGetValue(s, out var d2) && a.Lhs is EVar ev && d2.Any(x => x.V == ev.V && x.Inline);
-                var lhs = a.Lhs is EVar ev2 && decl ? TypeName(VarType(ev2.V)) + " " + NameOf(ev2.V) : Expr(a.Lhs);
+                var lhs = a.Lhs is EVar ev2 && decl ? TypeName(DeclVar(ev2.V)) + " " + NameOf(ev2.V) : Expr(a.Lhs);
                 o.L(!decl && Compound(a) is { } cmp ? cmp + ";" : $"{lhs} = {Cast(TargetType(a.Lhs), a.Rhs)};");
                 break;
             }
@@ -558,9 +669,9 @@ public sealed class JavaWriter
             case SLoop l:
             {
                 var label = Passes.UsedLabels(l.Body).Contains(l.Label) || Labeled(l.Label) ? l.Label + ": " : "";
-                if (l.Each is not null) o.Open($"{label}for ({TypeName(VarType(l.Each))} {NameOf(l.Each)} : {Expr(l.Iterable!)}) {{");
+                if (l.Each is not null) o.Open($"{label}for ({TypeName(DeclVar(l.Each))} {NameOf(l.Each)} : {Expr(l.Iterable!)}) {{");
                 else if (l.Init is { Lhs: EVar iv } init)
-                    o.Open($"{label}for ({TypeName(VarType(iv.V))} {NameOf(iv.V)} = {Cast(TargetType(init.Lhs), init.Rhs)}; {(l.C is null ? "" : Cond(l.C))}; {Compound(l.Update!) ?? Expr(l.Update!.Lhs) + " = " + Expr(l.Update.Rhs)}) {{");
+                    o.Open($"{label}for ({TypeName(DeclVar(iv.V))} {NameOf(iv.V)} = {Cast(TargetType(init.Lhs), init.Rhs)}; {(l.C is null ? "" : Cond(l.C))}; {Compound(l.Update!) ?? Expr(l.Update!.Lhs) + " = " + Expr(l.Update.Rhs)}) {{");
                 else o.Open($"{label}while ({(l.C is null ? "true" : Cond(l.C))}) {{");
                 Block(l.Body);
                 o.Close();
@@ -601,7 +712,7 @@ public sealed class JavaWriter
         }
     }
 
-    /// <summary>v = v + 1 → v++, v = v - k → v -= k (a number or a string; the compound form narrows as the cast did).</summary>
+    /// <summary>v = v + 1 â†’ v++, v = v - k â†’ v -= k (a number or a string; the compound form narrows as the cast did).</summary>
     string? Compound(SAssign a)
     {
         if (a.Lhs is not EVar { V: var v } || a.Rhs is not EBinary { Op: "+" or "-" or "*" } b || b.L is not EVar { V: var l } || l != v) return null;
@@ -628,7 +739,7 @@ public sealed class JavaWriter
             _ => null,
         };
         if (rf is null || App is null || Prog is null || rf.RefStart != 0 || !rf.Item.IsLeaf || App.RecordOf(Prog, rf.Item) is not { } r || !r.Rc.Flags.Contains(rf.Item.Name)) return null;
-        return new ERecordField(rf.Item) { Index = rf.Index, Type = JType.Bool };
+        return new ERecordField(rf.Item) { Index = rf.Index, More = rf.More, Type = JType.Bool, Via = rf.Via };
     }
 
     void SiteAt(int line, string site)
@@ -649,8 +760,17 @@ public sealed class JavaWriter
 
     string CaseLabel(Expr e) => e is ELit { Value: long v } ? v.ToString(CultureInfo.InvariantCulture) : Expr(e);
 
-    JType VarType(Var v) => v.Type is { } t && !t.IsObject && t.Name != "null" && (t.IsPrimitive || t.Class is not null) && v.TypeSlot < 0 && !Vars(v) ? t : T.JavaType(T.Of(v));
+    JType VarType(Var v) => VarTypeOf(T, v);
     bool Vars(Var v) => T.Vars.ContainsKey(v);
+
+    /// <summary>The type a local is declared with (<see cref="VarType"/>), shared with R5 (which reads declarations, never prints).</summary>
+    internal static JType VarTypeOf(TypeInference T, Var v) => v.Fixed && v.Type is { } ft ? ft : v.Type is { } t && !t.IsObject && t.Name != "null" && (t.IsPrimitive || t.Class is not null) && v.TypeSlot < 0 && !T.Vars.ContainsKey(v) ? t : T.JavaType(T.Of(v));
+
+    // R5 program-interfaces (opt-in): only where a declaration is printed; expression types, casts and names keep the lift's types
+    JType DeclVar(Var v) => shapes.Widened?.Locals.TryGetValue(v, out var w) == true ? w : VarType(v);
+    JType DeclField(FieldDef f) => shapes.Widened?.Fields.TryGetValue(f, out var w) == true ? w : FieldType(f);
+    JType DeclParam(FunctionDef fn, int i) => shapes.Widened?.Params.TryGetValue((fn, i), out var w) == true ? w : ParamType(fn, i);
+    JType DeclReturn(FunctionDef fn) => shapes.Widened?.Returns.TryGetValue(fn, out var w) == true ? w : T.JavaType(T.Ret(fn));
 
     static string Default(JType t) => t.Name switch
     {
@@ -678,6 +798,7 @@ public sealed class JavaWriter
         EProgField pf => pf.FieldType,
         ERecordField rf => rf.Type,
         ERecRaw => JType.String,
+        ECode cd => cd.Type,
         ECall { Fn: { Ret: not null } fn, Kind: CallKind.Static or CallKind.Instance } => T.JavaType(T.Ret(fn)),
         ENew { Class: { } c } => JType.Of(c),
         ECast c => c.T,
@@ -693,7 +814,10 @@ public sealed class JavaWriter
     /// A parameter's type. A collection of Object that callers pass with different element types is a generic method's
     /// List&lt;T&gt; (generateInterestScheduleModel): List&lt;?&gt; reads the same and accepts every caller.
     /// </summary>
-    JType ParamType(FunctionDef fn, int i)
+    JType ParamType(FunctionDef fn, int i) => ParamTypeOf(T, fn, i);
+
+    /// <summary>The type a parameter is declared with (<see cref="ParamType"/>), shared with R5.</summary>
+    internal static JType ParamTypeOf(TypeInference T, FunctionDef fn, int i)
     {
         var t = T.JavaType(T.Param(fn, i));
         if (t.Name is "java.util.List" or "java.util.Collection" or "java.util.Set" or "java.util.Iterator" && t.Args is [{ IsObject: true }] && T.Param(fn, i).Rep.Generic)
@@ -784,7 +908,7 @@ public sealed class JavaWriter
                 return el.TrimEnd().Length == 0 ? (RecordField(ef) + ".isEmpty()", 16) : (RecordField(ef) + ".equals(" + Literal(ELit.Str(el.TrimEnd())) + ")", 16);
             case ECall { Name: "equals", Recv: ELit { Value: string el2 }, Args: [ERecordField { Padded: false, Type.Name: "java.lang.String" } ef2] } when el2 != el2.TrimEnd():
                 return el2.TrimEnd().Length == 0 ? (RecordField(ef2) + ".isEmpty()", 16) : (Literal(ELit.Str(el2.TrimEnd())) + ".equals(" + RecordField(ef2) + ")", 16);
-            case ECall { Name: "stripTrailing", Recv: ERecordField { Padded: true } prf, Args.Count: 0 }: return (RecordField(new ERecordField(prf.Item) { Index = prf.Index, Type = prf.Type }), 16);
+            case ECall { Name: "stripTrailing", Recv: ERecordField { Padded: true } prf, Args.Count: 0 }: return (RecordField(new ERecordField(prf.Item) { Index = prf.Index, More = prf.More, Type = prf.Type, Via = prf.Via }), 16);
             case ECall c: return (Call(c), 16);
             case ENew n: return (New(n), 16);
             case EUnary u when u.Op == "!" && u.E is EInstanceOf io: return ("!(" + Expr(io, 0) + ")", 14);
@@ -832,9 +956,12 @@ public sealed class JavaWriter
             case EIndex x: return (Expr(x.A, 16) + "[" + Expr(x.I) + "]", 16);
             case EArrayLength al: return (Expr(al.A, 16) + ".length", 16);
             case ERecordField rf: return (RecordField(rf), 16);
+            case ECode cd: return ($"{CodeInstance(cd)}.{cd.Accessor}()", 16);
+            case EEnum en: return (en.Bare ? en.Constant : TypeName(JType.Of(en.EnumType)) + "." + en.Constant, 16);
             case EProgField pf: return (pf.Name, 16);
             case EClassLit cl: return (TypeName(cl.T) + ".class", 16);
-            case ERecRaw rr: return (rr.Offset is null ? $"{rr.Instance}.text()" : $"{rr.Instance}.raw({Expr(rr.Offset)}, {rr.Length})", 16);
+            case ERecRaw { Len: { } dl } dr: return ($"{Inst(dr.Via, dr.Instance)}.raw({(dr.Offset is null ? "0" : Expr(dr.Offset))}, {Expr(dl)})", 16);
+            case ERecRaw rr: return (rr.Offset is null ? $"{Inst(rr.Via, rr.Instance)}.text()" : ViewOf(rr) is { } rv ? $"{Inst(rr.Via, rr.Instance)}.{rv}()" : $"{Inst(rr.Via, rr.Instance)}.raw({Expr(rr.Offset)}, {rr.Length})", 16);
             case EPart p:
                 Residue.Add($"{cur?.Fn.Id} part {p.Part} of {IrText.Show(p.Whole)}");
                 return ($"RESIDUE(\"part {p.Part} of {Esc(IrText.Show(p.Whole))}\")", 16);
@@ -887,8 +1014,8 @@ public sealed class JavaWriter
     {
         var f = s.F;
         var owner = f.Owner;
-        // a job object (SJOB group): an instance field of the job class
-        if (owner is null && f.Group == "SJOB" && Prog is not null) return JobObjectName(f);
+        // a job object (SJOB group): an instance field of the job class (this. when a local of the method has its name)
+        if (owner is null && f.Group == "SJOB" && Prog is not null) { var jn = JobObjectName(f); return names.ContainsValue(jn) ? "this." + jn : jn; }
         if (owner is null) { Residue.Add($"static {f.CobolName} without a class"); return $"RESIDUE(\"static {f.CobolName}\")"; }
         if (current is not null && (owner == current || TopOf(owner) == TopOf(current) && shapes.Of(owner).IsEnum == false && owner == current)) return f.Name;
         return TypeName(JType.Of(owner)) + "." + f.Name;
@@ -918,7 +1045,7 @@ public sealed class JavaWriter
             case CallKind.Super: return $"{c.Name}({args})";
             case CallKind.Jdk:
                 if (c.Recv is ELit { Value: long lv }) return $"Integer.valueOf({lv}).{c.Name}({args})";
-                if (c.Recv is ELit { Value: bool bv }) return $"Boolean.valueOf({(bv ? "true" : "false")}).{c.Name}({args})";
+                if (c.Recv is ELit { Value: bool bv }) return $"{(bv ? "Boolean.TRUE" : "Boolean.FALSE")}.{c.Name}({args})";
                 return c.Recv is null ? $"{c.Name}({args})" : $"{Expr(c.Recv, 16)}{Dot(c)}{c.Name}({args})";
             case CallKind.JdkStatic:
                 return $"{TypeName(JType.Of(c.Owner!))}.{c.Name}({args})";
@@ -960,8 +1087,14 @@ public sealed class JavaWriter
         var (r, name) = acc;
         var view = rf.Type?.Name == "java.time.LocalDate" ? "" : r.Rc.DateViews.Contains(rf.Item.Name) ? "Number" : "";
         if (rf.Padded) view = "Text";
-        return $"{r.Instance}.{name}{view}({(rf.Index is null ? "" : Expr(rf.Index))})";
+        // a Y/N indicator read as a value (copied): its character, not its boolean accessor
+        else if (rf.Type?.Name != "boolean" && rf.Item.IsLeaf && r.Rc.Flags.Contains(rf.Item.Name)) view = "Text";
+        return $"{Inst(rf.Via, r.Instance)}.{name}{view}({Subscripts(rf, "")})";
     }
+
+    /// <summary>A record field's subscripts as accessor arguments (then the separator when there are any).</summary>
+    string Subscripts(ERecordField rf, string sep) =>
+        rf.Index is null ? "" : string.Join(", ", new[] { rf.Index }.Concat(rf.More).Select(x => Expr(x))) + sep;
 
     /// <summary>A group of a record (MOVE SPACES TO FN-SCHEDULE-REC): the characters of its image, "inst.text" or "inst.raw(off, len".</summary>
     string? GroupRaw(ERecordField rf)
@@ -970,8 +1103,24 @@ public sealed class JavaWriter
         int off = rf.Item.Offset - rf.Item.Record.Offset, len = rf.Item.Length;
         // a reference modification: that part of the field
         if (rf.RefStart > 0) { off += rf.RefStart - 1; len = rf.RefLen > 0 ? rf.RefLen : len - rf.RefStart + 1; }
-        return off == 0 && len == r.Rc.Length ? $"{r.Instance}.text" : $"{r.Instance}.raw({off}, {len}";
+        if (off == 0 && len == r.Rc.Length) return $"{Inst(rf.Via, r.Instance)}.text";
+        // a named view of the record class (a group, adjacent fields, a sign): "inst.view(" (the callers close it)
+        return r.Rc.View(off, len) is { } view ? $"{Inst(rf.Via, r.Instance)}.{view}(" : $"{Inst(rf.Via, r.Instance)}.raw({off}, {len}";
     }
+
+    /// <summary>The record instance of a code field (the program's field, or a restructured method's parameter).</summary>
+    string CodeInstance(ECode cd) => Inst(cd.Field.Via, App?.RecordOf(Prog!, cd.Field.Item)?.Instance ?? "?");
+
+    /// <summary>The record class's named view of a slice at a constant offset (registered on the class when new), else null.</summary>
+    string? ViewOf(ERecRaw rr)
+    {
+        if (rr.Offset is not ELit { Value: long off } || App is null || Prog is null) return null;
+        var rc = Prog.Records.FirstOrDefault(kv => Prog.Instances.TryGetValue(kv.Key, out var i) && i == rr.Instance).Value;
+        return rc?.View((int)off, rr.Length);
+    }
+
+    /// <summary>A record's instance as printed: the program's field, or the parameter or local a restructured method has.</summary>
+    string Inst(Expr? via, string instance) => via is null ? instance : Expr(via, 16);
 
     ((RecordClass Rc, string Instance) R, string Name)? RecordAccessor(ERecordField rf)
     {
@@ -998,7 +1147,7 @@ public sealed class JavaWriter
         names = [];
         taken = new HashSet<string>(StringComparer.Ordinal);
         // the program class's fields are in scope: locals keep other names
-        if (Prog is not null) { taken.UnionWith(Prog.Instances.Values); taken.UnionWith(Prog.Promoted.Values.Select(p => p.Name)); taken.UnionWith(Prog.FileFields.Values); taken.UnionWith(Prog.Callees.Values); }
+        if (Prog is not null) taken.UnionWith(Prog.FieldNames());
         markAll = true;
         int mark = SourceMap.Count;
         var ps = new List<string>();
@@ -1028,7 +1177,7 @@ public sealed class JavaWriter
             return edited;
         }
         Declarations(m.Body);
-        foreach (var st in Passes.All(m.Body)) foreach (var v in VarsOf(st)) if (!v.IsThis && !m.L.Captured.ContainsValue(v)) NameOf(v);
+        NameLocals(m);
         Block(m.Body);
         o.Close();
         for (int k = mark; k < SourceMap.Count; k++) sites.Add((-SourceMap[k].Line, SourceMap[k].Site));

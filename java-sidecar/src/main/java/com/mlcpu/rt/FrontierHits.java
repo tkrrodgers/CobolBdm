@@ -15,4 +15,13 @@ public final class FrontierHits {
     public static synchronized List<String> hits() { return List.copyOf(hits); }
     public static synchronized List<String> loopCuts() { return List.copyOf(loopCuts); }
     public static synchronized void clear() { hits.clear(); loopCuts.clear(); }
+
+    record State(List<String> recorded, List<String> cuts) {
+        void restore() {
+            hits.clear(); hits.addAll(recorded);
+            loopCuts.clear(); loopCuts.addAll(cuts);
+        }
+    }
+    static State capture() { return new State(List.copyOf(hits), List.copyOf(loopCuts)); }
+    static State fresh() { return new State(List.of(), List.of()); }
 }

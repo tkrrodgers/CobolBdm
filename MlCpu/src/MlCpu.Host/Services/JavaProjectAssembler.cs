@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using MlCpu.Cobol.Analysis.Entities;
 using MlCpu.Cobol.Analysis.Projections;
+using MlCpu.Cobol.Analysis.JavaBridge;
 using MlCpu.CobolKb.Knowledge;
 
 namespace MlCpu.Host.Services;
@@ -40,11 +41,14 @@ public sealed partial class JavaProjectAssembler
         var slug = Regex.Replace(name.ToLowerInvariant(), "[^a-z0-9]+", "-").Trim('-') + "-spring";
         var compiled = results.Where(r => !string.IsNullOrEmpty(r.JavaSource)).OrderBy(r => r.Program, StringComparer.Ordinal).ToList();
         var files = new ProjectFiles();
+        // Strangler routing (frozen baselines, mlcpu.strangler) only when the runtime has it; otherwise the emission is unchanged.
+        var strangler = runtime.TryGetValue("JobEngine.java", out var engine) && engine.Contains("BASELINE_PROGRAMS", StringComparison.Ordinal)
+                        && engine.Contains("STRANGLER", StringComparison.Ordinal);
         files.Set("settings.gradle.kts", $"rootProject.name = \"{slug}\"\n");
         files.Set("build.gradle.kts", BuildScript());
-        files.Set("src/main/resources/application.properties", Properties());
+        files.Set("src/main/resources/application.properties", Properties(strangler));
         files.Set("src/main/java/com/mlcpu/app/Application.java", ApplicationSource());
-        files.Set("src/main/java/com/mlcpu/app/JobRunner.java", JobRunnerSource());
+        files.Set("src/main/java/com/mlcpu/app/JobRunner.java", JobRunnerSource(strangler, compiled.Any(r => r.AdditionalSources.Count > 0)));
         files.Set("src/test/java/com/mlcpu/app/ApplicationContextTest.java", ContextTestSource());
         foreach (var (file, text) in runtime.OrderBy(kv => kv.Key, StringComparer.Ordinal))
             files.Set($"src/main/java/com/mlcpu/rt/{file}", text);
@@ -54,12 +58,17 @@ public sealed partial class JavaProjectAssembler
         int seeds = 0;
         foreach (var r in compiled)
         {
+            if (r.StorageComposition && (!r.Compiled || string.IsNullOrWhiteSpace(r.FaithfulJavaSource)))
+                throw new InvalidOperationException($"{r.Program}: composed storage must compile and include a faithful baseline");
             var src = GenPackage().Replace(r.JavaSource!, "package com.mlcpu.core;");
             var cls = ClassName().Match(src) is { Success: true } m ? m.Groups[1].Value : "Prog_" + r.Program;
             files.Set($"src/main/java/com/mlcpu/core/{cls}.java", src);
             var baseline = cls.Replace("Prog_", "Baseline_");
+            var faithful = r.StorageComposition
+                ? GenPackage().Replace(r.FaithfulJavaSource!, "package com.mlcpu.core;")
+                : src;
             files.Set($"src/main/java/com/mlcpu/core/{baseline}.java",
-                src.Replace($"public final class {cls} ", $"public final class {baseline} ")
+                faithful.Replace($"public final class {cls} ", $"public final class {baseline} ")
                    .Replace("/** Generated from", "/** Frozen pre-normalization comparator. Generated from"));
             if (r.Model is null || r.Graph is null) continue;
             var plan = BulkPartitionPlanner.Plan(r.Model, r.Graph);
@@ -103,15 +112,62 @@ public sealed partial class JavaProjectAssembler
         files.Set("src/main/java/com/mlcpu/app/JobDefinition.java", JobDefinitionSource(jobs.Select(j => j.Jcl).OfType<JclJob>().ToList(), compiled, capabilities));
         if (capabilities.Count > 0) files.Set("build.gradle.kts", BuildScript(capabilities, NormalizedCapabilities.SharedPackages(options.CapabilitiesRoot)));
 
+        // Kits must exist before domain partitioning routes sources and tests into Gradle modules.
+        var recordKitLedger = RecordKits(files, capabilities, plans, compiled);
         var ledgers = ProjectionPipeline.Run(files, units, slug, new ProjectionOptions(options.DomainPartition, options.DomainEvidenceRoot, options.OrchestrationEvidenceRoot))
             .Prepend(capabilityLedger).ToList();
-        ledgers.Add(RecordKits(files, capabilities, plans, compiled));
+        ledgers.Add(recordKitLedger);
+        if (options.DomainPartition && files.Paths("src/").Any())
+            throw new InvalidOperationException("partitioned export contains unassigned sources or tests at the project root");
+        // Typed rule modules sit beside the program modules (both layouts), so they are added after partitioning.
+        var ruleLedger = RuleHandoff.Apply(files, slug, compiled, options.DomainPartition);
+        ledgers.Add(ruleLedger);
+        var ruleHandoff = files.Exists($"{RuleHandoff.RulesModule}/build.gradle.kts");
+        if (strangler)
+        {
+            // After the projections: ProgramCapabilityProjection (P9) may move Baseline_* into capabilities/<pkg>/legacy, and
+            // partitioning into modules. JobDefinition is re-rendered in place with the classes' final packages.
+            var (baselines, stranglerLedger) = FrozenBaselines(files, compiled, ledgers);
+            ledgers.Add(stranglerLedger);
+            var jobDefinition = files.Paths().Single(p => p.EndsWith("src/main/java/com/mlcpu/app/JobDefinition.java", StringComparison.Ordinal));
+            files.Set(jobDefinition, JobDefinitionSource(jobs.Select(j => j.Jcl).OfType<JclJob>().ToList(), compiled, capabilities, baselines));
+        }
+
+        if (compiled.Any(r => r.StorageComposition))
+            files.Set("modernization/storage-composition.json", JsonSerializer.Serialize(new
+            {
+                schema = "mlcpu.storage-composition.v1",
+                stage = ruleLedger.Applied.Count > 0 ? "storage-composition+typed-rule-slices" : "storage-composition-only",
+                businessRulesExtracted = ruleLedger.Applied.Count > 0,
+                ruleHandoff = ruleLedger.Applied.Count > 0 ? "modernization/rule-handoff.md" : null,
+                executionIsolation = "process-wide runtime; use isolated processes for independent runs",
+                programs = compiled.Where(r => r.StorageComposition).Select(r =>
+                {
+                    var ir = r.Model is null ? null : r.Graph is null ? IrExporter.Export(r.Model) : IrExporter.Export(r.Model, r.Graph);
+                    return new
+                    {
+                        programId = r.Program,
+                        sourceHash = ProjectionJson.Sha256(r.JavaSource!),
+                        faithfulSourceHash = ProjectionJson.Sha256(r.FaithfulJavaSource!),
+                        fields = r.Fields,
+                        layout = ir?.Dictionary,
+                        calls = r.Graph?.Calls,
+                        callSites = r.Model is null ? null : CallSiteInventory.Build(r.Model, r.Graph, r.JavaSource),
+                        rules = r.RuleContracts.Select(c => c["ruleId"]?.GetValue<string>()).ToList(),
+                        lowered = r.Lowered,
+                        abstained = r.Abstained,
+                        frontiers = r.AbstainedSteps,
+                        oracleParity = "not established by generation"
+                    };
+                })
+            }, Json) + "\n");
 
         files.Set("MIGRATION.md", Migration(name, slug, results, jobs, ledgers, options.DomainPartition, capabilities));
         var frontiers = results.SelectMany(r => r.AbstainedSteps.Select(a => (r.Program, a))).ToList();
         if (frontiers.Count > 0)
             files.Set("FRONTIERS.md", "# Frontiers\n\nStatements the transpiler abstained on. Each stops the program with `CobRt.frontier` if reached.\n\n" +
                 string.Join("\n", frontiers.Select(f => $"- `{f.Program}` {f.a}")) + "\n");
+        if (ruleHandoff) files.Set(RuleHandoff.LockPath, RuleHandoff.Lock(files));
         return new JavaProject(slug, "com.mlcpu.core", files.All().Select(f => new JavaProjectFile(f.Path, f.Content, f.Language)).ToList(),
             results.Count, results.Count(r => r.Compiled), results.Count(r => r.Verdict == "PASS"), results.Sum(r => r.Lowered), results.Sum(r => r.Abstained), seeds, ledgers);
     }
@@ -162,6 +218,44 @@ public sealed partial class JavaProjectAssembler
     }
 
     static readonly JsonSerializerOptions Json = new() { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+    [GeneratedRegex(@"^package\s+([\w.]+)\s*;", RegexOptions.Multiline)] private static partial Regex PackageLine();
+
+    /// <summary>
+    /// The frozen Baseline_* class of each program after the projections, by its final package. A baseline P9 synthesized
+    /// from the projected program (no frozen copy existed) is not a frozen baseline and is left out, as is a missing or
+    /// ambiguous one: strangler LEGACY/SHADOW then stops at that step (JobEngine fails closed) instead of running the wrong code.
+    /// </summary>
+    static (Dictionary<string, string> Baselines, ProjectionLedger Ledger) FrozenBaselines(ProjectFiles files, IReadOnlyList<JavaTranspileResult> compiled,
+        IReadOnlyList<ProjectionLedger> ledgers)
+    {
+        var ledger = new ProjectionLedger("StranglerBaselines");
+        var synthesized = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (ledgers.FirstOrDefault(l => l.Pass == ProgramCapabilityProjection.Pass)?.Facts.GetValueOrDefault("implementations") is { } impl)
+            foreach (var i in System.Text.Json.Nodes.JsonNode.Parse(JsonSerializer.Serialize(impl))!.AsArray())
+                if (i?["synthesizedBaseline"]?.GetValue<bool>() == true) synthesized.Add(i["programId"]!.GetValue<string>());
+        var baselines = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var classes = new List<object>();
+        foreach (var r in compiled)
+        {
+            var pid = new string(r.Program.Select(c => char.IsLetterOrDigit(c) ? c : '_').ToArray());
+            var found = files.Paths().Where(p => p.EndsWith($"/Baseline_{pid}.java", StringComparison.Ordinal) && p.Contains("src/main/java/", StringComparison.Ordinal)).ToList();
+            string? reason = null, fqn = null;
+            if (synthesized.Contains(r.Program)) reason = "projection 9 synthesized the baseline from the projected program; no frozen copy exists";
+            else if (found.Count != 1) reason = found.Count == 0 ? "no Baseline_ class after the projections" : "ambiguous: " + string.Join(", ", found);
+            else if (!Regex.IsMatch(files.Get(found[0])!, $@"\bpublic\s+(?:final\s+)?class\s+Baseline_{pid}\b")) reason = "the Baseline_ class is not public";
+            else if (PackageLine().Match(files.Get(found[0])!) is not { Success: true } pkg) reason = "the Baseline_ class has no package";
+            else fqn = $"{pkg.Groups[1].Value}.Baseline_{pid}";
+            if (fqn is null) { ledger.Skip(r.Program, reason!); continue; }
+            baselines[r.Program] = fqn;
+            ledger.Applied.Add(r.Program);
+            classes.Add(new { programId = r.Program, baseline = fqn, path = found[0], frozen = r.StorageComposition ? "faithful emission (composed lane)" : "pre-normalization copy" });
+        }
+        ledger.Facts["baselines"] = classes;
+        ledger.Facts["modes"] = new[] { "OFF (default)", "LEGACY", "MODERN", "SHADOW" };
+        ledger.Facts["property"] = "mlcpu.strangler";
+        return (baselines, ledger);
+    }
 
     static string BuildScript() => """
         plugins {
@@ -251,6 +345,53 @@ public sealed partial class JavaProjectAssembler
             """;
     }
 
+    static string Properties(bool strangler) => Properties() + (strangler ? """
+        # OFF (default) | LEGACY (frozen Baseline_* per step) | MODERN | SHADOW (both, isolated; legacy authoritative)
+        mlcpu.strangler=OFF
+
+        """ : "");
+
+    static string JobRunnerSource(bool strangler, bool rules)
+    {
+        var text = JobRunnerSource().Replace("\r\n", "\n");
+        string Insert(string s, string anchor, string addition, bool before = false)
+        {
+            var at = s.IndexOf(anchor, StringComparison.Ordinal);
+            if (at < 0 || s.IndexOf(anchor, at + 1, StringComparison.Ordinal) >= 0) throw new InvalidOperationException("JobRunner template anchor not unique: " + anchor);
+            return before ? s.Insert(at, addition) : s.Insert(at + anchor.Length, addition);
+        }
+        if (rules)
+            text = Insert(text, "        CobConfig.DISPLAY_NUMERIC = displayNumeric;\n", """
+                        // A selected rule provider must hold no mutable state: RunUnit snapshots do not capture it (modernization/rule-handoff.md).
+                        for (String key : System.getProperties().stringPropertyNames()) {
+                            if (!key.startsWith("mlcpu.rule.")) continue;
+                            String ruleId = key.substring("mlcpu.rule.".length());
+                            String chosen = System.getProperty(key).trim();
+                            if (chosen.isEmpty() || chosen.equals(com.mlcpu.rules.spi.RuleSelector.GENERATED)) continue;
+                            for (com.mlcpu.rules.spi.RuleImplementation<?> r : java.util.ServiceLoader.load(com.mlcpu.rules.spi.RuleImplementation.class)) {
+                                if (!r.ruleId().equals(ruleId) || !r.implementationId().equals(chosen)) continue;
+                                List<String> state = com.mlcpu.rules.verify.ProviderPurity.violations(r.create());
+                                if (!state.isEmpty())
+                                    throw new IllegalStateException("rule " + ruleId + ": implementation '" + chosen + "' is not verifiably stateless; refused: " + state);
+                            }
+                        }
+
+                """.Replace("\r\n", "\n"), before: true);
+        if (!strangler) return text;
+        text = Insert(text, "@Value(\"${mlcpu.implementation:}\") String implementation;\n", "    @Value(\"${mlcpu.strangler:OFF}\") String strangler;\n");
+        text = Insert(text, "        String name = job.isBlank() ? JobDefinition.JOB : job.toUpperCase();\n", """
+                    String mode = strangler.isBlank() ? "OFF" : strangler.trim().toUpperCase();
+                    if (!List.of("OFF", "LEGACY", "MODERN", "SHADOW").contains(mode))
+                        throw new IllegalArgumentException("mlcpu.strangler must be OFF, LEGACY, MODERN or SHADOW: " + strangler);
+                    JobEngine.BASELINE_PROGRAMS.clear();
+                    JobEngine.BASELINE_PROGRAMS.putAll(JobDefinition.baselinePrograms());
+                    JobEngine.STRANGLER = mode;
+
+            """.Replace("\r\n", "\n"), before: true);
+        return Insert(text, "implementation.isBlank() ? \"policy\" + JobDefinition.DEFAULT_IMPLEMENTATIONS : implementation)",
+            "\n                        + (\"OFF\".equals(JobEngine.STRANGLER) ? \"\" : \" strangler=\" + JobEngine.STRANGLER)");
+    }
+
     static string Properties() => """
         spring.main.banner-mode=off
         spring.main.web-application-type=none
@@ -326,6 +467,13 @@ public sealed partial class JavaProjectAssembler
             @Override
             public void run(ApplicationArguments args) throws Exception {
                 if (!run) return;
+                // Typed rule selection (modernization/rule-handoff.md): --mlcpu.rule.<ruleId>=<implementationId>, explicit only.
+                for (String option : args.getOptionNames()) {
+                    List<String> values = args.getOptionValues(option);
+                    if (!option.startsWith("mlcpu.rule.") || values == null || values.isEmpty()) continue;
+                    System.setProperty(option, values.get(0));
+                    System.out.println("RULE " + option.substring("mlcpu.rule.".length()) + "=" + values.get(0));
+                }
                 CobConfig.DISPLAY_NUMERIC = displayNumeric;
                 CobConfig.BINARY_TRUNCATE = !"no".equalsIgnoreCase(binaryTruncate);
                 if (!clock.isBlank()) {
@@ -378,7 +526,10 @@ public sealed partial class JavaProjectAssembler
 
         """;
 
-    static string JobDefinitionSource(IReadOnlyList<JclJob> jobs, IReadOnlyList<JavaTranspileResult> programs, IReadOnlyList<CapabilityImport>? capabilities = null)
+    /// <param name="baselines">Program id → frozen baseline class (FQN after the projections), when the runtime supports
+    /// strangler routing; null keeps the pre-strangler emission.</param>
+    static string JobDefinitionSource(IReadOnlyList<JclJob> jobs, IReadOnlyList<JavaTranspileResult> programs, IReadOnlyList<CapabilityImport>? capabilities = null,
+        IReadOnlyDictionary<string, string>? baselines = null)
     {
         var classes = programs.ToDictionary(r => r.Program, r => "Prog_" + new string(r.Program.Select(c => char.IsLetterOrDigit(c) ? c : '_').ToArray()), StringComparer.OrdinalIgnoreCase);
         var modern = (capabilities ?? []).ToDictionary(c => c.ProgramId, StringComparer.OrdinalIgnoreCase);
@@ -428,6 +579,8 @@ public sealed partial class JavaProjectAssembler
                 var s = steps[i];
                 var factory = s.Program is not null && classes.TryGetValue(s.Program, out var cls) ? $"{cls}::new" : "null";
                 var normalized = s.Program is not null && modern.TryGetValue(s.Program, out var cap) && cap.Kind == "step" ? $"{cap.StepClass}::new, " : "";
+                var baseline = baselines is not null && s.Program is not null && baselines.TryGetValue(s.Program, out var b) ? $"{b}::new" : null;
+                if (baselines is not null && factory != "null" && normalized.Length == 0) normalized = "null, ";
                 var dds = s.Datasets.Select(d =>
                 {
                     var l = d.Lrecl ?? (d.Dsn is not null ? lrecl.GetValueOrDefault(d.Dsn) : null);
@@ -436,7 +589,8 @@ public sealed partial class JavaProjectAssembler
                 });
                 sb.Append($"                // {s.QualifiedStep} EXEC PGM={s.Program} ({s.Citation.Member}:{s.Citation.Line}{(s.InvocationChain.Count > 1 ? ", via " + string.Join(" > ", s.InvocationChain.Skip(1)) : "")})\n");
                 sb.Append($"                new JobEngine.Step(StepId.{ids[i]}.name(), {LitOrNull(s.Program)}, {LitOrNull(s.Parm)}, {LitOrNull(s.Cond)}, {factory}, {normalized}\n");
-                sb.Append("                    List.of(").Append(string.Join(",\n                        ", dds)).Append($")){(i + 1 < steps.Count ? "," : "")}\n");
+                sb.Append("                    List.of(").Append(string.Join(",\n                        ", dds))
+                  .Append(baselines is not null && factory != "null" ? $"), {baseline ?? "null"})" : "))").Append(i + 1 < steps.Count ? "," : "").Append('\n');
             }
             sb.Append("            );\n        }\n");
             foreach (var s in job.Steps.Where(s => s.Conditional))
@@ -446,6 +600,13 @@ public sealed partial class JavaProjectAssembler
         sb.Append("\n    /** Every converted program, for CALL resolution. */\n    public static Map<String, Supplier<CobolBase>> programs() {\n        return Map.ofEntries(\n");
         sb.Append(string.Join(",\n", classes.OrderBy(k => k.Key, StringComparer.Ordinal).Select(kv => $"            Map.entry({Lit(kv.Key)}, {kv.Value}::new)")));
         sb.Append("\n        );\n    }\n");
+        if (baselines is not null)
+        {
+            sb.Append("\n    /** Frozen pre-normalization baselines (Baseline_*), for mlcpu.strangler LEGACY/SHADOW steps and their CALL routing. */\n");
+            sb.Append("    public static Map<String, Supplier<CobolBase>> baselinePrograms() {\n        return Map.ofEntries(");
+            sb.Append(string.Join(",", baselines.OrderBy(k => k.Key, StringComparer.Ordinal).Select(kv => $"\n            Map.entry({Lit(kv.Key)}, {kv.Value}::new)")));
+            sb.Append(baselines.Count > 0 ? "\n        );\n    }\n" : ");\n    }\n");
+        }
         var subprograms = modern.Values.Where(c => c.Kind == "subprogram").OrderBy(c => c.ProgramId, StringComparer.Ordinal).ToList();
         sb.Append("\n    /** Normalized CALLed subprograms: a CALL reaches one when the job selects \"normalized\" for that program. */\n");
         sb.Append("    public static Map<String, Supplier<com.mlcpu.rt.ModernProgram>> modernPrograms() {\n        return Map.ofEntries(");

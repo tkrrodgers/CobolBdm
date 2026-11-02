@@ -134,6 +134,52 @@ public sealed partial class Model
     public Dictionary<string, string> ClassicMethods { get; } = new(StringComparer.OrdinalIgnoreCase);
     /// <summary>The package of the application runtime (Abend, Records), set by the application model.</summary>
     public string PlatformPackage { get; set; } = "modern.batch.platform";
+    /// <summary>The legacy sites whose decimal operations the lift checks against FSJBDEC's capacity (DecimalLimit).</summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, byte> DecimalLimitSites { get; } = new(StringComparer.Ordinal);
+    /// <summary>Where a capacity-checked decimal value leaves its function unchecked (an argument, a stored or returned value).</summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, byte> DecimalLimitEscapes { get; } = new(StringComparer.Ordinal);
+    /// <summary>
+    /// The interprocedural taint of values FSJBDEC may hold in its store (Modernizer runs the lift to a fixed point): functions
+    /// whose result may be such a value (fn id), parameters that receive one (fn id#index), fields that hold one
+    /// (owner.field), variables of a function that hold one at any point (fn id#name: loops and joins, flow-insensitive),
+    /// and the functions whose every capacity operation is checked because they handle one (fn id).
+    /// </summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, byte> LimitedReturns { get; } = new(StringComparer.Ordinal);
+    public System.Collections.Concurrent.ConcurrentDictionary<string, byte> LimitedParams { get; } = new(StringComparer.Ordinal);
+    public System.Collections.Concurrent.ConcurrentDictionary<string, byte> LimitedFields { get; } = new(StringComparer.Ordinal);
+    public System.Collections.Concurrent.ConcurrentDictionary<string, byte> LimitedVars { get; } = new(StringComparer.Ordinal);
+    public System.Collections.Concurrent.ConcurrentDictionary<string, byte> CheckedFunctions { get; } = new(StringComparer.Ordinal);
+    /// <summary>The size of the taint sets: the fixed point is reached when a lift pass leaves it unchanged.</summary>
+    public int TaintSize => LimitedReturns.Count + LimitedParams.Count + LimitedFields.Count + LimitedVars.Count + CheckedFunctions.Count;
+    /// <summary>The legacy sites of the J3S JRE pow(int, MathContext) emulation (JBigDecimalOps, its FSJBDEC operations by op code).</summary>
+    public Dictionary<string, string> JrePowSites { get; } = new(StringComparer.Ordinal);
+    /// <summary>FSJBDEC operations that may store a value the lift did not check (no taint, a function that handles none): the frontier.</summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, byte> UncheckedDecimalOps { get; } = new(StringComparer.Ordinal);
+    /// <summary>
+    /// The estate's FSJBDEC has no store of values beyond 31 digits (no 7900-BIG-RESULT): every value is an unscaled integer of
+    /// at most 31 digits (S9(31) COMP-3), and an operation whose result or working step does not fit returns RC 20. Then every
+    /// such operation is checked at its site (DecimalLimit of the inline runtime), not only those of values a store may hold.
+    /// </summary>
+    public bool DecimalInline { get; private set; }
+    /// <summary>
+    /// System.getProperty(key, def) calls the lift resolved to def (key → site): the batch job has no system properties
+    /// (J3S JSystemStatics: oracle A runs without -D options), so the modern code does not read the JVM's either.
+    /// </summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, string> JobProperties { get; } = new(StringComparer.Ordinal);
+    /// <summary>The legacy sites of J3S's unsupported-construct traps (abend 31) the lift keeps in the modern code (site → program).</summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, string> UnsupportedSites { get; } = new(StringComparer.Ordinal);
+    /// <summary>The job adapter's string conversions the lift checks (JS-CHARS, JS-FIELD: printable ASCII), program and function → paragraph.</summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, string> JobAdapterSites { get; } = new(StringComparer.Ordinal);
+    /// <summary>Reflective constructions the lift turned into new C() (method: class name → class).</summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, string> ReflectionFolds { get; } = new(StringComparer.Ordinal);
+    /// <summary>The class-path resources the code reads (method and call → the declared name).</summary>
+    public System.Collections.Concurrent.ConcurrentDictionary<string, string> ResourceReads { get; } = new(StringComparer.Ordinal);
+    /// <summary>The functions a case can run (Reflection.Lifetime: from the job, class initializers excluded).</summary>
+    public int CaseReach { get; set; }
+    /// <summary>J3S's build-time data of the target (resources, reflection list), when the estate has the table; else null.</summary>
+    public TargetData? Target { get; set; }
+    /// <summary>J3S's catch types: JX-ISA-n → the class the catch clause names (its "CATCH TYPE n: class" comment in FSJXP).</summary>
+    public Dictionary<string, string> CatchTypes { get; } = new(StringComparer.OrdinalIgnoreCase);
     /// <summary>The runtime's array classes (one class id per length band): Object[] from JA-NEW-A, int[] from JA-NEW-I.</summary>
     public Dictionary<int, JType> ArrayIds { get; } = [];
     public HashSet<string> RuntimePrograms { get; } = new(StringComparer.OrdinalIgnoreCase);
@@ -173,6 +219,7 @@ public sealed partial class Model
         {
             var header = J3sComments.HeaderClass(p);
             var id = p.Id.ToUpperInvariant();
+            if (id == "FSJBDEC") DecimalInline = !p.Model.Paragraphs.Any(x => x.Name.Equals("7900-BIG-RESULT", StringComparison.OrdinalIgnoreCase));
             if (id.StartsWith("FSJR") || id == "FSJBDEC" || id.StartsWith("FNDK") || id.StartsWith("FNDT")) RuntimePrograms.Add(p.Id);
             else if (header is null)
             {

@@ -47,6 +47,8 @@ public sealed class Estate
     public Dictionary<string, SourceProgram> ById { get; } = new(StringComparer.OrdinalIgnoreCase);
     public List<string> CopybookDirs { get; } = [];
     public List<string> JclFiles { get; } = [];
+    /// <summary>The legacy control flow structured before the lift (LegacyFlow), for modernize/legacy-flow.json.</summary>
+    public List<LegacyFlow.Entry> FlowLedger { get; } = [];
 
     static readonly Encoding Latin1 = Encoding.Latin1;
 
@@ -96,6 +98,7 @@ public sealed class Estate
             estate.Programs.Add(sp);
             estate.ById[sp.Id] = sp;
         }
+        LegacyFlow.Run(estate);
         return estate;
     }
 

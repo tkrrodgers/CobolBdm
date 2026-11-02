@@ -11,13 +11,18 @@ public final class SysIn {
 
     private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.ISO_8859_1));
 
-    public static void set(BufferedReader r) { reader = r; }
+    public static void set(BufferedReader r) {
+        try (RunUnit.Guard guard = RunUnit.guard()) { reader = java.util.Objects.requireNonNull(r); }
+    }
+    static BufferedReader current() {
+        try (RunUnit.Guard guard = RunUnit.guard()) { return reader; }
+    }
 
     public static String readLine() {
         try {
             return reader.readLine();
         } catch (IOException e) {
-            return null;
+            throw new java.io.UncheckedIOException("SYSIN read failed", e);
         }
     }
 }

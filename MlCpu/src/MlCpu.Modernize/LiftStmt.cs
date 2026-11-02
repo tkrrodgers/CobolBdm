@@ -18,10 +18,55 @@ public sealed partial class FunctionLifter
             var s = list[i];
             line = s.Line;
             if (ClosureDispatch(list, ref i)) { CommitUntouched(); continue; }
+            // IF v > hi OR v < lo (MOVE 'field' TO JX-AT, PERFORM JX-JOBFAIL), then MOVE v TO the field: the job adapter's
+            // checked move into a narrower field, lifted as the value checked where it is moved (JobAdapter.within)
+            if (RangeCheck(list, i) is { } rc) { pendingRange = rc; continue; }
             Statement(s);
             CommitUntouched();
         }
     }
+
+    /// <summary>The range the next MOVE's source must be within (its operand key, bounds and the field JX-AT names).</summary>
+    (string Key, long Lo, long Hi, string Site)? pendingRange;
+
+    (string Key, long Lo, long Hi, string Site)? RangeCheck(List<Stmt> list, int i)
+    {
+        var ic = StringComparison.OrdinalIgnoreCase;
+        var s = list[i];
+        if (s.Verb != "IF" || i + 1 >= list.Count || list[i + 1] is not { Verb: "MOVE" } mv || s.Blocks?.GetValueOrDefault("FALSE") is { Count: > 0 }) return null;
+        if (s.Blocks?.GetValueOrDefault("TRUE") is not [{ Verb: "MOVE" } at, { Verb: "PERFORM" } pf] || pf.Str("target")?.Equals("JX-JOBFAIL", ic) != true
+            || Model.DstName(at)?.Equals("JX-AT", ic) != true || at.Get("src") is not { K: "str", V: { } site }) return null;
+        if (s.Get("cond") is not { K: "or", L: { K: "rel" } a, R: { K: "rel" } b }) return null;
+        var (hiRel, loRel) = a.Op == "gt" && b.Op == "lt" ? (a, b) : a.Op == "lt" && b.Op == "gt" ? (b, a) : (null, null);
+        if (hiRel is null || loRel is null || Literal(hiRel.R!) is not long hi || Literal(loRel.R!) is not long lo) return null;
+        var key = NodeKey(hiRel.L!);
+        if (key != NodeKey(loRel.L!) || mv.Get("src") is not { } src) return null;
+        // MOVE JB-R-U TO JO-AMTU, the check of JB-R-U, then MOVE JO-AMT TO the field: the decimal moved, its unscaled value checked
+        if (NodeKey(src) != key && !(src is { K: "ref", V: { } sv } && sv.Equals("JO-AMT", ic) && hiRel.L!.V?.Equals("JB-R-U", ic) == true)) return null;
+        return (key, lo, hi, site.Trim());
+    }
+
+    static long? Literal(Node n) => n switch
+    {
+        { K: "num", V: { } v } when long.TryParse(v, out var x) => x,
+        { K: "neg", L: { K: "num", V: { } nv } } when long.TryParse(nv, out var y) => -y,
+        _ => null,
+    };
+
+    static string NodeKey(Node n) => $"{n.K}|{n.V}|{n.Id}|{n.Op}|{(n.L is null ? "" : NodeKey(n.L))}|{(n.R is null ? "" : NodeKey(n.R))}|{string.Join(",", (n.Args ?? []).Select(NodeKey))}|{(n.Start is null ? "" : NodeKey(n.Start))}|{(n.Len is null ? "" : NodeKey(n.Len))}";
+
+    /// <summary>A MOVE source the pending range check applies to: the value, checked (JobAdapter.within).</summary>
+    Expr Checked(Node src, Expr v)
+    {
+        if (pendingRange is not { } pr) return v;
+        bool amt = src is { K: "ref", V: { } sv } && sv.Equals("JO-AMT", StringComparison.OrdinalIgnoreCase) && NodeKey(src) != pr.Key;
+        if (!amt && NodeKey(src) != pr.Key) return v;
+        pendingRange = null;
+        M.JobAdapterSites.TryAdd($"{P.Id} {Fn.Id} JX-JOBFAIL {pr.Site}", "JX-JOBFAIL-RANGE");
+        return new ECall { Kind = CallKind.JdkStatic, Owner = M.PlatformPackage + ".JobAdapter", Name = amt ? "unscaledWithin" : "within", Args = [v, Bound(pr.Lo), Bound(pr.Hi), ELit.Str(pr.Site)], Type = v.Type };
+    }
+
+    static ELit Bound(long v) => v is >= int.MinValue and <= int.MaxValue ? ELit.Int(v) : new ELit(v, JType.Long) { Type = JType.Long };
 
     /// <summary>Paragraphs already lifted out of order (the branches of a closure dispatch).</summary>
     readonly HashSet<string> skipParagraphs = new(StringComparer.OrdinalIgnoreCase);
@@ -85,7 +130,8 @@ public sealed partial class FunctionLifter
         _ => "apply",
     };
 
-    [GeneratedRegex(@"^(F\d{4}-SP|JR-[A-Z]+)$", RegexOptions.IgnoreCase)] private static partial Regex StackRegRx();
+    // the J3S recursion registers (JR-SP, JR-STK, JR-RP, JR-MAX), not an application record's JR- fields (joda-money's JR-CURRENCIES)
+    [GeneratedRegex(@"^(F\d{4}-SP|JR-(SP|STK|RP|MAX))$", RegexOptions.IgnoreCase)] private static partial Regex StackRegRx();
 
     /// <summary>Recursion bookkeeping (frame stack pointers, return-point stack): Java's call stack does it.</summary>
     static bool StackBookkeeping(Stmt s)
@@ -134,7 +180,15 @@ public sealed partial class FunctionLifter
             if (d.V?.Equals("JO-AMTU", StringComparison.OrdinalIgnoreCase) == true)
             {
                 var amt = Operand(src);
-                SetReg("JO-AMT", amt is ECall { Name: "unscaledValue", Recv: { } whole } ? whole : amt);
+                var whole = amt is ECall { Name: "unscaledValue", Recv: { } w } ? w : null;
+                // the unscaled value checked against the field's range: the decimal moved, its unscaled value checked
+                if (whole is not null && pendingRange is { } ur && NodeKey(src) == ur.Key)
+                {
+                    pendingRange = null;
+                    M.JobAdapterSites.TryAdd($"{P.Id} {Fn.Id} JX-JOBFAIL {ur.Site}", "JX-JOBFAIL-RANGE");
+                    whole = new ECall { Kind = CallKind.JdkStatic, Owner = M.PlatformPackage + ".JobAdapter", Name = "unscaledWithin", Args = [whole, Bound(ur.Lo), Bound(ur.Hi), ELit.Str(ur.Site)], Type = JType.BigDecimal };
+                }
+                SetReg("JO-AMT", whole ?? Checked(src, amt));
                 continue;
             }
             if (d.K != "ref") { Residue("move to " + d.K); continue; }
@@ -153,9 +207,11 @@ public sealed partial class FunctionLifter
                 else SymWrite(Key(dloc), "", new EBinary("+", prev, piece) { Type = JType.String });
                 continue;
             }
-            var v = Operand(src, KindOfLoc(dloc), dpart);
+            var v = Checked(src, Operand(src, KindOfLoc(dloc), dpart));
             Write(dloc, dpart, v);
         }
+        // a range check whose MOVE did not take it (another shape): fail closed
+        if (pendingRange is not null) { Residue("job adapter range check without its move"); pendingRange = null; }
     }
 
     void RegisterWritten(string reg, string part, Expr value)
@@ -164,6 +220,8 @@ public sealed partial class FunctionLifter
         {
             if (value is ELit { Value: string t } && SiteRx().IsMatch(t.Trim())) site = t.Trim();
             else if (value is ELit { Value: string sp } && sp.Trim().Length == 0) { }
+            // the job adapter's failures name a field or a step (MOVE 'JM-AMOUNT-S' TO JX-AT, PERFORM JX-JOBFAIL)
+            jobFailAt = value is ELit { Value: string ja } && ja.Trim().Length > 0 ? ja.Trim() : null;
         }
     }
 
@@ -308,8 +366,16 @@ public sealed partial class FunctionLifter
         if (r is ELit { Value: "Y" or "N" } yn && IsBoolish(l)) return (yn.Value as string == "Y") == (jop == "==") ? l : Not(l);
         if (l is ELit { Value: "Y" or "N" } yn2 && IsBoolish(r)) return (yn2.Value as string == "Y") == (jop == "==") ? r : Not(r);
         if (r is ELit { Value: bool rb }) return rb == (jop == "==") ? l : Not(l);
+        // an unscaled value (BigInteger) against a number or another: compareTo
+        if ((IsBigInteger(l) || IsBigInteger(r)) && jop is "<" or ">" or "<=" or ">=" or "==" or "!=")
+        {
+            Expr Big(Expr e) => IsBigInteger(e) ? e : JdkStatic("java.math.BigInteger", "valueOf", JType.Of("java.math.BigInteger"), e);
+            return new EBinary(jop, Jdk(Big(l), "compareTo", JType.Int, Big(r)), ELit.Int(0)) { Type = JType.Bool };
+        }
         return new EBinary(jop, l, r) { Type = JType.Bool };
     }
+
+    static bool IsBigInteger(Expr e) => e.Type?.Name == "java.math.BigInteger";
 
     bool IsBoolish(Expr e) => e switch
     {
@@ -423,7 +489,7 @@ public sealed partial class FunctionLifter
 
     static readonly HashSet<string> GuardParagraphs = new(StringComparer.OrdinalIgnoreCase)
     {
-        "JX-NPE", "JX-INTERNAL", "JX-DEAD", "JX-PROP", "JB-ERR", "JX-SIZE", "JX-DEPTH", "JX-JOBFAIL", "JX-INEXACT", "JX-UNSUPPORTED",
+        "JX-NPE", "JX-INTERNAL", "JX-DEAD", "JX-PROP", "JB-ERR", "JX-SIZE", "JX-DEPTH", "JX-INEXACT",
     };
 
     /// <summary>Java exception class ids whose J3S checks Java performs by itself (cast, index, arithmetic, dates, iterators).</summary>
@@ -439,6 +505,19 @@ public sealed partial class FunctionLifter
     /// <summary>
     /// A guard: an IF whose only effect is to stop on a condition Java checks by itself. Returns the site the guard names.
     /// </summary>
+    /// <summary>
+    /// IF x-Z NOT = 0 (a decimal's zone: a store entry) of a value FSJBDEC may store: not a guard Java's own operation
+    /// makes, but the legacy's check (a job adapter that cannot output a stored value fails): lifted as it is.
+    /// </summary>
+    bool ZoneGuard(Stmt s)
+    {
+        if (s.Get("cond") is not { K: "rel", Op: "ne", L: { K: "ref" } zr, R: { K: "num", V: "0" } }) return false;
+        if (P.ItemsById.GetValueOrDefault(zr.Id ?? -1) is not { } it) return false;
+        var loc = Resolve(zr);
+        var part = PartOf(loc, it);
+        return part is "Z" or "P.Z" && Read(loc, part, zr) is ECall { Name: "zone" };
+    }
+
     bool IsGuard(Stmt s, out string? guardSite)
     {
         guardSite = null;
@@ -453,6 +532,9 @@ public sealed partial class FunctionLifter
         bool stops = false;
         // IF JB-RC NOT = 0 ... MOVE n TO JX-ABEND-CODE, PERFORM JX-ABEND: the BigDecimal service failed; Java's own call cannot
         bool jbAbend = s.Get("cond") is { K: "rel", L: { K: "ref" } jr } && jr.V!.Equals("JB-RC", StringComparison.OrdinalIgnoreCase);
+        // IF JX-C NOT = 0 ... PERFORM JX-JOBFAIL after a call: the exception the call threw propagates in Java (the frontier
+        // the generation reports); a job adapter failure on a value (a field's range) is lifted as the abend it is
+        bool jxcFail = s.Get("cond") is { K: "rel", L: { K: "ref" } xr } && xr.V!.Equals("JX-C", StringComparison.OrdinalIgnoreCase);
         foreach (var b in Model.Deep(body))
         {
             switch (b.Verb)
@@ -469,6 +551,9 @@ public sealed partial class FunctionLifter
                 {
                     var t = s.Line >= 0 ? b.Str("target") ?? "" : "";
                     if (GuardParagraphs.Contains(t) || jbAbend && t.Equals("JX-ABEND", StringComparison.OrdinalIgnoreCase)) { stops = true; continue; }
+                    // IF JX-C NOT = 0 / IF JB-RC NOT = 0 ... PERFORM JX-JOBFAIL: the failure of a call or of a decimal
+                    // conversion; the generation's ledger proves it unreachable or reports it unpreserved (RaiseAnalysis)
+                    if ((jxcFail || jbAbend) && t.Equals("JX-JOBFAIL", StringComparison.OrdinalIgnoreCase)) { stops = true; continue; }
                     if (t.Equals("JX-RAISE", StringComparison.OrdinalIgnoreCase) && raised is int r && Natural(r)) { stops = true; continue; }
                     return false;
                 }
@@ -518,9 +603,10 @@ public sealed partial class FunctionLifter
             if (Resolve(wdst) is LVar wv) { wv.V.Kind = VKind.Int; wv.V.Type = JType.Int; }
             return;
         }
-        if (IsGuard(s, out var gs))
+        if (!ZoneGuard(s) && IsGuard(s, out var gs))
         {
             if (gs is not null) site = gs;
+            ApplyDecimalLimit(s, gs);
             // IF JX-C NOT = 0 ... JX-PROP after a CALL names the call's own site: the exception it propagates was raised there
             if (gs is not null && Model.Deep(s.Blocks?.GetValueOrDefault("TRUE") ?? []).Any(b => b.Verb == "PERFORM" && b.Str("target")?.Equals("JX-PROP", StringComparison.OrdinalIgnoreCase) == true))
                 for (int k = Low.Count - 1; k >= 0; k--)
@@ -535,6 +621,9 @@ public sealed partial class FunctionLifter
         var cond = Cond(s.Get("cond")!);
         var then = s.Blocks?.GetValueOrDefault("TRUE") ?? [];
         var els = s.Blocks?.GetValueOrDefault("FALSE") ?? [];
+        // a test of a constant (a decimal's zone that is always inline, 0 NOT = 0): its branch never runs
+        if (els.Count == 0 && cond is EBinary { Op: "!=", L: ELit { Value: long or int } cl, R: ELit { Value: long or int } cr } && Convert.ToInt64(cl.Value) == Convert.ToInt64(cr.Value))
+            return;
         Flush();
         var lElse = NewLabel("else");
         var lEnd = NewLabel("endif");
@@ -630,6 +719,8 @@ public sealed partial class FunctionLifter
         }
         Flush();
         if (t!.Equals(Fn.ExitParagraph, StringComparison.OrdinalIgnoreCase)) { Emit(new LGoto(t)); return; }
+        // the handler of a try statement is reached by the exception: the raise before this GO TO is the Java throw
+        if (tryHandlers.Contains(t) && Low.LastOrDefault() is SThrow) return;
         if (t.EndsWith("-RET", StringComparison.OrdinalIgnoreCase) && Fn.Component is not null && t.StartsWith(Fn.Component + "-", StringComparison.OrdinalIgnoreCase))
         {
             Emit(new LGoto(Fn.ExitParagraph));

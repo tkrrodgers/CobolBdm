@@ -26,9 +26,13 @@ public final class JobEngine {
 
     public record Dd(String name, String dsn, String member, String generation, boolean dummy, boolean sysout, String instream, Integer lrecl) {}
 
-    public record Step(String id, String program, String parm, String cond, Supplier<CobolBase> factory, Supplier<ModernStep> modern, List<Dd> dds) {
+    public record Step(String id, String program, String parm, String cond, Supplier<CobolBase> factory, Supplier<ModernStep> modern,
+                       List<Dd> dds, Supplier<CobolBase> baseline) {
+        public Step(String id, String program, String parm, String cond, Supplier<CobolBase> factory, Supplier<ModernStep> modern, List<Dd> dds) {
+            this(id, program, parm, cond, factory, modern, dds, null);
+        }
         public Step(String id, String program, String parm, String cond, Supplier<CobolBase> factory, List<Dd> dds) {
-            this(id, program, parm, cond, factory, null, dds);
+            this(id, program, parm, cond, factory, null, dds, null);
         }
     }
 
@@ -38,6 +42,23 @@ public final class JobEngine {
 
     /** Normalized CALLed subprograms by program id; a CALL reaches one when the job selects "normalized" for that program. */
     public static final Map<String, Supplier<ModernProgram>> MODERN_PROGRAMS = new java.util.concurrent.ConcurrentHashMap<>();
+    public static final Map<String, Supplier<CobolBase>> BASELINE_PROGRAMS = new java.util.concurrent.ConcurrentHashMap<>();
+    public static String STRANGLER = "OFF";
+
+    record State(String implementation, Map<String, String> byProgram, Map<String, Supplier<ModernProgram>> subprograms,
+                 Map<String, Supplier<CobolBase>> baselines, String strangler) {
+        void restore() {
+            IMPLEMENTATION = implementation;
+            IMPLEMENTATION_BY_PROGRAM.clear(); IMPLEMENTATION_BY_PROGRAM.putAll(byProgram);
+            MODERN_PROGRAMS.clear(); MODERN_PROGRAMS.putAll(subprograms);
+            BASELINE_PROGRAMS.clear(); BASELINE_PROGRAMS.putAll(baselines);
+            STRANGLER = strangler;
+        }
+    }
+    static State capture() {
+        return new State(IMPLEMENTATION, new java.util.HashMap<>(IMPLEMENTATION_BY_PROGRAM), new java.util.HashMap<>(MODERN_PROGRAMS),
+                new java.util.HashMap<>(BASELINE_PROGRAMS), STRANGLER);
+    }
 
     /** Compiler, binder and assembler steps: they build load modules and touch no dataset the job reads or writes. */
     static final java.util.Set<String> BUILD_UTILITIES = java.util.Set.of("IGYCRCTL", "IGYWCL", "IGYWCLG", "IEWL", "HEWL", "IEWBLINK",
@@ -55,9 +76,13 @@ public final class JobEngine {
     /** CALL resolution for one step: every converted program, then the normalized subprograms the job selects. */
     private void prepareCalls() {
         ProgramRegistry.reset();
-        programs.forEach((id, f) -> ProgramRegistry.register(id, f.get()));
-        MODERN_PROGRAMS.forEach((id, f) -> {
-            if ("normalized".equalsIgnoreCase(implementationOf(id))) ProgramRegistry.registerModern(id, f.get());
+        ProgramRegistry.useBaselineNames(baselineExecution);
+        Map<String, Supplier<CobolBase>> selected = baselineExecution ? BASELINE_PROGRAMS : programs;
+        if (baselineExecution && !BASELINE_PROGRAMS.keySet().containsAll(programs.keySet()))
+            throw new JobFrontierException("frozen CALL baseline factories are missing");
+        selected.forEach((id, f) -> ProgramRegistry.register(id, f.get()));
+        if (!baselineExecution && "OFF".equalsIgnoreCase(STRANGLER)) MODERN_PROGRAMS.forEach((id, f) -> {
+            if ("normalized".equalsIgnoreCase(implementationOf(id))) ProgramRegistry.registerModernFactory(id, f);
         });
     }
 
@@ -82,12 +107,27 @@ public final class JobEngine {
     public record ProgramRun(int returnCode, List<String> display, String outcome) {}
 
     /** Runs one program as a step outside a job (typed services): DDs bound to files, optional PARM, DISPLAY captured. */
-    public static synchronized ProgramRun runProgram(CobolBase main, Map<String, Path> dds, String parm) {
+    public static ProgramRun runProgram(CobolBase main, Map<String, Path> dds, String parm) {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            return runBoundProgram(main, dds, parm);
+        }
+    }
+
+    /** Constructs and runs a program inside its isolated compatibility run unit. */
+    public static ProgramRun runProgram(Supplier<? extends CobolBase> factory, Map<String, Path> dds, String parm) {
+        try (RunUnit unit = new RunUnit(); RunUnit.Scope scope = unit.enter()) {
+            return runBoundProgram(factory.get(), dds, parm);
+        }
+    }
+
+    private static ProgramRun runBoundProgram(CobolBase main, Map<String, Path> dds, String parm) {
+        java.io.BufferedReader previousInput = SysIn.current();
         CobFile.DD.clear();
         dds.forEach((dd, p) -> CobFile.DD.put(dd.toUpperCase(), p.toString()));
+        bindInput(CobFile.DD.containsKey("SYSIN") ? Path.of(CobFile.DD.get("SYSIN")) : null);
         ProgramRegistry.reset();
         ProgramRegistry.register(main.programId(), main);
-        CobRt.resetRunUnit();
+        CobRt.resetCounters();
         DisplaySink prev = DisplaySink.current();
         DisplaySink.Capturing cap = new DisplaySink.Capturing();
         DisplaySink.set(cap);
@@ -105,8 +145,8 @@ public final class JobEngine {
             outcome = "ABEND:" + a.code;
             rc = 16;
         } finally {
-            OpenDatasets.closeAll(); // datasets a CALLed normalized program left open
-            DisplaySink.set(prev);
+            try { OpenDatasets.closeAll(); }
+            finally { SysIn.set(previousInput); DisplaySink.set(prev); }
         }
         return new ProgramRun(rc, List.copyOf(cap.lines()), outcome);
     }
@@ -127,6 +167,12 @@ public final class JobEngine {
     private final Path ctlDir;
     private final Map<String, Supplier<CobolBase>> programs;
     private final Consumer<String> log;
+    private boolean baselineExecution;
+
+    Path dataDirectory() { return dataDir; }
+    Path sysoutDirectory() { return sysoutDir; }
+    Path controlDirectory() { return ctlDir; }
+    Map<String, Supplier<CobolBase>> programFactories() { return programs; }
 
     public JobEngine(Path dataDir, Path sysoutDir, Path ctlDir, Map<String, Supplier<CobolBase>> programs, Consumer<String> log) {
         this.dataDir = dataDir;
@@ -137,6 +183,15 @@ public final class JobEngine {
     }
 
     public List<StepResult> run(List<Step> steps, java.util.Set<String> only) throws IOException {
+        if (RunUnit.current() == null) {
+            try (RunUnit unit = new RunUnit(); RunUnit.Scope scope = unit.enter()) {
+                return runBoundJob(steps, only);
+            }
+        }
+        return runBoundJob(steps, only);
+    }
+
+    private List<StepResult> runBoundJob(List<Step> steps, java.util.Set<String> only) throws IOException {
         Files.createDirectories(dataDir);
         Files.createDirectories(sysoutDir);
         List<StepResult> results = new ArrayList<>();
@@ -158,6 +213,18 @@ public final class JobEngine {
 
     private StepResult execute(Step s) throws IOException {
         String pgm = s.program() == null ? "" : s.program().toUpperCase();
+        if (s.factory() != null && !"OFF".equalsIgnoreCase(STRANGLER)) {
+            if (s.baseline() == null) throw new JobFrontierException(s.id() + ": no frozen baseline for strangler execution");
+            if ("SHADOW".equalsIgnoreCase(STRANGLER)) return StepStrangler.shadow(this, s);
+            if ("LEGACY".equalsIgnoreCase(STRANGLER)) {
+                baselineExecution = true;
+                return program(new Step(s.id(), s.program(), s.parm(), s.cond(), s.baseline(), null, s.dds(), s.baseline()));
+            }
+            if (!"MODERN".equalsIgnoreCase(STRANGLER)) throw new JobFrontierException("unknown strangler mode: " + STRANGLER);
+            baselineExecution = false;
+            return program(s);
+        }
+        baselineExecution = false;
         if (normalized(s)) return modern(s);
         if (s.factory() != null) return program(s);
         return switch (pgm) {
@@ -208,8 +275,10 @@ public final class JobEngine {
         for (Dd d : s.dds()) if (d.name().equals("SYSOUT")) sysout = path(s, d);
         CobFile.DD.clear();
         for (Dd d : s.dds()) if (!d.name().isEmpty()) CobFile.DD.put(d.name(), path(s, d).toString());
-        prepareCalls();
+        Dd input = find(s, "SYSIN");
+        bindInput(input == null ? null : path(s, input));
         CobRt.resetRunUnit();
+        prepareCalls();
         try (OutputStream os = new FileOutputStream(sysout.toFile(), true)) {
             DisplaySink.ToStream sink = new DisplaySink.ToStream(os);
             DisplaySink prev = DisplaySink.current();
@@ -231,9 +300,8 @@ public final class JobEngine {
                 sink.write("RUNTIME ERROR " + e, true);
                 return new StepResult(s.id(), s.program(), 20, "normalized " + e);
             } finally {
-                OpenDatasets.closeAll(); // implicit CLOSE of what the step left open, as for the faithful program
-                sink.flush();
-                DisplaySink.set(prev);
+                try { RunUnit.closeResources(); }
+                finally { sink.flush(); DisplaySink.set(prev); }
             }
         }
     }
@@ -258,10 +326,12 @@ public final class JobEngine {
             if (d.name().equals("SYSOUT")) sysout = p;
             CobFile.DD.put(d.name(), p.toString());
         }
+        Dd input = find(s, "SYSIN");
+        bindInput(input == null ? null : path(s, input));
+        CobRt.resetRunUnit();
         prepareCalls();
         CobolBase main = s.factory().get();
         ProgramRegistry.register(s.program(), main);
-        CobRt.resetRunUnit();
         try (OutputStream os = new FileOutputStream(sysout.toFile(), true)) {
             DisplaySink.ToStream sink = new DisplaySink.ToStream(os);
             DisplaySink prev = DisplaySink.current();
@@ -293,10 +363,21 @@ public final class JobEngine {
                 sink.write("RUNTIME ERROR " + e.getMessage(), true);
                 return new StepResult(s.id(), s.program(), 20, e.getMessage());
             } finally {
-                OpenDatasets.closeAll(); // datasets a CALLed normalized program left open
-                sink.flush();
-                DisplaySink.set(prev);
+                try { RunUnit.closeResources(); }
+                finally { sink.flush(); DisplaySink.set(prev); }
             }
+        }
+    }
+
+    private static void bindInput(Path path) {
+        try {
+            java.io.BufferedReader reader = path == null
+                    ? new java.io.BufferedReader(new java.io.StringReader(""))
+                    : Files.newBufferedReader(path, StandardCharsets.ISO_8859_1);
+            SysIn.set(reader);
+            OpenDatasets.opened(reader);
+        } catch (IOException e) {
+            throw new java.io.UncheckedIOException("cannot bind SYSIN: " + path, e);
         }
     }
 

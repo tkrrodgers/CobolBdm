@@ -46,7 +46,7 @@ public final class StepEquivalence {
         return out;
     }
 
-    public static synchronized Outcome run(JobEngine.Step step, Map<String, byte[]> inputs, String implementation) throws IOException {
+    public static Outcome run(JobEngine.Step step, Map<String, byte[]> inputs, String implementation) throws IOException {
         return run(step, inputs, implementation, Map.of());
     }
 
@@ -54,8 +54,9 @@ public final class StepEquivalence {
      * Runs the step with {@code implementation}; {@code subprograms} are the normalized CALL targets in play (only these:
      * any registered elsewhere are set aside for the run, so each capability is judged on its own).
      */
-    public static synchronized Outcome run(JobEngine.Step step, Map<String, byte[]> inputs, String implementation,
+    public static Outcome run(JobEngine.Step step, Map<String, byte[]> inputs, String implementation,
                                            Map<String, java.util.function.Supplier<ModernProgram>> subprograms) throws IOException {
+        try (RunUnit unit = new RunUnit(); RunUnit.Scope scope = unit.enter()) {
         Map<String, java.util.function.Supplier<ModernProgram>> savedCalls = new TreeMap<>(JobEngine.MODERN_PROGRAMS);
         JobEngine.MODERN_PROGRAMS.clear();
         subprograms.forEach((k, v) -> JobEngine.MODERN_PROGRAMS.put(k.toUpperCase(), v));
@@ -64,6 +65,7 @@ public final class StepEquivalence {
         } finally {
             JobEngine.MODERN_PROGRAMS.clear();
             JobEngine.MODERN_PROGRAMS.putAll(savedCalls);
+        }
         }
     }
 

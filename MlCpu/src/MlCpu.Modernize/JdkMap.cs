@@ -17,9 +17,20 @@ public static class JdkMap
         ["JOptional"] = "java.util.Optional", ["JString"] = "java.lang.String", ["JStringBuilder"] = "java.lang.StringBuilder",
         ["JAtomicReference"] = "java.util.concurrent.atomic.AtomicReference", ["JMapEntry"] = "java.util.Map.Entry",
         ["JArrayListItr"] = "java.util.Iterator", ["JListItr"] = "java.util.Iterator", ["JAbstractSet.Itr"] = "java.util.Iterator", ["JSubList.JSubListItr"] = "java.util.Iterator",
-        ["JHashItr"] = "java.util.Iterator",
+        ["JHashItr"] = "java.util.Iterator", ["JListOf"] = "java.util.List",
         ["JCollections.ReverseComparator"] = "java.util.Comparator", ["JComparators.KeyComparator"] = "java.util.Comparator",
         ["JClass"] = "java.lang.Class",
+        // concurrent maps (their iteration order is the JDK's: ConcurrentSkipListMap by key, ConcurrentHashMap by bin)
+        ["JConcurrentHashMap"] = "java.util.Map", ["JConcurrentSkipListMap"] = "java.util.Map", ["JCSLMView"] = "java.util.Collection",
+        ["JCSLMView.Itr"] = "java.util.Iterator", ["JCHMKeySet"] = "java.util.Set", ["JCHMKeySet.Itr"] = "java.util.Iterator", ["JCHMNode"] = "java.util.Map.Entry",
+        ["JEmptyList"] = "java.util.List",
+        // regex
+        ["JPattern"] = "java.util.regex.Pattern", ["JMatcher"] = "java.util.regex.Matcher",
+        // class-path resources and the readers over them
+        ["JResourceStream"] = "java.io.InputStream", ["JReader"] = "java.io.Reader", ["JInputStreamReader"] = "java.io.InputStreamReader",
+        ["JBufferedReader"] = "java.io.BufferedReader", ["JURL"] = "java.net.URL", ["JResourceEnumeration"] = "java.util.Enumeration",
+        // reflection
+        ["JClassLoader"] = "java.lang.ClassLoader", ["JConstructor"] = "java.lang.reflect.Constructor",
     };
 
     /// <summary>Concrete JDK class for `new` of an emulation class.</summary>
@@ -28,6 +39,8 @@ public static class JdkMap
         ["JArrayList"] = "java.util.ArrayList", ["JHashMap"] = "java.util.HashMap", ["JTreeMap"] = "java.util.TreeMap", ["JHashSet"] = "java.util.HashSet",
         ["JTreeSet"] = "java.util.TreeSet", ["JIdentityHashMap"] = "java.util.IdentityHashMap", ["JStringBuilder"] = "java.lang.StringBuilder",
         ["JAtomicReference"] = "java.util.concurrent.atomic.AtomicReference", ["JString"] = "java.lang.String",
+        ["JConcurrentHashMap"] = "java.util.concurrent.ConcurrentHashMap", ["JConcurrentSkipListMap"] = "java.util.concurrent.ConcurrentSkipListMap",
+        ["JBufferedReader"] = "java.io.BufferedReader", ["JInputStreamReader"] = "java.io.InputStreamReader",
     };
 
     /// <summary>Static emulation helpers → the JDK class that has the static method.</summary>
@@ -35,7 +48,15 @@ public static class JdkMap
     {
         ["JCollections"] = "java.util.Collections", ["JComparators"] = "java.util.Comparator", ["JMapStatics"] = "java.util.Map", ["JObjects"] = "java.util.Objects",
         ["JOptional"] = "java.util.Optional", ["JImmutableList"] = "java.util.List", ["JIntegerStatics"] = "java.lang.Integer", ["JString"] = "java.lang.String",
+        ["JListStatics"] = "java.util.List", ["JMathStatics"] = "java.lang.Math", ["JCollectionsEmpty"] = "java.util.Collections",
+        ["JPattern"] = "java.util.regex.Pattern",
     };
+
+    /// <summary>The JVM's own property namespaces: J3S's System.getProperty traps on them (their values are not known).</summary>
+    public static readonly string[] JvmPropertyPrefixes = ["java.", "os.", "user.", "file.", "line.", "path.", "jdk.", "sun."];
+
+    /// <summary>A property key the batch job's (empty) environment answers with the default: not empty, outside the JVM's namespaces.</summary>
+    public static bool JobPropertyKey(string key) => key.Length > 0 && !JvmPropertyPrefixes.Any(p => key.StartsWith(p, StringComparison.Ordinal));
 
     public static string EmulationName(ClassDef c)
     {

@@ -51,6 +51,12 @@ public final class CobConfig {
     /** Maximum loop iterations before a loop is cut (I10). */
     public static long LOOP_LIMIT = Long.parseLong(setting("mlcpu.loopLimit", "MLCPU_LOOP_LIMIT", "2000000000"));
 
+    /**
+     * The id of an explicit {@link RawMoveProfile} that may apply a copy order to shifted overlapping raw MOVEs. Empty (the
+     * default): every such MOVE stops at a frontier. An unknown id is never guessed: the MOVE stops at a frontier naming it.
+     */
+    public static String RAW_MOVE_PROFILE = setting("mlcpu.rawMoveProfile", "MLCPU_RAW_MOVE_PROFILE", "");
+
     public static void reload() {
         BINARY_TRUNCATE = !"no".equalsIgnoreCase(setting("mlcpu.binaryTruncate", "MLCPU_BINARY_TRUNCATE", "yes"));
         ASCII_SIGN = "ascii".equalsIgnoreCase(setting("mlcpu.sign", "MLCPU_SIGN", "ebcdic"));
@@ -61,5 +67,26 @@ public final class CobConfig {
         ARITHMETIC_OSVS = "gnucobol".equalsIgnoreCase(setting("mlcpu.arithmetic", "MLCPU_ARITHMETIC", DISPLAY_NUMERIC));
         DEFAULT_BYTE = (byte) Integer.parseInt(setting("mlcpu.defaultByte", "MLCPU_DEFAULT_BYTE", "0"));
         LOOP_LIMIT = Long.parseLong(setting("mlcpu.loopLimit", "MLCPU_LOOP_LIMIT", "2000000000"));
+        RAW_MOVE_PROFILE = setting("mlcpu.rawMoveProfile", "MLCPU_RAW_MOVE_PROFILE", "");
+    }
+
+    record State(boolean binaryTruncate, boolean asciiSign, String displayNumeric, boolean gnuInitialize,
+                 boolean comp5LittleEndian, boolean arithmeticOsvs, byte defaultByte, long loopLimit, String rawMoveProfile) {
+        void restore() {
+            BINARY_TRUNCATE = binaryTruncate;
+            ASCII_SIGN = asciiSign;
+            DISPLAY_NUMERIC = displayNumeric;
+            GNU_INITIALIZE = gnuInitialize;
+            COMP5_LITTLE_ENDIAN = comp5LittleEndian;
+            ARITHMETIC_OSVS = arithmeticOsvs;
+            DEFAULT_BYTE = defaultByte;
+            LOOP_LIMIT = loopLimit;
+            RAW_MOVE_PROFILE = rawMoveProfile;
+        }
+    }
+
+    static State capture() {
+        return new State(BINARY_TRUNCATE, ASCII_SIGN, DISPLAY_NUMERIC, GNU_INITIALIZE, COMP5_LITTLE_ENDIAN,
+                ARITHMETIC_OSVS, DEFAULT_BYTE, LOOP_LIMIT, RAW_MOVE_PROFILE);
     }
 }

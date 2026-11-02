@@ -68,8 +68,9 @@ else
                 <div>Jobs</div><div>@string.Join(", ", p.Publish.Jobs)</div>
                 <div>Capabilities</div><div>@(p.Publish.Capabilities.Count == 0 ? "—" : string.Join(", ", p.Publish.Capabilities)) @(p.Publish.CapabilitiesRoot is { } cr ? $"(authored: {cr})" : "(generated at publish)")</div>
             </div>
+            <label><input type="checkbox" @bind="composeStorage" /> Generate composed storage and verified rule slices (experimental; complete capabilities remain gated)</label>
             <div class="row"><label>Publish to</label><input type="text" class="wide" @bind="publishDir" />
-                <button disabled="@(Ops.IsRunning(p.Id, WorkspaceActions.Publish) || p.Oracle.JobChecks.Count == 0)" @onclick="() => Actions.StartPublish(p.Id, publishDir)">Publish</button>
+                <button disabled="@(Ops.IsRunning(p.Id, WorkspaceActions.Publish) || p.Oracle.JobChecks.Count == 0)" @onclick="() => Actions.StartPublish(p.Id, publishDir, composeStorage)">Publish</button>
                 @if (p.Oracle.JobChecks.Count == 0) { <span class="bad">run the GnuCOBOL oracle first (Settings)</span> }
             </div>
             <OperationPanel ProjectId="@p.Id" Kind="@WorkspaceActions.Publish" Completed="_ => Refresh()" Lines="20" />
@@ -110,6 +111,7 @@ else
     string publishDir = "";
     string? publishFor;
     bool sidecarUp;
+    bool composeStorage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -124,6 +126,7 @@ else
             publishFor = p.Id;
             publishDir = Conversion.DefaultPublishDir(p);
             selected = null;
+            composeStorage = false;
         }
     }
 

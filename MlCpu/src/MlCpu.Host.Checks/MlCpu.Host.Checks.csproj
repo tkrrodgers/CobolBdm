@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MlCpu.Host.Checks</RootNamespace>
+    <AssemblyName>MlCpu.Host.Checks</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\MlCpu.Host\MlCpu.Host.csproj" />
+  </ItemGroup>
+</Project>

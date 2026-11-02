@@ -10,9 +10,13 @@ import java.util.List;
 public abstract class DisplaySink {
     private static DisplaySink current = new Capturing();
 
-    public static DisplaySink current() { return current; }
+    public static DisplaySink current() {
+        try (RunUnit.Guard guard = RunUnit.guard()) { return current; }
+    }
 
-    public static void set(DisplaySink s) { current = s; }
+    public static void set(DisplaySink s) {
+        try (RunUnit.Guard guard = RunUnit.guard()) { current = java.util.Objects.requireNonNull(s); }
+    }
 
     public abstract void write(String text, boolean newline);
 

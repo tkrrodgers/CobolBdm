@@ -13,6 +13,8 @@ public sealed class Var
     public bool IsParam { get; init; }
     public bool IsThis { get; init; }
     public bool IsTemp { get; set; }
+    /// <summary>A variable a restructuring pass declared with its type (not a type inference slot).</summary>
+    public bool Fixed { get; init; }
     public FrameSlot? Slot { get; init; }
     /// <summary>The COBOL words of the name (MONTHLY-INTE), when another variable's: the frame slot's hint otherwise.</summary>
     public string? Hint { get => hint ?? Slot?.Hint; set => hint = value; }
@@ -168,6 +170,8 @@ public sealed class EArrayNew(JType elem, Expr len) : Expr
 public sealed class EClassLit(JType t) : Expr
 {
     public JType T { get; } = t;
+    /// <summary>The J3S class id of a literal the lift could not bind yet (an abstract class: no allocation names it).</summary>
+    public int? ClassId { get; init; }
     public override IEnumerable<Expr> Children => [];
     public override Expr Map(Func<Expr, Expr> f) => this;
 }

@@ -134,7 +134,7 @@ public sealed class TypeInference
     };
 
     public static bool IsContainer(string jdk) => jdk is "java.util.List" or "java.util.Map" or "java.util.Set" or "java.util.NavigableSet" or "java.util.Collection" or "java.util.Optional"
-        or "java.util.Iterator" or "java.util.Map.Entry" or "java.util.concurrent.atomic.AtomicReference";
+        or "java.util.Iterator" or "java.util.Map.Entry" or "java.util.concurrent.atomic.AtomicReference" or "java.util.Enumeration";
 
     /// <summary>A declared parameter type from the signature comment (a simple name; generic arguments are cut by J3S).</summary>
     static readonly System.Text.RegularExpressions.Regex TypeVar = new(@"(^|[<\s,?])[A-Z][A-Z0-9]?($|[>\s,\[])");

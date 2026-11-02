@@ -1,0 +1,437 @@
+{
+  "schema": "mlcpu.project.v1",
+  "id": "kontor-zins-legacy",
+  "name": "kontor-zins-legacy",
+  "origin": "C:\\Users\\Tomrodgers\\JavaToCOBOLTest-legacy\\fineract-cobol-gen\\build\\kontor-b1\\package\\source",
+  "onboardedAt": "2026-11-01T18:45:14",
+  "layout": {
+    "sourceDir": "source",
+    "codeRoots": [
+      "app/cbl"
+    ],
+    "copybookRoots": [
+      "app/cpy"
+    ],
+    "jclRoots": [
+      "app/jcl"
+    ],
+    "procRoots": [],
+    "controlCardRoots": [],
+    "dataRoots": [
+      "app/data"
+    ]
+  },
+  "programs": [
+    {
+      "id": "CEE3ABD",
+      "path": "app/cbl/CEE3ABD.cbl",
+      "kind": "subprogram",
+      "lines": 10,
+      "calledBy": [
+        "FSEM0100",
+        "KZLE0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FNDKRND",
+      "path": "app/cbl/FNDKRND.cbl",
+      "kind": "subprogram",
+      "lines": 172,
+      "calledBy": [
+        "FSJBDEC"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSEM0100",
+      "path": "app/cbl/FSEM0100.cbl",
+      "kind": "subprogram",
+      "lines": 579,
+      "calledBy": [
+        "KZLE0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "FSJBDEC",
+      "path": "app/cbl/FSJBDEC.cbl",
+      "kind": "subprogram",
+      "lines": 1546,
+      "calledBy": [
+        "FSEM0100"
+      ],
+      "jobs": []
+    },
+    {
+      "id": "KZLE0100",
+      "path": "app/cbl/KZLE0100.cbl",
+      "kind": "batch",
+      "lines": 433,
+      "calledBy": [],
+      "jobs": [
+        "KZANNUIT"
+      ]
+    }
+  ],
+  "excluded": [],
+  "oracle": {
+    "provider": "generic",
+    "clock": "2022-07-05T10:11:12-07:00",
+    "cobcFlags": [
+      "-std=ibm",
+      "-fsign=EBCDIC",
+      "-fstatic-call",
+      "-Wno-others"
+    ],
+    "jobs": [
+      "KZANNUIT"
+    ],
+    "datasets": [
+      {
+        "dsn": "KONTZINS.RUN.CONTROL",
+        "source": "app/data/RUN.CONTROL.txt",
+        "format": "fixed",
+        "lrecl": 80,
+        "minRecord": 80,
+        "alternateKeys": [],
+        "from": "KZLE0100:RUNCTL-FILE"
+      },
+      {
+        "dsn": "KONTZINS.CASES.DATA",
+        "source": "app/data/CASES.DATA.txt",
+        "format": "fixed",
+        "lrecl": 100,
+        "minRecord": 100,
+        "alternateKeys": [],
+        "from": "KZLE0100:EVENT-FILE"
+      }
+    ],
+    "scenarios": [
+      "boundaries",
+      "damaged",
+      "disjoint-01",
+      "disjoint-02",
+      "disjoint-03",
+      "disjoint-04",
+      "disjoint-05",
+      "replay-01",
+      "replay-02",
+      "replay-03",
+      "replay-04",
+      "replay-05",
+      "rounding-ceiling",
+      "rounding-down",
+      "rounding-floor",
+      "rounding-half_down",
+      "rounding-half_even",
+      "rounding-half_up",
+      "rounding-up"
+    ],
+    "scenarioJobs": {},
+    "jobChecks": [
+      {
+        "job": "KZANNUIT",
+        "scenario": "base",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/base/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/base/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/base/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/base/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "boundaries",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/boundaries/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/boundaries/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/boundaries/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/boundaries/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "damaged",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/damaged/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/damaged/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/damaged/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/damaged/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "disjoint-01",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/disjoint-01/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/disjoint-01/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/disjoint-01/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/disjoint-01/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "disjoint-02",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/disjoint-02/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/disjoint-02/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/disjoint-02/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/disjoint-02/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "disjoint-03",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/disjoint-03/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/disjoint-03/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/disjoint-03/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/disjoint-03/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "disjoint-04",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/disjoint-04/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/disjoint-04/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/disjoint-04/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/disjoint-04/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "disjoint-05",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/disjoint-05/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/disjoint-05/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/disjoint-05/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/disjoint-05/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "replay-01",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/replay-01/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/replay-01/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/replay-01/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-01/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "replay-02",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/replay-02/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/replay-02/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/replay-02/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-02/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "replay-03",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/replay-03/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/replay-03/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/replay-03/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-03/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "replay-04",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/replay-04/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/replay-04/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/replay-04/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-04/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "replay-05",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/replay-05/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/replay-05/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/replay-05/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/replay-05/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "rounding-ceiling",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/rounding-ceiling/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/rounding-ceiling/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/rounding-ceiling/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rounding-ceiling/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "rounding-down",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/rounding-down/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/rounding-down/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/rounding-down/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rounding-down/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "rounding-floor",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/rounding-floor/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/rounding-floor/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/rounding-floor/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rounding-floor/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "rounding-half_down",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/rounding-half_down/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/rounding-half_down/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/rounding-half_down/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rounding-half_down/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "rounding-half_even",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/rounding-half_even/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/rounding-half_even/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/rounding-half_even/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rounding-half_even/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "rounding-half_up",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/rounding-half_up/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/rounding-half_up/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/rounding-half_up/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rounding-half_up/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      },
+      {
+        "job": "KZANNUIT",
+        "scenario": "rounding-up",
+        "inputs": {
+          "KONTZINS.CASES.DATA": "oracle/runs/rounding-up/jobs/KZANNUIT/in/KONTZINS.CASES.DATA",
+          "KONTZINS.RUN.CONTROL": "oracle/runs/rounding-up/jobs/KZANNUIT/in/KONTZINS.RUN.CONTROL"
+        },
+        "outputs": {
+          "data:KONTZINS.RESULTS.DATA": "oracle/runs/rounding-up/jobs/KZANNUIT/out/KONTZINS.RESULTS.DATA",
+          "sysout:STEP20.SYSOUT.txt": "oracle/runs/rounding-up/jobs/KZANNUIT/out/sysout/STEP20.SYSOUT.txt"
+        }
+      }
+    ],
+    "jobCheckRoot": ".",
+    "status": {
+      "builtAt": "2026-11-01T18:45:44",
+      "units": 1,
+      "unitsCached": 0,
+      "runAt": "2026-11-01T18:45:44",
+      "scenarios": [
+        "base",
+        "boundaries",
+        "damaged",
+        "disjoint-01",
+        "disjoint-02",
+        "disjoint-03",
+        "disjoint-04",
+        "disjoint-05",
+        "replay-01",
+        "replay-02",
+        "replay-03",
+        "replay-04",
+        "replay-05",
+        "rounding-ceiling",
+        "rounding-down",
+        "rounding-floor",
+        "rounding-half_down",
+        "rounding-half_even",
+        "rounding-half_up",
+        "rounding-up"
+      ],
+      "problems": [],
+      "referenceOutputs": 20,
+      "referenceMatch": 20
+    }
+  },
+  "publish": {
+    "jobs": [
+      "KZANNUIT"
+    ],
+    "capabilities": [
+      "CEE3ABD",
+      "FNDKRND",
+      "FSEM0100",
+      "FSJBDEC",
+      "KZLE0100"
+    ],
+    "acceptanceScenarios": []
+  },
+  "gemma": {
+    "designed": []
+  },
+  "muse": {
+    "designed": []
+  },
+  "reference": {
+    "label": "ANNUITY LOAN PLANS - original Java outputs, provenance-free legacy estate B1",
+    "root": "C:\\Users\\Tomrodgers\\JavaToCOBOLTest-legacy\\fineract-cobol-gen\\build\\kontor-b1\\package\\oracle-a",
+    "scenarioMap": {
+      "base": "accept-01"
+    },
+    "outputs": {
+      "KONTZINS.RESULTS.DATA": "RESULTS.dat"
+    }
+  },
+  "notes": []
+}

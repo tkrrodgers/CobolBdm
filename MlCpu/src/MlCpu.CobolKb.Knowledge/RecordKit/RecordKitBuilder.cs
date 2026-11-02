@@ -749,11 +749,19 @@ public static class RecordKitBuilder
                     Area[] linkage = (Area[]) find(c, "_linkage").invoke(p);
                     for (Area a : linkage) a.bind(new byte[a.size], 0);
                     Map<String, List<CobField>> m = new java.util.HashMap<>();
+                    Object storage = p;
                     for (Class<?> k = c; k != null; k = k.getSuperclass())
+                        for (java.lang.reflect.Field f : k.getDeclaredFields())
+                            if (f.getName().equals("_storage") && f.getType().getSimpleName().equals("Storage")
+                                    && !java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
+                                f.setAccessible(true);
+                                storage = f.get(p);
+                            }
+                    for (Class<?> k = storage.getClass(); k != null; k = k.getSuperclass())
                         for (java.lang.reflect.Field f : k.getDeclaredFields())
                             if (f.getType() == CobField.class && !java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
                                 f.setAccessible(true);
-                                CobField v = (CobField) f.get(p);
+                                CobField v = (CobField) f.get(storage);
                                 if (v != null) m.computeIfAbsent(v.name, x -> new ArrayList<>()).add(v);
                             }
                     return m;

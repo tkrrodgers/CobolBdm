@@ -49,11 +49,16 @@ app.MapGet("/health", async (JavaSidecarService sidecar) =>
     return h is null ? Results.Json(new { status = "sidecar-unreachable" }, statusCode: 503) : Results.Json(new { status = "ok", sidecar = h });
 });
 
-app.MapPost("/migrate/job-java/{job}", async (string job, string? exportDir, bool? includeCalled, JobJavaConversionService svc, JavaProjectAssembler assembler) =>
+app.MapPost("/migrate/job-java/{job}", async (string job, string? exportDir, bool? includeCalled, bool? composeStorage, JobJavaConversionService svc, JavaProjectAssembler assembler) =>
 {
     if (string.IsNullOrWhiteSpace(exportDir)) return Results.BadRequest(new { error = "exportDir is required" });
-    var conv = await svc.ConvertAsync(job, includeCalled ?? true);
-    if (conv.Project is null) return Results.UnprocessableEntity(new { job, error = conv.Scope is null ? "job not found" : "no program compiled", results = conv.Results.Select(r => new { r.Program, r.Verdict, r.Error }) });
+    var conv = await svc.ConvertAsync(job, includeCalled ?? true, composeStorage: composeStorage ?? false);
+    if (conv.Project is null) return Results.UnprocessableEntity(new
+    {
+        job,
+        error = conv.Scope is null ? "job not found" : composeStorage == true ? "composed storage did not compile for every program" : "no program compiled",
+        results = conv.Results.Select(r => new { r.Program, r.Verdict, r.Error, r.Diagnostics })
+    });
     var root = await assembler.PublishAsync(conv.Project, exportDir);
     return Results.Json(new
     {
@@ -68,12 +73,17 @@ app.MapPost("/migrate/job-java/{job}", async (string job, string? exportDir, boo
 }).DisableAntiforgery();
 
 // Several jobs as one project; partition=true applies projection 10 (Gradle module per business domain).
-app.MapPost("/migrate/estate-java", async (string jobs, string? exportDir, string? name, bool? partition, JobJavaConversionService svc, JavaProjectAssembler assembler) =>
+app.MapPost("/migrate/estate-java", async (string jobs, string? exportDir, string? name, bool? partition, bool? composeStorage, JobJavaConversionService svc, JavaProjectAssembler assembler) =>
 {
     if (string.IsNullOrWhiteSpace(exportDir)) return Results.BadRequest(new { error = "exportDir is required" });
     var list = jobs.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-    var conv = await svc.ConvertEstateAsync(name ?? "estate", list, partition ?? true);
-    if (conv.Project is null) return Results.UnprocessableEntity(new { jobs = list, error = conv.Scope is null ? "no job found" : "no program compiled" });
+    var conv = await svc.ConvertEstateAsync(name ?? "estate", list, partition ?? true, composeStorage: composeStorage ?? false);
+    if (conv.Project is null) return Results.UnprocessableEntity(new
+    {
+        jobs = list,
+        error = conv.Scope is null ? "no job found" : composeStorage == true ? "composed storage did not compile for every program" : "no program compiled",
+        results = conv.Results.Select(r => new { r.Program, r.Verdict, r.Error, r.Diagnostics })
+    });
     var root = await assembler.PublishAsync(conv.Project, exportDir);
     return Results.Json(new
     {
@@ -106,8 +116,8 @@ api.MapPost("/projects/{id}/oracle", (string id, bool? force, string? only, Work
     only?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)))));
 api.MapPost("/projects/{id}/graphs", (string id, WorkspaceActions a) => Results.Json(OpJson(a.StartGraphs(id))));
 api.MapPost("/projects/{id}/transpile", (string id, WorkspaceActions a) => Results.Json(OpJson(a.StartTranspile(id))));
-api.MapPost("/projects/{id}/publish", (string id, string? dir, WorkspaceActions a, ProjectService ps) =>
-    Results.Json(OpJson(a.StartPublish(id, string.IsNullOrWhiteSpace(dir) ? ps.Paths(ps.Get(id)!).Publish : dir))));
+api.MapPost("/projects/{id}/publish", (string id, string? dir, bool? composeStorage, WorkspaceActions a, ProjectService ps) =>
+    Results.Json(OpJson(a.StartPublish(id, string.IsNullOrWhiteSpace(dir) ? ps.Paths(ps.Get(id)!).Publish : dir, composeStorage ?? false))));
 api.MapPost("/projects/{id}/test", (string id, bool? tests, WorkspaceActions a) => Results.Json(OpJson(a.StartTest(id, tests ?? true))));
 // A local model's steps (gemma, muse): design, publish the design to a service (implement + assemble), assemble from code a
 // script wrote, test the service against GnuCOBOL. debug=true sends the focused debug prompt on repair turns; warm=true starts

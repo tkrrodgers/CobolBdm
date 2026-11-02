@@ -90,6 +90,41 @@ public static class Passes
         return list;
     }
 
+    /// <summary>A void method's last statement: a return at the end of its branches is the end of the method.</summary>
+    public static void DropTailReturns(List<St> body)
+    {
+        while (body.Count > 0 && body[^1] is SReturn { E: null }) body.RemoveAt(body.Count - 1);
+        if (body.Count > 0 && body[^1] is SIf f) { DropBranch(f.Then); DropBranch(f.Else); }
+        // a branch keeps a statement: if (c) { return; } stays the early exit it is
+        static void DropBranch(List<St> b) { if (b.Count > 1) DropTailReturns(b); }
+    }
+
+    /// <summary>Every break to a block's label replaced by a copy of the return that follows the block.</summary>
+    static List<St> ReplaceBreaks(List<St> list, string label, SReturn exit)
+    {
+        var res = new List<St>();
+        foreach (var s in list)
+        {
+            if (s is SBreak br && br.Label == label) { res.Add(new SReturn(exit.E) { Line = br.Line, Site = exit.Site }); continue; }
+            switch (s)
+            {
+                case SIf f: f.Then = ReplaceBreaks(f.Then, label, exit); f.Else = ReplaceBreaks(f.Else, label, exit); break;
+                case SLoop l: l.Body = ReplaceBreaks(l.Body, label, exit); break;
+                case SBlock b: b.Body = ReplaceBreaks(b.Body, label, exit); break;
+                case SSwitch sw:
+                    for (int k = 0; k < sw.Cases.Count; k++) sw.Cases[k] = (sw.Cases[k].Labels, ReplaceBreaks(sw.Cases[k].Body, label, exit));
+                    if (sw.Default is not null) sw.Default = ReplaceBreaks(sw.Default, label, exit);
+                    break;
+                case STry t:
+                    t.Body = ReplaceBreaks(t.Body, label, exit);
+                    for (int k = 0; k < t.Catches.Count; k++) t.Catches[k] = (t.Catches[k].Type, t.Catches[k].V, ReplaceBreaks(t.Catches[k].Body, label, exit));
+                    break;
+            }
+            res.Add(s);
+        }
+        return res;
+    }
+
     /// <summary>
     /// One pass. <paramref name="loopLabel"/>: the loop whose body this list ends (a trailing continue to it is redundant);
     /// <paramref name="blockLabel"/>: the block this list ends (a trailing break to it is redundant).
@@ -175,6 +210,23 @@ public static class Passes
                 case SBlock b:
                 {
                     b.Body = TidyList(b.Body, last ? loopLabel : null, b.Label, ref changed);
+                    // { ...; if (c) { T; break L; } R }  →  { ...; if (c) { T } else { R } }: the end of T is the end of the block
+                    for (int k = 0; k < b.Body.Count - 1; k++)
+                    {
+                        if (b.Body[k] is not SIf { Else.Count: 0, Then: [.., SBreak { Label: var tl }] } tif || tl != b.Label) continue;
+                        tif.Then.RemoveAt(tif.Then.Count - 1);
+                        tif.Else = b.Body.Skip(k + 1).ToList();
+                        b.Body = b.Body.Take(k + 1).ToList();
+                        if (tif.Then.Count == 0) { tif.C = FunctionLifter.Not(tif.C); tif.Then = tif.Else; tif.Else = []; }
+                        changed = true;
+                        break;
+                    }
+                    // L: { ... break L ... } return x;  →  { ... return x ... } return x;   (leaving the block is the exit that follows it)
+                    if (Targets(b.Body, b.Label) && i + 1 < list.Count && list[i + 1] is SReturn { E: null or ELit or EVar } exit)
+                    {
+                        b.Body = ReplaceBreaks(b.Body, b.Label, exit);
+                        changed = true;
+                    }
                     if (!Targets(b.Body, b.Label))
                     {
                         // splice: nothing jumps to the end of this block (the body is tidied already)

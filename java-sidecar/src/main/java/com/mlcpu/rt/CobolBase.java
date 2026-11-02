@@ -12,6 +12,8 @@ public abstract class CobolBase implements MigratedProgram {
     private Area[] linkage;
     protected boolean _called;
     private boolean _initialized;
+    private int _invocations;
+    private RunUnit _owner;
 
     /** Allocate storage, apply VALUE clauses, open nothing. */
     protected abstract void _init();
@@ -77,6 +79,12 @@ public abstract class CobolBase implements MigratedProgram {
     }
 
     private ProgramState runRange(int lo, int hi, Map<String, String> inputs) {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            return runRangeBound(lo, hi, inputs);
+        }
+    }
+
+    private ProgramState runRangeBound(int lo, int hi, Map<String, String> inputs) {
         ensureInit();
         materializeLinkage();
         Map<String, CobField> fields = _fields();
@@ -153,40 +161,88 @@ public abstract class CobolBase implements MigratedProgram {
     }
 
     public final void ensureInit() {
-        if (!_initialized) {
-            _init();
-            _initialized = true;
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            checkOwner();
+            if (!_initialized) {
+                _init();
+                _initialized = true;
+            }
         }
     }
 
     /** Enter the program (main or CALLed). Linkage areas are bound to the arguments BY REFERENCE. */
     public final void call(CobField[] args, boolean called) {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            checkOwner();
+            RunUnit.enteringCall();
+            try {
+                callBound(args, called);
+            } finally {
+                RunUnit.leavingCall();
+            }
+        }
+    }
+
+    private void checkOwner() {
+        RunUnit current = RunUnit.current();
+        if (_owner != null && _owner != current)
+            throw new CobRt.RuntimeCheck(programId() + ": program state belongs to another run unit");
+        if (current != null) _owner = current;
+    }
+
+    /** CANCEL resets retained program storage on the next invocation; EXTERNAL storage remains run-unit-owned. */
+    public final void cancel() {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            checkOwner();
+            if (_invocations != 0) throw new CobRt.RuntimeCheck(programId() + ": cannot CANCEL an active program");
+            for (CobFile file : _files()) if (file.isOpen()) file.close();
+            _initialized = false;
+            _goto = -1;
+            _called = false;
+        }
+    }
+
+    private void callBound(CobField[] args, boolean called) {
         if (_initial() && _initialized) _init();
         ensureInit();
         Area[] lk = linkage != null ? linkage : (linkage = _linkage());
-        for (int i = 0; i < Math.min(args.length, lk.length); i++) {
-            if (args[i] != null) lk[i].bind(args[i].buf(), args[i].pos());
+        boolean nested = _invocations > 0;
+        Area.Binding[] bindings = nested ? new Area.Binding[lk.length] : null;
+        if (nested) for (int i = 0; i < lk.length; i++) bindings[i] = lk[i].binding();
+        int previousGoto = _goto;
+        byte[][] buffers = new byte[args.length][];
+        int[] offsets = new int[args.length];
+        for (int i = 0; i < args.length; i++) if (args[i] != null) {
+            buffers[i] = args[i].buf(); offsets[i] = args[i].pos();
         }
-        for (Area a : lk) a.materialize(CobConfig.DEFAULT_BYTE); // a USING record no argument was bound to
-        // LOCAL-STORAGE: fresh storage per invocation (after the arguments are bound, so an argument in the caller's
-        // LOCAL-STORAGE keeps pointing at the caller's bytes), the caller's restored on return.
         Area[] local = _localAreas();
         byte[][] saved = local.length == 0 ? NO_SAVED : new byte[local.length][];
-        for (int i = 0; i < local.length; i++) {
-            saved[i] = local[i].b;
-            local[i].b = new byte[local[i].size];
-        }
-        if (local.length > 0) _initLocal();
+        for (int i = 0; i < local.length; i++) saved[i] = local[i].b;
         boolean prev = _called;
         _called = called;
+        _invocations++;
         try {
+            for (int i = 0; i < Math.min(args.length, lk.length); i++)
+                if (args[i] != null) lk[i].bind(buffers[i], offsets[i]);
+            for (Area a : lk) a.materialize(CobConfig.DEFAULT_BYTE);
+            // Bind caller arguments before allocating this invocation's LOCAL-STORAGE.
+            for (Area a : local) a.b = new byte[a.size];
+            if (local.length > 0) _initLocal();
             perform(_start(), _count() - 1);
         } catch (CobRt.ProgramExit e) {
             // GOBACK / EXIT PROGRAM
         } finally {
+            _invocations--;
             _called = prev;
             for (int i = 0; i < local.length; i++) local[i].b = saved[i];
-            if (_initial()) for (CobFile f : _files()) if (f.isOpen()) f.close();
+            try {
+                if (_initial()) for (CobFile f : _files()) if (f.isOpen()) f.close();
+            } finally {
+                if (nested) {
+                    for (int i = 0; i < lk.length; i++) lk[i].restore(bindings[i]);
+                    _goto = previousGoto;
+                }
+            }
         }
     }
 
@@ -197,6 +253,12 @@ public abstract class CobolBase implements MigratedProgram {
 
     @Override
     public ProgramState run(ProgramState state) {
+        try (RunUnit.Guard guard = RunUnit.guard()) {
+            return runBound(state);
+        }
+    }
+
+    private ProgramState runBound(ProgramState state) {
         ensureInit();
         materializeLinkage();
         Map<String, CobField> fields = _fields();

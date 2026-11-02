@@ -120,9 +120,51 @@ public final class Sidecar {
         return Map.of("compiled", r.compiled, "diagnostics", r.diagnostics);
     }
 
+    /** Rule sources of every emitted program; shared files (the SPI) must be byte-identical. */
+    static List<Map<String, Object>> mergeAdditionalSources(List<SkeletonEmitter.Emission> emissions) {
+        Map<String, Map<String, Object>> byPath = new LinkedHashMap<>();
+        for (SkeletonEmitter.Emission e : emissions)
+            for (Map<String, Object> s : e.additionalSources) {
+                Map<String, Object> prior = byPath.putIfAbsent((String) s.get("path"), s);
+                if (prior != null && !prior.get("content").equals(s.get("content")))
+                    throw new IllegalStateException("two programs generate different " + s.get("path"));
+            }
+        return new ArrayList<>(byPath.values());
+    }
+
+    /** Publishes the rule contracts, sources and ledgers and verifies them; false when the evidence fails. */
+    @SuppressWarnings("unchecked")
+    static boolean rules(Map<String, Object> resp, Map<String, Object> checks, Protocol.VerifyRequest req, Object[] built, boolean compiled) {
+        List<SkeletonEmitter.Emission> emissions = (List<SkeletonEmitter.Emission>) built[3];
+        List<Map<String, Object>> additional = (List<Map<String, Object>>) built[4];
+        List<Map<String, Object>> contracts = new ArrayList<>();
+        List<Map<String, Object>> ledgers = new ArrayList<>();
+        for (int i = 0; i < emissions.size(); i++) {
+            SkeletonEmitter.Emission e = emissions.get(i);
+            contracts.addAll(e.ruleContracts);
+            JsonObject irJson = i == 0 ? req.ir : req.callees.get(i - 1);
+            e.extractionLedger.put("irSha256", RuleSet.sha256(GSON.toJson(irJson)));
+            ledgers.add(e.extractionLedger);
+        }
+        RuleVerifier.Result v = RuleVerifier.verify(additional, contracts);
+        boolean ok = compiled && v.isolatedCompile && v.casesPass && v.forbiddenFree;
+        if (ok)
+            for (Map<String, Object> d : contracts) d.put("evidence", List.of("faithful-runtime-cases", "jdk-only-compile", "generated-passes-cases"));
+        checks.put("ruleSourcesJdkOnly", v.isolatedCompile && v.forbiddenFree);
+        checks.put("ruleCasesPass", v.casesPass);
+        resp.put("ruleCasesRun", v.casesRun);
+        resp.put("ruleDiagnostics", v.diagnostics);
+        resp.put("additionalSources", additional);
+        resp.put("ruleContracts", contracts);
+        resp.put("extractionLedger", ledgers.get(0));
+        resp.put("extractionLedgers", ledgers);
+        return ok;
+    }
+
     static Object transpileVerify(String body) throws Exception {
         Protocol.VerifyRequest req = GSON.fromJson(body, Protocol.VerifyRequest.class);
         if (req.ir == null) return error(400, "missing ir");
+        if (req.extractRules && !req.composeStorage) return error(400, "extractRules requires composeStorage");
         Ir ir = GSON.fromJson(req.ir, Ir.class);
         List<Ir> callees = new ArrayList<>();
         if (req.callees != null) for (JsonObject c : req.callees) callees.add(GSON.fromJson(c, Ir.class));
@@ -130,14 +172,20 @@ public final class Sidecar {
         // Bounded build: emit + compile on a daemon thread under the budget.
         var exec = Executors.newSingleThreadExecutor(r -> { Thread t = new Thread(r, "build"); t.setDaemon(true); return t; });
         Future<Object[]> build = exec.submit(() -> {
-            SkeletonEmitter.Emission main = new SkeletonEmitter().emit(ir);
+            SkeletonEmitter.Emission main = new SkeletonEmitter().emit(ir, req.composeStorage, req.extractRules);
+            String faithful = req.composeStorage ? new SkeletonEmitter().emit(ir).source : null;
             Map<String, String> sources = new LinkedHashMap<>();
+            List<SkeletonEmitter.Emission> emissions = new ArrayList<>();
+            emissions.add(main);
             sources.put(main.className, main.source);
             for (Ir c : callees) {
-                SkeletonEmitter.Emission e = new SkeletonEmitter().emit(c);
+                SkeletonEmitter.Emission e = new SkeletonEmitter().emit(c, req.composeStorage, req.extractRules);
                 sources.put(e.className, e.source);
+                emissions.add(e);
             }
-            return new Object[]{main, new JavaCompilerService().compileAll(sources)};
+            List<Map<String, Object>> additional = mergeAdditionalSources(emissions);
+            for (Map<String, Object> s : additional) sources.put((String) s.get("className"), (String) s.get("content"));
+            return new Object[]{main, new JavaCompilerService().compileAll(sources), faithful, emissions, additional};
         });
         Object[] built;
         try {
@@ -170,6 +218,7 @@ public final class Sidecar {
         resp.put("programId", ir.program.id);
         resp.put("className", em.className);
         resp.put("renderer", "semantic-tree");
+        resp.put("storageComposition", req.composeStorage);
         resp.put("loweredStatements", em.loweredStatements);
         resp.put("abstainedStatements", em.abstainedStatements);
         resp.put("abstained", em.abstained);
@@ -185,7 +234,7 @@ public final class Sidecar {
         Map<String, Object> checks = new LinkedHashMap<>();
         if (comp.compiled) {
             Class<?> c = Class.forName(em.className, false, new JavaCompilerService.MemoryLoader(comp.classes, Sidecar.class.getClassLoader()));
-            TreeApiChecker.Structure st = new TreeApiChecker().scan(c);
+            TreeApiChecker.Structure st = new TreeApiChecker().scan(c, req.composeStorage);
             boolean methods = st.methods.size() >= em.paragraphCount;
             boolean fields = st.fields.size() >= em.fieldCount;
             boolean identity = ir.program.id.equals(st.cobolProgramId);
@@ -194,6 +243,7 @@ public final class Sidecar {
             checks.put("programIdentity", identity);
             structureOk = methods && fields && identity;
         }
+        if (req.extractRules) structureOk &= rules(resp, checks, req, built, comp.compiled);
         resp.put("checks", checks);
 
         String verdict;
@@ -240,7 +290,10 @@ public final class Sidecar {
             resp.put("javaSourcePath", p.toString());
             resp.put("javaSourceBytes", Files.size(p));
         }
-        if (include) resp.put("javaSource", em.source);
+        if (include) {
+            resp.put("javaSource", em.source);
+            if (req.composeStorage) resp.put("faithfulJavaSource", built[2]);
+        }
         return resp;
     }
 

@@ -29,6 +29,7 @@ public final class CobField {
     public final String pic;
     final int[] counts;
     final int[] strides;
+    private boolean contentArgument;
 
     public CobField(String name, Cat cat, Use use, Area area, int off, int len, int digits, int scale, boolean signed,
                     boolean signSep, boolean signLead, boolean just, boolean bwz, String pic, int[] counts, int[] strides) {
@@ -77,6 +78,8 @@ public final class CobField {
 
     public byte[] buf() { return area.b; }
     public int pos() { return area.base + off; }
+    CobField contentArgument() { contentArgument = true; return this; }
+    boolean isContentArgument() { return contentArgument; }
 
     /** This field's storage with another field's attributes (BY CONTENT copies keep the sender's description). */
     public CobField withShape(CobField f) {

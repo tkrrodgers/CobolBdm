@@ -310,7 +310,7 @@ public static class CompositionProjection
             public {{u.Pid}}Result execute({{u.Pid}}Command command) {
                 for (String dd : {{u.Pid}}Command.DDS)
                     if (!command.datasets().containsKey(dd)) throw new IllegalArgumentException("{{u.ProgramId}}: DD " + dd + " is not bound");
-                JobEngine.ProgramRun run = JobEngine.runProgram(new {{u.ClassName}}(), command.datasets(), command.parm());
+                JobEngine.ProgramRun run = JobEngine.runProgram({{u.ClassName}}::new, command.datasets(), command.parm());
                 return new {{u.Pid}}Result(run.returnCode(), run.display(), run.outcome());
             }
         }

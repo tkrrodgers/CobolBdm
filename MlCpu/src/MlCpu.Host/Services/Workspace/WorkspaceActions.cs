@@ -31,8 +31,9 @@ public sealed class WorkspaceActions(OperationService ops, ProjectService projec
     public Operation StartTranspile(string projectId) =>
         ops.Start(projectId, Transpile, "Transpile all programs", (op, ct) => conversion.TranspileAllAsync(projectId, op, ct));
 
-    public Operation StartPublish(string projectId, string targetDir) =>
-        ops.Start(projectId, Publish, "Publish the normalized Spring estate", async (op, ct) => op.Result = await conversion.PublishAsync(projectId, targetDir, op, ct));
+    public Operation StartPublish(string projectId, string targetDir, bool composeStorage = false) =>
+        ops.Start(projectId, Publish, composeStorage ? "Publish the Spring estate with composed storage" : "Publish the normalized Spring estate",
+            async (op, ct) => op.Result = await conversion.PublishAsync(projectId, targetDir, op, ct, composeStorage));
 
     public Operation StartTest(string projectId, bool runTests = true) =>
         ops.Start(projectId, Test, runTests ? "Build & test against GnuCOBOL" : "Build & job checks against GnuCOBOL",

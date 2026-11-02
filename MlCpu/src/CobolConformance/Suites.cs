@@ -7,7 +7,7 @@ using MlCpu.Cobol.Analysis.Projections;
 using MlCpu.CobolKb.Knowledge;
 using MlCpu.Core;
 
-static class Suites
+static partial class Suites
 {
     static IEnumerable<string[]> Rows(string manifest) =>
         File.ReadAllLines(manifest).Where(l => l.Length > 0 && !l.StartsWith('#')).Select(l => l.Split('\t'));
@@ -659,6 +659,20 @@ static class Suites
             }
         }
         catch (Exception e) { r.Fail(suite, "large program state split", e); }
+
+        try
+        {
+            var composed = await new Toolchain(env.Repo, composeStorage: true).Transpile(Path.Combine(corpus, "projection", "CALCDEMO.cbl"));
+            var src = composed["javaSource"]!.GetValue<string>();
+            var faithful = composed["faithfulJavaSource"]!.GetValue<string>();
+            var (state, prog, reason) = ProgramStateProjection.SplitOne("CALCDEMO", src.Replace("package com.mlcpu.gen;", "package com.mlcpu.core;"));
+            r.Check(suite, "composed storage cannot be converted back to inheritance",
+                state is null && prog is null && reason?.Contains("storage composition already emitted") == true, reason ?? "");
+            r.Check(suite, "composed storage preserves an independent faithful baseline",
+                src.Contains("private final Storage _storage") && !faithful.Contains("private final Storage _storage")
+                && composed["compiled"]?.GetValue<bool>() == true);
+        }
+        catch (Exception e) { r.Fail(suite, "composed storage projection guard", e); }
     }
 
     const string ProjectionBuild = """

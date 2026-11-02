@@ -15,7 +15,7 @@ var repo = Repo.Root();
 var corpus = Path.Combine(repo, "MlCpu", "src", "CobolConformance", "corpus");
 var carddemo = opts.GetValueOrDefault("carddemo") ?? Path.GetFullPath(Path.Combine(repo, "..", "carddemo", "app"));
 var report = new Report(opts.GetValueOrDefault("suite"));
-var env = new Toolchain(repo);
+var env = new Toolchain(repo, opts.ContainsKey("compose-storage"));
 
 Suites.ParserAcceptance(report, corpus);
 Suites.ParserAst(report, corpus, carddemo);
@@ -29,6 +29,7 @@ await Suites.Parity(report, corpus, env);
 Suites.KitValuesDecoding(report, corpus, env);
 Suites.RecordKitScale(report, env);
 await Suites.Projections(report, corpus, env);
+await Suites.ModernizationMove(report, corpus, env);
 return report.Finish();
 
 sealed class Report(string? only)
@@ -90,6 +91,7 @@ static class Repo
 /// <summary>Sidecar, JDK, Gradle and GnuCOBOL as found on this machine; anything missing makes its lane BLOCKED, never PASS.</summary>
 sealed class Toolchain
 {
+    readonly bool _composeStorage;
     public string Repo { get; }
     public string RuntimeClasses { get; }
     public string? JavaHome { get; }
@@ -97,8 +99,9 @@ sealed class Toolchain
     readonly HttpClient _http;
     bool? _up;
 
-    public Toolchain(string repo)
+    public Toolchain(string repo, bool composeStorage = false)
     {
+        _composeStorage = composeStorage;
         Repo = repo;
         RuntimeClasses = Path.Combine(repo, "java-sidecar", "build", "classes", "java", "main");
         JavaHome = Environment.GetEnvironmentVariable("JAVA_HOME") ?? Environment.GetEnvironmentVariable("JAVA_HOME", EnvironmentVariableTarget.User);
@@ -148,10 +151,14 @@ sealed class Toolchain
         var request = new JsonObject
         {
             ["battery"] = new JsonArray(new JsonObject { ["inputs"] = new JsonObject(), ["expect"] = new JsonObject() }),
-            ["useLir"] = false, ["loopPolicy"] = "TERMINATE", ["includeJavaSource"] = true, ["transpileOnly"] = true
+            ["useLir"] = false, ["loopPolicy"] = "TERMINATE", ["includeJavaSource"] = true, ["transpileOnly"] = true,
+            ["composeStorage"] = _composeStorage
         };
         var resp = await _http.PostAsync("/transpile-verify", new StringContent(IrExporter.TranspileRequest(ir, request), Encoding.UTF8, "application/json"));
-        return JsonNode.Parse(await resp.Content.ReadAsStringAsync())!;
+        var result = JsonNode.Parse(await resp.Content.ReadAsStringAsync())!;
+        if (_composeStorage && result["storageComposition"]?.GetValue<bool>() != true)
+            throw new InvalidOperationException("sidecar did not return composed storage: " + result["error"]);
+        return result;
     }
 
     public async Task<IReadOnlyDictionary<string, string>> Runtime()

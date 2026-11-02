@@ -18,6 +18,7 @@ public static partial class ProgramStateProjection
     [GeneratedRegex(@"(\r?\n)[ \t]*(\r?\n)([ \t]*\r?\n)+")] private static partial Regex BlankRuns();
     [GeneratedRegex(@"^    private static final [^(\r\n]*=[^\r\n]*;[^\r\n]*\r?\n", RegexOptions.Multiline)] private static partial Regex ConstantRx();
     [GeneratedRegex(@"^import [^\r\n]+;\r?$", RegexOptions.Multiline)] private static partial Regex ImportRx();
+    [GeneratedRegex(@"^    private final Storage _storage = new Storage\(\);[ \t]*\r?$", RegexOptions.Multiline)] private static partial Regex ComposedStorageRx();
     [GeneratedRegex(@"^    private void _(?:init|fields)\d+\(", RegexOptions.Multiline)] private static partial Regex HelperRx();
 
     static readonly string[] MovedMembers = ["protected void _init() {", "protected Area[] _linkage() {", "protected java.util.Map<String, CobField> _fields() {"];
@@ -46,6 +47,8 @@ public static partial class ProgramStateProjection
 
     public static (string? State, string? Prog, string? Reason) SplitOne(string program, string text)
     {
+        if (ComposedStorageRx().IsMatch(text))
+            return (null, null, $"{program}: storage composition already emitted; inheritance projection not applicable");
         var cm = ClassRx().Match(text);
         if (!cm.Success) return (null, null, $"{program}: class declaration not in expected form");
         if (cm.Groups["p"].Value != program) return (null, null, $"{program}: class name does not match file name");

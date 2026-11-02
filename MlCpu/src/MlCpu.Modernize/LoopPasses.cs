@@ -154,6 +154,22 @@ public static class LoopPasses
         changed = ch;
         for (int k = 0; k < list.Count; k++)
         {
+            // Iterator it = c.iterator(); while (it.hasNext()) { v = it.next(); ... }: for (v : c) (what javac makes of the
+            // for-each J3S compiled; the iterator is not used otherwise, the element not after the loop)
+            if (k + 1 < list.Count && list[k] is SAssign { Lhs: EVar { V: var itv }, Rhs: ECall { Name: "iterator", Args.Count: 0, Recv: { } src } }
+                && list[k + 1] is SLoop { Each: null, Iterable: null, Init: null, C: ECall { Name: "hasNext", Args.Count: 0, Recv: EVar { V: var hv } } } wl && hv == itv
+                && wl.Body.Count > 0 && wl.Body[0] is SAssign { Lhs: EVar { V: var elem }, Rhs: ECall { Name: "next", Args.Count: 0, Recv: EVar { V: var nv } } } && nv == itv
+                && !Passes.All(wl.Body.Skip(1).ToList()).Any(x => Fold.Exprs(x).Any(e => Fold.Mentions(e, itv)) || x is SAssign { Lhs: EVar { V: var av } } && (av == itv || av == elem))
+                && !list.Skip(k + 2).Any(x => Passes.All([x]).Any(y => Fold.Exprs(y).Any(e => Fold.Mentions(e, itv) || Fold.Mentions(e, elem)) || y is SAssign { Lhs: EVar { V: var bv } } && (bv == itv || bv == elem))))
+            {
+                wl.Each = elem;
+                wl.Iterable = src;
+                wl.C = null;
+                wl.Body = wl.Body.Skip(1).ToList();
+                list.RemoveAt(k);
+                changed = true;
+                continue;
+            }
             if (list[k] is not SLoop { Each: null, C: EBinary { Op: "<", L: EVar { V: var iv }, R: var fenceE } } loop) continue;
             if (loop.Body.Count < 2) continue;
             if (loop.Body[0] is not SAssign { Lhs: EVar { V: var ev }, Rhs: ECall { Name: "j3sAt" or "get" } at } first) continue;

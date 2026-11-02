@@ -14,6 +14,16 @@ public sealed class JavaTranspileResult
     public bool Compiled { get; set; }
     public string Verdict { get; set; } = "";
     public string? JavaSource { get; set; }
+    public string? FaithfulJavaSource { get; set; }
+    public bool StorageComposition { get; set; }
+    /// <summary>Typed rule sources the sidecar extracted (composed lane only); published into the modern-rules module.</summary>
+    public List<GeneratedRuleSource> AdditionalSources { get; set; } = [];
+    /// <summary>mlcpu.rule-contract.v1 descriptors, verbatim.</summary>
+    public List<JsonObject> RuleContracts { get; set; } = [];
+    /// <summary>mlcpu.rule-extraction-ledger.v1, verbatim: applied rules and skipped sites with reasons.</summary>
+    public JsonObject? ExtractionLedger { get; set; }
+    /// <summary>The ledgers of the program and the callees transpiled with it (sidecar <c>extractionLedgers</c>).</summary>
+    public List<JsonObject> ExtractionLedgers { get; set; } = [];
     public string? ClassName { get; set; }
     public int Paragraphs { get; set; }
     public int Fields { get; set; }
@@ -60,7 +70,8 @@ public sealed class JavaSidecarService(ConfigService config, ILogger<JavaSidecar
 
     public bool IsCobolProgram(string path) => CobolSourceClassifier.IsCobol(path);
 
-    public async Task<JavaTranspileResult> TranspileAsync(string programPath, bool transpileOnly = true, CancellationToken ct = default)
+    public async Task<JavaTranspileResult> TranspileAsync(string programPath, bool transpileOnly = true, CancellationToken ct = default,
+        bool composeStorage = false)
     {
         var result = new JavaTranspileResult { Program = Path.GetFileNameWithoutExtension(programPath).ToUpperInvariant() };
         try
@@ -78,7 +89,9 @@ public sealed class JavaSidecarService(ConfigService config, ILogger<JavaSidecar
                 ["useLir"] = false,
                 ["loopPolicy"] = "TERMINATE",
                 ["includeJavaSource"] = true,
-                ["transpileOnly"] = transpileOnly
+                ["transpileOnly"] = transpileOnly,
+                ["composeStorage"] = composeStorage,
+                ["extractRules"] = composeStorage
             });
             using var content = new StringContent(request, Encoding.UTF8, "application/json");
             using var resp = await _http.PostAsync(Url("/transpile-verify"), content, ct);
@@ -86,6 +99,11 @@ public sealed class JavaSidecarService(ConfigService config, ILogger<JavaSidecar
             result.Compiled = r["compiled"]?.GetValue<bool>() ?? false;
             result.Verdict = r["verdict"]?.GetValue<string>() ?? "ERROR";
             result.JavaSource = r["javaSource"]?.GetValue<string>();
+            result.FaithfulJavaSource = r["faithfulJavaSource"]?.GetValue<string>();
+            result.StorageComposition = r["storageComposition"]?.GetValue<bool>() ?? false;
+            if (composeStorage && result.Compiled && (!result.StorageComposition || string.IsNullOrWhiteSpace(result.FaithfulJavaSource)))
+                throw new InvalidOperationException("sidecar did not return composed storage and its faithful baseline; rebuild the sidecar");
+            if (composeStorage) RuleHandoff.ReadSidecarResponse(r, result);
             result.ClassName = r["className"]?.GetValue<string>();
             result.Paragraphs = r["paragraphCount"]?.GetValue<int>() ?? 0;
             result.Fields = r["fieldCount"]?.GetValue<int>() ?? 0;
