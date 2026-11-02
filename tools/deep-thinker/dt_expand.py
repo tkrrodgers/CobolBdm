@@ -1,6 +1,6 @@
 """Deterministic pre-check and expansion of the thinker's unit proposals (lead tool, DT-deep-thinker.md).
 
-usage: python dt_expand.py <thinker-dir> <packet-dir> <out-dir>
+usage: python dt_expand.py <thinker-dir> <packet-dir> <out-dir> [<unit-packet-dir>]
 Reads <thinker-dir>/worklist.json and proposals/*.json. Checks completeness, verbatim evidence, identifier validity
 and conventions, and collisions (against the full packet inventory, locked symbols included). Writes:
   proposals.json  mlcpu.naming-proposals.v1, one entry per symbol id, derived from its unit
@@ -36,6 +36,13 @@ LOWER_CAMEL = re.compile(r'^[a-z][A-Za-z0-9]*$')
 UPPER_SNAKE = re.compile(r'^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$')
 
 files_cache = {}
+# optional 4th argument: a packet with generator-emitted canonical units (unitKey per symbol, same ids)
+canon = None
+completion = {}
+if len(sys.argv) > 4:
+    up = json.load(open(os.path.join(sys.argv[4], 'packet.json'), encoding='utf-8'))
+    canon = {x['id']: x['unitKey'] for x in up['symbols'] if x.get('proposable')}
+    assert set(canon) == {x['id'] for x in packet['symbols'] if x.get('proposable')}, 'unit packet proposable ids differ'
 
 
 def line_text(rel, n):
@@ -194,16 +201,53 @@ for uid in collided_units:
 
 out = []
 review = []
-for mid, (nm, uid) in sorted(renames.items(), key=lambda kv: (kv[1][1], kv[0])):
+
+
+def entry(mid, nm, uid, **extra):
     p = got[uid]
     s = sym[mid]
     e = {'id': mid, 'kind': s['kind'], 'legacy': s['legacy'], 'current': s['current'], 'proposed': nm,
          'confidence': p['confidence'], 'rationale': p.get('rationale', ''), 'evidence': p.get('evidence', []),
          'notebook': p.get('notebook', []), 'unit': uid}
-    (out if p['confidence'] >= THRESHOLD else review).append(e)
+    e.update(extra)
+    return e
+
+
+if canon is None:
+    for mid, (nm, uid) in sorted(renames.items(), key=lambda kv: (kv[1][1], kv[0])):
+        (out if got[uid]['confidence'] >= THRESHOLD else review).append(entry(mid, nm, uid))
+else:
+    # canonical completion: every member of a canonical unit that has a rename is emitted, no-ops explicitly
+    myunit = {m['id']: uid for uid, u in units.items() for m in u['members']}
+    rejected = {uid for uid, f in findings.items() if f}
+    members_of = collections.defaultdict(list)
+    for i, k in canon.items():
+        members_of[k].append(i)
+    for k in sorted({canon[i] for i in renames}):
+        ids = sorted(members_of[k])
+        bad = sorted({myunit[i] for i in ids if myunit[i] in rejected})
+        es = []
+        for i in ids:
+            if i in renames:
+                es.append(entry(i, renames[i][0], renames[i][1], canonicalUnit=k))
+            else:
+                es.append(entry(i, sym[i]['current'], myunit[i], canonicalUnit=k, noOp=True))
+        if bad:
+            for e in es:
+                e.update(reviewOnly=True, reviewReason='canonical unit contains a pre-check rejected member (%s)' % ','.join(bad))
+            review.extend(es)
+        elif min(e['confidence'] for e in es) >= THRESHOLD:
+            out.extend(es)
+        else:
+            review.extend(es)
+    completion['touchedCanonicalUnits'] = len({canon[i] for i in renames})
+    completion['noOpEntries'] = sum(1 for e in out + review if e.get('noOp'))
 # merged derived-role units: per-id reviewOnly entries with the thinker's raw answer; never applied automatically
+already = {e['id'] for e in review}
 for uid, f in findings.items():
     if not (f and all(x.startswith('heterogeneous') for x in f) and uid in got):
+        continue
+    if any(m['id'] in already for m in units[uid]['members']):
         continue
     p = got[uid]
     for m in units[uid]['members']:
@@ -230,10 +274,11 @@ lines = ['# Thinker pre-check (lead, deterministic)', '',
          '| Units | %d (answered %d) |' % (len(units), len(got)),
          '| Units accepted by pre-check | %d (kept as is: %d) |' % (len(units) - len(rej), len(kept)),
          '| Units rejected (fail closed) | %d |' % len(rej),
-         '| Symbol renames, confidence >= %.1f (ledger candidates) | %d |' % (THRESHOLD, len(out)),
-         '| Symbol renames, below threshold (review queue) | %d |' % len(review),
+         '| Entries (renames + explicit no-ops), confidence >= %.1f (ledger candidates) | %d |' % (THRESHOLD, len(out)),
+         '| Entries below threshold or held (review queue) | %d |' % len(review),
          '| Collisions | %d |' % len(collisions),
          '| Notes proposed | %d |' % len(notes),
+         '| Canonical units touched / explicit no-op entries | %s / %s |' % (completion.get('touchedCanonicalUnits', '-'), completion.get('noOpEntries', '-')),
          '| File errors | %d |' % len(dups), '']
 reasons = collections.Counter(re.sub(r"[:(].*", '', x).strip() for f in rej.values() for x in f)
 lines += ['Rejection reasons: ' + ', '.join('%s %d' % kv for kv in reasons.most_common()), '']
