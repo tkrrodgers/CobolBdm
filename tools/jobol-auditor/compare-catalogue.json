@@ -21,7 +21,12 @@
       "description": "A field, parameter, local, method or constant whose modern spelling is the original with its tail cut (`totalFeeChargesChar` for `totalFeeChargesCharged`, `termInMont`). Exactly one identifier elsewhere in the modern estate extends the cut name and it is the original (unique-correct), or several do and the original is one of them (ambiguous-correct). Cut lengths cluster at 10–11 characters (frame locals and parameters) and spread over 14–24 for fields (the 30-character COBOL name, less the prefix).",
       "evidence": "The full spelling survives elsewhere in the COBOL-derived estate: FRAME comments give full method names (`addTotalFeeChargesCharged`), getter and setter names give property names, and assignment `this.loanTermInDays = loanTermIn` links a cut parameter to a full field.",
       "hypothesis": "Complete a cut name to the identifier it flows to or from: a parameter stored into a field takes the field's name, a field returned by a getter takes the property name, and an argument passed to a parameter takes the parameter's name. Only when no data-flow link exists, take the unique estate identifier the cut name is a prefix of. With several candidates, decide only by data flow, never by prefix length.",
-      "matches": ["NAME.TRUNCATED.UNIQUE_CORRECT", "NAME.TRUNCATED.AMBIGUOUS_CORRECT", "NAME.TRUNCATED_NUMBERED.UNIQUE_CORRECT", "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_CORRECT"]
+      "matches": [
+        "NAME.TRUNCATED.UNIQUE_CORRECT",
+        "NAME.TRUNCATED.AMBIGUOUS_CORRECT",
+        "NAME.TRUNCATED_NUMBERED.UNIQUE_CORRECT",
+        "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_CORRECT"
+      ]
     },
     {
       "id": "G02",
@@ -30,7 +35,14 @@
       "description": "Cut names that no estate identifier completes (`amountToAd` for `amountToAdd`, `actualPayme`, `disbursementDueDat`, `EARLY_PAYMENT_AMOUNT_IS` for `..._NEGATIVE`), or that a prefix match would complete to the wrong word (unique-wrong, ambiguous-wrong). This is the largest name gap. A counter appended to a cut stem (`scheduleModel2` for `scheduleModelCopy`, `paidAmounts2`) marks two cut names that collided.",
       "evidence": "None in the COBOL: the cut data name (12 characters for a local or parameter, the 30-character name for a field) is all that J3S keeps, and the estate does not spell the word out anywhere.",
       "hypothesis": "Prefix completion with a lexicon (English and banking words): external knowledge, for example a dictionary or a language model limited to completions of the cut stem that are type-compatible. Never apply estate-prefix completion when it is unique-wrong: in fineract-xl it would be wrong 98+21 times. When unsure, keep the cut name. Completing both names of a collision removes the counter.",
-      "matches": ["NAME.TRUNCATED.NONE", "NAME.TRUNCATED.UNIQUE_WRONG", "NAME.TRUNCATED.AMBIGUOUS_WRONG", "NAME.TRUNCATED_NUMBERED.NONE", "NAME.TRUNCATED_NUMBERED.UNIQUE_WRONG", "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_WRONG"]
+      "matches": [
+        "NAME.TRUNCATED.NONE",
+        "NAME.TRUNCATED.UNIQUE_WRONG",
+        "NAME.TRUNCATED.AMBIGUOUS_WRONG",
+        "NAME.TRUNCATED_NUMBERED.NONE",
+        "NAME.TRUNCATED_NUMBERED.UNIQUE_WRONG",
+        "NAME.TRUNCATED_NUMBERED.AMBIGUOUS_WRONG"
+      ]
     },
     {
       "id": "G03",
@@ -39,7 +51,9 @@
       "description": "Word-by-word abbreviations: enum constants `CAP_INC` (CAPITALIZED_INCOME), `INT_RATE_CHANGE`, `PRIN_GRACE_LIFTED`, `DISB_DATE`, and fields `downPaymentPct` and `disbursedAmountPctF` (`disbursedAmountPercentageForDownPayment`). Most are words the generator's own abbreviation table (MODERNIZATION.md: CAP, INC, INT, PRIN, DISB...) already expands for fields and variables.",
       "evidence": "The learned abbreviation table (paragraph names beside method names). For PCT, the full spelling is in a reached getter's FRAME (`getDisbursedAmountPercentageForDownPayment`).",
       "hypothesis": "Apply the learned abbreviation table to enum constants and static constant names too. Learn new pairs such as PCT and PERCENTAGE from FRAME method names that contain both forms.",
-      "matches": ["NAME.ABBREVIATED"]
+      "matches": [
+        "NAME.ABBREVIATED"
+      ]
     },
     {
       "id": "G04",
@@ -48,7 +62,10 @@
       "description": "Where J3S never compiled an accessor, the generator invents one in the bean style even when the estate uses record-style accessors. kontor-zins `Schedule.installments()` becomes `getInstallments()`. Invented getters also carry cut field names (`getDisbursedAmountPctF`) or a doubled prefix (`isIsInterestRecalculationE`).",
       "evidence": "The reached accessors' FRAME names give the estate's convention (`LoanTerms.principal()`, `Installment.month()`), and the field's full name (G01).",
       "hypothesis": "Name invented accessors in the convention of the reached accessors of the same type, falling back to the estate's convention. Build the name from the completed field name. Never prefix `is` to a name that already starts with `is`.",
-      "matches": ["NAME.ACCESSOR_STYLE", "METHOD.EXTRA_ACCESSOR"]
+      "matches": [
+        "NAME.ACCESSOR_STYLE",
+        "METHOD.EXTRA_ACCESSOR"
+      ]
     },
     {
       "id": "G05",
@@ -57,7 +74,9 @@
       "description": "A counter appended to an otherwise exact name (`countryCode3`, `daysInYear3`). These are rare.",
       "evidence": "The base name is exact, so the counter comes from the generator's scope de-duplication, not from the COBOL.",
       "hypothesis": "Add a counter only when the name actually clashes in the same Java scope. Otherwise keep the base name.",
-      "matches": ["NAME.NUMBERED"]
+      "matches": [
+        "NAME.NUMBERED"
+      ]
     },
     {
       "id": "G06",
@@ -66,7 +85,10 @@
       "description": "Word case or separator changes (`calculatedEMI` to `calculatedEmi`, `intToEnumMap` to `INT_TO_ENUM_MAP`) and a few renames (`rp`, `list`, `repaymentEvery` for `repayEvery`, where the abbreviation table over-expanded). Some renames pair two locals by type and are alignment noise.",
       "evidence": "Case does not survive COBOL's upper-case names.",
       "hypothesis": "Low value. At most, do not expand an abbreviation the estate itself uses in reached FRAME names (`repayEvery`).",
-      "matches": ["NAME.CASE", "NAME.RENAMED"]
+      "matches": [
+        "NAME.CASE",
+        "NAME.RENAMED"
+      ]
     },
     {
       "id": "G07",
@@ -75,7 +97,11 @@
       "description": "`Map<LocalDate,Money>` becomes `Map<Object,Object>`, `Set<Integer>` becomes `Set<Object>`, and `Supplier<? extends T>` becomes `Supplier<Object>`, in fields, parameters and returns. Generic arguments are dropped or changed (`List<T>` to `List<?>`). The modern code then casts at every use.",
       "evidence": "FRAME parameter lists keep the last type argument as a dangling `>` (`Money>` for `Map<LocalDate,Money>`). The modern code's own casts at get, put and iteration sites (`(LocalDate) k`) give the others.",
       "hypothesis": "Type a collection by its frame `X>` token for the last argument and by the unique cast type at its use sites for the others. Remove the casts that become redundant.",
-      "matches": ["TYPEREF.GENERIC_TO_OBJECT_KNOWN", "TYPEREF.GENERIC_DROPPED", "TYPEREF.GENERIC_CHANGED"]
+      "matches": [
+        "TYPEREF.GENERIC_TO_OBJECT_KNOWN",
+        "TYPEREF.GENERIC_DROPPED",
+        "TYPEREF.GENERIC_CHANGED"
+      ]
     },
     {
       "id": "G08",
@@ -84,7 +110,9 @@
       "description": "Generic classes and methods become monomorphic: `Memo<T>` and `<T> generateInterestScheduleModel(List<T>, Function<T,LocalDate>, ...)` lose their type parameter.",
       "evidence": "COBOL is monomorphic. Only the different cast types at each instantiation hint at a parameter.",
       "hypothesis": "Introduce a type variable where one Object-typed slot is cast to different types at different call sites. This needs type inference beyond the COBOL evidence, so the type parameter's existence is an external judgement. Low frequency.",
-      "matches": ["GENERICS.TYPE_PARAMETERS_LOST"]
+      "matches": [
+        "GENERICS.TYPE_PARAMETERS_LOST"
+      ]
     },
     {
       "id": "G09",
@@ -93,7 +121,10 @@
       "description": "Fields and parameters whose type J3S never compiled are declared `Object` (`LoanCharge`, `LoanRepaymentScheduleTransactionProcessor`, `LoanCapitalizedIncomeType`). The name is lost even though the COBOL carries it.",
       "evidence": "FRAME parameter lists name the simple type (`LoanScheduleParams.<init>(..., LoanRepaymentScheduleTransactionProcessor, ...)`).",
       "hypothesis": "Declare an opaque boundary type with the frame's simple name (an empty interface in a boundary package, documented as outside the estate) instead of `Object`, or at least keep the name in the declaration.",
-      "matches": ["TYPEREF.TO_OBJECT_EXTERNAL", "TYPEREF.GENERIC_TO_OBJECT_EXTERNAL"]
+      "matches": [
+        "TYPEREF.TO_OBJECT_EXTERNAL",
+        "TYPEREF.GENERIC_TO_OBJECT_EXTERNAL"
+      ]
     },
     {
       "id": "G10",
@@ -102,7 +133,9 @@
       "description": "Types the estate or the JDK declares are still typed `Object`, mostly fields that reached code only stores and never reads: `DisbursementData.note` and `linkAccountId` (String), `DateUtils.DEFAULT_DATE_FORMATTER` (DateTimeFormatter) and `BigMoney.PARSE_REGEX` (Pattern). Return types are affected too (`Money.zero(MonetaryCurrency)` returns `Object`).",
       "evidence": "The constructor and setter FRAMEs that write the field carry the parameter type (`String`, `Money`). Static initialisers call a typed factory (`Pattern.compile`).",
       "hypothesis": "Type a field by the frame types of the parameters assigned to it, or by the result type of its initialiser call. Type a method's return by the declared type of what it returns.",
-      "matches": ["TYPEREF.TO_OBJECT_KNOWN"]
+      "matches": [
+        "TYPEREF.TO_OBJECT_KNOWN"
+      ]
     },
     {
       "id": "G11",
@@ -111,7 +144,10 @@
       "description": "Parameters, fields and returns declared with an implementation instead of the original interface or supertype: `ILoanConfigurationDetails` becomes `LoanConfigurationDetails`, and the `LoanAmortizationCalculator` returned by the factories becomes `LoanAmortizationCalculatorImpl` or `AnnualPaymentLoanCalculator`.",
       "evidence": "FRAME parameter lists print the declared type (`shouldRecalculateTillInstallmentDueDate(ILoanConfigurationDetails, boolean)`). The generator already recovers `ILoanConfigurationDetails` from dispatch.",
       "hypothesis": "Declare a parameter with its frame type whenever the estate declares that type, even when one implementation flows in. Do the same for fields assigned from such parameters.",
-      "matches": ["TYPEREF.INTERFACE_TO_IMPL", "TYPEREF.SUPERTYPE_TO_SUBTYPE"]
+      "matches": [
+        "TYPEREF.INTERFACE_TO_IMPL",
+        "TYPEREF.SUPERTYPE_TO_SUBTYPE"
+      ]
     },
     {
       "id": "G12",
@@ -120,7 +156,11 @@
       "description": "`short` becomes `int` (joda `CurrencyUnit.numericCode` and `decimalPlaces`), `Integer` becomes `int` (`periodNumber()`), and `Object...` becomes `Object[]` (MathUtil, AbstractPlatformException).",
       "evidence": "PIC S9(4) COMP against S9(9)/S9(10) COMP gives short against int. The `-C` null-flag item beside a numeric item gives a boxed type. Frames print varargs as arrays (`BigDecimal[]`), so restoring varargs needs the JDK convention (class b for that subcase).",
       "hypothesis": "Map PICTURE sizes to the narrowest Java primitive J3S could have produced, and keep the boxed type where the item has a null flag. Make a trailing array parameter varargs when every call site builds a fresh array.",
-      "matches": ["TYPEREF.NUMERIC_CHANGED", "TYPEREF.BOXING", "TYPEREF.VARARGS_TO_ARRAY"]
+      "matches": [
+        "TYPEREF.NUMERIC_CHANGED",
+        "TYPEREF.BOXING",
+        "TYPEREF.VARARGS_TO_ARRAY"
+      ]
     },
     {
       "id": "G13",
@@ -129,7 +169,10 @@
       "description": "The declared collection interface changes: `ConcurrentMap` becomes `Map`, `Collection` becomes `List`, and `Temporal` becomes `LocalDate`.",
       "evidence": "Frames print only the last type argument, not the outer collection type. The JDK emulation program (`JConcurrentHashMap`, `JArrayList`) names the implementation, not the declared interface.",
       "hypothesis": "Choose the narrowest JDK interface that the operations used on the value need (JDK knowledge): `ConcurrentMap` when `putIfAbsent` or `computeIfAbsent` is used, and `Collection` when only iteration and `size` are.",
-      "matches": ["TYPEREF.COLLECTION_CHANGED", "TYPEREF.OTHER"]
+      "matches": [
+        "TYPEREF.COLLECTION_CHANGED",
+        "TYPEREF.OTHER"
+      ]
     },
     {
       "id": "G14",
@@ -138,7 +181,10 @@
       "description": "`Comparable<BigMoneyProvider>`, `Comparable<CurrencyUnit>` and `Serializable` are dropped, along with the `serialVersionUID` constants (joda-money, loanamorti DTOs).",
       "evidence": "`compareTo(X)` FRAMEs exist (`BigMoney.compareTo(BigMoneyProvider)`). Serializable and serialVersionUID leave no trace in the COBOL.",
       "hypothesis": "Implement `Comparable<X>` when a public `int compareTo(X)` exists (a JDK convention). Serializable cannot be recovered from the evidence; at most, use a policy for DTO-like types.",
-      "matches": ["SUPERTYPE.JDK_INTERFACE_LOST", "FIELD.MISSING_SERIAL_VERSION"]
+      "matches": [
+        "SUPERTYPE.JDK_INTERFACE_LOST",
+        "FIELD.MISSING_SERIAL_VERSION"
+      ]
     },
     {
       "id": "G15",
@@ -147,7 +193,14 @@
       "description": "Domain interfaces disappear from `implements` (`LoanAmortizationCalculator`, `RepeatableEarlyPayment`, `BigMoneyProvider` on Money, `LoanScheduleGenerator`, `ApiFacingEnum`, `LoanPrincipalRelatedDataHolder`). Exception superclasses fall back to `RuntimeException` (`CurrencyMismatchException extends IllegalArgumentException`), and an abstract class becomes concrete (`CurrencyUnitDataProvider`).",
       "evidence": "Interface simple names appear in FRAME parameter types (`BigMoney.of(BigMoneyProvider)`), and the classes whose instances flow there implement them. The generator already recovers `ILoanConfigurationDetails` from dispatch. Exception class ids and catch-site tests give subtyping. A class with no `NEW` site and with subclasses is abstract.",
       "hypothesis": "When an estate type is named in frame parameter or return types and has no CLASS program of its own, declare it an interface whose methods are the ones called on it. Make the classes whose instances reach it implement it. Take an exception's superclass from the catch sites that include its class id. Keep a class abstract when it is never instantiated and has subclasses.",
-      "matches": ["SUPERTYPE.INTERFACE_LOST", "SUPERTYPE.EXTENDS_LOST", "SUPERTYPE.ADDED", "SUPERTYPE.ARGS_CHANGED", "TYPE.KIND_ABSTRACT_TO_CLASS", "TYPE.KIND_INTERFACE_TO_CLASS"]
+      "matches": [
+        "SUPERTYPE.INTERFACE_LOST",
+        "SUPERTYPE.EXTENDS_LOST",
+        "SUPERTYPE.ADDED",
+        "SUPERTYPE.ARGS_CHANGED",
+        "TYPE.KIND_ABSTRACT_TO_CLASS",
+        "TYPE.KIND_INTERFACE_TO_CLASS"
+      ]
     },
     {
       "id": "G16",
@@ -156,7 +209,13 @@
       "description": "Over the comparable code of fineract-xl, `stream()` calls fall from 79 to 0, method references from 56 to 0 and lambdas from 153 to 88, while loops rise from 40 to 111 (ProgressiveEMICalculator alone: −120 stream, lambda and reference uses, +47 loops). loanamorti shows the same in LoanAmortizationCalculatorImpl.",
       "evidence": "J3S lambda frames (`FRAME OF M0998-LSP-LAMBDA lambda LSP:50`) with their SRC line spans, and the iterator loops over the JDK emulation programs (`JArrayListItr`).",
       "hypothesis": "Raise canonical loop shapes back to the Stream API using JDK knowledge: accumulate into a new list (map, filter, toList), exit early on a boolean (anyMatch, allMatch), sum or reduce, and a min or max scan (min with a Comparator). A lambda frame whose body is a single call becomes a method reference. Do it only when the loop has no other side effects.",
-      "matches": ["IDIOM.STREAM_LOST", "IDIOM.LAMBDA_LOST", "IDIOM.METHODREF_LOST", "IDIOM.FUNCTIONAL_LOST", "IDIOM.STREAM_TO_LOOP"]
+      "matches": [
+        "IDIOM.STREAM_LOST",
+        "IDIOM.LAMBDA_LOST",
+        "IDIOM.METHODREF_LOST",
+        "IDIOM.FUNCTIONAL_LOST",
+        "IDIOM.STREAM_TO_LOOP"
+      ]
     },
     {
       "id": "G17",
@@ -165,7 +224,12 @@
       "description": "Over the comparable code of fineract-xl, switch expressions fall from 10 to 0 (ProgressiveEMICalculator 6, DaysInMonthType, DaysInYearType, InterestPeriod, ProgressiveLoanInterestScheduleModel). `instanceof` pattern variables are also lost (joda BigMoney and Money, fineract LoanSchedulePlan and Memo).",
       "evidence": "The EVALUATE shape: every WHEN assigns the same target or returns. A type test followed by a cast of the same reference.",
       "hypothesis": "This is a Java-level rewrite that needs no original. Turn a switch or if chain whose branches all assign one variable, or all return, into a switch expression. Turn `instanceof T` followed by `(T) x` into a pattern variable.",
-      "matches": ["IDIOM.SWITCHEXPR_LOST", "IDIOM.PATTERNMATCH_LOST", "IDIOM.VAR_LOST", "IDIOM.TEXTBLOCK_LOST"]
+      "matches": [
+        "IDIOM.SWITCHEXPR_LOST",
+        "IDIOM.PATTERNMATCH_LOST",
+        "IDIOM.VAR_LOST",
+        "IDIOM.TEXTBLOCK_LOST"
+      ]
     },
     {
       "id": "G18",
@@ -174,7 +238,12 @@
       "description": "The data does not support this as a recurring gap. There is one instance in fineract-xl, and over the comparable code the modern side uses Optional more than the original did (39 against 80 in fineract-xl). Original Optional-returning methods were mostly never compiled by J3S.",
       "evidence": "The JOptional emulation program shows where Optional was used.",
       "hypothesis": "No rule needed now. Re-measure when more Optional-heavy code is reached.",
-      "matches": ["IDIOM.OPTIONAL_LOST", "IDIOM.OPTIONAL_TO_NULL", "TYPEREF.OPTIONAL_UNWRAPPED", "TYPEREF.OPTIONAL_LOST"]
+      "matches": [
+        "IDIOM.OPTIONAL_LOST",
+        "IDIOM.OPTIONAL_TO_NULL",
+        "TYPEREF.OPTIONAL_UNWRAPPED",
+        "TYPEREF.OPTIONAL_LOST"
+      ]
     },
     {
       "id": "G19",
@@ -183,7 +252,10 @@
       "description": "Original records become classes with the same members: kontor-zins `LoanTerms` and `Installment`. Both have a compact constructor that validates and normalises (`principal = Rounding.money(principal)`), and `LoanTerms` has a static constant.",
       "evidence": "All instance fields are final and assigned once from the constructor parameters in declaration order, and the accessors are named exactly as the fields. The generator already turns such classes into records elsewhere (G20).",
       "hypothesis": "Extend record recovery to constructors with a validation or normalisation prologue (emit a compact constructor) and to classes with static members.",
-      "matches": ["TYPE.KIND_RECORD_TO_CLASS", "IDIOM.RECORD_LOST"]
+      "matches": [
+        "TYPE.KIND_RECORD_TO_CLASS",
+        "IDIOM.RECORD_LOST"
+      ]
     },
     {
       "id": "G20",
@@ -192,16 +264,23 @@
       "description": "The reverse divergence: original final classes become records (joda `CurrencyUnit` and `Money`; loanamorti `Loan`, `EarlyPayment`, `LoanAmortization` and `MonthlyPayment`; fineract `LoanSchedulePlan*` periods and `PeriodDueDetails`). It is arguably more modern, but it adds record accessors to the API, some with cut component names (`totalDisbursedAmou()`, `totalOutstandingLoanBa()`: G01 and G02).",
       "evidence": "Records are a modernisation choice, not a gap.",
       "hypothesis": "Keep the rule, but complete the component names (G01) before promotion, and do not promote public library types whose original API used getters, when the estate is a library.",
-      "matches": ["TYPE.KIND_CLASS_TO_RECORD", "METHOD.EXTRA_RECORD"]
+      "matches": [
+        "TYPE.KIND_CLASS_TO_RECORD",
+        "METHOD.EXTRA_RECORD"
+      ]
     },
     {
       "id": "G21",
       "title": "Visibility widened",
-      "closability": "a",
+      "closability": "b",
       "description": "Private static fields become public (`LOGGER`, `MC`, `MONTHS_PER_YEAR`, `PARSE_REGEX`, `COUNTRY_REGEX_LINE`), and package or private constructors and methods become public (`Money(BigMoney)`, `LoanScheduleModelDisbursementPeriod(...)`).",
       "evidence": "The cross-program references in the COBOL: ENTRY lists (FA-ENTRY) and the programs that touch a static item. A static used only inside its own program is private.",
       "hypothesis": "Give each member the least visibility that satisfies its cross-type references in the generated estate, and keep constants used by one type private.",
-      "matches": ["MEMBER.VISIBILITY_WIDENED_*", "TYPE.VISIBILITY_WIDENED"]
+      "matches": [
+        "MEMBER.VISIBILITY_WIDENED_*",
+        "TYPE.VISIBILITY_WIDENED"
+      ],
+      "outcome": "R1 (least access from the estate reference graph) REJECTED 2026-11-01: it closed G21 but raised G22 on TRAIN and TEST. The authors' API intent is not in the COBOL; it needs an external API manifest."
     },
     {
       "id": "G22",
@@ -210,7 +289,11 @@
       "description": "Public API methods that reached code calls only from inside their class become private: fineract `Money.isLessThanZero`, `MathUtil.isGreaterThanZero` and `ProgressiveLoanScheduleGenerator.generate`, and joda `BigMoney.getScale`. In a closed application this is harmless. In a library such as joda-money it breaks the API.",
       "evidence": "ENTRY tables list only the reached callers. The original intent is not in the COBOL.",
       "hypothesis": "Use an external policy input: library or application, or an API manifest. By default, do not narrow a public method of a public type below the visibility its name and the estate's convention suggest.",
-      "matches": ["MEMBER.VISIBILITY_NARROWED_*", "TYPE.VISIBILITY_NARROWED"]
+      "matches": [
+        "MEMBER.VISIBILITY_NARROWED_*",
+        "TYPE.VISIBILITY_NARROWED"
+      ],
+      "outcome": "R1 (least access from the estate reference graph) REJECTED 2026-11-01: it closed G21 but raised G22 on TRAIN and TEST. The authors' API intent is not in the COBOL; it needs an external API manifest."
     },
     {
       "id": "G23",
@@ -219,7 +302,11 @@
       "description": "Final original classes are emitted non-final: utility classes (`Annuity`, `Rounding`, `MathUtil`), value classes (`Schedule`, `LoanScheduleParams`) and nested builders.",
       "evidence": "Closed world: no other program extends or dispatches to a subclass of the type.",
       "hypothesis": "Make classes with no subclass in the estate final, and always make classes with only static members and a private constructor final. For library estates this over-approximates; it is acceptable.",
-      "matches": ["TYPE.FINAL_LOST", "FIELD.FINAL_LOST"]
+      "matches": [
+        "TYPE.FINAL_LOST",
+        "FIELD.FINAL_LOST"
+      ],
+      "outcome": "R3 ACCEPTED 2026-11-01 behind the closedWorld estate profile: G23 TRAIN 20 -> 3, TEST 7 -> 0."
     },
     {
       "id": "G24",
@@ -228,7 +315,10 @@
       "description": "Original mutable fields become final (fineract-xl), either because their setters were never compiled (`FIELD.FINAL_ADDED_SETTER_UNREACHED`) or because reached code assigns them once.",
       "evidence": "This is a consequence of the J3S reach.",
       "hypothesis": "No rule: it is harmless, and arguably better.",
-      "matches": ["FIELD.FINAL_ADDED", "FIELD.FINAL_ADDED_SETTER_UNREACHED"]
+      "matches": [
+        "FIELD.FINAL_ADDED",
+        "FIELD.FINAL_ADDED_SETTER_UNREACHED"
+      ]
     },
     {
       "id": "G25",
@@ -237,7 +327,9 @@
       "description": "Compile-time constants disappear and their literals appear in place: kontor-zins `MAX_MONTHS` (`months > 600`), `MONEY_SCALE` and `RATE_SCALE`.",
       "evidence": "javac folds compile-time constants before J3S reads the bytecode, so the COBOL holds only the literal.",
       "hypothesis": "Not closable. At most, name a literal repeated across a type as a private constant, but the original name cannot be recovered.",
-      "matches": ["FIELD.MISSING_CONSTANT"]
+      "matches": [
+        "FIELD.MISSING_CONSTANT"
+      ]
     },
     {
       "id": "G26",
@@ -246,7 +338,9 @@
       "description": "`throw new IllegalArgumentException(\"principal must not be null\")` becomes `throw new IllegalArgumentException()`: kontor-zins LoanTerms 7 to 0, Schedule 6 to 0, joda CurrencyUnit 10 to 3 and BigMoney 4 to 1, fineract ProgressiveEMICalculator 14 to 4.",
       "evidence": "None. J3S maps exceptions to class ids (`JO-SIMPLE-NAME`) and does not keep the message literal.",
       "hypothesis": "Not closable in the generator. It needs J3S to carry the message literal.",
-      "matches": ["IDIOM.EXCEPTION_MESSAGE_LOST"]
+      "matches": [
+        "IDIOM.EXCEPTION_MESSAGE_LOST"
+      ]
     },
     {
       "id": "G27",
@@ -255,7 +349,12 @@
       "description": "Methods, builders and nested types with no J3S frame, and methods whose frame J3S compiled as dead code (`* J3S: no object of ProcessedTransactionData is ever created`), which the generator emits as a `JX-DEAD` throw stub (`METHOD.DEAD_STUB`; their signatures count as preserved). This is the bulk of the \"missing\" API: joda-money has 107 public methods and 24 accessors, and fineract-xl has 344 public methods, 169 accessors and 114 Lombok members. It is not a generator gap: the estate's jobs never call them.",
       "evidence": "The FRAME comments are exhaustive for what J3S compiled.",
       "hypothesis": "Widen the J3S entry set (more job scenarios, or an API-driven entry list) when the full API matters. Nothing to do in the generator.",
-      "matches": ["METHOD.UNREACHED_*", "TYPE.UNREACHED_*", "BUILDER.UNREACHED", "METHOD.DEAD_STUB"]
+      "matches": [
+        "METHOD.UNREACHED_*",
+        "TYPE.UNREACHED_*",
+        "BUILDER.UNREACHED",
+        "METHOD.DEAD_STUB"
+      ]
     },
     {
       "id": "G28",
@@ -264,7 +363,16 @@
       "description": "Members modern Java has and the original does not: explicit default constructors (private `<init>()` in enums and utility classes), a few extra public methods (`Money.currency()`), and record-promotion and Lombok-expansion leftovers. Private helpers split out differently are not observed: `METHOD.EXTRA_PRIVATE` is zero in all four estates.",
       "evidence": "These come from the generator's choices.",
       "hypothesis": "Low value. Omit an explicit no-argument constructor when it is the implicit one.",
-      "matches": ["METHOD.EXTRA_CTOR", "METHOD.EXTRA_PRIVATE", "METHOD.EXTRA_PACKAGE", "METHOD.EXTRA_API", "FIELD.EXTRA", "FIELD.EXTRA_CONSTANT", "TYPE.MODERN_ONLY_*", "ENUM.CONSTANT_EXTRA"]
+      "matches": [
+        "METHOD.EXTRA_CTOR",
+        "METHOD.EXTRA_PRIVATE",
+        "METHOD.EXTRA_PACKAGE",
+        "METHOD.EXTRA_API",
+        "FIELD.EXTRA",
+        "FIELD.EXTRA_CONSTANT",
+        "TYPE.MODERN_ONLY_*",
+        "ENUM.CONSTANT_EXTRA"
+      ]
     },
     {
       "id": "G29",
@@ -273,7 +381,14 @@
       "description": "This is the check that the generator loses nothing J3S compiled: reached methods missing, overloads collapsed, fields, enum constants and builders lost, and reached types missing. Reached methods and overloads are zero in all four estates. The few `FIELD.MISSING` (fineract `ProcessedTransactionData.transactionType`, `transactionDate` and `reAgeParameter`) belong to a type J3S never instantiates (G27).",
       "evidence": "None needed.",
       "hypothesis": "Keep this at zero as a regression check.",
-      "matches": ["METHOD.MISSING_*", "OVERLOAD.COLLAPSED", "FIELD.MISSING", "ENUM.CONSTANT_MISSING", "BUILDER.LOST", "TYPE.MISSING_*"]
+      "matches": [
+        "METHOD.MISSING_*",
+        "OVERLOAD.COLLAPSED",
+        "FIELD.MISSING",
+        "ENUM.CONSTANT_MISSING",
+        "BUILDER.LOST",
+        "TYPE.MISSING_*"
+      ]
     },
     {
       "id": "G30",
@@ -282,7 +397,21 @@
       "description": "A recovered type is placed in the package of its implementation or user: `ILoanConfigurationDetails` moves from `loanproduct.domain` to `loanproduct.data`, and `InterestScheduleModelRepositoryWrapper` from `loanaccount.service` to `loanschedule.domain`.",
       "evidence": "Frames print simple names only, so the package of a type J3S never compiled is unknown.",
       "hypothesis": "Not closable from the evidence, and of little importance.",
-      "matches": ["TYPE.MOVED", "TYPE.RELOCATED"]
+      "matches": [
+        "TYPE.MOVED",
+        "TYPE.RELOCATED"
+      ]
+    },
+    {
+      "id": "G31",
+      "title": "final added where the original was extensible",
+      "closability": "c",
+      "description": "A class made final although the original left it open to subclassing (TYPE.FINAL_ADDED). Introduced by R3.",
+      "evidence": "None in the COBOL: external extension intent (framework proxies, library users) is not visible to the closed estate.",
+      "hypothesis": "Acceptable modern practice only under the declared closedWorld estate profile (nothing outside subclasses or proxies). Without that profile R3 is off.",
+      "matches": [
+        "TYPE.FINAL_ADDED"
+      ]
     }
   ],
   "split": [

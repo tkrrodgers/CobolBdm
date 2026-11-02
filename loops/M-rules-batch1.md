@@ -99,3 +99,8 @@ visibility, types and idioms. Behaviour is not lost.
   therefore inflated relative to real legacy COBOL. The `legacy` session's estates (no such headers) will measure it.
 - **R3 narrowed** to `final` on classes only (G23). The record conversion is dropped (G19 is TRAIN-only, 4 instances, and
   it conflicts with G20). The acceptance is pre-registered in the hub message of 15:30.
+- **R3 ACCEPTED (16:20), behind the explicit estate profile `closedWorld: true`; the default is off.** G23 TRAIN 20 -> 3,
+  TEST 7 -> 0; no catalogued gap rises; 48/48 self-tests. TYPE.FINAL_ADDED (22, 52% precision against the originals) is
+  stricter than the originals. It is classed (c) under closedWorld only, because Spring/JPA proxies, mocks and library
+  extension need open classes, and the closed estate cannot see them. The profile is a per-estate deployment decision,
+  never inferred.
