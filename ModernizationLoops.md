@@ -99,3 +99,5 @@ Disclosed risks: fineract-xl has 123 unchecked decimal ops and 106 unpreserved a
 
 ## Loop 5: kontor-zins-legacy (the first provenance-free estate)
 - Onboarded: native 20/20. iter0 `20261101-184625-036cf0` (current default generator, untouched): **42.6 C, FAIL; residue 8; 96 javac errors; no domain classes.** The same business logic as J3S-derived kontor-zins iter0, which scored **8.0 A**. That difference is the measured bias. RoundingKernel recognition carried over (the kernel method generalizes). Iterations authorized 18:47 (generic passes only).
+
+Overnight (19:40): both VS Code sessions went idle at about 18:49 and cannot be woken from here. Under Tomrodgers's standing instruction ('if they stop, continue the work'), the lead continues loop 5 with a BLIND background agent in an isolated generator snapshot (C:/Users/Tomrodgers/Source/CobolBdm-l5lead, commit 26604b6, a copy of the pipeline's uncommitted generator). It writes nothing to the CobolBdm main checkout. Results come back as commits in the snapshot, for the pipeline or Tomrodgers to merge.
