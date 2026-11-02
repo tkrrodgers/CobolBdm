@@ -243,4 +243,64 @@ class CompareTest {
         assertEquals(2, Main.run(new String[] {"compare", "--modern", fixture("modern").toString(), "--quiet"}));
         assertEquals(2, Main.run(new String[] {"compare-gaps"}));
     }
+
+    // ---- structural alignment (--align structural, DT-deep-thinker.md 2.5)
+
+    private static void write(Path root, String rel, String text) throws Exception {
+        Path f = root.resolve(rel);
+        Files.createDirectories(f.getParent());
+        Files.writeString(f, text);
+    }
+
+    private static CompareReport shapes(Path tmp, boolean structural) throws Exception {
+        Path o = tmp.resolve("o");
+        Path m = tmp.resolve("m");
+        write(o, "a/LoanTerms.java", "package a; import java.math.BigDecimal; import java.time.LocalDate;\n"
+            + "public record LoanTerms(BigDecimal principal, int months, LocalDate start) { public BigDecimal monthlyRate() { return principal; } }\n");
+        write(o, "a/Mode.java", "package a; public enum Mode { ANNUITY, LINEAR, BULLET }\n");
+        write(m, "modern/batch/Fsem0100Terms.java", "package modern.batch; import java.math.BigDecimal; import java.time.LocalDate;\n"
+            + "public record Fsem0100Terms(BigDecimal wsPrin, int wsMonths, LocalDate wsStart) { public BigDecimal wsRate() { return wsPrin; } }\n");
+        write(m, "modern/batch/ParmsMode.java", "package modern.batch; public enum ParmsMode { A, L, B }\n");
+        // plumbing with the same shapes is never a partner
+        write(m, "modern/batch/platform/Terms.java", "package modern.batch.platform; import java.math.BigDecimal; import java.time.LocalDate;\n"
+            + "public record Terms(BigDecimal a, int b, LocalDate c) { public BigDecimal d() { return a; } }\n");
+        write(m, "modern/batch/platform/Mode3.java", "package modern.batch.platform; public enum Mode3 { X, Y, Z }\n");
+        return new Comparer(Config.defaults()).structural(structural).compare("shapes", List.of(o), m, null, "all");
+    }
+
+    @Test
+    void structuralAlignmentPairsByShapeAndScoresNamesSeparately(@TempDir Path tmp) throws Exception {
+        CompareReport byName = shapes(tmp.resolve("n"), false);
+        assertEquals(0, byName.summary.matched);
+        assertEquals(0, byName.summary.matchedStructural);
+        assertTrue(byName.summary.typeNameClasses.isEmpty(), "name mode reports no type names");
+
+        CompareReport r = shapes(tmp.resolve("s"), true);
+        assertEquals(2, r.summary.matchedStructural);
+        var pairs = r.matched.stream().collect(Collectors.toMap(d -> d.original, d -> d.modern));
+        assertEquals("modern.batch.Fsem0100Terms", pairs.get("a.LoanTerms"));
+        assertEquals("modern.batch.ParmsMode", pairs.get("a.Mode"));
+        assertTrue(r.matched.stream().allMatch(d -> d.alignment.equals("structural") && d.structuralScore >= Comparer.STRUCTURAL_THRESHOLD));
+        assertEquals(0, r.summary.typeNames.kept);
+        assertEquals(2, r.summary.typeNames.total);
+        assertEquals(2, r.summary.typeNameClasses.get("renamed"));
+        // the record's members pair by shape too: one accessor-like method with a unique shape
+        var terms = r.matched.stream().filter(d -> d.original.equals("a.LoanTerms")).findFirst().orElseThrow();
+        assertEquals(3, terms.fields.matched);
+        assertEquals(CompareWriters.json(r), CompareWriters.json(shapes(tmp.resolve("s2"), true)).replace(
+            tmp.resolve("s2").toAbsolutePath().normalize().toString().replace('\\', '/'),
+            tmp.resolve("s").toAbsolutePath().normalize().toString().replace('\\', '/')), "deterministic");
+    }
+
+    @Test
+    void shapeCategoriesIgnoreNames() {
+        Set<String> domain = Set.of("LoanTerms", "Fsem0100Terms");
+        assertEquals("decimal", Comparer.category("java.math.BigDecimal", domain));
+        assertEquals("integral", Comparer.category("long", domain));
+        assertEquals("coll", Comparer.category("List<Installment>", domain));
+        assertEquals("D", Comparer.category("LoanTerms", domain));
+        assertEquals("D", Comparer.category("Fsem0100Terms", domain));
+        assertEquals("other", Comparer.category("org.joda.money.Money", domain));
+        assertEquals(50.0, Math.round(100 * Comparer.tokenDice("GeneralLedger", "LedgerEntry")) * 1.0);
+    }
 }

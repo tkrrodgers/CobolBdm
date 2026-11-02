@@ -20,6 +20,9 @@ public final class Compare {
                              methods; sets --scope reached
           --scope S          all | reached (default: reached with --cobol, else all). reached: original types J3S compiled
                              or that the modern estate names (by fully qualified or unique simple name)
+          --align A          name | structural (default: name). structural also pairs the types left unpaired by name by
+                             their shape (member type categories and signatures, never names) and scores type names
+                             separately: the measure for renamed, provenance-free estates
           --name NAME        estate name in the report (default: the modern root's estate directory)
           --out DIR          write compare-report.json/.md to DIR (default: ./compare-out)
           --config FILE      lanes and compareInfrastructureGlobs (default: built-in)
@@ -37,6 +40,7 @@ public final class Compare {
         String name = null;
         int examples = 3;
         boolean quiet = false;
+        boolean structural = false;
         try {
             for (int i = 0; i < args.length; i++) {
                 String a = args[i];
@@ -47,6 +51,11 @@ public final class Compare {
                     case "--scope" -> {
                         scope = args[++i];
                         if (!scope.equals("all") && !scope.equals("reached")) throw new IllegalArgumentException("--scope all|reached");
+                    }
+                    case "--align" -> {
+                        String al = args[++i];
+                        if (!al.equals("name") && !al.equals("structural")) throw new IllegalArgumentException("--align name|structural");
+                        structural = al.equals("structural");
                     }
                     case "--name" -> name = args[++i];
                     case "--out" -> out = Path.of(args[++i]);
@@ -76,7 +85,7 @@ public final class Compare {
         if (name == null) name = estateName(modern);
         try {
             Config cfg = configFile == null ? Config.defaults() : Config.load(configFile);
-            CompareReport r = new Comparer(cfg).compare(name, roots, modern, cobol, scope);
+            CompareReport r = new Comparer(cfg).structural(structural).compare(name, roots, modern, cobol, scope);
             Files.createDirectories(out);
             Files.writeString(out.resolve("compare-report.json"), CompareWriters.json(r), StandardCharsets.UTF_8);
             Files.writeString(out.resolve("compare-report.md"), CompareWriters.markdown(r, examples), StandardCharsets.UTF_8);
@@ -86,6 +95,10 @@ public final class Compare {
                     s.matched, s.matchedMoved, s.originalOnly, s.modernOnlyInfrastructure + s.modernOnlyOther, s.modernOnlyInfrastructure);
                 System.out.printf("  API %s (reached %s) | names %s | signatures %s (reached %s)%n", CompareWriters.pct(s.api),
                     CompareWriters.pct(s.apiReached), CompareWriters.pct(s.names), CompareWriters.pct(s.signatures), CompareWriters.pct(s.signaturesReached));
+                if (structural) {
+                    System.out.printf("  structural: %d types paired by shape | type names exact %s, token overlap %.1f%%, classes %s%n",
+                        s.matchedStructural, CompareWriters.pct(s.typeNames), s.typeNameTokens, s.typeNameClasses);
+                }
                 System.out.println("  reports: " + out.toAbsolutePath().normalize());
             }
             return 0;

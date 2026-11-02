@@ -36,6 +36,14 @@ public final class CompareReport {
         public int matched;
         public int matchedByFqn;
         public int matchedMoved;
+        /** --align structural: types paired by shape, not name */
+        public int matchedStructural;
+        /** --align structural: matched type pairs whose modern simple name is exactly the original's */
+        public Ratio typeNames = new Ratio();
+        /** --align structural: matched type name pairs by class (exact, case, renamed, ...) */
+        public Map<String, Integer> typeNameClasses = new TreeMap<>();
+        /** --align structural: mean camel-token overlap (Dice, %) of matched type names */
+        public double typeNameTokens;
         public int originalOnly;
         public int modernOnlyInfrastructure;
         public int modernOnlyOther;
@@ -119,8 +127,10 @@ public final class CompareReport {
     public static final class TypeDiff {
         public String original;
         public String modern;
-        /** fqn: same name; moved: same simple name, other package; relocated: nesting changed */
+        /** fqn: same name; moved: same simple name, other package; relocated: nesting changed; structural: by shape */
         public String alignment;
+        /** --align structural: the shape similarity of a structural pair */
+        public Double structuralScore;
         public String originalFile;
         public String modernFile;
         public Pair2 kind = new Pair2();

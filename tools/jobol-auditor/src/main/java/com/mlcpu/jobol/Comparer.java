@@ -63,6 +63,16 @@ public final class Comparer {
     private final JavaParser parser;
     private final List<java.util.regex.Pattern> infrastructure = new ArrayList<>();
 
+    /** --align structural: after name alignment, pair the remaining types by shape (member types and signatures, never names). */
+    private boolean structural;
+    /** pre-registered: the least structural similarity accepted as a pair (DT-deep-thinker.md 2.5) */
+    static final double STRUCTURAL_THRESHOLD = 0.5;
+
+    public Comparer structural(boolean on) {
+        this.structural = on;
+        return this;
+    }
+
     public Comparer(Config cfg) {
         this.cfg = cfg;
         this.parser = new JavaParser(new ParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21));
@@ -363,6 +373,37 @@ public final class Comparer {
             }
         }
         bySimpleName(o, mDomain, align, mUsed, how, false);
+        Map<String, Double> shapeScore = new HashMap<>();
+        if (structural) {
+            Set<String> domainNames = new HashSet<>();
+            for (TypeModel t : o.values()) domainNames.add(t.name);
+            List<java.util.regex.Pattern> exclude = new ArrayList<>();
+            for (String g : cfg.compareStructuralExcludeGlobs) exclude.add(Glob.compile(g));
+            Map<String, TypeModel> pool = new TreeMap<>();
+            for (TypeModel t : m.values()) {
+                String rel = modern.fileOf.get(t.fqn);
+                if ("lane:test".equals(infrastructureReason(rel)) || exclude.stream().anyMatch(x -> x.matcher(rel).matches())) continue;
+                pool.put(t.fqn, t);
+                domainNames.add(t.name);
+            }
+            byShape(o, pool, align, mUsed, how, shapeScore, domainNames);
+            for (TypeModel a : o.values()) {
+                if (align.containsKey(a.fqn)) continue;
+                String best = null;
+                double bs = -1;
+                for (TypeModel b : pool.values()) {
+                    double x = similarity(a, b, domainNames);
+                    if (x > bs) {
+                        bs = x;
+                        best = b.fqn;
+                    }
+                }
+                r.notes.add("unpaired by shape: " + a.fqn + " (" + a.kind + ", " + a.fields.size() + " fields, " + a.methods.size()
+                    + " methods); nearest " + best + " at " + round1(bs * 100) + "%");
+            }
+            r.notes.add("--align structural: types left unpaired by name were paired by shape (field and method type categories, "
+                + "never names) at similarity >= " + STRUCTURAL_THRESHOLD + "; type names are then scored separately (typeNames)");
+        }
 
         // modern-only
         for (TypeModel t : m.values()) {
@@ -428,8 +469,17 @@ public final class Comparer {
             d.modernFile = modern.fileOf.get(b.fqn);
             r.matched.add(d);
             if (d.alignment.equals("fqn")) s.matchedByFqn++;
+            else if (d.alignment.equals("structural")) s.matchedStructural++;
             else s.matchedMoved++;
+            if (structural) {
+                d.structuralScore = shapeScore.get(a.fqn);
+                Names.Kind k = Names.classify(a.name, b.name);
+                s.typeNameClasses.merge(k.id(), 1, Integer::sum);
+                s.typeNames.add(k == Names.Kind.EXACT);
+                s.typeNameTokens += tokenDice(a.name, b.name);
+            }
         }
+        if (structural && s.typeNames.total > 0) s.typeNameTokens = round1(100.0 * s.typeNameTokens / s.typeNames.total);
         s.matched = r.matched.size();
 
         // structure, idioms
@@ -449,6 +499,7 @@ public final class Comparer {
         s.api.close();
         s.apiReached.close();
         s.names.close();
+        s.typeNames.close();
         s.signatures.close();
         s.signaturesReached.close();
         for (Gap g : r.gaps) s.gapCounts.merge(g.pattern(), 1, Integer::sum);
@@ -479,6 +530,136 @@ public final class Comparer {
             if (infrastructure.get(i).matcher(rel).matches()) return "glob:" + cfg.compareInfrastructureGlobs.get(i);
         }
         return null;
+    }
+
+    /** Simple names of the types on both sides, which a shape reduces to "D" (set by byShape). */
+    private Set<String> shapeDomain = Set.of();
+
+    /** A name-free category of a type: integral, decimal, text, bool, date, coll, map, opt, void, obj, D (an estate type), other. */
+    static String category(String type, Set<String> domain) {
+        if (type == null) return "ctor";
+        String e = JavaModel.erase(type).replace("...", "[]").trim();
+        if (e.endsWith("[]")) return e.startsWith("char[") || e.startsWith("byte[") ? "text" : "coll";
+        String n = e.substring(e.lastIndexOf('.') + 1);
+        return switch (n) {
+            case "byte", "short", "int", "long", "Byte", "Short", "Integer", "Long", "BigInteger", "AtomicInteger", "AtomicLong" -> "integral";
+            case "float", "double", "Float", "Double", "BigDecimal" -> "decimal";
+            case "char", "Character", "String", "CharSequence", "StringBuilder" -> "text";
+            case "boolean", "Boolean" -> "bool";
+            case "LocalDate", "LocalDateTime", "LocalTime", "Instant", "Date", "ZonedDateTime", "OffsetDateTime", "YearMonth", "Year",
+                "Period", "Duration" -> "date";
+            case "List", "Set", "Collection", "Iterable", "ArrayList", "LinkedList", "Deque", "Queue", "ArrayDeque", "Stream", "SortedSet",
+                "NavigableSet", "TreeSet", "HashSet", "LinkedHashSet", "EnumSet" -> "coll";
+            case "Map", "SortedMap", "NavigableMap", "HashMap", "TreeMap", "LinkedHashMap", "EnumMap" -> "map";
+            case "Optional" -> "opt";
+            case "void" -> "void";
+            case "Object" -> "obj";
+            default -> domain.contains(n) ? "D" : "other";
+        };
+    }
+
+    static List<String> fieldShapes(TypeModel t, Set<String> domain) {
+        List<String> out = new ArrayList<>();
+        for (Field f : t.fields) out.add((f.isStatic ? "s:" : "") + category(f.type, domain));
+        return out;
+    }
+
+    static String methodShape(Method x, Set<String> domain) {
+        List<String> ps = new ArrayList<>();
+        for (JavaModel.Param p : x.params) ps.add(category(p.type, domain));
+        java.util.Collections.sort(ps);
+        return (x.ctor ? "ctor" : (x.isStatic ? "s:" : "") + category(x.returnType, domain)) + "(" + String.join(",", ps) + ")";
+    }
+
+    static List<String> methodShapes(TypeModel t, Set<String> domain) {
+        List<String> out = new ArrayList<>();
+        for (Method x : t.methods) out.add(methodShape(x, domain));
+        return out;
+    }
+
+    /** Dice coefficient of two multisets; 1 when both are empty. */
+    static double dice(List<String> a, List<String> b) {
+        if (a.isEmpty() && b.isEmpty()) return 1.0;
+        Map<String, Integer> ca = new HashMap<>();
+        for (String x : a) ca.merge(x, 1, Integer::sum);
+        int common = 0;
+        for (String y : b) {
+            Integer n = ca.get(y);
+            if (n != null && n > 0) {
+                common++;
+                ca.put(y, n - 1);
+            }
+        }
+        return 2.0 * common / (a.size() + b.size());
+    }
+
+    private static String shapeKind(String kind) {
+        return kind.equals("record") ? "class" : kind;
+    }
+
+    /** Name-free similarity of two types in [0, 1]; 0 when the kinds cannot correspond. */
+    static double similarity(TypeModel a, TypeModel b, Set<String> domain) {
+        if (!shapeKind(a.kind).equals(shapeKind(b.kind))) return 0.0;
+        double methods = dice(methodShapes(a, domain), methodShapes(b, domain));
+        if (a.kind.equals("enum")) {
+            int x = a.enumConstants.size();
+            int y = b.enumConstants.size();
+            double constants = x == 0 && y == 0 ? 1.0 : (double) Math.min(x, y) / Math.max(x, y);
+            return 0.6 * constants + 0.4 * methods;
+        }
+        if (a.kind.equals("interface")) return methods;
+        return 0.5 * dice(fieldShapes(a, domain), fieldShapes(b, domain)) + 0.5 * methods;
+    }
+
+    private record ShapeCand(String a, String b, double s) {
+    }
+
+    /** Greedy one-to-one pairing of the still unaligned types by similarity, best first; ties by fqn (deterministic). */
+    private void byShape(Map<String, TypeModel> o, Map<String, TypeModel> m, Map<String, String> align, Set<String> mUsed,
+        Map<String, String> how, Map<String, Double> score, Set<String> domain) {
+        shapeDomain = domain;
+        List<ShapeCand> cands = new ArrayList<>();
+        for (TypeModel a : o.values()) {
+            if (align.containsKey(a.fqn)) continue;
+            for (TypeModel b : m.values()) {
+                if (mUsed.contains(b.fqn)) continue;
+                double x = similarity(a, b, domain);
+                if (x >= STRUCTURAL_THRESHOLD) cands.add(new ShapeCand(a.fqn, b.fqn, x));
+            }
+        }
+        cands.sort(Comparator.comparingDouble((ShapeCand c) -> c.s()).reversed().thenComparing(ShapeCand::a).thenComparing(ShapeCand::b));
+        for (ShapeCand c : cands) {
+            if (align.containsKey(c.a()) || mUsed.contains(c.b())) continue;
+            align.put(c.a(), c.b());
+            mUsed.add(c.b());
+            how.put(c.a(), "structural");
+            score.put(c.a(), Math.round(c.s() * 1000.0) / 1000.0);
+        }
+    }
+
+    /** Pairs the methods left unpaired by name when their shape is unique on both sides (structural mode). */
+    static List<Method[]> byShape(List<Method> a, List<Method> b, List<Method[]> pairs, Set<String> domain) {
+        Set<Method> pa = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        Set<Method> pb = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        for (Method[] p : pairs) {
+            pa.add(p[0]);
+            pb.add(p[1]);
+        }
+        Map<String, List<Method>> ra = new TreeMap<>();
+        Map<String, List<Method>> rb = new TreeMap<>();
+        for (Method x : a) if (!pa.contains(x)) ra.computeIfAbsent(methodShape(x, domain), k -> new ArrayList<>()).add(x);
+        for (Method y : b) if (!pb.contains(y)) rb.computeIfAbsent(methodShape(y, domain), k -> new ArrayList<>()).add(y);
+        List<Method[]> out = new ArrayList<>(pairs);
+        for (Map.Entry<String, List<Method>> e : ra.entrySet()) {
+            List<Method> c = rb.get(e.getKey());
+            if (e.getValue().size() == 1 && c != null && c.size() == 1) out.add(new Method[] {e.getValue().get(0), c.get(0)});
+        }
+        return out;
+    }
+
+    /** Dice overlap of the camel tokens of two names, ignoring case: GeneralLedger vs LedgerEntry = 0.5. */
+    static double tokenDice(String a, String b) {
+        return dice(new ArrayList<>(new TreeSet<>(Names.tokens(a))), new ArrayList<>(new TreeSet<>(Names.tokens(b))));
     }
 
     private static String reverse(Map<String, String> align, String modernFqn) {
@@ -727,6 +908,7 @@ public final class Comparer {
         d.methods.original = a.methods.size();
         d.methods.modern = b.methods.size();
         List<Method[]> pairs = alignMethods(a.methods, b.methods, type, gaps, x -> reach.reached(a.name, x));
+        if (structural) pairs = byShape(a.methods, b.methods, pairs, shapeDomain);
         Set<Method> pa = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         Set<Method> pb = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         for (Method[] p : pairs) {

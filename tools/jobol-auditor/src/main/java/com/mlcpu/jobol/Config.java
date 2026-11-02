@@ -33,6 +33,12 @@ public final class Config {
      * infrastructure (the generated job/application layer), not gaps.
      */
     public List<String> compareInfrastructureGlobs = new ArrayList<>();
+    /**
+     * compare --align structural: modern files never offered as a structural partner (runtime plumbing). Everything
+     * else outside the test lane is a candidate, including the infrastructure above: a provenance-free estate puts its
+     * domain types there too. Not in default-jobol.json, so the ruleset hash is unchanged.
+     */
+    public List<String> compareStructuralExcludeGlobs = new ArrayList<>(List.of("**/platform/**", "**/strangler/**"));
 
     public static final class ZoneGlobs {
         public String zone;

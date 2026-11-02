@@ -92,6 +92,18 @@ Acceptance for naming v1:
 - precision of applied names >= 80% on the evaluation estates;
 - 0 behaviour changes (strict parity), JOBOL not worse, anchors byte-identical without `--names`.
 
+### 2.6 First measurement (lead, 2026-11-02): `compare --align structural` on kontor-zins-legacy loop5-iter2
+- Built: types are paired by shape. A shape is the multiset of field and method type categories (integral, decimal,
+  text, date, coll, D, ...), never names. Pairing is greedy and one-to-one, with the threshold 0.5 pre-registered.
+  Platform and strangler plumbing are never partners. Type names are then scored separately: exact %, name classes,
+  and the mean camel-token Dice. Tests: 24/24. Name mode is unchanged: same Markdown, and the JSON only gains the new
+  fields.
+- Result: **0 of 5 original types have a structural partner.** The nearest are LoanTerms 49.6% and Installment 47.6%,
+  both against DecimalKernel.Operand, which is spurious. Schedule is at 30.1%, Rounding 24.4%, Annuity 16.7%.
+- Meaning: the original's domain types (LoanTerms, Installment, Schedule) do not exist yet in the modern estate.
+  Renaming cannot raise fidelity on this estate by itself. Naming v1 still gives readability, traceability and the
+  ledger. The fidelity gain needs **task 2 (domain decomposition)** next, and the packet is built to serve both tasks.
+
 ## 3. The notebook (memory that improves over time)
 `knowledge/notebook/` (versioned in the repo, reviewed like code), built on the existing `knowledge/glossary` and
 `taxonomy.json`:

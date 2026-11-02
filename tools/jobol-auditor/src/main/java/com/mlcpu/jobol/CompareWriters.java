@@ -53,6 +53,12 @@ public final class CompareWriters {
         b.append("| Signature fidelity, reached by J3S | ").append(pct(s.signaturesReached)).append(" |\n");
         b.append("| Original types in scope | ").append(s.originalTypes).append(" (").append(s.outOfScope).append(" top-level out of scope) |\n");
         b.append("| Matched | ").append(s.matched).append(" (").append(s.matchedByFqn).append(" by name, ").append(s.matchedMoved).append(" moved) |\n");
+        if (s.matchedStructural > 0 || !s.typeNameClasses.isEmpty()) {
+            b.append("| Matched by shape (--align structural) | ").append(s.matchedStructural).append(" |\n");
+            b.append("| Type names exact (matched pairs) | ").append(pct(s.typeNames)).append(" |\n");
+            b.append("| Type name token overlap (mean Dice) | ").append(s.typeNameTokens).append("% |\n");
+            b.append("| Type name classes | ").append(esc(s.typeNameClasses.toString())).append(" |\n");
+        }
         b.append("| Original only | ").append(s.originalOnly).append(" |\n");
         b.append("| Modern only | ").append(s.modernOnlyInfrastructure).append(" pipeline infrastructure, ").append(s.modernOnlyLombok).append(" Lombok expansion, ").append(s.modernOnlyOther).append(" other |\n\n");
         b.append("API preservation counts the public and protected fields, methods, constructors and enum constants of the original's ")
